@@ -17,6 +17,7 @@ def extract(c, board_id):
                 con.run(f"sudo tar cvzf {board_id}_data.tar.gz {board_id}_data")
 
             c.run("mkdir -p board_data")
+            print("Getting data")
             con.get(f"/tmp/{board_id}_data.tar.gz", "board_data/")
 
             con.run(f"sudo rm -rf /tmp/{board_id}_data.tar.gz /tmp/{board_id}_data/")
