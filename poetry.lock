@@ -30,7 +30,7 @@ requests = "^2.22"
 tabulate = "^0.8.6"
 
 [package.source]
-reference = "a9c2ed9a04cff1a1c1cf1298850066b8c5945559"
+reference = "b064c199d32d9dcad0ce20e102c9da6325373491"
 type = "git"
 url = "git@atreus.informatik.uni-tuebingen.de:ties/timing/schrank/automate.git"
 [[package]]
