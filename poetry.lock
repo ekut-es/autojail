@@ -221,6 +221,14 @@ version = "1.4.0"
 
 [[package]]
 category = "main"
+description = "A Software Testing Tool"
+name = "lit"
+optional = false
+python-versions = "*"
+version = "0.9.0"
+
+[[package]]
+category = "main"
 description = "More routines for operating on iterables, beyond itertools"
 marker = "python_version < \"3.8\""
 name = "more-itertools"
@@ -482,7 +490,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["pathlib2", "contextlib2", "unittest2"]
 
 [metadata]
-content-hash = "857b1e28bce3db417aea2e47c4d16692724eaa151d54ac0ec7ecf29f723bc594"
+content-hash = "83925917534644242590745e4bd4bf06ae9fb56bb951a59e35371fef8e66f8ce"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -621,6 +629,9 @@ invoke = [
     {file = "invoke-1.4.0-py2-none-any.whl", hash = "sha256:4668a4a594a47f2da2f0672ec2f7b1566f809cebf10bcd95ce2de9ecf39b95d1"},
     {file = "invoke-1.4.0-py3-none-any.whl", hash = "sha256:e04faba8ea7cdf6f5c912be42dcafd5c1074b7f2f306998992c4bfb40a9a690b"},
     {file = "invoke-1.4.0.tar.gz", hash = "sha256:ae7b4513638bde9afcda0825e9535599637a3f65bd819a27098356027bb17c8a"},
+]
+lit = [
+    {file = "lit-0.9.0.tar.gz", hash = "sha256:c035aa0a233633f7046745164a153a57d8bbcaf9b833232438cf4d2923d8786e"},
 ]
 more-itertools = [
     {file = "more-itertools-8.1.0.tar.gz", hash = "sha256:c468adec578380b6281a114cb8a5db34eb1116277da92d7c46f904f0b52d3288"},
