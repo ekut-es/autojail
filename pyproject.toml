@@ -13,6 +13,7 @@ lit = "^0.9.0"
 
 [tool.poetry.dev-dependencies]
 invoke = "^1.4.0"
+mkdocs = "^1.0.4"
 
 [build-system]
 requires = ["poetry>=0.12"]
