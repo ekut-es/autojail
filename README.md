@@ -1,4 +1,4 @@
-# Autmated Jailhouse configuration
+# Automated Jailhouse configuration
 
 ## Getting Started
 
@@ -14,8 +14,6 @@ configuration to your needs. Metadata should point to the absolute path
 of the directory metadata inside external/automate. 
 
 ## Commandline interface
-
-TODO: Interface of commandline generator 
 
 Check out jailhouse:
 
@@ -36,3 +34,7 @@ Deploy jailhouse:
 Deploy jailhouse for a specific board:
 
     automate-run deploy -b jetsontx2
+
+# Simple usage example 
+
+ A simple example for running a completed test case on jetson-tx2 can be found in examples/jetsontx2/run.sh.
