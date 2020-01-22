@@ -7,10 +7,11 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.6"
+automate = {path = "external/automate"}
+pre-commit = "^1.21.0"
 
 [tool.poetry.dev-dependencies]
 invoke = "^1.4.0"
-automate = {git = "git@atreus.informatik.uni-tuebingen.de:ties/timing/schrank/automate.git"}
 
 [build-system]
 requires = ["poetry>=0.12"]
