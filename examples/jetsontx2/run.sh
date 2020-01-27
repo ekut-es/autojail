@@ -17,7 +17,7 @@ automate board.reboot $BOARD --wait
 automate board.kexec $BOARD --append="mem=7808M vmalloc=512M"
 automate board.run $BOARD "sudo insmod jailhouse/driver/jailhouse.ko"
 automate board.run $BOARD "sudo jailhouse/tools/jailhouse enable jailhouse/configs/arm64/jetson-tx2.cell"
-automate board.run $BOARD "sudo jailhouse/tools/jailhouse cell create jailhouse/configs/arm64/jetson-tx2-demo.cell"
+automate board.run $BOARD "sudo jailhouse/tools/jailhouse cell create jailhouse/configs/arm64/jetson-tx2-inmate-demo.cell"
 automate board.run $BOARD "sudo jailhouse/tools/jailhouse cell load 1 jailhouse/inmates/demos/arm64/gic-demo.bin"
 automate board.run $BOARD "sudo jailhouse/tools/jailhouse cell start 1"
 automate board.run $BOARD "sudo jailhouse/tools/jailhouse cell list"
