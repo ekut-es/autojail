@@ -1,16 +1,158 @@
 import logging
 from pathlib import Path
 import os.path
+import stat
 
 from invoke import task
 from automate.utils import fix_symlinks
 from automate.utils.kernel import KernelData
 from automate.utils.network import rsync
 
+from ruamel.yaml import YAML
+
 ROOT_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
 JAILHOUSE_REPO = 'https://github.com/siemens/jailhouse.git'
 JAILHOUSE_PATH = ROOT_PATH / "jailhouse"
 JAILHOUSE_BOARDS = ["jetsontx2"]
+
+autojailhouse_yml_template = r"""
+# (automate|ssh)
+project_type:
+
+# (automate-id|ssh login)
+board_id:
+
+cross_compiler:
+    # automate id
+    id:
+    # absolute path to bin directory
+    bin-path:
+    prefix:
+    cc:
+    cxx:
+    ld:
+    asm:
+
+base_architecture:
+
+# absolute path to kernel build directory containing object files
+kernel_build_dir:
+
+# user name to use for login, key authentication required
+ssh_login:
+
+# full address of JailHouse git repository to be used
+jailhouse_git:
+
+kernel_params:
+    # kernel command-line MEM parameter
+    mem:
+    # kernel command-line VMALLOC parameter
+    vmalloc:
+"""
+
+def check_project_config(c, autojailhouse_yml) -> bool:
+    check_host = lambda host : c.run(f"ping -W 1 -c 1 {host}", hide='both').exited == 0
+    valid = True
+
+    if autojailhouse_yml['project_type'] == "automate":
+        try:
+            c.board(autojailhouse_yml['board_id'])
+        except:
+            logging.error("Invalid automate board-id")
+            valid = False
+
+        try:
+            c.compiler(autojailhouse_yml['cross_compiler']['id'])
+        except:
+            logging.error("Invalid automate compiler-id")
+            valid = False
+
+    else:
+        if not check_host(autojailhouse_yml['board_id']):
+            logging.error("Invalid SSH board host")
+            valid = False
+
+        cross_compiler = autojailhouse_yml['cross_compiler']
+        cross_compiler_bin_path = Path(cross_compiler['bin_path'])
+        if not cross_compiler_bin_path.exists():
+            logging.error("Invalid cross-compiler bin path")
+            valid = False
+
+        prefix = cross_compiler['prefix']
+        if not (cross_compiler_bin_path / (prefix + cross_compiler['cc'])).exists():
+            logging.error("Invalid CC compiler")
+            valid = False
+
+        if not (cross_compiler_bin_path / (prefix + cross_compiler['cxx'])).exists():
+            logging.error("Invalid CXX compielr")
+            valid = False
+
+    return valid
+
+def generate_config_automate(c, board_id, autojailhouse_yml):
+    """ Generates an initial <autojailhouse.yml> config file using automate """
+
+    autojailhouse_yml['project_type'] = "automate"
+    board = c.board(board_id)
+
+    cross_compiler = board.compiler()
+    autojailhouse_yml['cross_compiler']['id'] = cross_compiler.id
+    autojailhouse_yml['base_architecture'] = str(cross_compiler.machine)
+
+    kernel_data = board.kernel_data("default")
+    build_cache_path = kernel_data.build_cache_path
+    autojailhouse_yml['kernel_build_dir'] = str(build_cache_path)
+
+    return autojailhouse_yml
+
+
+@task
+def init(c, board_id, kernel_build_dir=None, jailhouse_git=JAILHOUSE_REPO, cross_compiler=None, base_arch=None, ssh_login=None, \
+    cross_compiler_prefix=None, cross_compiler_cc='gcc', cross_compiler_cxx='g++', overwrite_existing=False, kernel_mem=None, \
+    kernel_vmalloc=None):
+
+    """ Initializes an AutoJailhouse project
+    """
+
+    if os.path.exists("autojailhouse.yml") and not overwrite_existing:
+        assert(False and "Output file <autojailhouse.yml> already existing")
+
+    yaml = YAML()
+    autojailhouse_yml = yaml.load(autojailhouse_yml_template)
+
+    autojailhouse_yml['board_id'] = board_id
+    autojailhouse_yml['jailhouse_git'] = jailhouse_git
+
+    kernel = autojailhouse_yml['kernel_params']
+    if not kernel_mem:
+        assert(False and "Missing kernel parameter MEM")
+
+    kernel['mem'] = kernel_mem
+    kernel['vmalloc'] = kernel_vmalloc
+
+    if not kernel_build_dir or not jailhouse_git or not cross_compiler or not base_arch:
+        autojailhouse_yml = generate_config_automate(c, board_id, autojailhouse_yml)
+    else:
+        autojailhouse_yml['project_type'] = "ssh"
+
+        autojailhouse_yml['cross_compiler']['bin_path'] = cross_compiler
+        autojailhouse_yml['cross_compiler']['cc'] = cross_compiler_cc
+
+        autojailhouse_yml['cross_compiler']['cxx'] = cross_compiler_cxx
+        autojailhouse_yml['cross_compiler']['prefix'] = cross_compiler_prefix
+
+        autojailhouse_yml['base_architecture'] = base_arch
+
+        autojailhouse_yml['kernel_build_dir'] = kernel_build_dir
+        autojailhouse_yml['ssh_login'] = ssh_login
+
+    assert(check_project_config(c, autojailhouse_yml) and "Failed to create valid config")
+    logging.info("Successfully created autojail project configuration")
+
+    with open("autojailhouse.yml", 'w') as fd:
+        yaml.dump(autojailhouse_yml, fd)
+
 
 @task
 def update(c):
