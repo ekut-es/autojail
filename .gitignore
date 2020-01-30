@@ -1,5 +1,6 @@
 *.pyc
 \#*
+.\#*
 *~
 jailhouse/
 board_data/

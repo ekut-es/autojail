@@ -1,0 +1,10 @@
+id: board1
+name: board1
+board: board
+
+memory_regions:
+  ram: 
+    physical_start_addr: 0x100
+    virtual_start_addr: 0x100
+    size: 10
+    flags: [MEM_WRITE]
