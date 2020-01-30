@@ -4,12 +4,14 @@
 
 To install the package in development mode:
 
-    pip install poetry
+    git clone git@atreus.informatik.uni-tuebingen.de:ties/autojailhouse/autojail.git
+    cd autojail
+    pip3 install poetry --user
     git submodule update --init --recursive
 	poetry shell
+	poetry install
 	
-	
-Then copy external/automate/automate.yml to ~/.automate and adopt the 
+Then copy external/automate/automate.yml to ~/.automate.yml and adopt the 
 configuration to your needs. Metadata should point to the absolute path
 of the directory metadata inside external/automate. 
 
@@ -39,7 +41,7 @@ Deploy jailhouse for a specific board:
 
  A simple example for running a completed test case on jetson-tx2 can be found in examples/jetsontx2/run.sh.
  
- # Status
+# Status
  
  - Jailhouse runs on Jetson-TX2
  - Initial configuration for Boards is ongoing
