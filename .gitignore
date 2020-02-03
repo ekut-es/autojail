@@ -5,3 +5,5 @@
 jailhouse/
 board_data/
 kernels
+.vscode/
+*.egg-info/
