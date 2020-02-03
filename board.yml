@@ -1,3 +1,10 @@
+---
+title:board.yml
+author:Dennis Volm
+date: 29.01.2020
+---
+
+
 name:"autojailExtract/board"
 id:boardID
 board: boardTyp
@@ -8,7 +15,7 @@ physicalInformation:
 	-reserved RAM size = 64MB
 	//-starting und ending Adress of reserved RAM = 0x0000-0xFFFF
 	-Device Tree Information (only arm/arm64 based board)
-	-#CPUs:0x1-0xF
+	-CPUs:0x1-0xF
 
 Hypervisor:
 	-hyperVisorLocation:0x2000-0x2500
