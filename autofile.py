@@ -1,18 +1,16 @@
 import logging
 from pathlib import Path
 import os.path
-import stat
 
 from invoke import task
 from automate.utils import fix_symlinks
-from automate.utils.kernel import KernelData
 from automate.utils.network import rsync
 
 from ruamel.yaml import YAML
 
 ROOT_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
-JAILHOUSE_REPO = 'https://github.com/siemens/jailhouse.git'
-JAILHOUSE_BRANCH = 'next'
+JAILHOUSE_REPO = "https://github.com/siemens/jailhouse.git"
+JAILHOUSE_BRANCH = "next"
 JAILHOUSE_PATH = ROOT_PATH / "jailhouse"
 JAILHOUSE_BOARDS = ["jetsontx2"]
 
@@ -62,14 +60,14 @@ def check_project_config(c, autojailhouse_yml) -> bool:
     if autojailhouse_yml["project_type"] == "automate":
         try:
             c.board(autojailhouse_yml["board_id"])
-        except:
-            logging.error("Invalid automate board-id")
+        except Exception as e:
+            logging.error("Invalid automate board-id", str(e))
             valid = False
 
         try:
             c.compiler(autojailhouse_yml["cross_compiler"]["id"])
-        except:
-            logging.error("Invalid automate compiler-id")
+        except Exception as e:
+            logging.error("Invalid automate compiler-id", str(e))
             valid = False
 
     else:
@@ -198,9 +196,12 @@ def update(c, reset=False):
             c.run("git pull")
         except Exception as e:
             logging.error("Git pull failed")
-            logging.error("You might wan't to try 'automate-run update --reset' to reset the jailhouse checkout before pulling")
-            return -1 
-            
+            logging.error(
+                "You might wan't to try 'automate-run update --reset' to reset the jailhouse checkout before pulling"
+            )
+            logging.info("Error: %s", str(e))
+            return -1
+
         c.run(f"git checkout ${JAILHOUSE_BRANCH}")
 
 
@@ -335,3 +336,11 @@ def extract(c, board_ids="all"):
             c.run("chown -R ${USER} board_data/")
             c.run("chmod -R ug+wr board_data")
             fix_symlinks(f"board_data/{board_id}")
+
+
+@task
+def pre_commit(c):
+    "Installs pre commit hooks"
+    root_path = Path(os.path.dirname(os.path.abspath(__file__)))
+    with c.cd(str(root_path)):
+        c.run("pre-commit install")
