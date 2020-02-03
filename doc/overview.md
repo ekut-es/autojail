@@ -6,7 +6,8 @@
 
 Initialisiert ein autojailhouse Projekt.
 
-Eingaben: 
+Eingaben:
+
     - Kernel build directory
     - Jailhouse git url
     - Cross compiler
@@ -18,9 +19,11 @@ Ausgaben: Projektkonfiguration  (autojailhouse.yml)
 ### autojail extract
    
 Eingaben: autojailhouse.yml
+
 Ausgaben: board.yml
 
 Datenquellen:
+
     - Device trees
     - Linux tools
         * lscpu
@@ -40,7 +43,8 @@ Datenmodelle:
    
 ### autojail configure
 
-Eingaben: board.yml und cells.yml
+Eingaben: board.yml und cells.
+
 Ausgaben: Konfiguriertes und gebautes Jailhouse Projekt
 
 Worflow:
@@ -71,6 +75,7 @@ Worflow:
 #### Ansätze
 
 Regelbasierter Ansatz:
+
     - Auf Basis bestehender Jailhouse Konfigurationen
     - Identifikation und Berücksichtigung von Metainformationen
     - Feedbackmechanismus
@@ -78,5 +83,6 @@ Regelbasierter Ansatz:
         * Regelbasiert
 
 Maschinelles Lernen/Hybridverfahren:
+
     - Generierung von Konfigurationen mittels regelbasiertem Ansatz
     - Supervised learning mittels Feedbackmechanismus
