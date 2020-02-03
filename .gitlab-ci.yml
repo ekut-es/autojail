@@ -1,5 +1,7 @@
 image: python:3.6
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
   - python3.6 -m ensurepip
