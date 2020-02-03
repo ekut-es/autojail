@@ -1,0 +1,17 @@
+image: centos:7
+
+
+before_script:
+  - yum install epel-release -y
+  - yum install git sudo python36 python36-devel -y
+  - yum groupinstall 'Development Tools' -y
+  - python3.6 -m ensurepip
+  - python3.6 -m pip install poetry
+  
+test:
+  script:
+    - set -e
+    - poetry install
+    - python -m pytest test
+  tags:
+    - docker
