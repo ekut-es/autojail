@@ -11,6 +11,6 @@ test:
   script:
     - set -e
     - poetry install
-    - python -m pytest test
+    - poetry run python -m pytest test
   tags:
     - docker
