@@ -12,6 +12,7 @@ from ruamel.yaml import YAML
 
 ROOT_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
 JAILHOUSE_REPO = 'https://github.com/siemens/jailhouse.git'
+JAILHOUSE_BRANCH = 'next'
 JAILHOUSE_PATH = ROOT_PATH / "jailhouse"
 JAILHOUSE_BOARDS = ["jetsontx2"]
 
@@ -155,13 +156,23 @@ def init(c, board_id, kernel_build_dir=None, jailhouse_git=JAILHOUSE_REPO, cross
 
 
 @task
-def update(c):
+def update(c, reset=False):
     """Update the jailhouse from github"""
     if not JAILHOUSE_PATH.exists():
         c.run(f"git clone {JAILHOUSE_REPO} {JAILHOUSE_PATH}")
-    else:
-        with c.cd(str(JAILHOUSE_PATH)):
-            c.run(f"git pull")
+
+    with c.cd(str(JAILHOUSE_PATH)):
+        if reset:
+            c.run("git reset --hard")
+        try:
+            c.run("git pull")
+        except Exception as e:
+            logging.error("Git pull failed")
+            logging.error("You might wan't to try 'automate-run update --reset' to reset the jailhouse checkout before pulling")
+            return -1 
+            
+        c.run(f"git checkout ${JAILHOUSE_BRANCH}")
+
 
 @task
 def build(c, board_ids="all", sync_kernel=False):
