@@ -2,6 +2,35 @@
 
 ## Flow 
 
+Workflow:
+   
+```
+      +---------------+
+      | autojail init |
+      +---------------+
+               |
+               | autojail.yml
+               v
+  +-----------------------------+
+  | autojail extract (optional) |
+  +-----------------------------+
+               | board.yml
+               |            | cells.yml
+               v            v
+   +---------------------------+
+   |     autojail config       |<-------------+
+   +---------------------------+              |new cells.yml
+               |                     +------------------------------+
+               | board.cell          |  autojail explore (optional) |
+               | board_guest1.cell   +------------------------------+
+               | board_guest...               |
+               |                              |
+               v                              |
+   +---------------------------+              |
+   | autojail  test (optional) |--------------+
+   +---------------------------+
+```
+
 ### autojail init
 
 Initialisiert ein autojailhouse Projekt.
@@ -14,17 +43,20 @@ Eingaben:
 - Base architure (ARM oder ARM64)
 - Board identifier oder ssh login      
 
-Ausgaben: Projektkonfiguration  (autojailhouse.yml)
+Ausgaben: Projektkonfiguration  (autojail.yml)
 
 ### autojail extract
    
-Eingaben: autojailhouse.yml
+Eingaben: autojail.yml
 
 Ausgaben: board.yml
 
 Datenquellen:
 
 - Device trees
+- /proc
+    * /iomem
+    * ..
 - Linux tools
     * lscpu
     * lspci
@@ -32,7 +64,7 @@ Datenquellen:
     * ...
 - Optional
     * Microbenchmarks
-    * [Google Dialogflow](https://ieeexplore.ieee.org/document/8876925)
+    * Datenblätter [Google Dialogflow](https://ieeexplore.ieee.org/document/8876925)
 
 Datenmodelle:
 
@@ -44,34 +76,11 @@ Datenmodelle:
    
 ### autojail configure
 
-Eingaben: board.yml und cells.
+Eingaben: board.yml, cells.yml, autojail.yml
 
 Ausgaben: Konfiguriertes und gebautes Jailhouse Projekt
 
-Worflow:
-   
-```
-       autojail extract 
-               | board.yaml
-               | cells.yml
-               v
-   +---------------------------+
-   | Generierung Konfiguration |<--+
-   +---------------------------+   |
-               |                   |
-               | config.c          | Feedback
-               |                   |
-               v                   |
-   +-------------------------+     |
-   | Valiedierung/Evaluation |-----+
-   +-------------------------+
-               |
-               |
-               v
-  +--------------------------+
-  | Optimierte Konfiguration |
-  +--------------------------+
-```
+
    
 #### Ansätze
 
