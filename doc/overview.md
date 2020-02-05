@@ -85,7 +85,7 @@ Beispiel für Rohdaten/Plattformparameter in boards.yml:
 	     virt_start: 0x03020000 #
 	     phys_start: 0x03020000 # 
 	     size: 100 MB           # 
-	     type: PLL01            # Wird auf jeden Fall benötigt
+	     type: PLL01            # Wird auf jeden Fall benötigt wenn wir auf Console Eintrag verzichten
 	     linux_driver: ??       # Braucht man das ?
 	     devicetree_nodes: ??   # Braucht man das ?
 	     root_used: true        # Wird dieses Device / diese Memory Region vom Linux benutzt, wird benutzt um JAILHOUSE_MEM_ROOTSHARED zu inferieren 
