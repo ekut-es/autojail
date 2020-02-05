@@ -89,6 +89,8 @@ Beispiel für Rohdaten/Plattformparameter in boards.yml:
 	  system_ram:
 	     virt_start: 
           ...
+		  
+
 ### autojail config
 
 Eingaben: board.yml, cells.yml, autojail.yml
@@ -184,7 +186,7 @@ Regelbasierter Ansatz:
     * Zur Erzeugung optimierter Konfigurationen
     * Regelbasiert
 
-Maschinelles Lernen/Hybridverfahren sieht autojail explore:
+Maschinelles Lernen/Hybridverfahren (siehe autojail explore):
 
 - Generierung von Konfigurationen mittels regelbasiertem Ansatz
 - Supervised learning mittels Feedbackmechanismus
@@ -205,4 +207,24 @@ Eingaben: autojail.yml und test_results.yml
 Ausgaben: Neue cells.yml 
 
 TODO: Hier würden wir uns gerne ein wenig austoben. 
+
+## Use Case / Anwendung:
+
+Hier mal die Anforderungsdefinition von Andreas Messerschmid:
+ 
+![Raspberry PI 4B Use Case](img/usecase_raspi4_vswitch.png)
+
+    ich hatte Ihnen ja noch einen ersten Vorschlag für einen Usecase mit dem
+    Raspi 4 und Jailhouse versprochen. Im Anhang finden Sie ein kleines
+    Schaubild dazu. Viele Boards (auch im Bereich unserer Industriekunden)
+    verfügen nur über ein physikalisches Netzwerkinterface. Beim Einsatz von
+    Jailhouse und der Implementierung von einem oder mehreren Gastsystemen,
+    ergibt sich immer wieder die Anforderung, dass zum einen die isolierten
+    Jailhouse-Zellen untereinander kommunizieren müssen und darüber hinaus
+    evtl. auch mit der Aussenwelt über nur ein physikalisch vorhandenes
+    Netzwerkinterface. Daher wäre meine Idee in einem ersten Schritt solch
+    ein Szenario mit Jailhouse abzubilden. Die Zielsetzung wäre hierbei
+    herauszufinden, welche Konfigurationsschritte dafür notwendig sind und
+    erste Ideen zu erarbeiten, wie solch einen Konfiguration automatisiert
+    erstellt werden kann.
 
