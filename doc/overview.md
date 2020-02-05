@@ -228,3 +228,9 @@ Hier mal die Anforderungsdefinition von Andreas Messerschmid:
     erste Ideen zu erarbeiten, wie solch einen Konfiguration automatisiert
     erstellt werden kann.
 
+Als konkrete Anwendung bereitet Linutronix gerade einen Demonstrator für X86 vor. 
+Dieser basiert auf 2-Zellen. 
+Eine mit einer Software SPS basierend auf  https://www.codesys.com/ und Realtime Linux.
+Die zweite Zelle Läuft mit einem "normalen" Linux und stellt die GUI oder Weboberfläche dar.
+
+Und hier wäre schon einmal die Anleitung für Codesys auf dem Raspberry https://raspberry-sps.de/codesys-programme-am-raspberry-pi/ .
