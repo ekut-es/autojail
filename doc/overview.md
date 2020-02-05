@@ -81,12 +81,12 @@ Beispiel für Rohdaten/Plattformparameter in boards.yml:
      memory_regions:
 	   uart:
 	     virt_start: 0x03020000 #
-		 phys_start: 0x03020000 # 
-		 size: 100 MB           # 
-		 type: PLL01            # Wird auf jeden Fall benötigt
-		 linux_driver: ??       # Braucht man das ?
-		 devicetree_nodes: ??   # Braucht man das ?
-		 root_used: true        # Wird dieses Device / diese Memory Region vom Linux benutzt, wird benutzt um JAILHOUSE_MEM_ROOTSHARED zu inferieren 
+	     phys_start: 0x03020000 # 
+	     size: 100 MB           # 
+	     type: PLL01            # Wird auf jeden Fall benötigt
+	     linux_driver: ??       # Braucht man das ?
+	     devicetree_nodes: ??   # Braucht man das ?
+	     root_used: true        # Wird dieses Device / diese Memory Region vom Linux benutzt, wird benutzt um JAILHOUSE_MEM_ROOTSHARED zu inferieren 
 		
 	  system_ram:
 	     virt_start: 
