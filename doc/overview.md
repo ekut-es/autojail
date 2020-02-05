@@ -72,7 +72,7 @@ Datenquellen:
 
 Beispiel für Rohdaten/Plattformparameter in boards.yml:
 
-     console: Wird das hier benötigt (vermutlich nicht)
+     console: # Wird das hier benötigt (vermutlich nicht)
 
      irqchips:
 	   gic: 
@@ -89,6 +89,7 @@ Beispiel für Rohdaten/Plattformparameter in boards.yml:
 	     linux_driver: ??       # Braucht man das ?
 	     devicetree_nodes: ??   # Braucht man das ?
 	     root_used: true        # Wird dieses Device / diese Memory Region vom Linux benutzt, wird benutzt um JAILHOUSE_MEM_ROOTSHARED zu inferieren 
+		 # evtl. möchte man subregions / subdevices zulassen
 		
 	  system_ram:
 	     virt_start: 
