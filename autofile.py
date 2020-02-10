@@ -12,7 +12,7 @@ ROOT_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
 JAILHOUSE_REPO = "https://github.com/siemens/jailhouse.git"
 JAILHOUSE_BRANCH = "next"
 JAILHOUSE_PATH = ROOT_PATH / "jailhouse"
-JAILHOUSE_BOARDS = ["jetsontx2"]
+JAILHOUSE_BOARDS = ["jetsontx2", "raspberrypi4b-jh1"]
 
 autojailhouse_yml_template = r"""
 # (automate|ssh)
