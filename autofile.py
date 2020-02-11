@@ -249,14 +249,24 @@ def build(c, board_ids="all", sync_kernel=False):
             c.run(f"mkdir -p {dest_dir}")
             c.run(f"rsync -r --delete jailhouse/ {dest_dir}")
             with c.cd(str(dest_dir)):
-                c.run(
-                    f"rm -rf configs/*/dts"
-                )  # Currently does not build for many targets
-                c.run(
-                    f"make CROSS_COMPILE={cross_compile} KDIR={kdir} ARCH={kernel_arch}  V=1"
+
+                result = c.run(
+                    f"make CROSS_COMPILE={cross_compile} KDIR={kdir} ARCH={kernel_arch}  V=1",
+                    warn=True,
                 )
 
-    return False
+                if result.return_code != 0:
+                    logging.error(
+                        "Could not build with device trees retrying build without device trees"
+                    )
+                    c.run(
+                        f"rm -rf configs/*/dts"
+                    )  # Currently does not build for many targets
+
+                    result = c.run(
+                        f"make CROSS_COMPILE={cross_compile} KDIR={kdir} ARCH={kernel_arch}  V=1",
+                        warn=True,
+                    )
 
 
 @task
