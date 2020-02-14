@@ -40,7 +40,7 @@ kernel_build_dir:
 # user name to use for login, key authentication required
 ssh_login:
 
-# full address of JailHouse git repository to be used
+# full address of Jailhouse git repository to be used
 jailhouse_git:
 
 kernel_params:
@@ -354,3 +354,20 @@ def pre_commit(c):
     root_path = Path(os.path.dirname(os.path.abspath(__file__)))
     with c.cd(str(root_path)):
         c.run("pre-commit install")
+
+
+@task
+def build_kernels(c, config_name="jailhouse"):
+    "Build kernel configs for jailhouse"
+
+    for board_name in JAILHOUSE_BOARDS:
+        board = c.board(board_name)
+        for kernel in board.os.kernels:
+            if kernel.name == config_name:
+                kernel_builder = board.builder(
+                    "kernel", f"kernels/{board_name}/{config_name}"
+                )
+                kernel_builder.configure(config_name)
+                kernel_builder.build()
+                kernel_builder.install()
+                kernel_builder.deploy()
