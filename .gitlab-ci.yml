@@ -3,6 +3,8 @@ variables:
 
 before_script:
   - python3.6 -m ensurepip
+  - python3.6 -m virtualenv venv
+  - source venv/bin/activate
   - python3.6 -m pip install poetry
   
 test:
@@ -17,7 +19,7 @@ test:
 
 build_doc:
   script:
-    - set -e 
+    - set -e
     - poetry install
     - poetry run mkdocs build
     - cp -r site/* /afs/wsi/home/gerum/public_html/autojail
