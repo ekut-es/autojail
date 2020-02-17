@@ -2,7 +2,8 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
-  - python3.6 -m ensurepip
+  - python3.6 -m ensurepip --user
+  - python3.6 -m pip install virtualenv --user
   - python3.6 -m virtualenv venv
   - source venv/bin/activate
   - python3.6 -m pip install poetry
