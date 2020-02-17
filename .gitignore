@@ -8,3 +8,4 @@ kernels
 .vscode/
 *.egg-info/
 *.orig
+site

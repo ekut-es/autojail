@@ -86,6 +86,21 @@ six = ">=1.4.1"
 tests = ["pytest (>=3.2.1,<3.3.0 || >3.3.0)"]
 
 [[package]]
+category = "main"
+description = "Screen-scraping library"
+name = "beautifulsoup4"
+optional = false
+python-versions = "*"
+version = "4.8.2"
+
+[package.dependencies]
+soupsieve = ">=1.2"
+
+[package.extras]
+html5lib = ["html5lib"]
+lxml = ["lxml"]
+
+[[package]]
 category = "dev"
 description = "The uncompromising code formatter."
 name = "black"
@@ -141,7 +156,7 @@ python-versions = "*"
 version = "3.0.4"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Composable command line interface toolkit"
 name = "click"
 optional = false
@@ -259,8 +274,8 @@ category = "main"
 description = "Human friendly output for text interfaces using Python"
 name = "humanfriendly"
 optional = false
-python-versions = "*"
-version = "6.1"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+version = "7.1"
 
 [package.dependencies]
 pyreadline = "*"
@@ -330,7 +345,7 @@ version = "0.4.2"
 dev = ["testpath"]
 
 [[package]]
-category = "dev"
+category = "main"
 description = "A very fast and expressive template engine."
 name = "jinja2"
 optional = false
@@ -373,7 +388,7 @@ python-versions = "*"
 version = "0.9.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python LiveReload is an awesome tool for web developers"
 name = "livereload"
 optional = false
@@ -385,7 +400,7 @@ six = "*"
 tornado = "*"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python implementation of Markdown."
 name = "markdown"
 optional = false
@@ -399,7 +414,7 @@ setuptools = ">=36"
 testing = ["coverage", "pyyaml"]
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Safely add untrusted strings to HTML/XML markup."
 name = "markupsafe"
 optional = false
@@ -415,7 +430,7 @@ python-versions = "*"
 version = "0.6.1"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Project documentation with Markdown."
 name = "mkdocs"
 optional = false
@@ -430,6 +445,23 @@ click = ">=3.3"
 livereload = ">=2.5.1"
 tornado = ">=5.0"
 
+[[package]]
+category = "main"
+description = "A MkDocs plugin that support mermaid graph in markdown file"
+name = "mkdocs-mermaid-plugin"
+optional = false
+python-versions = ">=2.7"
+version = "0.1.1"
+
+[package.dependencies]
+beautifulsoup4 = ">=4.6.3"
+mkdocs = ">=1.0.4"
+setuptools = ">=18.5"
+
+[package.source]
+reference = "abf14392b0ed0c7022210b32c4e7c9c3e4c5c68a"
+type = "git"
+url = "https://github.com/pugong/mkdocs-mermaid-plugin.git"
 [[package]]
 category = "dev"
 description = "More routines for operating on iterables, beyond itertools"
@@ -782,6 +814,14 @@ version = "1.14.0"
 
 [[package]]
 category = "main"
+description = "A modern CSS selector implementation for Beautiful Soup."
+name = "soupsieve"
+optional = false
+python-versions = "*"
+version = "1.9.5"
+
+[[package]]
+category = "main"
 description = "Pretty-print tabular data"
 name = "tabulate"
 optional = false
@@ -800,7 +840,7 @@ python-versions = "*"
 version = "0.10.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed."
 name = "tornado"
 optional = false
@@ -884,7 +924,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools"]
 
 [metadata]
-content-hash = "4067f4cf37fcc9ebffdf6f5ea5d81b2b8a956092909cc37430b1e2754e9bf6ec"
+content-hash = "d8fe3a5ec6c8de6075aa793714f1e8d2587c56af92c861928a66755946d83962"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -924,6 +964,11 @@ bcrypt = [
     {file = "bcrypt-3.1.7-cp38-cp38-win32.whl", hash = "sha256:ce4e4f0deb51d38b1611a27f330426154f2980e66582dc5f438aad38b5f24fc1"},
     {file = "bcrypt-3.1.7-cp38-cp38-win_amd64.whl", hash = "sha256:6305557019906466fc42dbc53b46da004e72fd7a551c044a827e572c82191752"},
     {file = "bcrypt-3.1.7.tar.gz", hash = "sha256:0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42"},
+]
+beautifulsoup4 = [
+    {file = "beautifulsoup4-4.8.2-py2-none-any.whl", hash = "sha256:e1505eeed31b0f4ce2dbb3bc8eb256c04cc2b3b72af7d551a4ab6efd5cbe5dae"},
+    {file = "beautifulsoup4-4.8.2-py3-none-any.whl", hash = "sha256:9fbb4d6e48ecd30bcacc5b63b94088192dcda178513b2ae3c394229f8911b887"},
+    {file = "beautifulsoup4-4.8.2.tar.gz", hash = "sha256:05fd825eb01c290877657a56df4c6e4c311b3965bda790c613a3d6fb01a5462a"},
 ]
 black = [
     {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
@@ -1030,8 +1075,8 @@ flake8 = [
     {file = "flake8-3.7.9.tar.gz", hash = "sha256:45681a117ecc81e870cbf1262835ae4af5e7a8b08e40b944a8a6e6b895914cfb"},
 ]
 humanfriendly = [
-    {file = "humanfriendly-6.1-py2.py3-none-any.whl", hash = "sha256:5a57c973dd28a24f45ab723521c84b111fbe79e9d9fcdca6f9aeb668c18a0f40"},
-    {file = "humanfriendly-6.1.tar.gz", hash = "sha256:b77d1aa8d73b6fe7e8860fa516fbc0e2aa85bff159d7525b0213353817cf1cfc"},
+    {file = "humanfriendly-7.1-py2.py3-none-any.whl", hash = "sha256:1a2df7c533161580a9c0fcec9c02674ee29b5f8fcbca7bf6bc6ac2bcf4caeb33"},
+    {file = "humanfriendly-7.1.tar.gz", hash = "sha256:237f68a825f44128e53160907a7d4c5ad08115e5e3a195f2666fac59fe75c8e8"},
 ]
 identify = [
     {file = "identify-1.4.11-py2.py3-none-any.whl", hash = "sha256:1222b648251bdcb8deb240b294f450fbf704c7984e08baa92507e4ea10b436d5"},
@@ -1115,6 +1160,7 @@ mkdocs = [
     {file = "mkdocs-1.0.4-py2.py3-none-any.whl", hash = "sha256:8cc8b38325456b9e942c981a209eaeb1e9f3f77b493ad755bfef889b9c8d356a"},
     {file = "mkdocs-1.0.4.tar.gz", hash = "sha256:17d34329aad75d5de604b9ed4e31df3a4d235afefdc46ce7b1964fddb2e1e939"},
 ]
+mkdocs-mermaid-plugin = []
 more-itertools = [
     {file = "more-itertools-8.2.0.tar.gz", hash = "sha256:b1ddb932186d8a6ac451e1d95844b382f55e12686d51ca0c68b6f61f2ab7a507"},
     {file = "more_itertools-8.2.0-py3-none-any.whl", hash = "sha256:5dd8bcf33e5f9513ffa06d5ad33d78f31e1931ac9a18f33d37e77a180d393a7c"},
@@ -1317,6 +1363,10 @@ setproctitle = [
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
     {file = "six-1.14.0.tar.gz", hash = "sha256:236bdbdce46e6e6a3d61a337c0f8b763ca1e8717c03b369e87a7ec7ce1319c0a"},
+]
+soupsieve = [
+    {file = "soupsieve-1.9.5-py2.py3-none-any.whl", hash = "sha256:bdb0d917b03a1369ce964056fc195cfdff8819c40de04695a80bc813c3cfa1f5"},
+    {file = "soupsieve-1.9.5.tar.gz", hash = "sha256:e2c1c5dee4a1c36bcb790e0fabd5492d874b8ebd4617622c4f6a731701060dda"},
 ]
 tabulate = [
     {file = "tabulate-0.8.6.tar.gz", hash = "sha256:5470cc6687a091c7042cee89b2946d9235fe9f6d49c193a4ae2ac7bf386737c8"},

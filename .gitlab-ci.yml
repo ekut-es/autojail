@@ -1,5 +1,3 @@
-image: python:3.6
-
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
@@ -8,9 +6,21 @@ before_script:
   - python3.6 -m pip install poetry
   
 test:
+  image: python:3.6
+
   script:
     - set -e
     - poetry install
     - poetry run python -m pytest test
   tags:
     - docker
+
+build_doc:
+  script:
+    - set -e 
+    - poetry install
+    - poetry run mkdocs build
+    - cp -r site/* /afs/wsi/home/gerum/public_html/autojail
+  tags:
+    - afs
+    
