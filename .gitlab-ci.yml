@@ -2,11 +2,11 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
-  - python3.6 -m ensurepip --user
-  - python3.6 -m pip install virtualenv --user
-  - python3.6 -m virtualenv venv
+  - python3 -m ensurepip --user
+  - python3 -m pip install virtualenv --user
+  - python3 -m virtualenv venv
   - source venv/bin/activate
-  - python3.6 -m pip install poetry
+  - python3 -m pip install poetry
   
 test:
   image: python:3.6
@@ -18,6 +18,17 @@ test:
   tags:
     - docker
 
+test_python_latest:
+  image: python:latest
+
+  script:
+    - set -e
+    - poetry install
+    - poetry run python -m pytest test
+  tags:
+    - docker
+
+  
 build_doc:
   script:
     - set -e
