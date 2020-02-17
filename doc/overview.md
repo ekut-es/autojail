@@ -1,34 +1,14 @@
 # Übersicht Autojailhouse 
 
-## Flow 
+## Flow
 
-Workflow:
-   
-```
-      +---------------+
-      | autojail init |
-      +---------------+
-               |
-               | autojail.yml
-               v
-  +-----------------------------+
-  | autojail extract (optional) |
-  +-----------------------------+
-               | board.yml
-               |            | cells.yml
-               v            v
-   +---------------------------+
-   |     autojail config       |<-------------+
-   +---------------------------+              |new cells.yml
-               |                     +------------------------------+
-               | board.cell          |  autojail explore (optional) |
-               | board_guest1.cell   +------------------------------+
-               | board_guest...               |
-               |                              |
-               v                              |
-   +---------------------------+              |
-   | autojail  test (optional) |--------------+
-   +---------------------------+
+```mermaid
+graph TD
+  A[autojail init] -->|autojail.yml| B["autojail extract (optional)"];
+  B -->|board.yml, cells.yml| C[autojail config];
+  C -->|board.cell, board_guest1.cell, board_guest...| D["autojail test (optional)"];
+  D --> E["autojail explore (optional)"];
+  E --> C;
 ```
 
 
