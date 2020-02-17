@@ -220,7 +220,13 @@ def build(c, board_ids="all", sync_kernel=False):
         for board_id in board_ids:
             board = c.board(board_id)
             cross_compiler = board.compiler()
-            kernel_data = board.kernel_data("default")
+
+            kernel_name = "default"
+            for kernel_desc in board.os.kernels:
+                if kernel_desc.name == "jailhouse":
+                    kernel_name = "jailhouse"
+
+            kernel_data = board.kernel_data(kernel_name)
 
             build_cache_path = kernel_data.build_cache_path
 
@@ -231,19 +237,27 @@ def build(c, board_ids="all", sync_kernel=False):
                 logging.warning(f"Skipping jailhouse build")
                 continue
 
-            kernel_path = ROOT_PATH / "kernels" / board_id
+            kernel_path = ROOT_PATH / "kernels" / board_id / kernel_name
 
             if not kernel_path.exists() or sync_kernel:
                 print("Getting cached kernel build")
                 c.run(f"mkdir -p {kernel_path}")
-                c.run(f"cp {build_cache_path} kernels/{board.id}")
-                with c.cd(f"kernels/{board.id}"):
+                c.run(
+                    f"cp {build_cache_path} kernels/{board.name}/{kernel_name}"
+                )
+                with c.cd(f"kernels/{board.id}/{kernel_name}"):
                     c.run(f"tar xJf {kernel_data.build_cache_name}")
 
             kernel_arch = kernel_data.arch
-            kdir = ROOT_PATH / "kernels" / board.id / kernel_data.srcdir
+            kdir = (
+                ROOT_PATH
+                / "kernels"
+                / board.name
+                / kernel_name
+                / kernel_data.srcdir
+            )
             kdir = os.path.realpath(kdir.absolute())
-            dest_dir = ROOT_PATH / "builds" / board.id / "jailhouse"
+            dest_dir = ROOT_PATH / "builds" / board.name / "jailhouse"
             cross_compile = cross_compiler.bin_path / cross_compiler.prefix
 
             c.run(f"mkdir -p {dest_dir}")
