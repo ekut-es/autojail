@@ -24,6 +24,10 @@ build_doc:
     - poetry install
     - poetry run mkdocs build
     - cp -r site/* /afs/wsi/home/gerum/public_html/autojail
+
   tags:
     - afs
     
+  only:
+    refs:
+      - master
