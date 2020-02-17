@@ -9,3 +9,5 @@ kernels
 *.egg-info/
 *.orig
 site
+elbe-build*
+initvm/
