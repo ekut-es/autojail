@@ -2,6 +2,7 @@ site_name: Autojail
 nav:
   - Index: index.md
   - Overview: overview.md
+
     
 docs_dir: doc
 plugins:
@@ -9,3 +10,4 @@ plugins:
 
 extra_javascript:
   - https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js
+

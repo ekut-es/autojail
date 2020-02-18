@@ -52,29 +52,30 @@ Datenquellen:
 
 Beispiel für Rohdaten/Plattformparameter in boards.yml:
 
-     console: # Wird das hier benötigt (vermutlich nicht)
+```yaml
+console: # Wird das hier benötigt (vermutlich nicht)
 
-     irqchips:
-	   gic: 
-	     address: 0x03881000
-         pin_base: 32
-         pin_bitmap: 0-128
+irqchips:
+  gic: 
+	address: 0x03881000
+	pin_base: 32
+	pin_bitmap: 0-128
 
-     memory_regions:
-	   uart:
-	     virt_start: 0x03020000 #
-	     phys_start: 0x03020000 # 
-	     size: 100 MB           # 
-	     type: PLL01            # Wird auf jeden Fall benötigt wenn wir auf Console Eintrag verzichten
-	     linux_driver: ??       # Braucht man das ?
-	     devicetree_nodes: ??   # Braucht man das ?
-	     root_used: true        # Wird dieses Device / diese Memory Region vom Linux benutzt, wird benutzt um JAILHOUSE_MEM_ROOTSHARED zu inferieren 
-		 # evtl. möchte man subregions / subdevices zulassen
-		
-	  system_ram:
-	     virt_start: 
-          ...
-		  
+memory_regions:
+  uart:
+	virt_start: 0x03020000 #
+	phys_start: 0x03020000 # 
+	size: 100 MB		   # 
+	type: PLL01			   # Wird auf jeden Fall benötigt wenn wir auf Console Eintrag verzichten
+	linux_driver: ??	   # Braucht man das ?
+	devicetree_nodes: ??   # Braucht man das ?
+	root_used: true		   # Wird dieses Device / diese Memory Region vom Linux benutzt, wird benutzt um JAILHOUSE_MEM_ROOTSHARED zu inferieren 
+ # evtl. möchte man subregions / subdevices zulassen
+
+ system_ram:
+	virt_start: 
+	 ...
+```	  
 
 ### autojail config
 
@@ -94,73 +95,77 @@ Ausgaben: Konfiguriertes und gebautes Jailhouse Projekt
 
 Minimale cells.yml:
 
-	root:
-	  name: "My Root Cell"
-	  
-	guests:
-	  guest1: 
-		name: "Guest 1"
-	 os: bare
-	 cpus: 1
-	 console: &root.console	 #Implies | MEM_ROOTSHARED
-	
-	  guest2:
-		name: "Guest 2"
-		os: Linux
-	 cpus: 2,3
-	 console: &board.mem_regions_pll1.01
+```yaml
+root:
+  name: "My Root Cell"
+  
+guests:
+  guest1: 
+	name: "Guest 1"
+ os: bare
+ cpus: 1
+ console: &root.console	 #Implies | MEM_ROOTSHARED
+
+  guest2:
+	name: "Guest 2"
+	os: Linux
+ cpus: 2,3
+ console: &board.mem_regions_pll1.01
+ 
+ mem_regions:
+	 memory: 
+		size: 128 MB
+		virtual_start: 0x0
+	 timer: 
+		id: &board.hw.timer1 #Reference extracted hardware
 	 
-	 mem_regions:
-	     memory: 
-		    size: 128 MB
-		    virtual_start: 0x0
-	     timer: 
-		    id: &board.hw.timer1 #Reference extracted hardware
-		 
-		 
-	shmem:
-	   name: "Shared memory for communication between guest1 und guest2"
-	   size: 10 MB
-	   protocol: IVETH
-	   peers: [guest1, guest2]
-	   
+	 
+shmem:
+   name: "Shared memory for communication between guest1 und guest2"
+   size: 10 MB
+   protocol: IVETH
+   peers: [guest1, guest2]
+```
+
 cells.yml ohne extraktion einer boards.yml ist eine etwas vereinfachte Konfiguration:
 
-     root:
-	   name: "Root Cell"
-       console: 
-	     address: 0x3100000
-		 size: 0x10000,
-         type: 8250,
-         flags: [ACCESS_MMIO, REGDIST_4]
-	   platform_info:
-	     gicd_base: 0x03881000
-         gicc_base: 0x03882000
-         gich_base: 0x03884000
-         gicv_base: 0x03886000
-         gic_version: 2
-         maintenance_irq: 25
-		 
-	   mem_regions:
-	     timer: 
-		   phys_start: 0x03020000
-           virt_start: 0x03020000
-           size: 0xa0000
-           flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
-	   	 
-	     uart: 
-		   ...
-		   
-	   irqchips:
-	      gic: 
-		     address: 0x03881000
-             pin_base: 32
-             pin_bitmap: 0-128
-          gic2: 
-             address: 0x03881000 # In jetson tx2 same pin base is this actually correct
-			 pin_base: 160
-			 pin_bitmap: 0-128
-    
+
+```yaml
+root:
+  name: "Root Cell"
+  console: 
+	address: 0x3100000
+ size: 0x10000,
+	type: 8250,
+	flags: [ACCESS_MMIO, REGDIST_4]
+  platform_info:
+	gicd_base: 0x03881000
+	gicc_base: 0x03882000
+	gich_base: 0x03884000
+	gicv_base: 0x03886000
+	gic_version: 2
+	maintenance_irq: 25
+ 
+  mem_regions:
+	timer: 
+   phys_start: 0x03020000
+	  virt_start: 0x03020000
+	  size: 0xa0000
+	  flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
+	 
+	uart: 
+   ...
+   
+  irqchips:
+	 gic: 
+	 address: 0x03881000
+		pin_base: 32
+		pin_bitmap: 0-128
+	 gic2: 
+		address: 0x03881000 # In jetson tx2 same pin base is this actually correct
+	 pin_base: 160
+	 pin_bitmap: 0-128
+```
 
 
 #### Ansätze zur Generierung von 
