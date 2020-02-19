@@ -9,6 +9,7 @@ license = "MIT"
 python = "^3.6"
 automate = {path = "external/automate", optional = true}
 pre-commit = "^1.21.0"
+pydantic = "^1.4"
 
 [tool.poetry.extras]
 automate = ["automate"]
