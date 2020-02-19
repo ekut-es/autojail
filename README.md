@@ -10,6 +10,10 @@ To install the package in development mode:
     poetry install 
     poetry shell
 
+To start the documentation browser use:
+
+    mkdocs serve
+
 ## Usage with EKUT-ES Testrack "Der Schrank"
 
 
