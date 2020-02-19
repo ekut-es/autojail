@@ -226,3 +226,37 @@ Eine mit einer Software SPS basierend auf  https://www.codesys.com/ und Realtime
 Die zweite Zelle Läuft mit einem "normalen" Linux und stellt die GUI oder Weboberfläche dar.
 
 Und hier wäre schon einmal die Anleitung für Codesys auf dem Raspberry: [Link](https://raspberry-sps.de/codesys-programme-am-raspberry-pi/).
+
+
+# Meilenstein Planung Phase 1
+
+## Milestone 1: Minimal Viable Prototype
+
+Features:
+
+1. Minimales *autojail extract*: parst nur /proc/iomem mit hart kodierten
+   werten für FLAGS und virtual address
+2. Minimales *autojail config*: Generierung von Konfiguration aus im 
+   wesentlichen selbst geschriebener cells.yml + teilweise automatisierte 
+   generierung von *memory_regions*. 
+   
+## Milestone 2: First usable Product
+
+Features:
+
+1. *autojail init*: First version
+2. *autojail extract*: 
+  - Zusätzlich parsen von device trees
+    - Extraktion von interrupt controller und interrupts
+	- Wenn mögliche der Konsolen-Konfiguration
+3. *autojail generate*:
+  - Automatische Generierung eines Großteils von
+    memory regions, irqchips, platform_info
+  - Erste Unterstützung für Konfiguration von Inter-Zell Kommunikation
+    
+	
+## Milestone 3: Abschluss Phase 1
+
+- Dokumentation der Ergebnisse
+- Falls sinnvoll Publikation der Ergebnisse 
+- Planung für Phase 2
