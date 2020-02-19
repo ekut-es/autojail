@@ -1,21 +1,29 @@
 # Automated Jailhouse configuration
 
-## Getting Started
+## Getting started
 
 To install the package in development mode:
 
     git clone git@atreus.informatik.uni-tuebingen.de:ties/autojailhouse/autojail.git
     cd autojail
     pip3 install poetry --user
+    poetry install 
+    poetry shell
+
+## Usage with EKUT-ES Testrack "Der Schrank"
+
+
+To activate automation support:
+
     git submodule update --init --recursive
 	poetry shell
-	poetry install
+	poetry install -E automate
 	
 Then copy external/automate/automate.yml to ~/.automate.yml and adopt the 
 configuration to your needs. Metadata should point to the absolute path
 of the directory metadata inside external/automate. 
 
-## Commandline interface
+### Commandline interface
 
 Check out jailhouse:
 
@@ -37,18 +45,11 @@ Deploy jailhouse for a specific board:
 
     automate-run deploy -b jetsontx2
 
-## Usage example 
+### Usage example 
 
  A simple example for running a completed test case on jetson-tx2 can be found in examples/jetsontx2/run.sh.
  
-# Status
- 
- - Jailhouse runs on Jetson-TX2
- - Initial configuration for Boards is ongoing
- - Master Thesis for Jailhouse-Configuration is started
- 
- 
- ## Boards      
+### "Der Schrank" Boards
  
 |Board                         | Available | Compatible     | SoC                              | CPU                                     |
 |------------------------------|-----------|----------------|----------------------------------|-----------------------------------------|
