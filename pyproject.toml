@@ -7,9 +7,11 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-automate = {path = "external/automate"}
+automate = {path = "external/automate", optional = true}
 pre-commit = "^1.21.0"
-lit = "^0.9.0"
+
+[tool.poetry.extras]
+automate = ["automate"]
 
 [tool.poetry.dev-dependencies]
 invoke = "^1.4.0"
