@@ -1,8 +1,12 @@
 site_name: Autojail
+
 nav:
   - Index: index.md
   - Overview: overview.md
-
+  - Boards:
+     RPI4: rpi4.md
+     Jetson TX2: jetsontx2.md
+     
     
 docs_dir: doc
 plugins:
