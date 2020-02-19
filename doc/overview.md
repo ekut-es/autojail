@@ -220,13 +220,22 @@ Hier mal die Anforderungsdefinition von Andreas Messerschmid:
     erste Ideen zu erarbeiten, wie solch einen Konfiguration automatisiert
     erstellt werden kann.
 
+
+### Codesys Demonstrator (Möglicherweise Bearbeitung durch Bachelorarbeiter ab April)
+
 Als konkrete Anwendung bereitet Linutronix gerade einen Demonstrator für X86 vor. 
 Dieser basiert auf 2-Zellen. 
 Eine mit einer Software SPS basierend auf  https://www.codesys.com/ und Realtime Linux.
 Die zweite Zelle Läuft mit einem "normalen" Linux und stellt die GUI oder Weboberfläche dar.
 
-Und hier wäre schon einmal die Anleitung für Codesys auf dem Raspberry: [Link](https://raspberry-sps.de/codesys-programme-am-raspberry-pi/).
 
+1. Portierung einer CODESYS SPS Demoapplikation auf Raspberry PI 4B, Das sollte ungefähr so gehen:
+https://raspberry-sps.de/codesys-programme-am-raspberry-pi/
+2. Aufteilen des Systems mit dem Jailhouse Hypervisor: . Eine Linuxzelle für die WEB-GUI, eine Linuxzelle für die Steuerung, Idealerweise geht das dann schon mit uneserm Auokonfigurator
+3. Umstellen der Zelle mit der Steuerung von einem normalen auf einen Realtime Linux-Kernel
+4. Messen und bewerten des Echtzeitverhaltens der 3 vorhergehenden Systemkonfigurationen TODO: Bewertung
+5. Optimierung von Systemkonfiguration 3 für (noch) besseres Echtzeitverhalten
+6. Automatisierung der Installation und Messungen
 
 # Meilenstein Planung Phase 1
 
@@ -257,6 +266,10 @@ Features:
 	
 ## Milestone 3: Abschluss Phase 1
 
+- Integration des Codesys SPS Demonstrators
+- Konfiguration eines zweiten Boards
 - Dokumentation der Ergebnisse
-- Falls sinnvoll Publikation der Ergebnisse 
-- Planung für Phase 2
+- Falls sinnvoll/möglich Publikation der Ergebnisse 
+- Planung für Phase 2 insbesondere:
+  - Entscheidung über *autojail test* und *autojail explore*
+  - Entscheidung über Einsatz von Machine Learning
