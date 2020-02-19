@@ -225,4 +225,4 @@ Dieser basiert auf 2-Zellen.
 Eine mit einer Software SPS basierend auf  https://www.codesys.com/ und Realtime Linux.
 Die zweite Zelle Läuft mit einem "normalen" Linux und stellt die GUI oder Weboberfläche dar.
 
-Und hier wäre schon einmal die Anleitung für Codesys auf dem Raspberry: [Link](https://raspberry-sps.de/codesys-programme-am-raspberry-pi/ .)
+Und hier wäre schon einmal die Anleitung für Codesys auf dem Raspberry: [Link](https://raspberry-sps.de/codesys-programme-am-raspberry-pi/).
