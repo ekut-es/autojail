@@ -1,6 +1,6 @@
 # RPI 4
 
-This documents describes board bring up and the Rpi4 for inter-cell communication
+This documents describes board bring up and the rpi4 for inter-cell communication
 
 
 ## Installation of Ubuntu 19.10
@@ -9,38 +9,47 @@ This documents describes board bring up and the Rpi4 for inter-cell communicatio
   
 ## Installation of perf
 
-  Just sudo apt-get install linux-tools -y
+Just sudo apt-get install linux-tools -y
   
 ## Kernel:
 
-   Is built from: https://github.com/raspberrypi/linux branch rpi-5.3.y
+We provide rpi-5.3 kernel with raspberry pi patches and jailhouse-5.4 kernel with 
+jailhouse patches.
 
-   Deployment:
+### Default Kernel
+   
+Is built from: https://github.com/raspberrypi/linux branch rpi-5.3.y
+
+Deployment:
    
      tar xvzf kernel-default.tar.gz
      cp -r boot /
 	 cp -r lib/modules /lib/
 	 cp -r lib/firmware /lib/
 
-   To update the initramfs:
+To update the initramfs:
    
-   1. Edit /etc/initramfs-tools/initramfs.conf and change MODULES= to dep
+1. Edit /etc/initramfs-tools/initramfs.conf and change MODULES= to dep
    
         MODULES=dep
    
-   2. Rebuild initramfs
+2. Rebuild initramfs
    
         sudo update-initramfs -c -k 5.3.18 -v
   
 	 
-   To make the kernel the default:
+To make the kernel the default:
    
 	  sudo cp /boot/vmlinuz-5.3.18 /boot/firmware/vmlinuz
 	  sudo cp /boot/initrd.img-5.3.18 /boot/firmware/initrd.img
 	  sudo cp /boot/dtbs/5.3.18/bcm2711-rpi-4-b.dtb /boot/firmware/bcm2711-rpi-4-b.dtb
 	  
-   Then reboot and test
+Then reboot and test
    
+### Jailhouse Kernel
+
+Is built from jailhouse patch queue 5.4.16: http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/jailhouse-enabling/5.4
+Using defconfig from jailhouse-images: https://github.com/siemens/jailhouse-images/blob/master/recipes-kernel/linux/files/rpi4_defconfig_5.4
    
 ## ARM Trusted firmware
 
