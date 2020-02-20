@@ -54,5 +54,5 @@ Deploy jailhouse for a specific board:
 |Raspberry Pi 2 Model B v1.1   |   yes     |  probably no   | BCM2836                          | 4x ARM Cortex-A7                        |
 |Raspberry Pi 3B               |   yes     |  probably      | BCM2837                          | 4x ARM Cortex-A53                       |
 |Raspberry Pi 3B+              |   no      |  probably      | BCM2837B0                        | 4x ARM Cortex-A53                       |
-|Raspberry Pi 4B               |   yes     |  probably      | BCM2711                          | 4x ARM Cortex-A72                       |
+|Raspberry Pi 4B               |   yes     |  yes           | BCM2711                          | 4x ARM Cortex-A72                       |
 |Zynqberry                     |   yes     |    no          | Xilinx Zynq XC7Z010-1CLG225C     | 2x ARM Cortex-A9                        |

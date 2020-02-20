@@ -4,13 +4,13 @@ This documents describes board bring up and the rpi4 for inter-cell communicatio
 
 ## Overview
 
-The processor manual is available from: http://infocenter.arm.com/help/topic/com.arm.doc.100095_0001_02_en/cortex_a72_mpcore_trm_100095_0001_02_en.pdf
+The processor manual is available from: <http://infocenter.arm.com/help/topic/com.arm.doc.100095_0001_02_en/cortex_a72_mpcore_trm_100095_0001_02_en.pdf>
 
-A SOC datasheet is not available at the momement for now this manual could be close enough: https://www.raspberrypi.org/app/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
+A SOC datasheet is not available at the momement for now this manual could be close enough: <https://www.raspberrypi.org/app/uploads/2012/02/BCM2835-ARM-Peripherals.pdf>
 
 ## Installation of Ubuntu 19.10
 
-  Follow https://ubuntu.com/download/raspberry-pi
+  Follow <https://ubuntu.com/download/raspberry-pi>
   
 ## Installation of perf
 
@@ -23,7 +23,7 @@ jailhouse patches.
 
 ### Default Kernel
    
-Is built from: https://github.com/raspberrypi/linux branch rpi-5.3.y
+Is built from: <https://github.com/raspberrypi/linux> branch rpi-5.3.y
 
 Deployment:
    
@@ -53,9 +53,9 @@ Then reboot and test
    
 ### Jailhouse Kernel
 
-Is built from jailhouse patch queue 5.4.16: http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/jailhouse-enabling/5.4
+Is built from jailhouse patch queue 5.4.16: <http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/jailhouse-enabling/5.4>
 
-Using defconfig from jailhouse-images: https://github.com/siemens/jailhouse-images/blob/master/recipes-kernel/linux/files/rpi4_defconfig_5.4
+Using defconfig from jailhouse-images: <https://github.com/siemens/jailhouse-images/blob/master/recipes-kernel/linux/files/rpi4_defconfig_5.4>
    
 ## ARM Trusted firmware
 
@@ -91,7 +91,7 @@ After successful installation the BL31 messages should apear on serial console:
 	INFO:    BL31: Preparing for EL3 exit to normal world
 
 
-For jailhouse the patches mentioned in https://github.com/siemens/jailhouse-images/blob/7c6d0ddb2763ef38a019b565568b8e9b59ca48c8/recipes-bsp/arm-trusted-firmware/files/0001-rpi3-4-Add-support-for-offlining-CPUs.patch seem no longer necessary when using the current master of arm trusted firmware. 
+For jailhouse the patches mentioned [here](https://github.com/siemens/jailhouse-images/blob/7c6d0ddb2763ef38a019b565568b8e9b59ca48c8/recipes-bsp/arm-trusted-firmware/files/0001-rpi3-4-Add-support-for-offlining-CPUs.patch) seem no longer necessary when using the current master of arm trusted firmware. 
 
 
 # Rpi4 inter-cell communication setup
