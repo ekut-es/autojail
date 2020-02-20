@@ -6,7 +6,9 @@ nav:
   - Boards:
      RPI4: rpi4.md
      Jetson TX2: jetsontx2.md
-     
+  - Data Sources:
+      Device Tree: device_tree.md
+      Proc Filesystem: proc.md
     
 docs_dir: doc
 plugins:
