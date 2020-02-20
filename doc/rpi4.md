@@ -49,6 +49,7 @@ Then reboot and test
 ### Jailhouse Kernel
 
 Is built from jailhouse patch queue 5.4.16: http://git.kiszka.org/?p=linux.git;a=shortlog;h=refs/heads/jailhouse-enabling/5.4
+
 Using defconfig from jailhouse-images: https://github.com/siemens/jailhouse-images/blob/master/recipes-kernel/linux/files/rpi4_defconfig_5.4
    
 ## ARM Trusted firmware
