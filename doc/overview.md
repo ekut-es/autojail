@@ -11,7 +11,6 @@ graph TD
   E --> C;
 ```
 
-
 ### autojail init
 
 Initialisiert ein autojailhouse Projekt.
@@ -237,9 +236,9 @@ https://raspberry-sps.de/codesys-programme-am-raspberry-pi/
 5. Optimierung von Systemkonfiguration 3 für (noch) besseres Echtzeitverhalten
 6. Automatisierung der Installation und Messungen
 
-# Meilenstein Planung Phase 1
+## Meilenstein Planung Phase 1
 
-## Milestone 1: Minimal Viable Prototype
+### Milestone 1: Minimal Viable Prototype
 
 Features:
 
@@ -249,7 +248,7 @@ Features:
    wesentlichen selbst geschriebener cells.yml + teilweise automatisierte 
    generierung von *memory_regions*. 
    
-## Milestone 2: First usable Product
+### Milestone 2: First usable Product
 
 Features:
 
@@ -264,7 +263,7 @@ Features:
   - Erste Unterstützung für Konfiguration von Inter-Zell Kommunikation
     
 	
-## Milestone 3: Abschluss Phase 1
+### Milestone 3: Abschluss Phase 1
 
 - Integration des Codesys SPS Demonstrators
 - Konfiguration eines zweiten Boards
