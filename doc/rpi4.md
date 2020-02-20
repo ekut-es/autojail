@@ -1,7 +1,12 @@
-# RPI 4
+# Rasperry PI 4B
 
 This documents describes board bring up and the rpi4 for inter-cell communication
 
+## Overview
+
+The processor manual is available from: http://infocenter.arm.com/help/topic/com.arm.doc.100095_0001_02_en/cortex_a72_mpcore_trm_100095_0001_02_en.pdf
+
+A SOC datasheet is not available at the momement for now this manual could be close enough: https://www.raspberrypi.org/app/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
 
 ## Installation of Ubuntu 19.10
 
