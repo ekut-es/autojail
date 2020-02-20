@@ -454,6 +454,7 @@ setuptools = ">=18.5"
 reference = "abf14392b0ed0c7022210b32c4e7c9c3e4c5c68a"
 type = "git"
 url = "https://github.com/pugong/mkdocs-mermaid-plugin.git"
+
 [[package]]
 category = "dev"
 description = "More routines for operating on iterables, beyond itertools"
@@ -638,6 +639,14 @@ version = ">=0.6"
 dotenv = ["python-dotenv (>=0.10.4)"]
 email = ["email-validator (>=1.0.3)"]
 typing_extensions = ["typing-extensions (>=3.7.2)"]
+
+[[package]]
+category = "main"
+description = "Python Flattened Device Tree Library"
+name = "pyfdt"
+optional = false
+python-versions = "*"
+version = "0.3"
 
 [[package]]
 category = "dev"
@@ -919,7 +928,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 automate = ["automate"]
 
 [metadata]
-content-hash = "2f7179e8080c55cfae48a58678169f4fcee8fa7a98440c13e8114dcf2872dfec"
+content-hash = "1ea560a6c4282bb970f06ef71d7b6cec97b42b09d432cd73a9067503dddd7b43"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -1234,6 +1243,9 @@ pydantic = [
     {file = "pydantic-1.4-cp38-cp38-manylinux2010_x86_64.whl", hash = "sha256:6100d7862371115c40be55cc4b8d766a74b1d0dbaf99dbfe72bb4bac0faf89ed"},
     {file = "pydantic-1.4-py36.py37.py38-none-any.whl", hash = "sha256:72184c1421103cca128300120f8f1185fb42a9ea73a1c9845b1c53db8c026a7d"},
     {file = "pydantic-1.4.tar.gz", hash = "sha256:f17ec336e64d4583311249fb179528e9a2c27c8a2eaf590ec6ec2c6dece7cb3f"},
+]
+pyfdt = [
+    {file = "pyfdt-0.3.tar.gz", hash = "sha256:61601c2005ff394a25a6c84c6da2088bbf888328038400d27e4eeb1b04b9f4f0"},
 ]
 pyflakes = [
     {file = "pyflakes-2.1.1-py2.py3-none-any.whl", hash = "sha256:17dbeb2e3f4d772725c777fabc446d5634d1038f234e77343108ce445ea69ce0"},
