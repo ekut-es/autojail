@@ -160,7 +160,7 @@ Device Tree Nodes with the property *interrupt-controller;* set, are interrupt c
 
 It has the following attributes:
 
-#interrupt-cells : It specifies the number of cells needed to encode an interrupt source. In the case of ARM-GICs interrupt-cells should always be 3
+\#interrupt-cells : It specifies the number of cells needed to encode an interrupt source. In the case of ARM-GICs interrupt-cells should always be 3
 
 
 Further documentation on ARM-GICs can be found here:
