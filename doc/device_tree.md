@@ -163,6 +163,10 @@ It has the following attributes:
 #interrupt-cells : It specifies the number of cells needed to encode an interrupt source. In the case of ARM-GICs interrupt-cells should always be 3
 
 
+Further documentation on ARM-GICs can be found here:
+
+- [GICv1 and GICv2](https://github.com/torvalds/linux/blob/937d6eefc716a9071f0e3bada19200de1bb9d048/Documentation/devicetree/bindings/interrupt-controller/arm%2Cgic-v3.yaml)
+- [GICv3 and GICv4](https://github.com/torvalds/linux/blob/937d6eefc716a9071f0e3bada19200de1bb9d048/Documentation/devicetree/bindings/interrupt-controller/arm%2Cgic.yaml)
 
 - Raspberry PI 4B
 
@@ -174,7 +178,6 @@ It has the following attributes:
                         interrupt-controller;
                         phandle = <0x01>;
                 };
-
 
 
 
