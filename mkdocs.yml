@@ -13,6 +13,9 @@ nav:
   - Test Rack: schrank.md
       
 docs_dir: doc
+
+theme: material
+
 plugins:
   - markdownmermaid
 
