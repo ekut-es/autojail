@@ -155,3 +155,5 @@ sudo kexec -e
 - load linux inmate
     * `sudo tools/jailhouse cell linux configs/arm64/rpi4-linux-demo.cell /boot/vmlinuz-5.4.16 -d configs/arm64/dts/inmate-rpi4.dtb -i <path-to-rootfs.cpio> -c "console=ttyS0,115200 ip=192.168.19.2"`
 - run `ssh 192.168.19.2`
+
+

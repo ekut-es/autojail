@@ -4,7 +4,7 @@ So far at least the following attributes seem problematic to
 derive from device trees:
 
     platform info:
-        maintenance_irq = 25 # But is always 25 on the example boards
+	    Bases for SPI, PPI and SGI interrupts, but for now we can assume 0 for SGI, 16 for PPI and 32 for SPI
         vpci_irq_base 
          
         pci_mmconfig_base

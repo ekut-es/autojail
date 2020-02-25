@@ -162,11 +162,24 @@ It has the following attributes:
 
 \#interrupt-cells : It specifies the number of cells needed to encode an interrupt source. In the case of ARM-GICs interrupt-cells should always be 3
 
+   The first cell specifies the interrupt type: 0 is SPI (Shared Peripheral Interrupt), 1 is PPI (Private Peripheral Interrupts)
+   SGIs (Software Generated Interrupts) seem not to be specified in the device tree.
+   
+   The second cell specifies the offset of the interupt number in the space of the interrupt type. 
+   For ARM GIC-400 SPIs are in Range 16-31. 
+   SPIs are in range 32 to an implementation defined upper bound.
+   And SGIs are in Range 0-16 the ranges do not seem to be part of the device tree specification. 
+
+   The third cell specifies additional metadata, that is probably not needed for jailhouse configuration. 
+
+\#interrupts : In the case of the toplevel GIC this should encode the virtual maintenance interrupt. e.g. maintenance_interrupt in platform config. 
+
+reg :  Specifies base physical address(s) and size of the GIC registers. The addresses are GICD (Distributor Interface), GICC (CPU Interface), GICH (Virtual Interface Control Blocks), GICV (Virtual CPU Interface)
 
 Further documentation on ARM-GICs can be found here:
 
-- [GICv1 and GICv2](https://github.com/torvalds/linux/blob/937d6eefc716a9071f0e3bada19200de1bb9d048/Documentation/devicetree/bindings/interrupt-controller/arm%2Cgic-v3.yaml)
-- [GICv3 and GICv4](https://github.com/torvalds/linux/blob/937d6eefc716a9071f0e3bada19200de1bb9d048/Documentation/devicetree/bindings/interrupt-controller/arm%2Cgic.yaml)
+- [GICv1 and GICv2](https://github.com/torvalds/linux/blob/937d6eefc716a9071f0e3bada19200de1bb9d048/Documentation/devicetree/bindings/interrupt-controller/arm%2Cgic.yaml)
+- [GICv3 and GICv4](https://github.com/torvalds/linux/blob/937d6eefc716a9071f0e3bada19200de1bb9d048/Documentation/devicetree/bindings/interrupt-controller/arm%2Cgic-v3.yaml)
 
 - Raspberry PI 4B
 
