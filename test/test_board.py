@@ -50,3 +50,14 @@ def test_parse_iomem():
     assert regions["System RAM"].physical_start_addr == 0x80000000
     assert regions["System RAM"].size == 0x6FFFFFFF  # 0x80000000-0xefffffff
 
+
+def test_board_from_yaml_bytesize():
+    board_yaml = os.path.join(test_data_folder, "test_board_bytesize.yml")
+    with open(board_yaml) as board_yaml_file:
+
+        board_dict = yaml.load(board_yaml_file)
+        board_model = Board(**board_dict)
+
+        assert board_model.name == "board1"
+        assert board_model.memory_regions["ram"].size == 768 * 1024 * 1024
+        assert board_model.memory_regions["ram2"].size == 1024

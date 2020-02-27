@@ -1,19 +1,18 @@
 import logging
 from pathlib import Path
 import os.path
-import stat
 
 from invoke import task
 from automate.utils import fix_symlinks
-from automate.utils.kernel import KernelData
 from automate.utils.network import rsync
 
 from ruamel.yaml import YAML
 
 ROOT_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
 JAILHOUSE_REPO = "https://github.com/siemens/jailhouse.git"
+JAILHOUSE_BRANCH = "next"
 JAILHOUSE_PATH = ROOT_PATH / "jailhouse"
-JAILHOUSE_BOARDS = ["jetsontx2"]
+JAILHOUSE_BOARDS = ["jetsontx2", "raspberrypi4b-jh1"]
 
 autojailhouse_yml_template = r"""
 # (automate|ssh)
@@ -41,7 +40,7 @@ kernel_build_dir:
 # user name to use for login, key authentication required
 ssh_login:
 
-# full address of JailHouse git repository to be used
+# full address of Jailhouse git repository to be used
 jailhouse_git:
 
 kernel_params:
@@ -61,14 +60,14 @@ def check_project_config(c, autojailhouse_yml) -> bool:
     if autojailhouse_yml["project_type"] == "automate":
         try:
             c.board(autojailhouse_yml["board_id"])
-        except:
-            logging.error("Invalid automate board-id")
+        except Exception as e:
+            logging.error("Invalid automate board-id", str(e))
             valid = False
 
         try:
             c.compiler(autojailhouse_yml["cross_compiler"]["id"])
-        except:
-            logging.error("Invalid automate compiler-id")
+        except Exception as e:
+            logging.error("Invalid automate compiler-id", str(e))
             valid = False
 
     else:
@@ -185,13 +184,25 @@ def init(
 
 
 @task
-def update(c):
+def update(c, reset=False):
     """Update the jailhouse from github"""
     if not JAILHOUSE_PATH.exists():
         c.run(f"git clone {JAILHOUSE_REPO} {JAILHOUSE_PATH}")
-    else:
-        with c.cd(str(JAILHOUSE_PATH)):
-            c.run(f"git pull")
+
+    with c.cd(str(JAILHOUSE_PATH)):
+        if reset:
+            c.run("git reset --hard")
+        try:
+            c.run("git pull")
+        except Exception as e:
+            logging.error("Git pull failed")
+            logging.error(
+                "You might wan't to try 'automate-run update --reset' to reset the jailhouse checkout before pulling"
+            )
+            logging.info("Error: %s", str(e))
+            return -1
+
+        c.run(f"git checkout ${JAILHOUSE_BRANCH}")
 
 
 @task
@@ -209,7 +220,13 @@ def build(c, board_ids="all", sync_kernel=False):
         for board_id in board_ids:
             board = c.board(board_id)
             cross_compiler = board.compiler()
-            kernel_data = board.kernel_data("default")
+
+            kernel_name = "default"
+            for kernel_desc in board.os.kernels:
+                if kernel_desc.name == "jailhouse":
+                    kernel_name = "jailhouse"
+
+            kernel_data = board.kernel_data(kernel_name)
 
             build_cache_path = kernel_data.build_cache_path
 
@@ -220,32 +237,50 @@ def build(c, board_ids="all", sync_kernel=False):
                 logging.warning(f"Skipping jailhouse build")
                 continue
 
-            kernel_path = ROOT_PATH / "kernels" / board_id
+            kernel_path = ROOT_PATH / "kernels" / board_id / kernel_name
 
             if not kernel_path.exists() or sync_kernel:
                 print("Getting cached kernel build")
                 c.run(f"mkdir -p {kernel_path}")
-                c.run(f"cp {build_cache_path} kernels/{board.id}")
-                with c.cd(f"kernels/{board.id}"):
+                c.run(
+                    f"cp {build_cache_path} kernels/{board.name}/{kernel_name}"
+                )
+                with c.cd(f"kernels/{board.id}/{kernel_name}"):
                     c.run(f"tar xJf {kernel_data.build_cache_name}")
 
             kernel_arch = kernel_data.arch
-            kdir = ROOT_PATH / "kernels" / board.id / kernel_data.srcdir
+            kdir = (
+                ROOT_PATH
+                / "kernels"
+                / board.name
+                / kernel_name
+                / kernel_data.srcdir
+            )
             kdir = os.path.realpath(kdir.absolute())
-            dest_dir = ROOT_PATH / "builds" / board.id / "jailhouse"
+            dest_dir = ROOT_PATH / "builds" / board.name / "jailhouse"
             cross_compile = cross_compiler.bin_path / cross_compiler.prefix
 
             c.run(f"mkdir -p {dest_dir}")
             c.run(f"rsync -r --delete jailhouse/ {dest_dir}")
             with c.cd(str(dest_dir)):
-                c.run(
-                    f"rm -rf configs/*/dts"
-                )  # Currently does not build for many targets
-                c.run(
-                    f"make CROSS_COMPILE={cross_compile} KDIR={kdir} ARCH={kernel_arch}  V=1"
+
+                result = c.run(
+                    f"make CROSS_COMPILE={cross_compile} KDIR={kdir} ARCH={kernel_arch}  V=1",
+                    warn=True,
                 )
 
-    return False
+                if result.return_code != 0:
+                    logging.error(
+                        "Could not build with device trees retrying build without device trees"
+                    )
+                    c.run(
+                        f"rm -rf configs/*/dts"
+                    )  # Currently does not build for many targets
+
+                    result = c.run(
+                        f"make CROSS_COMPILE={cross_compile} KDIR={kdir} ARCH={kernel_arch}  V=1",
+                        warn=True,
+                    )
 
 
 @task
@@ -325,3 +360,28 @@ def extract(c, board_ids="all"):
             c.run("chown -R ${USER} board_data/")
             c.run("chmod -R ug+wr board_data")
             fix_symlinks(f"board_data/{board_id}")
+
+
+@task
+def pre_commit(c):
+    "Installs pre commit hooks"
+    root_path = Path(os.path.dirname(os.path.abspath(__file__)))
+    with c.cd(str(root_path)):
+        c.run("pre-commit install")
+
+
+@task
+def build_kernels(c, config_name="jailhouse"):
+    "Build kernel configs for jailhouse"
+
+    for board_name in JAILHOUSE_BOARDS:
+        board = c.board(board_name)
+        for kernel in board.os.kernels:
+            if kernel.name == config_name:
+                kernel_builder = board.builder(
+                    "kernel", f"kernels/{board_name}/{config_name}"
+                )
+                kernel_builder.configure(config_name)
+                kernel_builder.build()
+                kernel_builder.install()
+                kernel_builder.deploy()

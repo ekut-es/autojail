@@ -1,12 +1,12 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ByteSize
 from typing import Dict, List
 
 
 class MemoryRegion(BaseModel):
     physical_start_addr: int
     virtual_start_addr: int
-    size: int
-    flags: List[str]  # Besser ENUM
+    size: ByteSize
+    flags: List[str]  # FIXME: Use list of ENUM
 
 
 class Board(BaseModel):
@@ -27,4 +27,3 @@ if __name__ == "__main__":
 
         board = Board(**yaml_dict)
         pprint(board, indent=2)
-

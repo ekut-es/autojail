@@ -1,0 +1,24 @@
+site_name: Autojail
+
+nav:
+  - Index: index.md
+  - Overview: overview.md
+  - Boards:
+     RPI4: rpi4.md
+     Jetson TX2: jetsontx2.md
+  - Data Sources:
+      Device Tree: device_tree.md
+      Proc Filesystem: proc.md
+      Data Sheets: ml_extractor.md
+  - Test Rack: schrank.md
+      
+docs_dir: doc
+
+theme: material
+
+plugins:
+  - markdownmermaid
+
+extra_javascript:
+  - https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js
+
