@@ -10,7 +10,6 @@ class MemoryRegion(BaseModel):
 
 
 class Board(BaseModel):
-    id: str
     name: str
     board: str
 
