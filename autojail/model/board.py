@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ByteSize
-from typing import Dict, List
+from typing import Dict, List, Union
 
 
 class MemoryRegion(BaseModel):
@@ -9,11 +9,18 @@ class MemoryRegion(BaseModel):
     flags: List[str]  # FIXME: Use list of ENUM
 
 
+class SHMemoryRegion(BaseModel):
+    physical_start_addr: int
+    virtual_start_addr: int
+    size: ByteSize
+    flags: List[str]  # FIXME: Use list of ENUM
+
+
 class Board(BaseModel):
     name: str
     board: str
-
-    memory_regions: Dict[str, MemoryRegion]
+    memory_regions: Dict[str, Union[MemoryRegion, SHMemoryRegion]]
+    # memory_regions: Dict[str, MemoryRegion]
 
 
 if __name__ == "__main__":

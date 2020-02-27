@@ -27,7 +27,7 @@ class BoardInfoExtractor:
                 temp = temp.strip()
                 start_addr = start_addr.strip()
                 physical_start_addr.append(start_addr)
-                end_addr, temp = temp.split(":")
+                end_addr, temp = temp.split(":", 1)
 
                 end_addr = end_addr.split(" ", 1)[0]
                 # end_addr_list.append(end_addr)

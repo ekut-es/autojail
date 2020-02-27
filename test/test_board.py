@@ -1,7 +1,7 @@
 import os.path
 import yaml
 
-from autojail.model import Board, MemoryRegion
+from autojail.model import Board, MemoryRegion, SHMemoryRegion
 from autojail.extract import BoardInfoExtractor
 
 test_data_folder = os.path.join(os.path.dirname(__file__), "test_data")
