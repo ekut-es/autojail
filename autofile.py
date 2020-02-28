@@ -10,7 +10,7 @@ from ruamel.yaml import YAML
 
 ROOT_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
 JAILHOUSE_REPO = "https://github.com/siemens/jailhouse.git"
-JAILHOUSE_COMMIT = "v0.12"  # GIT branch or sha or tag to use
+JAILHOUSE_COMMIT = "master"  # GIT branch or sha or tag to use
 JAILHOUSE_PATH = ROOT_PATH / "jailhouse"
 JAILHOUSE_BOARDS = ["jetsontx2", "raspberrypi4b-jh1"]
 
