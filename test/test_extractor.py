@@ -7,7 +7,7 @@ test_data_folder = os.path.join(os.path.dirname(__file__), "test_data")
 
 def test_parse_jetsonagx():
     iomem_name = os.path.join(test_data_folder, "iomem_jetsonagx")
-    extractor = BoardInfoExtractor("", "", "")
+    extractor = BoardInfoExtractor("jetsonagx", "jetsonagx", "")
     regions = extractor.read_iomem(iomem_name)
 
     debug(regions)
@@ -23,7 +23,7 @@ def test_parse_jetsonagx():
 
 def test_parse_iomem():
     iomem_name = os.path.join(test_data_folder, "iomem_jetsontx2")
-    extractor = BoardInfoExtractor("", "", "")
+    extractor = BoardInfoExtractor("jetsontx2", "jetsontx2", "")
     regions = extractor.read_iomem(iomem_name)
 
     assert "System RAM" in regions
@@ -33,7 +33,7 @@ def test_parse_iomem():
 
 def test_parse_raspberrypi2b():
     iomem_name = os.path.join(test_data_folder, "iomem_raspberrypi2b")
-    extractor = BoardInfoExtractor("", "", "")
+    extractor = BoardInfoExtractor("rpi2b", "rpi2b", "")
     regions = extractor.read_iomem(iomem_name)
 
     assert "System RAM" in regions
@@ -41,7 +41,7 @@ def test_parse_raspberrypi2b():
 
 def test_parse_raspberrypi4b():
     iomem_name = os.path.join(test_data_folder, "iomem_raspberrypi4b")
-    extractor = BoardInfoExtractor("", "", "")
+    extractor = BoardInfoExtractor("rpi4b", "rpi4b", "")
     regions = extractor.read_iomem(iomem_name)
 
     assert "System RAM" in regions
