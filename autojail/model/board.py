@@ -1,6 +1,7 @@
-from pydantic import BaseModel, ByteSize
+from pydantic import BaseModel
 from typing import Dict, List, Union
 
+from .datatypes import ByteSize
 
 class MemoryRegion(BaseModel):
     physical_start_addr: int
@@ -20,7 +21,6 @@ class Board(BaseModel):
     name: str
     board: str
     memory_regions: Dict[str, Union[MemoryRegion, SHMemoryRegion]]
-    # memory_regions: Dict[str, MemoryRegion]
 
 
 if __name__ == "__main__":
