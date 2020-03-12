@@ -3,6 +3,7 @@ from typing import Dict, List, Union
 
 from .datatypes import ByteSize
 
+
 class MemoryRegion(BaseModel):
     physical_start_addr: int
     virtual_start_addr: int
@@ -63,14 +64,14 @@ class PlatformInfo:
     pci_mmconfig_base: int
     pci_mmconfig_end_bus: int
     pci_is_virtual: int
-    pci_domain : int
-    arm : List[str]
+    pci_domain: int
+    arm: List[str]
 
 
 class IRQChips:
     adress: int
     pin_base: int
-    interrupts : List[int]
+    interrupts: List[int]
 
 
 class PCIDevices:
@@ -83,6 +84,7 @@ class SHMemoryRegionTest:
     virtual_start_addr: int
     size: ByteSize
     flags: List[str]  # FIXME: Use list of ENUM
+
 
 if __name__ == "__main__":
     import yaml
