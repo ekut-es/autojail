@@ -88,12 +88,14 @@ class BoardConfigurator:
 
     def writeToFile(self, board, cell):
         # from devtools import debug
+        # import sys
         f = open("Converted-C-File.c", "w+")
         amount_pci_devices = len(cell.pci_devices.__dict__)
         amount_memory_regions = len(board.memory_regions)+len(cell.additional_memory_regions)
         cpu_set = parseIntSet(cell.cpus)
         cpu_calculated = (len(cpu_set)//64) + 1  # 64 von rpi4.c  Datentypgröße :__u64
-        # debug(cpu_set)
+        # test = sys.getsizeof(0b1111)
+        # debug(test)
         f.write("#include <jailhouse/types.h>\n")
         f.write("#include <jailhouse/cell-config.h>\n")
 
@@ -104,7 +106,7 @@ class BoardConfigurator:
         f.write("\tstruct jailhouse_irqchip irqchips[1];\n")  # TODO:
         # f.write("\tstruct jailhouse_pio pio_regions[13];\n") # Unnötig für ARM
         f.write("\tstruct jailhouse_pci_device pci_devices["+str(amount_pci_devices)+"];\n")
-        f.write("\tstruct jailhouse_pci_capability pci_caps[39];\n")  # TODO:
+        # f.write("\tstruct jailhouse_pci_capability pci_caps[39];\n")  # TODO:
         f.write("} __attribute__((packed)) config = {\n")
         f.write("\n.header = {")
 
@@ -205,9 +207,9 @@ class BoardConfigurator:
         f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
         f.write("\n\t\t.num_memory_regions = " + str(amount_memory_regions) + ",")
         f.write("\n\t\t.num_pci_devices = " + str(amount_pci_devices) + ",")
-        f.write("\n\t\t//.cpu_set_size !!//TODO: = " + ",")
+        f.write("\n\t\t.cpu_set_size: = " + str(cpu_calculated) + ",")  # lookatthis later
         f.write("\n\t\t//.num_irqchips !!//TODO: = " + ",")
-        f.write("\n\t\t//.num_pci_caps !!//TODO: = " + ",")
+        # f.write("\n\t\t//.num_pci_caps !!//TODO: = " + ",")
         f.write("\n\t},\n")
 
         f.write("\n};")
