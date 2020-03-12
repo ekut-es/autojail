@@ -10,7 +10,7 @@ from ruamel.yaml import YAML
 
 ROOT_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
 JAILHOUSE_REPO = "https://github.com/siemens/jailhouse.git"
-JAILHOUSE_BRANCH = "next"
+JAILHOUSE_COMMIT = "master"  # GIT branch or sha or tag to use
 JAILHOUSE_PATH = ROOT_PATH / "jailhouse"
 JAILHOUSE_BOARDS = ["jetsontx2", "raspberrypi4b-jh1"]
 
@@ -195,14 +195,14 @@ def update(c, reset=False):
         try:
             c.run("git pull")
         except Exception as e:
-            logging.error("Git pull failed")
-            logging.error(
+            logging.fatal("Git pull failed")
+            logging.fatal(
                 "You might wan't to try 'automate-run update --reset' to reset the jailhouse checkout before pulling"
             )
             logging.info("Error: %s", str(e))
             return -1
 
-        c.run(f"git checkout ${JAILHOUSE_BRANCH}")
+        c.run(f"git checkout '{JAILHOUSE_COMMIT}'")
 
 
 @task
