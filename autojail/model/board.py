@@ -70,8 +70,9 @@ class PlatformInfo:
 
 class IRQChips:
     adress: int
-    pin_base: int
+    pin_base: List[int]
     interrupts: List[int]
+    pin_bitmap: List[List[int]]
 
 
 class PCIDevices:

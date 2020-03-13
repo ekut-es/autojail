@@ -95,26 +95,20 @@ class BoardInfoExtractor:
 
 class BoardConfigurator:
     def writeToFile(self, board, cell):
-        # from devtools import debug
-        # import sys
-        f = open("Converted-C-File.c", "w+")
+        f = open("config_rpi4.c", "w+")
         amount_pci_devices = len(cell.pci_devices.__dict__)
         amount_memory_regions = len(board.memory_regions) + len(
             cell.additional_memory_regions
         )
         cpu_set = parseIntSet(cell.cpus)
-<<<<<<< HEAD
-        cpu_calculated = (len(cpu_set)//64) + 1  # 64 von rpi4.c  Datentypgröße :__u64
+        cpu_calculated = (len(cpu_set) // 64) + 1  # 64 von rpi4.c  Datentypgröße :__u64
+        # jailhouse_flag_part = "JAILHOUSE_"
         # test = sys.getsizeof(0b1111)
         # debug(test)
-=======
-        cpu_calculated = (len(cpu_set) // 64) + 1  # 64 von rpi4.c  Datentypgröße :__u64
-        # debug(cpu_set)
->>>>>>> 3d1addf7181f462552b0f511cbf8035fa33b530d
         f.write("#include <jailhouse/types.h>\n")
         f.write("#include <jailhouse/cell-config.h>\n")
 
-        f.write("# struct { \n")
+        f.write("struct { \n")
         f.write("\tstruct jailhouse_system header; \n")
         f.write("\t__u64 cpus[" + str(cpu_calculated) + "];\n")
         f.write(
@@ -124,17 +118,12 @@ class BoardConfigurator:
         )
         f.write("\tstruct jailhouse_irqchip irqchips[1];\n")  # TODO:
         # f.write("\tstruct jailhouse_pio pio_regions[13];\n") # Unnötig für ARM
-<<<<<<< HEAD
-        f.write("\tstruct jailhouse_pci_device pci_devices["+str(amount_pci_devices)+"];\n")
-        # f.write("\tstruct jailhouse_pci_capability pci_caps[39];\n")  # TODO:
-=======
         f.write(
             "\tstruct jailhouse_pci_device pci_devices["
             + str(amount_pci_devices)
             + "];\n"
         )
-        f.write("\tstruct jailhouse_pci_capability pci_caps[39];\n")  # TODO:
->>>>>>> 3d1addf7181f462552b0f511cbf8035fa33b530d
+        # f.write("\tstruct jailhouse_pci_capability pci_caps[39];\n")  # TODO:
         f.write("} __attribute__((packed)) config = {\n")
         f.write("\n.header = {")
 
@@ -162,7 +151,7 @@ class BoardConfigurator:
         f.write("\n\t.debug_console = {")
         f.write("\n\t\t.address = " + hex(cell.debug_console.adress) + ",")
         f.write("\n\t\t.size = " + hex(cell.debug_console.size) + ",")
-        f.write("\n\t\t.type = " + cell.debug_console.Type + ",")
+        f.write("\n\t\t.type = " + "JAILHOUSE_" + cell.debug_console.Type + ",")
         f.write("\n\t\t.size = " + hex(cell.debug_console.size) + ",")
         s = "|"
         jailhouse_flags = ["JAILHOUSE_" + flag for flag in cell.debug_console.flags]
@@ -178,10 +167,34 @@ class BoardConfigurator:
         f.write("\n\t\t.size = " + cell.hypervisor_memory.size + ",")
         f.write("\n\t},\n")
 
-        f.write("\n\t.cpus = ")
-        f.write(str(cpu_set) + ",")
-        f.write("\n\t")
+        cell_type_temp = cell.base_infos.Type
+        if cell_type_temp == "root":
+            f.write("\n\t.root_cell = {")
+        else:
+            f.write("\n\t.guest_cell = {")
+        f.write("\n\t\t.name =" + " \"" + cell.base_infos.name + "\" " + ",")
+        f.write("\n\t\t.vpci_irq_base = " + str(cell.base_infos.vpci_irq_base) + ",")
+        s = "|"
+        jailhouse_flags = ["JAILHOUSE_" + flag for flag in cell.base_infos.flags]
+        f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
+        f.write("\n\t\t.num_memory_regions = " + str(amount_memory_regions) + ",")
+        f.write("\n\t\t.num_pci_devices = " + str(amount_pci_devices) + ",")
+        f.write(
+            "\n\t\t.cpu_set_size = " + str(cpu_calculated) + ","
+        )  # lookatthis later
+        f.write("\n\t\t.num_irqchips = " + str(1) + ",")
+        # f.write("\n\t\t//.num_pci_caps !!//TODO: = " + ",")
+        f.write("\n\t},")
+        f.write("\n\t},")
 
+        f.write("\n\t.cpus = ")
+        cpu_set_tmp = "0b" + "0" * (max(cpu_set)+1)
+        s = list(cpu_set_tmp)
+        for e in cpu_set:
+            s[(max(cpu_set)+2)-e] = str(1)
+        s = "".join(s)
+        f.write(s + ",")
+        f.write("\n\t")
         f.write("\n\t.mem_regions = {\n")
         for k, v in board.memory_regions.items():
             f.write(
@@ -221,11 +234,15 @@ class BoardConfigurator:
             f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
             f.write("\n\t},\n")
         f.write("\t},")
-
         f.write("\n\t.irqchips = {")
-        f.write("\n\t\t.address = " + hex(cell.irqchips.adress) + ",")
-        f.write("\n\t\t.pin_base = " + str(cell.irqchips.pin_base) + ",")
-        f.write("\n\t\t.interrupts = " + str(cell.irqchips.interrupts) + ",")
+        for i in range(len(cell.irqchips.pin_base)):
+            f.write("\n\t\t{")
+            f.write("\n\t\t\t.address = " + hex(cell.irqchips.adress) + ",")
+            hex_bitmap = "".join(["0x%x, " % b for b in cell.irqchips.pin_bitmap[i]])
+            f.write("\n\t\t\t.pin_base = " + str(cell.irqchips.pin_base[i]) + ",")
+            # f.write("\n\t\t\t.interrupts = " + str(cell.irqchips.interrupts) + ",") TODO:
+            f.write("\n\t\t\t.pin_bitmap = " + hex_bitmap.rstrip(','))
+            f.write("\n\t\t},")
         # interrupt_set = parseIntSet(cell.irqchips.interrupts)
         # f.write("\n\t.interrupt_set = " + str(interrupt_set) + ",")
         f.write("\n\t},\n")
@@ -234,41 +251,26 @@ class BoardConfigurator:
         device_keys = list(cell.pci_devices.__dict__.keys())
         device_values = list(cell.pci_devices.__dict__.values())
         for i in range(len(cell.pci_devices.__dict__.keys())):
-            f.write("\n\t\t." + device_keys[i] + " = {")
+            f.write("\n\t\t/*" + device_keys[i] + "*/")
+            f.write("\n\t\t{")
             device_values_temp = device_values[i].split(",")[:-1]
             for j in range(len(device_values_temp)):
                 f.write("\n\t\t\t." + str(device_values_temp[j]).strip() + ",")
             f.write("\n\t\t},")
         f.write("\n\t},\n")
 
-        f.write("\n\t.shmem_net = {")
-        f.write("\n\t\t.start_addr = " + hex(cell.sh_mem_net.start_addr) + ",")
-        dev_id = cell.sh_mem_net.device_id
-        if dev_id == 1:
-            dev_id_offset = 0x80000
-        else:
-            dev_id_offset = 0x1000
-        f.write("\n\t\t.device_id = " + hex(dev_id_offset) + ",")
-        # interrupt_set = parseIntSet(cell.irqchips.interrupts)
-        # f.write("\n\t.interrupt_set = " + str(interrupt_set) + ",")
-        f.write("\n\t},\n")
-
-        cell_type_temp = cell.base_infos.Type
-        if cell_type_temp == "root":
-            f.write("\n\t.root_cell = {")
-        else:
-            f.write("\n\t.guest_cell = {")
-        f.write("\n\t\t.name = " + cell.base_infos.name + ",")
-        f.write("\n\t\t.vpci_irq_base = " + str(cell.base_infos.vpci_irq_base) + ",")
-        s = "|"
-        jailhouse_flags = ["JAILHOUSE_" + flag for flag in cell.base_infos.flags]
-        f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
-        f.write("\n\t\t.num_memory_regions = " + str(amount_memory_regions) + ",")
-        f.write("\n\t\t.num_pci_devices = " + str(amount_pci_devices) + ",")
-        f.write("\n\t\t.cpu_set_size: = " + str(cpu_calculated) + ",")  # lookatthis later
-        f.write("\n\t\t//.num_irqchips !!//TODO: = " + ",")
-        # f.write("\n\t\t//.num_pci_caps !!//TODO: = " + ",")
-        f.write("\n\t},\n")
+        # TODO:not defined in struct jailhouse_system
+        # f.write("\n\t.shmem_net = {")
+        # f.write("\n\t\t.start_addr = " + hex(cell.sh_mem_net.start_addr) + ",")
+        # dev_id = cell.sh_mem_net.device_id
+        # if dev_id == 1:
+        #     dev_id_offset = 0x80000
+        # else:
+        #     dev_id_offset = 0x1000
+        # f.write("\n\t\t.device_id = " + hex(dev_id_offset) + ",")
+        # # interrupt_set = parseIntSet(cell.irqchips.interrupts)
+        # # f.write("\n\t.interrupt_set = " + str(interrupt_set) + ",")
+        # f.write("\n\t},\n")
 
         f.write("\n};")
 
@@ -290,6 +292,7 @@ class BoardConfigurator:
                 irqChips.adress = recursive_lookup("address", irqChips_yml)
                 irqChips.pin_base = recursive_lookup("pin_base", irqChips_yml)
                 irqChips.interrupts = recursive_lookup("interrupts", irqChips_yml)
+                irqChips.pin_bitmap = recursive_lookup("pin_bitmap", irqChips_yml)
                 hypMem = HypervisorMemory()
                 hypMem_yml = recursive_lookup("hypervisor_memory", yaml_info)
                 hypMem.physical_start_addr = recursive_lookup("phys_start", hypMem_yml)
