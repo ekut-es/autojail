@@ -145,15 +145,15 @@ sudo kexec -e
     * check status: `sudo tools/jailhouse console`
 - configure ivshmem provided virtual ethernet
     * get PCI device
-        - run `lspci -k | grep -B 2 "ivshmemi-net"`
+        - run `lspci -k | grep -B 2 "ivshmem-net"`
     * get interface name
-        - run `ls /sys/bus/pci/<pci-device/net`
+        - run `ls /sys/bus/pci/devices/<pci-device/net`
     * run
-        - `ip addr add 192.168.19.1/24 dev <device>`
-        - `ip link set dev <device> up`
+        - `ip addr add 192.168.19.1/24 dev <interface-name>`
+        - `ip link set dev <interface-name> up`
     * **Important note** configure virtual ethernet device in root cell **before** starting an inmate cell
 - load linux inmate
     * `sudo tools/jailhouse cell linux configs/arm64/rpi4-linux-demo.cell /boot/vmlinuz-5.4.16 -d configs/arm64/dts/inmate-rpi4.dtb -i <path-to-rootfs.cpio> -c "console=ttyS0,115200 ip=192.168.19.2"`
-- run `ssh 192.168.19.2`
+- run `ssh root@192.168.19.2`
 
 
