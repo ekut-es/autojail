@@ -1,4 +1,4 @@
-# Rasperry PI 4B
+# Setup Notes for Raspberry PI 4B
 
 This documents describes board bring up and the rpi4 for inter-cell communication
 
@@ -16,7 +16,7 @@ A SOC datasheet is not available at the momement for now this manual could be cl
 
 Just sudo apt-get install linux-tools -y
   
-## Kernel:
+## Kernel
 
 We provide rpi-5.3 kernel with raspberry pi patches and jailhouse-5.4 kernel with 
 jailhouse patches.
@@ -94,15 +94,15 @@ After successful installation the BL31 messages should apear on serial console:
 For jailhouse the patches mentioned [here](https://github.com/siemens/jailhouse-images/blob/7c6d0ddb2763ef38a019b565568b8e9b59ca48c8/recipes-bsp/arm-trusted-firmware/files/0001-rpi3-4-Add-support-for-offlining-CPUs.patch) seem no longer necessary when using the current master of arm trusted firmware. 
 
 
-# Rpi4 inter-cell communication setup
+## Rpi4 inter-cell communication setup
 
-## Requirements
+### Requirements
 
 - a custom `initramfs`
 - official jailhouse kernel for Rpi4
 - jailhouse built with that kernel
 
-## Preparation
+### Preparation
 
 - build custom initramfs
     * get files from [Jailhouse images](https://github.com/siemens/jailhouse-images/tree/master/recipes-core/non-root-initramfs/files)
@@ -126,13 +126,13 @@ For jailhouse the patches mentioned [here](https://github.com/siemens/jailhouse-
     * tared jailhouse kernel
     * jailhouse build folder
 
-## Setup on Rpi
+### Setup on Rpi
 
 - `cd jailhouse`
     * `cp hypervisor/jailhouse.bin /lib/firmware`
     * `sudo insmod drivers/jailhouse.ko`
 
-## Setup cells and inter-cell communication
+### Setup cells and inter-cell communication
 
 - load jailhouse kernel
 ~~~

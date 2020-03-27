@@ -4,7 +4,8 @@
 
 Bearbeiter: Dennis Volm
 
-Anforderung: Anforderung Example Commandlines
+Anforderung: Automatisierte konfiguration eines Basis-Jailhouse Systems unter 
+Zuhilfenahme von durch Linux (/proc, /sys) bereitgestellte Basiskonfigurationen
 
 ## Konfiguration von Inter-Cell Konfiguration
 
@@ -14,6 +15,14 @@ Anforderung: Definition und Entwicklung einer Konfiguarationsbeschreibung Shared
 
 ## Use-Case CODESYS SPS
 
-Bearbeiter: 
+Bearbeiter: Artur Plischke
 
-Anforderung: Portierung einer CODESYS-SPS Anwendung von 
+Anforderung: 
+- Portierung einer CODESYS-SPS Anwendung auf Raspberry PI 4B und Jailhouse
+- Bewerten des Echtzeitverhaltens von CODESYS-SPS
+- Bewertung der Folgenden Szenarien.
+  1. Reines Linux-System
+  2. Partitioniertes System mit extra Jailhouse-Cell für SPS Runtime 
+  3. Reines Linux-System mit Preempt-RT patch
+  4. SPS-Runtime in extra Jailhouse-Cell mit partitioniertem Cell
+  
