@@ -11,7 +11,7 @@ Zuhilfenahme von durch Linux (/proc, /sys) bereitgestellte Basiskonfigurationen
 
 Bearbeiter: ???
 
-Anforderung: Definition und Entwicklung einer Konfiguarationsbeschreibung Shared Memory und Netzwerkkonfiguration zwischen Jailhouse-Zellen
+Anforderung: Definition und Entwicklung einer Konfigurationsbeschreibung Shared Memory und Netzwerkkonfiguration zwischen Jailhouse-Zellen
 
 ## Use-Case CODESYS SPS
 
