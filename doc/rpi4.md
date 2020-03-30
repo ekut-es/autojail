@@ -1,4 +1,4 @@
-# Rasperry PI 4B
+# Setup Notes for Raspberry PI 4B
 
 This documents describes board bring up and the rpi4 for inter-cell communication
 
@@ -16,7 +16,7 @@ A SOC datasheet is not available at the momement for now this manual could be cl
 
 Just sudo apt-get install linux-tools -y
   
-## Kernel:
+## Kernel
 
 We provide rpi-5.3 kernel with raspberry pi patches and jailhouse-5.4 kernel with 
 jailhouse patches.
@@ -94,15 +94,15 @@ After successful installation the BL31 messages should apear on serial console:
 For jailhouse the patches mentioned [here](https://github.com/siemens/jailhouse-images/blob/7c6d0ddb2763ef38a019b565568b8e9b59ca48c8/recipes-bsp/arm-trusted-firmware/files/0001-rpi3-4-Add-support-for-offlining-CPUs.patch) seem no longer necessary when using the current master of arm trusted firmware. 
 
 
-# Rpi4 inter-cell communication setup
+## Rpi4 inter-cell communication setup
 
-## Requirements
+### Requirements
 
 - a custom `initramfs`
 - official jailhouse kernel for Rpi4
 - jailhouse built with that kernel
 
-## Preparation
+### Preparation
 
 - build custom initramfs
     * get files from [Jailhouse images](https://github.com/siemens/jailhouse-images/tree/master/recipes-core/non-root-initramfs/files)
@@ -126,13 +126,13 @@ For jailhouse the patches mentioned [here](https://github.com/siemens/jailhouse-
     * tared jailhouse kernel
     * jailhouse build folder
 
-## Setup on Rpi
+### Setup on Rpi
 
 - `cd jailhouse`
     * `cp hypervisor/jailhouse.bin /lib/firmware`
     * `sudo insmod drivers/jailhouse.ko`
 
-## Setup cells and inter-cell communication
+### Setup cells and inter-cell communication
 
 - load jailhouse kernel
 ~~~
@@ -145,15 +145,15 @@ sudo kexec -e
     * check status: `sudo tools/jailhouse console`
 - configure ivshmem provided virtual ethernet
     * get PCI device
-        - run `lspci -k | grep -B 2 "ivshmemi-net"`
+        - run `lspci -k | grep -B 2 "ivshmem-net"`
     * get interface name
-        - run `ls /sys/bus/pci/<pci-device/net`
+        - run `ls /sys/bus/pci/devices/<pci-device/net`
     * run
-        - `ip addr add 192.168.19.1/24 dev <device>`
-        - `ip link set dev <device> up`
+        - `ip addr add 192.168.19.1/24 dev <interface-name>`
+        - `ip link set dev <interface-name> up`
     * **Important note** configure virtual ethernet device in root cell **before** starting an inmate cell
 - load linux inmate
     * `sudo tools/jailhouse cell linux configs/arm64/rpi4-linux-demo.cell /boot/vmlinuz-5.4.16 -d configs/arm64/dts/inmate-rpi4.dtb -i <path-to-rootfs.cpio> -c "console=ttyS0,115200 ip=192.168.19.2"`
-- run `ssh 192.168.19.2`
+- run `ssh root@192.168.19.2`
 
 
