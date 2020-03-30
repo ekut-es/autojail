@@ -44,7 +44,7 @@ def test_board_from_yaml_bytesize():
     board_yaml = os.path.join(test_data_folder, "test_board_bytesize.yml")
     with open(board_yaml) as board_yaml_file:
 
-        board_dict = yaml.safe_(board_yaml_file)
+        board_dict = yaml.safe_load(board_yaml_file)
         board_model = Board(**board_dict)
 
         assert board_model.name == "board1"
