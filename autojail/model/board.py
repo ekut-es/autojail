@@ -17,7 +17,12 @@ class SHMemoryRegion(BaseModel):
     size: ByteSize
     flags: List[str]  # FIXME: Use list of ENUM
 
+class AdditionalRamSettings:
+    physical_start_addr: int
+    virtual_start_addr: int
+    size: ByteSize
 
+    
 class ShMemNet:
     start_addr: int
     device_id: int
@@ -39,6 +44,7 @@ class CellYML:
     irqchips: dict
     pci_devices: dict
     sh_mem_net: dict
+    additional_ram_settings: dict
 
 
 class BaseInfos:
