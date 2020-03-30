@@ -10,6 +10,7 @@ from ..model import (
     IRQChips,
     PlatformInfo,
     PCIDevices,
+    AdditionalRamSettings,
     ShMemNet,
     SHMemoryRegionTest,
 )
@@ -36,6 +37,8 @@ class BoardInfoExtractor:
             memory_regions = []
             res = 1
             res2 = 1
+            mem_flags = "JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64"
+            ram_flags =  "JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE"            
             for x in iomem_info:
                 start_addr, temp, *rest = x.split("-", 1)
                 temp = temp.strip()
@@ -47,7 +50,6 @@ class BoardInfoExtractor:
                 # end_addr_list.append(end_addr)
                 size_calculated = int(end_addr, 16) - int(start_addr, 16)
                 size.append(size_calculated)
-
                 temp = temp.strip()
                 res = any(temp in sublist for sublist in memory_regions)
                 compare_count = 1
@@ -75,15 +77,37 @@ class BoardInfoExtractor:
                             else:
                                 res = 1
         mem_regs = {}
+        from devtools import debug
+
         for i, name in enumerate(memory_regions):
+            # debug(name)
+            if (
+                ("System RAM" in name)
+                or ("Kernel Code" in name)
+                or ("reserved" in name)
+            ):
+                flags = (ram_flags,)
+            else:
+                flags = (mem_flags,)
+            # debug(flags)
             memory_region = MemoryRegion(
                 physical_start_addr=int(physical_start_addr[i], 16),
                 virtual_start_addr=int(physical_start_addr[i], 16),
                 size=size[i],
-                flags=["MEM_READ"],
+                flags=flags,
             )
             mem_regs[name] = memory_region
+        # debug(len(mem_regs))
+        del mem_regs["reserved"]
+        for i in range(len(mem_regs)):
+            tmp = "reserved_" + str(i)
+            if tmp in mem_regs:
+                del mem_regs[tmp]
+        del mem_regs["System RAM_2"]
+        del mem_regs["Kernel data"]
+        del mem_regs["Kernel code"]
 
+        # debug(mem_regs)
         return mem_regs
 
     def extract(self):
@@ -95,7 +119,7 @@ class BoardInfoExtractor:
 
 class BoardConfigurator:
     def writeToFile(self, board, cell):
-        f = open("config_rpi4.c", "w+")
+        f = open("config_rpi4.c", "w+")        
         amount_pci_devices = len(cell.pci_devices.__dict__)
         amount_memory_regions = len(board.memory_regions) + len(
             cell.additional_memory_regions
@@ -104,7 +128,6 @@ class BoardConfigurator:
         cpu_calculated = (len(cpu_set) // 64) + 1  # 64 von rpi4.c  Datentypgröße :__u64
         # jailhouse_flag_part = "JAILHOUSE_"
         # test = sys.getsizeof(0b1111)
-        # debug(test)
         f.write("#include <jailhouse/types.h>\n")
         f.write("#include <jailhouse/cell-config.h>\n")
 
@@ -116,7 +139,7 @@ class BoardConfigurator:
             + str(amount_memory_regions)
             + "];\n"
         )
-        f.write("\tstruct jailhouse_irqchip irqchips[1];\n")  # TODO:
+        f.write("\tstruct jailhouse_irqchip irqchips[2];\n")  # TODO:
         # f.write("\tstruct jailhouse_pio pio_regions[13];\n") # Unnötig für ARM
         f.write(
             "\tstruct jailhouse_pci_device pci_devices["
@@ -126,11 +149,29 @@ class BoardConfigurator:
         # f.write("\tstruct jailhouse_pci_capability pci_caps[39];\n")  # TODO:
         f.write("} __attribute__((packed)) config = {\n")
         f.write("\n.header = {")
-
+        f.write("\n\t.signature = JAILHOUSE_SYSTEM_SIGNATURE,")
+        f.write("\n\t.revision = JAILHOUSE_CONFIG_REVISION,")
+        f.write("\n\t.flags = JAILHOUSE_SYS_VIRTUAL_DEBUG_CONSOLE,")
+        f.write("\n\t.hypervisor_memory = {")
+        f.write(
+            "\n\t\t.phys_start = "
+            + hex(cell.hypervisor_memory.physical_start_addr)
+            + ","
+        )
+        f.write("\n\t\t.size = " + hex(cell.hypervisor_memory.size) + ",")
+        f.write("\n\t},\n")
+        f.write("\n\t.debug_console = {")
+        f.write("\n\t\t.address = " + hex(cell.debug_console.adress) + ",")
+        f.write("\n\t\t.size = " + hex(cell.debug_console.size) + ",")
+        f.write("\n\t\t.type = " + "JAILHOUSE_" + cell.debug_console.Type + ",")
+        s = " | "
+        jailhouse_flags = ["JAILHOUSE_" + flag for flag in cell.debug_console.flags]
+        f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
+        f.write("\n\t},\n")
         f.write("\n\t.platform_info = {")
         f.write(
             "\n\t\t.pci_mmconfig_base = "
-            + str(cell.platform_info.pci_mmconfig_base)
+            + hex(cell.platform_info.pci_mmconfig_base)
             + ","
         )
         f.write(
@@ -148,52 +189,38 @@ class BoardConfigurator:
             f.write("\n\t\t\t." + str(arm_values[i]).strip() + ",")
         f.write("\n\t\t},\n")
         f.write("\n\t},\n")
-        f.write("\n\t.debug_console = {")
-        f.write("\n\t\t.address = " + hex(cell.debug_console.adress) + ",")
-        f.write("\n\t\t.size = " + hex(cell.debug_console.size) + ",")
-        f.write("\n\t\t.type = " + "JAILHOUSE_" + cell.debug_console.Type + ",")
-        f.write("\n\t\t.size = " + hex(cell.debug_console.size) + ",")
-        s = "|"
-        jailhouse_flags = ["JAILHOUSE_" + flag for flag in cell.debug_console.flags]
-        f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
-        f.write("\n\t},\n")
-
-        f.write("\n\t.hypervisor_memory = {")
-        f.write(
-            "\n\t\t.phys_start = "
-            + hex(cell.hypervisor_memory.physical_start_addr)
-            + ","
-        )
-        f.write("\n\t\t.size = " + cell.hypervisor_memory.size + ",")
-        f.write("\n\t},\n")
-
         cell_type_temp = cell.base_infos.Type
         if cell_type_temp == "root":
             f.write("\n\t.root_cell = {")
         else:
             f.write("\n\t.guest_cell = {")
-        f.write("\n\t\t.name =" + " \"" + cell.base_infos.name + "\" " + ",")
+        f.write("\n\t\t.name =" + ' "' + cell.base_infos.name + '" ' + ",")
         f.write("\n\t\t.vpci_irq_base = " + str(cell.base_infos.vpci_irq_base) + ",")
-        s = "|"
-        jailhouse_flags = ["JAILHOUSE_" + flag for flag in cell.base_infos.flags]
-        f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
-        f.write("\n\t\t.num_memory_regions = " + str(amount_memory_regions) + ",")
-        f.write("\n\t\t.num_pci_devices = " + str(amount_pci_devices) + ",")
-        f.write(
-            "\n\t\t.cpu_set_size = " + str(cpu_calculated) + ","
-        )  # lookatthis later
-        f.write("\n\t\t.num_irqchips = " + str(1) + ",")
+        f.write("\n\t\t.num_memory_regions = ARRAY_SIZE(config.mem_regions)" + ",")
+        f.write("\n\t\t.num_pci_devices = ARRAY_SIZE(config.pci_devices)" + ",")
+        f.write("\n\t\t.cpu_set_size = sizeof(config.cpus)" + ",")  # lookatthis later
+        f.write("\n\t\t.num_irqchips = ARRAY_SIZE(config.irqchips)" + ",")
         # f.write("\n\t\t//.num_pci_caps !!//TODO: = " + ",")
         f.write("\n\t},")
         f.write("\n\t},")
+        from devtools import debug
+       # debug(cell.additional_ram_settings.physical_start_addr)        
+        if cell.additional_ram_settings.size is None or cell.additional_ram_settings.physical_start_addr is None or cell.additional_ram_settings.virtual_start_addr is None:
+            testing = 1
+        else:
+            board.memory_regions.get('System RAM').size = cell.additional_ram_settings.size -1
+            board.memory_regions.get('System RAM').virtual_start_addr = cell.additional_ram_settings.virtual_start_addr
+            board.memory_regions.get('System RAM').physical_start_addr = cell.additional_ram_settings.physical_start_addr
 
-        f.write("\n\t.cpus = ")
-        cpu_set_tmp = "0b" + "0" * (max(cpu_set)+1)
+
+        #debug(board.memory_regions.items())
+        f.write("\n\t.cpus = {")
+        cpu_set_tmp = "0b" + "0" * (max(cpu_set) + 1)
         s = list(cpu_set_tmp)
         for e in cpu_set:
-            s[(max(cpu_set)+2)-e] = str(1)
+            s[(max(cpu_set) + 2) - e] = str(1)
         s = "".join(s)
-        f.write(s + ",")
+        f.write(s + "},")
         f.write("\n\t")
         f.write("\n\t.mem_regions = {\n")
         for k, v in board.memory_regions.items():
@@ -209,12 +236,19 @@ class BoardConfigurator:
             f.write("\t{")
             f.write("\n\t\t.phys_start = " + hex(v.physical_start_addr) + ",")
             f.write("\n\t\t.virt_start = " + hex(v.virtual_start_addr) + ",")
-            f.write("\n\t\t.size = " + hex(v.size) + ",")
+            tmp_size = hex(v.size + 1)
+            # tmp_size = tmp_size + 1
+            from devtools import debug
+
+            # debug(tmp_size)
+
+            f.write("\n\t\t.size = " + tmp_size + ",")
             s = "|"
-            jailhouse_flags = ["JAILHOUSE_" + flag for flag in v.flags]
+            # jailhouse_flags = ["JAILHOUSE_" + flag for flag in v.flags]
+            jailhouse_flags = [flag for flag in v.flags]
             f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
             f.write("\n\t},\n")
-
+        f.write("\t JAILHOUSE_SHMEM_NET_REGIONS(0x3fb00000, 0),\n")
         for k, v in cell.additional_memory_regions.items():
             f.write(
                 "\t/*"
@@ -241,7 +275,9 @@ class BoardConfigurator:
             hex_bitmap = "".join(["0x%x, " % b for b in cell.irqchips.pin_bitmap[i]])
             f.write("\n\t\t\t.pin_base = " + str(cell.irqchips.pin_base[i]) + ",")
             # f.write("\n\t\t\t.interrupts = " + str(cell.irqchips.interrupts) + ",") TODO:
-            f.write("\n\t\t\t.pin_bitmap = " + hex_bitmap.rstrip(','))
+            bitmap_temp = hex_bitmap.rsplit(",", 1)[0]
+            bitmap_temp = bitmap_temp + "},"
+            f.write("\n\t\t\t.pin_bitmap = {" + bitmap_temp)
             f.write("\n\t\t},")
         # interrupt_set = parseIntSet(cell.irqchips.interrupts)
         # f.write("\n\t.interrupt_set = " + str(interrupt_set) + ",")
@@ -297,7 +333,11 @@ class BoardConfigurator:
                 hypMem_yml = recursive_lookup("hypervisor_memory", yaml_info)
                 hypMem.physical_start_addr = recursive_lookup("phys_start", hypMem_yml)
                 hypMem.size = recursive_lookup("size", hypMem_yml)
-
+                add_ram_set = AdditionalRamSettings()
+                add_ram_set_yml = recursive_lookup("ram_settings", yaml_info)
+                add_ram_set.physical_start_addr = recursive_lookup("phys_start", add_ram_set_yml)
+                add_ram_set.virtual_start_addr = recursive_lookup("virt_start", add_ram_set_yml)
+                add_ram_set.size = recursive_lookup("size", add_ram_set_yml)               
                 memory_regions_yml = recursive_lookup("mem_regions", yaml_info)
                 shmem_net = ShMemNet()
                 shmem_net_base_yml = recursive_lookup("shmem_net", memory_regions_yml)
@@ -317,7 +357,11 @@ class BoardConfigurator:
                             "virtual_start_addr", memory_regions_yml
                         )
                         siz = recursive_lookup("size", memory_regions_yml)
-                        flag = recursive_lookup("flags", memory_regions_yml)
+                        tmp_flag = list(list(memory_regions_yml.values())[i].values())[
+                            3
+                        ]
+                        flag = tmp_flag
+
                     else:
                         break
 
@@ -326,6 +370,7 @@ class BoardConfigurator:
                     memory_region.virtual_start_addr = virt
                     memory_region.size = siz
                     memory_region.flags = flag
+
                     mem_regs[name] = memory_region
                 debug_console = recursive_lookup("debug_console", yaml_info)
                 platInfo = PlatformInfo()
@@ -357,6 +402,7 @@ class BoardConfigurator:
                 cellYML.sh_mem_net = shmem_net
                 cellYML.irqchips = irqChips
                 cellYML.pci_devices = pci_devices
+                cellYML.additional_ram_settings = add_ram_set
                 return cellYML
 
             except yaml.YAMLError as exc:
@@ -372,6 +418,20 @@ def recursive_lookup(k, d):
             if a is not None:
                 return a
     return None
+
+
+# def recursive_lookup_tmp(k, d):
+#     from devtools import debug
+#     if k in d:
+#         return d[k]
+#     for v in d.values():
+#         debug(list(d.values())[4])
+#         if isinstance(v, dict):
+#             a = recursive_lookup_tmp(k, v)
+#             #debug(v)
+#             if a is not None:
+#                 return a
+#     return None
 
 
 def parseIntSet(nputstr=""):
