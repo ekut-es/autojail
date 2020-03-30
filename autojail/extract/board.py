@@ -97,15 +97,26 @@ class BoardInfoExtractor:
                 flags=flags,
             )
             mem_regs[name] = memory_region
-        # debug(len(mem_regs))
-        del mem_regs["reserved"]
+        # # debug(len(mem_regs))
+        # from devtools import debug
+        # debug(memory_regions)
+        tmp = "reserved"
+        if tmp in mem_regs:
+                del mem_regs[tmp]
+        # del mem_regs["reserved"]
         for i in range(len(mem_regs)):
             tmp = "reserved_" + str(i)
             if tmp in mem_regs:
                 del mem_regs[tmp]
-        del mem_regs["System RAM_2"]
-        del mem_regs["Kernel data"]
-        del mem_regs["Kernel code"]
+        tmp = "System RAM_2"
+        if tmp in mem_regs:
+                del mem_regs[tmp]
+        tmp = "Kernel data"
+        if tmp in mem_regs:
+                del mem_regs[tmp]
+        tmp = "Kernel code"
+        if tmp in mem_regs:
+                del mem_regs[tmp]
 
         # debug(mem_regs)
         return mem_regs
