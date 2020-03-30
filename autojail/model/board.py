@@ -99,7 +99,7 @@ if __name__ == "__main__":
     from pprint import pprint
 
     with open(sys.argv[1]) as yaml_file:
-        yaml_dict = yaml.load(yaml_file)
+        yaml_dict = yaml.safe_load(yaml_file)
         pprint(yaml_dict, indent=2)
 
         board = Board(**yaml_dict)
