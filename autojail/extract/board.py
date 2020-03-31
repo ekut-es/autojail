@@ -38,7 +38,9 @@ class BoardInfoExtractor:
             res = 1
             res2 = 1
             mem_flags = "JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64"
-            ram_flags =  "JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE"            
+            ram_flags = (
+                "JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE"
+            )
             for x in iomem_info:
                 start_addr, temp, *rest = x.split("-", 1)
                 temp = temp.strip()
@@ -102,7 +104,7 @@ class BoardInfoExtractor:
         # debug(memory_regions)
         tmp = "reserved"
         if tmp in mem_regs:
-                del mem_regs[tmp]
+            del mem_regs[tmp]
         # del mem_regs["reserved"]
         for i in range(len(mem_regs)):
             tmp = "reserved_" + str(i)
@@ -110,13 +112,13 @@ class BoardInfoExtractor:
                 del mem_regs[tmp]
         tmp = "System RAM_2"
         if tmp in mem_regs:
-                del mem_regs[tmp]
+            del mem_regs[tmp]
         tmp = "Kernel data"
         if tmp in mem_regs:
-                del mem_regs[tmp]
+            del mem_regs[tmp]
         tmp = "Kernel code"
         if tmp in mem_regs:
-                del mem_regs[tmp]
+            del mem_regs[tmp]
 
         # debug(mem_regs)
         return mem_regs
@@ -130,7 +132,7 @@ class BoardInfoExtractor:
 
 class BoardConfigurator:
     def writeToFile(self, board, cell):
-        f = open("config_rpi4.c", "w+")        
+        f = open("config_rpi4.c", "w+")
         amount_pci_devices = len(cell.pci_devices.__dict__)
         amount_memory_regions = len(board.memory_regions) + len(
             cell.additional_memory_regions
@@ -215,16 +217,26 @@ class BoardConfigurator:
         f.write("\n\t},")
         f.write("\n\t},")
         from devtools import debug
-       # debug(cell.additional_ram_settings.physical_start_addr)        
-        if cell.additional_ram_settings.size is None or cell.additional_ram_settings.physical_start_addr is None or cell.additional_ram_settings.virtual_start_addr is None:
+
+        # debug(cell.additional_ram_settings.physical_start_addr)
+        if (
+            cell.additional_ram_settings.size is None
+            or cell.additional_ram_settings.physical_start_addr is None
+            or cell.additional_ram_settings.virtual_start_addr is None
+        ):
             testing = 1
         else:
-            board.memory_regions.get('System RAM').size = cell.additional_ram_settings.size -1
-            board.memory_regions.get('System RAM').virtual_start_addr = cell.additional_ram_settings.virtual_start_addr
-            board.memory_regions.get('System RAM').physical_start_addr = cell.additional_ram_settings.physical_start_addr
+            board.memory_regions.get("System RAM").size = (
+                cell.additional_ram_settings.size - 1
+            )
+            board.memory_regions.get(
+                "System RAM"
+            ).virtual_start_addr = cell.additional_ram_settings.virtual_start_addr
+            board.memory_regions.get(
+                "System RAM"
+            ).physical_start_addr = cell.additional_ram_settings.physical_start_addr
 
-
-        #debug(board.memory_regions.items())
+        # debug(board.memory_regions.items())
         f.write("\n\t.cpus = {")
         cpu_set_tmp = "0b" + "0" * (max(cpu_set) + 1)
         s = list(cpu_set_tmp)
@@ -346,9 +358,13 @@ class BoardConfigurator:
                 hypMem.size = recursive_lookup("size", hypMem_yml)
                 add_ram_set = AdditionalRamSettings()
                 add_ram_set_yml = recursive_lookup("ram_settings", yaml_info)
-                add_ram_set.physical_start_addr = recursive_lookup("phys_start", add_ram_set_yml)
-                add_ram_set.virtual_start_addr = recursive_lookup("virt_start", add_ram_set_yml)
-                add_ram_set.size = recursive_lookup("size", add_ram_set_yml)               
+                add_ram_set.physical_start_addr = recursive_lookup(
+                    "phys_start", add_ram_set_yml
+                )
+                add_ram_set.virtual_start_addr = recursive_lookup(
+                    "virt_start", add_ram_set_yml
+                )
+                add_ram_set.size = recursive_lookup("size", add_ram_set_yml)
                 memory_regions_yml = recursive_lookup("mem_regions", yaml_info)
                 shmem_net = ShMemNet()
                 shmem_net_base_yml = recursive_lookup("shmem_net", memory_regions_yml)
