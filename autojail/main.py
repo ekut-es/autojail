@@ -13,11 +13,12 @@ class AutoJail:
         self._init_argument_parser()
 
     def _init_argument_parser(self):
-        init_parser = self.parser.add_subparsers("init")
-        extract_parser = self.parser.add_subparsers("extract")
-        config_parser = self.parser.add_subparsers("config")
-        explore_parser = self.parser.add_subparsers("explore")
-        test_parser = self.parser.add_subparsers("test")
+        subparsers = self.parser.add_subparsers(help="Subcommands")
+        init_parser = subparsers.add_parser("init")
+        extract_parser = subparsers.add_parser("extract")
+        config_parser = subparsers.add_parser("config")
+        explore_parser = subparsers.add_parser("explore")
+        test_parser = subparsers.add_parser("test")
 
     def _parse_arguments(self, args):
         res = self.parser.parse_args(args)
