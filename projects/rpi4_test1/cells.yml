@@ -2,16 +2,19 @@ cells:
   root:
      type: root #linux, generic 
      name: "RaspberryPI4"
-     vpci_irq_base: 150
-
+     vpci_irq_base: 182 - 32
+     ram_settings:
+      phys_start: 0x0
+      virt_start: 0x0
+      size: 0x3fa10000 # 16*1024*1024
      flags: [SYS_VIRTUAL_DEBUG_CONSOLE]
      hypervisor_memory: 
-        phys_start: 0x11319
-        size: 16*1024*1024
+        phys_start: 0x3fc00000 # 0x11319sollte es eig sein
+        size:  0x00400000 # 16*1024*1024
 
 
      debug_console:
-        address: 0xfe
+        address: 0xfe215040
         size: 0x40
         type: CON_TYPE_8250
         flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
@@ -31,6 +34,7 @@ cells:
 
      cpus: 0-3 # 1-3 oder 0,2 oder 1-3,5
 
+     #TODO: Root cell system RAM SYS tart 0x0 0x3b380000 + system RAM 2 
      mem_regions:
         ivshmem1:
           physical_start_addr: 0x3faf0000

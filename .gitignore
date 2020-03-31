@@ -11,3 +11,4 @@ kernels
 site
 elbe-build*
 initvm/
+.history/

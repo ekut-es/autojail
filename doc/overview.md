@@ -197,8 +197,6 @@ Und führt eine oder mehrere Test-Applikationen aus.
 Eingaben: autojail.yml und test_results.yml
 Ausgaben: Neue cells.yml 
 
-TODO: Hier würden wir uns gerne ein wenig austoben. 
-
 ## Use Case / Anwendung:
 
 Hier mal die Anforderungsdefinition von Andreas Messerschmid:
