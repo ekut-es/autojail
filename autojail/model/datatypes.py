@@ -81,3 +81,43 @@ class ByteSize(int):
             raise errors.InvalidByteSizeUnit(unit=unit)
 
         return self / unit_div
+
+
+class IntegerList(list):
+    """Integer List that can be initialized with , separated values and ranges 0,2-4 representing [0,2,3,4]"""
+
+    @classmethod
+    def __get_validators__(cls) -> "CallableGenerator":
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v: str) -> "IntegerList":
+        selection = set()
+        # tokens are comma seperated values
+        tokens = [x.strip() for x in v.split(",")]
+        for i in tokens:
+            try:
+                # typically tokens are plain old integers
+                selection.add(int(i))
+            except:
+                # if not, then it might be a range
+                try:
+                    token = [int(k.strip()) for k in i.split("-")]
+                    if len(token) > 1:
+                        token.sort()
+                        # we have items seperated by a dash
+                        # try to build a valid range
+                        first = token[0]
+                        last = token[len(token) - 1]
+                        for x in range(first, last + 1):
+                            selection.add(x)
+                    else:
+                        raise Exception(
+                            "Could not read integer list item {}".format(str(i))
+                        )
+                except:
+                    raise Exception(
+                        "Could not read integer list item {}".format(str(i))
+                    )
+
+        return cls(sorted(selection))

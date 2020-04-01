@@ -1,8 +1,7 @@
 from pydantic import BaseModel
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Optional
 
-from .datatypes import ByteSize
-
+from .datatypes import ByteSize, IntegerList
 
 class MemoryRegion(BaseModel):
     physical_start_addr: int
@@ -11,20 +10,7 @@ class MemoryRegion(BaseModel):
     flags: List[str]  # FIXME: Use list of ENUM
 
 
-class SHMemoryRegion(BaseModel):
-    physical_start_addr: int
-    virtual_start_addr: int
-    size: ByteSize
-    flags: List[str]  # FIXME: Use list of ENUM
-
-
-class AdditionalRamSettings:
-    physical_start_addr: int
-    virtual_start_addr: int
-    size: ByteSize
-
-
-class ShMemNet:
+class ShMemNetRegion(BaseModel):
     start_addr: int
     device_id: int
 
@@ -32,42 +18,22 @@ class ShMemNet:
 class Board(BaseModel):
     name: str
     board: str
-    memory_regions: Dict[str, Union[MemoryRegion, SHMemoryRegion]]
+    memory_regions: Dict[str, MemoryRegion]
 
 
-class CellYML:
-    base_infos: dict
-    hypervisor_memory: dict
-    debug_console: dict
-    platform_info: dict
-    cpus: List[int]
-    additional_memory_regions: dict
-    irqchips: dict
-    pci_devices: dict
-    sh_mem_net: dict
-    additional_ram_settings: dict
-
-
-class BaseInfos:
-    Type: str
-    name: str
-    vpci_irq_base: int
-    flags: List[str]  # FIXME: Use list of ENUM
-
-
-class HypervisorMemory:
+class HypervisorMemory(BaseModel):
     physical_start_addr: int
     size: ByteSize
 
 
-class DebugConsole:
-    adress: str
+class DebugConsole(BaseModel):
+    address: str
     size: int
-    Type: str
+    type: str
     flags: List[str]  # FIXME: Use list of ENUM
 
 
-class PlatformInfo:
+class PlatformInfo(BaseModel):
     pci_mmconfig_base: int
     pci_mmconfig_end_bus: int
     pci_is_virtual: int
@@ -75,23 +41,35 @@ class PlatformInfo:
     arm: List[str]
 
 
-class IRQChips:
-    adress: int
-    pin_base: List[int]
-    interrupts: List[int]
-    pin_bitmap: List[List[int]]
+class IRQChip(BaseModel):
+    address: int
+    pin_base: int
+    interrupts: IntegerList
 
 
-class PCIDevices:
-    demo: List[str]
-    networking: List[str]
+PCIDevice = List[str] #TODO: Implement PCI Device
 
-
-class SHMemoryRegionTest:
-    physical_start_addr: int
-    virtual_start_addr: int
-    size: ByteSize
+class CellConfig(BaseModel):
+    type: str
+    name: str
+    vpci_irq_base: int
     flags: List[str]  # FIXME: Use list of ENUM
+
+    hypervisor_memory: HypervisorMemory
+    debug_console: DebugConsole
+    platform_info: PlatformInfo
+    cpus: IntegerList
+    memory_regions: Dict[str, Union[MemoryRegion, ShMemNetRegion]]
+    irqchips: Dict[str, IRQChip]
+    pci_devices: Dict[str, PCIDevice]
+
+class CommunicationConfig(BaseModel):
+    pass
+
+
+class JailhouseConfig(BaseModel):
+    cells: Dict[str, CellConfig]
+    communication: Optional[Dict[str, CommunicationConfig]] = None
 
 
 if __name__ == "__main__":
