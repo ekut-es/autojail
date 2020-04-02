@@ -1,7 +1,7 @@
 import os.path
 import yaml
 
-from autojail.model import Board, MemoryRegion, SHMemoryRegion
+from autojail.model import Board
 
 test_data_folder = os.path.join(os.path.dirname(__file__), "test_data")
 
@@ -22,8 +22,12 @@ def test_board():
 
     board_model = Board(**test_data)
 
-    assert board_model.memory_regions["test_region"].virtual_start_addr == 0x1000
-    assert board_model.memory_regions["test_region"].physical_start_addr == 0x1000
+    assert (
+        board_model.memory_regions["test_region"].virtual_start_addr == 0x1000
+    )
+    assert (
+        board_model.memory_regions["test_region"].physical_start_addr == 0x1000
+    )
     assert board_model.memory_regions["test_region"].size == 100
 
 
