@@ -3,6 +3,7 @@ from typing import Dict, List, Union, Optional
 
 from .datatypes import ByteSize, IntegerList
 
+
 class MemoryRegion(BaseModel):
     physical_start_addr: int
     virtual_start_addr: int
@@ -27,8 +28,8 @@ class HypervisorMemory(BaseModel):
 
 
 class DebugConsole(BaseModel):
-    address: str
-    size: int
+    address: int
+    size: ByteSize
     type: str
     flags: List[str]  # FIXME: Use list of ENUM
 
@@ -46,8 +47,29 @@ class IRQChip(BaseModel):
     pin_base: int
     interrupts: IntegerList
 
+    @property
+    def pin_bitmap(self) -> List[int]:
+        SIZE = 32
 
-PCIDevice = List[str] #TODO: Implement PCI Device
+        count = 0
+        res = []
+        current_item = 0
+
+        for irq in self.interrupts:
+            if irq >= count + SIZE:
+                res.append(current_item)
+                current_item = 0
+                count += SIZE
+            current_item |= 1 << irq - count
+
+        if current_item > 0:
+            res.append(current_item)
+
+        return res
+
+
+PCIDevice = List[str]  # TODO: Implement PCI Device
+
 
 class CellConfig(BaseModel):
     type: str
@@ -62,6 +84,7 @@ class CellConfig(BaseModel):
     memory_regions: Dict[str, Union[MemoryRegion, ShMemNetRegion]]
     irqchips: Dict[str, IRQChip]
     pci_devices: Dict[str, PCIDevice]
+
 
 class CommunicationConfig(BaseModel):
     pass

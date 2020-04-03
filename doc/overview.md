@@ -115,9 +115,6 @@ guests:
 	 memory: 
 		size: 128 MB
 		virtual_start: 0x0
-	 timer: 
-		id: &board.hw.timer1 #Reference extracted hardware
-	 
 	 
 shmem:
    name: "Shared memory for communication between guest1 und guest2"

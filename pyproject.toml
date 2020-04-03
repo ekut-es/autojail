@@ -11,6 +11,8 @@ automate = {path = "external/automate", optional = true}
 pre-commit = "^1.21.0"
 pydantic = "^1.4"
 pyfdt = "^0.3"
+cleo = "^0.8.0"
+pyserial = "^3.4"
 
 [tool.poetry.extras]
 automate = ["automate"]
@@ -28,7 +30,7 @@ mkdocs-mermaid-plugin = {git = "https://github.com/pugong/mkdocs-mermaid-plugin.
 mkdocs-material = "^4.6.3"
 
 [tool.poetry.scripts]
-autojail = 'autojail.main:main'
+autojail = 'autojail.main:app.run'
 
 [build-system]
 requires = ["poetry>=0.12"]

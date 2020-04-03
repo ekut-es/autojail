@@ -1,20 +1,17 @@
+import os
+
+from typing import Optional
 from pathlib import Path
+
+import ruamel.yaml
+
 from ..model import (
     Board,
     MemoryRegion,
-    SHMemoryRegion,
-    CellYML,
-    BaseInfos,
-    DebugConsole,
-    HypervisorMemory,
-    IRQChips,
-    PlatformInfo,
-    PCIDevices,
-    AdditionalRamSettings,
-    ShMemNet,
-    SHMemoryRegionTest,
+    ShMemNetRegion,
+    JailhouseConfig,
+    IRQChip,
 )
-import yaml
 
 
 class BoardInfoExtractor:
@@ -25,7 +22,6 @@ class BoardInfoExtractor:
 
     def read_iomem(self, filename):
         with open(filename, "r") as iomem_info:
-
             start_addr = 0
             end_addr = 0
             size_calculated = 0
@@ -38,9 +34,7 @@ class BoardInfoExtractor:
             res = 1
             res2 = 1
             mem_flags = "JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64"
-            ram_flags = (
-                "JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE"
-            )
+            ram_flags = "JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE"
             for x in iomem_info:
                 start_addr, temp, *rest = x.split("-", 1)
                 temp = temp.strip()
@@ -49,7 +43,6 @@ class BoardInfoExtractor:
                 end_addr, temp = temp.split(":", 1)
 
                 end_addr = end_addr.split(" ", 1)[0]
-                # end_addr_list.append(end_addr)
                 size_calculated = int(end_addr, 16) - int(start_addr, 16)
                 size.append(size_calculated)
                 temp = temp.strip()
@@ -71,7 +64,9 @@ class BoardInfoExtractor:
                                 temp = temp.strip() + "_" + str(compare_count)
                             else:
                                 temp = temp.strip() + "_" + str(compare_count)
-                            res2 = any(temp in sublist for sublist in memory_regions)
+                            res2 = any(
+                                temp in sublist for sublist in memory_regions
+                            )
                             if res2 == 0:
                                 memory_regions.append(temp)
 
@@ -79,10 +74,8 @@ class BoardInfoExtractor:
                             else:
                                 res = 1
         mem_regs = {}
-        from devtools import debug
 
         for i, name in enumerate(memory_regions):
-            # debug(name)
             if (
                 ("System RAM" in name)
                 or ("Kernel Code" in name)
@@ -91,7 +84,7 @@ class BoardInfoExtractor:
                 flags = (ram_flags,)
             else:
                 flags = (mem_flags,)
-            # debug(flags)
+
             memory_region = MemoryRegion(
                 physical_start_addr=int(physical_start_addr[i], 16),
                 virtual_start_addr=int(physical_start_addr[i], 16),
@@ -99,396 +92,293 @@ class BoardInfoExtractor:
                 flags=flags,
             )
             mem_regs[name] = memory_region
-        # # debug(len(mem_regs))
-        # from devtools import debug
-        # debug(memory_regions)
+
         tmp = "reserved"
         if tmp in mem_regs:
             del mem_regs[tmp]
-        # del mem_regs["reserved"]
+
         for i in range(len(mem_regs)):
             tmp = "reserved_" + str(i)
             if tmp in mem_regs:
                 del mem_regs[tmp]
-        tmp = "System RAM_2"
-        if tmp in mem_regs:
-            del mem_regs[tmp]
+
         tmp = "Kernel data"
         if tmp in mem_regs:
             del mem_regs[tmp]
+
         tmp = "Kernel code"
         if tmp in mem_regs:
             del mem_regs[tmp]
 
-        # debug(mem_regs)
         return mem_regs
 
     def extract(self):
         memory_regions = self.read_iomem(self.data_root / "proc" / "iomem")
 
-        board = Board(name=self.name, board=self.board, memory_regions=memory_regions)
+        board = Board(
+            name=self.name, board=self.board, memory_regions=memory_regions
+        )
         return board
 
 
 class BoardConfigurator:
-    def writeToFile(self, board, cell):
-        f = open("config_rpi4.c", "w+")
-        amount_pci_devices = len(cell.pci_devices.__dict__)
-        amount_memory_regions = len(board.memory_regions) + len(
-            cell.additional_memory_regions
-        )
-        cpu_set = parseIntSet(cell.cpus)
-        cpu_calculated = (len(cpu_set) // 64) + 1  # 64 von rpi4.c  Datentypgröße :__u64
-        # jailhouse_flag_part = "JAILHOUSE_"
-        # test = sys.getsizeof(0b1111)
-        f.write("#include <jailhouse/types.h>\n")
-        f.write("#include <jailhouse/cell-config.h>\n")
+    def __init__(self, board: Board):
+        self.board = board
+        self.config: Optional[JailhouseConfig] = None
 
-        f.write("struct { \n")
-        f.write("\tstruct jailhouse_system header; \n")
-        f.write("\t__u64 cpus[" + str(cpu_calculated) + "];\n")
-        f.write(
-            "\tstruct jailhouse_memory mem_regions["
-            + str(amount_memory_regions)
-            + "];\n"
-        )
-        f.write("\tstruct jailhouse_irqchip irqchips[2];\n")  # TODO:
-        # f.write("\tstruct jailhouse_pio pio_regions[13];\n") # Unnötig für ARM
-        f.write(
-            "\tstruct jailhouse_pci_device pci_devices["
-            + str(amount_pci_devices)
-            + "];\n"
-        )
-        # f.write("\tstruct jailhouse_pci_capability pci_caps[39];\n")  # TODO:
-        f.write("} __attribute__((packed)) config = {\n")
-        f.write("\n.header = {")
-        f.write("\n\t.signature = JAILHOUSE_SYSTEM_SIGNATURE,")
-        f.write("\n\t.revision = JAILHOUSE_CONFIG_REVISION,")
-        f.write("\n\t.flags = JAILHOUSE_SYS_VIRTUAL_DEBUG_CONSOLE,")
-        f.write("\n\t.hypervisor_memory = {")
-        f.write(
-            "\n\t\t.phys_start = "
-            + hex(cell.hypervisor_memory.physical_start_addr)
-            + ","
-        )
-        f.write("\n\t\t.size = " + hex(cell.hypervisor_memory.size) + ",")
-        f.write("\n\t},\n")
-        f.write("\n\t.debug_console = {")
-        f.write("\n\t\t.address = " + hex(cell.debug_console.adress) + ",")
-        f.write("\n\t\t.size = " + hex(cell.debug_console.size) + ",")
-        f.write("\n\t\t.type = " + "JAILHOUSE_" + cell.debug_console.Type + ",")
-        s = " | "
-        jailhouse_flags = ["JAILHOUSE_" + flag for flag in cell.debug_console.flags]
-        f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
-        f.write("\n\t},\n")
-        f.write("\n\t.platform_info = {")
-        f.write(
-            "\n\t\t.pci_mmconfig_base = "
-            + hex(cell.platform_info.pci_mmconfig_base)
-            + ","
-        )
-        f.write(
-            "\n\t\t.pci_mmconfig_end_bus = "
-            + str(cell.platform_info.pci_mmconfig_end_bus)
-            + ","
-        )
-        f.write(
-            "\n\t\t.pci_is_virtual = " + str(cell.platform_info.pci_is_virtual) + ","
-        )
-        f.write("\n\t\t.pci_domain = " + str(cell.platform_info.pci_domain) + ",")
-        f.write("\n\t\t.arm = {")
-        arm_values = cell.platform_info.arm.split(",")[:-1]
-        for i in range(len(arm_values)):
-            f.write("\n\t\t\t." + str(arm_values[i]).strip() + ",")
-        f.write("\n\t\t},\n")
-        f.write("\n\t},\n")
-        cell_type_temp = cell.base_infos.Type
-        if cell_type_temp == "root":
-            f.write("\n\t.root_cell = {")
-        else:
-            f.write("\n\t.guest_cell = {")
-        f.write("\n\t\t.name =" + ' "' + cell.base_infos.name + '" ' + ",")
-        f.write("\n\t\t.vpci_irq_base = " + str(cell.base_infos.vpci_irq_base) + ",")
-        f.write("\n\t\t.num_memory_regions = ARRAY_SIZE(config.mem_regions)" + ",")
-        f.write("\n\t\t.num_pci_devices = ARRAY_SIZE(config.pci_devices)" + ",")
-        f.write("\n\t\t.cpu_set_size = sizeof(config.cpus)" + ",")  # lookatthis later
-        f.write("\n\t\t.num_irqchips = ARRAY_SIZE(config.irqchips)" + ",")
-        # f.write("\n\t\t//.num_pci_caps !!//TODO: = " + ",")
-        f.write("\n\t},")
-        f.write("\n\t},")
-        from devtools import debug
+    def write_config(self, output_path):
+        """Write configuration data to file"""
+        board = self.board
 
-        # debug(cell.additional_ram_settings.physical_start_addr)
-        if (
-            cell.additional_ram_settings.size is None
-            or cell.additional_ram_settings.physical_start_addr is None
-            or cell.additional_ram_settings.virtual_start_addr is None
-        ):
-            testing = 1
-        else:
-            board.memory_regions.get("System RAM").size = (
-                cell.additional_ram_settings.size - 1
-            )
-            board.memory_regions.get(
-                "System RAM"
-            ).virtual_start_addr = cell.additional_ram_settings.virtual_start_addr
-            board.memory_regions.get(
-                "System RAM"
-            ).physical_start_addr = cell.additional_ram_settings.physical_start_addr
+        for cell_id, cell in self.config.cells.items():
+            output_name = str(cell.name).lower().replace(" ", "-")
+            output_name += ".c"
 
-        # debug(board.memory_regions.items())
-        f.write("\n\t.cpus = {")
-        cpu_set_tmp = "0b" + "0" * (max(cpu_set) + 1)
-        s = list(cpu_set_tmp)
-        for e in cpu_set:
-            s[(max(cpu_set) + 2) - e] = str(1)
-        s = "".join(s)
-        f.write(s + "},")
-        f.write("\n\t")
-        f.write("\n\t.mem_regions = {\n")
-        for k, v in board.memory_regions.items():
+            print("Writing cell config", output_name)
+
+            output_file = os.path.join(output_path, output_name)
+
+            f = open(output_file, "w+")
+            amount_pci_devices = len(cell.pci_devices)
+            amount_memory_regions = len(board.memory_regions)
+            amount_irqchips = len(cell.irqchips)
+            cpu_set = cell.cpus
+            cpu_calculated = (
+                len(cpu_set) // 64
+            ) + 1  # 64 von rpi4.c  Datentypgröße :__u64
+
+            f.write("#include <jailhouse/types.h>\n")
+            f.write("#include <jailhouse/cell-config.h>\n")
+
+            f.write("struct { \n")
+            f.write("\tstruct jailhouse_system header; \n")
+            f.write("\t__u64 cpus[" + str(cpu_calculated) + "];\n")
             f.write(
-                "\t/*"
-                + k
-                + " "
-                + hex(v.physical_start_addr)
-                + "-"
-                + hex(v.physical_start_addr + v.size)
-                + "*/\n"
+                "\tstruct jailhouse_memory mem_regions["
+                + str(amount_memory_regions)
+                + "];\n"
             )
-            f.write("\t{")
-            f.write("\n\t\t.phys_start = " + hex(v.physical_start_addr) + ",")
-            f.write("\n\t\t.virt_start = " + hex(v.virtual_start_addr) + ",")
-            tmp_size = hex(v.size + 1)
-            # tmp_size = tmp_size + 1
-            from devtools import debug
-
-            # debug(tmp_size)
-
-            f.write("\n\t\t.size = " + tmp_size + ",")
-            s = "|"
-            # jailhouse_flags = ["JAILHOUSE_" + flag for flag in v.flags]
-            jailhouse_flags = [flag for flag in v.flags]
+            f.write(
+                f"\tstruct jailhouse_irqchip irqchips[{amount_irqchips}];\n"
+            )  # TODO:
+            f.write(
+                "\tstruct jailhouse_pci_device pci_devices["
+                + str(amount_pci_devices)
+                + "];\n"
+            )
+            # f.write("\tstruct jailhouse_pci_capability pci_caps[39];\n")  # TODO:
+            f.write("} __attribute__((packed)) config = {\n")
+            f.write("\n.header = {")
+            f.write("\n\t.signature = JAILHOUSE_SYSTEM_SIGNATURE,")
+            f.write("\n\t.revision = JAILHOUSE_CONFIG_REVISION,")
+            f.write("\n\t.flags = JAILHOUSE_SYS_VIRTUAL_DEBUG_CONSOLE,")
+            f.write("\n\t.hypervisor_memory = {")
+            f.write(
+                "\n\t\t.phys_start = "
+                + hex(cell.hypervisor_memory.physical_start_addr)
+                + ","
+            )
+            f.write("\n\t\t.size = " + hex(cell.hypervisor_memory.size) + ",")
+            f.write("\n\t},\n")
+            f.write("\n\t.debug_console = {")
+            f.write("\n\t\t.address = " + hex(cell.debug_console.address) + ",")
+            f.write("\n\t\t.size = " + hex(cell.debug_console.size) + ",")
+            f.write(
+                "\n\t\t.type = " + "JAILHOUSE_" + cell.debug_console.type + ","
+            )
+            s = " | "
+            jailhouse_flags = [
+                "JAILHOUSE_" + flag for flag in cell.debug_console.flags
+            ]
             f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
             f.write("\n\t},\n")
-        f.write("\t JAILHOUSE_SHMEM_NET_REGIONS(0x3fb00000, 0),\n")
-        for k, v in cell.additional_memory_regions.items():
+            f.write("\n\t.platform_info = {")
             f.write(
-                "\t/*"
-                + k
-                + " "
-                + hex(v.physical_start_addr)
-                + "-"
-                + hex(v.physical_start_addr + v.size)
-                + "*/\n"
+                "\n\t\t.pci_mmconfig_base = "
+                + hex(cell.platform_info.pci_mmconfig_base)
+                + ","
             )
-            f.write("\t{")
-            f.write("\n\t\t.phys_start = " + hex(v.physical_start_addr) + ",")
-            f.write("\n\t\t.virt_start = " + hex(v.virtual_start_addr) + ",")
-            f.write("\n\t\t.size = " + hex(v.size) + ",")
-            s = "|"
-            jailhouse_flags = ["JAILHOUSE_" + flag for flag in v.flags]
-            f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
+            f.write(
+                "\n\t\t.pci_mmconfig_end_bus = "
+                + str(cell.platform_info.pci_mmconfig_end_bus)
+                + ","
+            )
+            f.write(
+                "\n\t\t.pci_is_virtual = "
+                + str(cell.platform_info.pci_is_virtual)
+                + ","
+            )
+            f.write(
+                "\n\t\t.pci_domain = "
+                + str(cell.platform_info.pci_domain)
+                + ","
+            )
+            f.write("\n\t\t.arm = {")
+            arm_values = cell.platform_info.arm
+            for i in range(len(arm_values)):
+                f.write("\n\t\t\t." + str(arm_values[i]).strip() + ",")
+            f.write("\n\t\t},\n")
             f.write("\n\t},\n")
-        f.write("\t},")
-        f.write("\n\t.irqchips = {")
-        for i in range(len(cell.irqchips.pin_base)):
-            f.write("\n\t\t{")
-            f.write("\n\t\t\t.address = " + hex(cell.irqchips.adress) + ",")
-            hex_bitmap = "".join(["0x%x, " % b for b in cell.irqchips.pin_bitmap[i]])
-            f.write("\n\t\t\t.pin_base = " + str(cell.irqchips.pin_base[i]) + ",")
-            # f.write("\n\t\t\t.interrupts = " + str(cell.irqchips.interrupts) + ",") TODO:
-            bitmap_temp = hex_bitmap.rsplit(",", 1)[0]
-            bitmap_temp = bitmap_temp + "},"
-            f.write("\n\t\t\t.pin_bitmap = {" + bitmap_temp)
-            f.write("\n\t\t},")
-        # interrupt_set = parseIntSet(cell.irqchips.interrupts)
-        # f.write("\n\t.interrupt_set = " + str(interrupt_set) + ",")
-        f.write("\n\t},\n")
+            cell_type_temp = cell.type
+            if cell_type_temp == "root":
+                f.write("\n\t.root_cell = {")
+            else:
+                f.write("\n\t.guest_cell = {")
+            f.write("\n\t\t.name =" + ' "' + cell.name + '" ' + ",")
+            f.write("\n\t\t.vpci_irq_base = " + str(cell.vpci_irq_base) + ",")
+            f.write(
+                "\n\t\t.num_memory_regions = ARRAY_SIZE(config.mem_regions)"
+                + ","
+            )
+            f.write(
+                "\n\t\t.num_pci_devices = ARRAY_SIZE(config.pci_devices)" + ","
+            )
+            f.write(
+                "\n\t\t.cpu_set_size = sizeof(config.cpus)" + ","
+            )  # lookatthis later
+            f.write("\n\t\t.num_irqchips = ARRAY_SIZE(config.irqchips)" + ",")
+            # f.write("\n\t\t//.num_pci_caps !!//TODO: = " + ",")
+            f.write("\n\t},")
+            f.write("\n\t},")
 
-        f.write("\n\t.pci_devices = {")
-        device_keys = list(cell.pci_devices.__dict__.keys())
-        device_values = list(cell.pci_devices.__dict__.values())
-        for i in range(len(cell.pci_devices.__dict__.keys())):
-            f.write("\n\t\t/*" + device_keys[i] + "*/")
-            f.write("\n\t\t{")
-            device_values_temp = device_values[i].split(",")[:-1]
-            for j in range(len(device_values_temp)):
-                f.write("\n\t\t\t." + str(device_values_temp[j]).strip() + ",")
-            f.write("\n\t\t},")
-        f.write("\n\t},\n")
+            f.write("\n\t.cpus = {")
+            cpu_set_tmp = "0b" + "0" * (max(cpu_set) + 1)
+            s = list(cpu_set_tmp)
+            for e in cpu_set:
+                s[(max(cpu_set) + 2) - e] = str(1)
+            s = "".join(s)
+            f.write(s + "},")
+            f.write("\n\t")
+            f.write("\n\t.mem_regions = {\n")
+            for k, v in board.memory_regions.items():
+                if isinstance(v, MemoryRegion):
+                    f.write(
+                        "\t/*"
+                        + k
+                        + " "
+                        + hex(v.physical_start_addr)
+                        + "-"
+                        + hex(v.physical_start_addr + v.size)
+                        + "*/\n"
+                    )
+                    f.write("\t{")
+                    f.write(
+                        "\n\t\t.phys_start = "
+                        + hex(v.physical_start_addr)
+                        + ","
+                    )
+                    f.write(
+                        "\n\t\t.virt_start = " + hex(v.virtual_start_addr) + ","
+                    )
+                    tmp_size = hex(v.size + 1)
 
-        # TODO:not defined in struct jailhouse_system
-        # f.write("\n\t.shmem_net = {")
-        # f.write("\n\t\t.start_addr = " + hex(cell.sh_mem_net.start_addr) + ",")
-        # dev_id = cell.sh_mem_net.device_id
-        # if dev_id == 1:
-        #     dev_id_offset = 0x80000
-        # else:
-        #     dev_id_offset = 0x1000
-        # f.write("\n\t\t.device_id = " + hex(dev_id_offset) + ",")
-        # # interrupt_set = parseIntSet(cell.irqchips.interrupts)
-        # # f.write("\n\t.interrupt_set = " + str(interrupt_set) + ",")
-        # f.write("\n\t},\n")
+                    f.write("\n\t\t.size = " + tmp_size + ",")
+                    s = "|"
+                    # jailhouse_flags = ["JAILHOUSE_" + flag for flag in v.flags]
+                    jailhouse_flags = [flag for flag in v.flags]
+                    f.write(
+                        "\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ","
+                    )
+                    f.write("\n\t},\n")
+                elif isinstance(v, ShMemNetRegion):
+                    f.write(
+                        f"JAILHOUSE_SHMEM_NET_REGIONS({v.start_addr}, {v.device_id}),"
+                    )
 
-        f.write("\n};")
+            f.write("\t},")
+            f.write("\n\t.irqchips = {")
+            for name, chip in cell.irqchips.items():
+                f.write("\n\t\t{")
+                f.write("\n\t\t\t.address = " + hex(chip.address) + ",")
+                hex_bitmap = ", ".join(["0x%x" % b for b in chip.pin_bitmap])
+                f.write("\n\t\t\t.pin_base = " + str(chip.pin_base) + ",")
+                bitmap_temp = hex_bitmap + "},"
+                f.write("\n\t\t\t.pin_bitmap = {" + bitmap_temp)
+                f.write("\n\t\t},")
+            f.write("\n\t},\n")
 
-    def read_Cell_YML(self, board):
-        with open("../projects/rpi4_test1/cells.yml", "r") as stream:
-            try:
-                yaml_info = yaml.safe_load(stream)
-                base_infos = BaseInfos()
-                base_infos.Type = recursive_lookup("type", yaml_info)
-                base_infos.name = recursive_lookup("name", yaml_info)
-                base_infos.vpci_irq_base = recursive_lookup("vpci_irq_base", yaml_info)
-                base_infos.flags = recursive_lookup("flags", yaml_info)
-                pci_devices = PCIDevices()
-                pci_devices_yml = recursive_lookup("pci_devices", yaml_info)
-                pci_devices.demo = recursive_lookup("demo", pci_devices_yml)
-                pci_devices.networking = recursive_lookup("networking", pci_devices_yml)
-                irqChips = IRQChips()
-                irqChips_yml = recursive_lookup("irqchips", yaml_info)
-                irqChips.adress = recursive_lookup("address", irqChips_yml)
-                irqChips.pin_base = recursive_lookup("pin_base", irqChips_yml)
-                irqChips.interrupts = recursive_lookup("interrupts", irqChips_yml)
-                irqChips.pin_bitmap = recursive_lookup("pin_bitmap", irqChips_yml)
-                hypMem = HypervisorMemory()
-                hypMem_yml = recursive_lookup("hypervisor_memory", yaml_info)
-                hypMem.physical_start_addr = recursive_lookup("phys_start", hypMem_yml)
-                hypMem.size = recursive_lookup("size", hypMem_yml)
-                add_ram_set = AdditionalRamSettings()
-                add_ram_set_yml = recursive_lookup("ram_settings", yaml_info)
-                add_ram_set.physical_start_addr = recursive_lookup(
-                    "phys_start", add_ram_set_yml
-                )
-                add_ram_set.virtual_start_addr = recursive_lookup(
-                    "virt_start", add_ram_set_yml
-                )
-                add_ram_set.size = recursive_lookup("size", add_ram_set_yml)
-                memory_regions_yml = recursive_lookup("mem_regions", yaml_info)
-                shmem_net = ShMemNet()
-                shmem_net_base_yml = recursive_lookup("shmem_net", memory_regions_yml)
-                shmem_net.start_addr = recursive_lookup("start", shmem_net_base_yml)
-                shmem_net.device_id = recursive_lookup("dev_id", shmem_net_base_yml)
-                test_region_names = memory_regions_yml.keys()
-                keylist = []
-                keylist.extend(iter(test_region_names))
-                len_loop = len(keylist) - 1
-                mem_regs = {}
-                for i, name in enumerate(memory_regions_yml):
-                    if i < len_loop:
-                        phys = recursive_lookup(
-                            "physical_start_addr", memory_regions_yml
-                        )
-                        virt = recursive_lookup(
-                            "virtual_start_addr", memory_regions_yml
-                        )
-                        siz = recursive_lookup("size", memory_regions_yml)
-                        tmp_flag = list(list(memory_regions_yml.values())[i].values())[
-                            3
-                        ]
-                        flag = tmp_flag
+            f.write("\n\t.pci_devices = {")
+            for name, device in cell.pci_devices.items():
+                f.write("\n\t\t/*" + name + "*/")
+                f.write("\n\t\t{")
 
-                    else:
-                        break
+                for val in device:
+                    f.write("\n\t\t\t." + str(val).strip())
+                f.write("\n\t\t},")
+            f.write("\n\t},\n")
 
-                    memory_region = SHMemoryRegionTest()
-                    memory_region.physical_start_addr = phys
-                    memory_region.virtual_start_addr = virt
-                    memory_region.size = siz
-                    memory_region.flags = flag
+            # TODO:not defined in struct jailhouse_system
+            # f.write("\n\t.shmem_net = {")
+            # f.write("\n\t\t.start_addr = " + hex(cell.sh_mem_net.start_addr) + ",")
+            # dev_id = cell.sh_mem_net.device_id
+            # if dev_id == 1:
+            #     dev_id_offset = 0x80000
+            # else:
+            #     dev_id_offset = 0x1000
+            # f.write("\n\t\t.device_id = " + hex(dev_id_offset) + ",")
+            # # interrupt_set = parseIntSet(cell.irqchips.interrupts)
+            # # f.write("\n\t.interrupt_set = " + str(interrupt_set) + ",")
+            # f.write("\n\t},\n")
 
-                    mem_regs[name] = memory_region
-                debug_console = recursive_lookup("debug_console", yaml_info)
-                platInfo = PlatformInfo()
-                platform_info_yml = recursive_lookup("platform_info", yaml_info)
-                platInfo.pci_mmconfig_base = recursive_lookup(
-                    "pci_mmconfig_base", platform_info_yml
-                )
-                platInfo.pci_mmconfig_end_bus = recursive_lookup(
-                    "pci_mmconfig_end_bus", platform_info_yml
-                )
-                platInfo.pci_is_virtual = recursive_lookup(
-                    "pci_is_virtual", platform_info_yml
-                )
-                platInfo.pci_domain = recursive_lookup("pci_domain", platform_info_yml)
-                platInfo.arm = recursive_lookup("arm", platform_info_yml)
+            f.write("\n};")
 
-                debCon = DebugConsole()
-                debCon.adress = recursive_lookup("address", debug_console)
-                debCon.size = recursive_lookup("size", debug_console)
-                debCon.Type = recursive_lookup("type", debug_console)
-                debCon.flags = recursive_lookup("flags", debug_console)
-                cellYML = CellYML()
-                cellYML.base_infos = base_infos
-                cellYML.hypervisor_memory = hypMem
-                cellYML.debug_console = debCon
-                cellYML.platform_info = platInfo
-                cellYML.additional_memory_regions = mem_regs
-                cellYML.cpus = recursive_lookup("cpus", yaml_info)
-                cellYML.sh_mem_net = shmem_net
-                cellYML.irqchips = irqChips
-                cellYML.pci_devices = pci_devices
-                cellYML.additional_ram_settings = add_ram_set
-                return cellYML
+    def _prepare_irqchips(self, cell):
+        "Splits irqchips that handle more interrupts than are possible in one autojail config entry"
 
-            except yaml.YAMLError as exc:
-                return exc
+        split_factor = 32 * 4  # One entry can handle only  4*32 interrupts
+        new_irqchips = {}
+        for name, irqchip in cell.irqchips.items():
+            count = 0
+            new_name = name
+            new_chip = IRQChip(
+                address=irqchip.address,
+                pin_base=irqchip.pin_base,
+                interrupts=[],
+            )
 
+            current_base = 0
+            for irq in irqchip.interrupts:
+                while irq >= current_base + split_factor:
+                    new_irqchips[new_name] = new_chip
 
-def recursive_lookup(k, d):
-    if k in d:
-        return d[k]
-    for v in d.values():
-        if isinstance(v, dict):
-            a = recursive_lookup(k, v)
-            if a is not None:
-                return a
-    return None
+                    current_base += split_factor
+                    new_chip = IRQChip(
+                        address=irqchip.address,
+                        pin_base=irqchip.pin_base + current_base,
+                        interrupts=[],
+                    )
 
+                    count += 1
+                    new_name = name + "_" + str(count)
 
-# def recursive_lookup_tmp(k, d):
-#     from devtools import debug
-#     if k in d:
-#         return d[k]
-#     for v in d.values():
-#         debug(list(d.values())[4])
-#         if isinstance(v, dict):
-#             a = recursive_lookup_tmp(k, v)
-#             #debug(v)
-#             if a is not None:
-#                 return a
-#     return None
+                new_chip.interrupts.append(irq - current_base)
 
+            new_irqchips[new_name] = new_chip
 
-def parseIntSet(nputstr=""):
-    selection = set()
-    invalid = set()
-    # tokens are comma seperated values
-    tokens = [x.strip() for x in nputstr.split(",")]
-    for i in tokens:
-        if len(i) > 0:
-            if i[:1] == "<":
-                i = "1-%s" % (i[1:])
-        try:
-            # typically tokens are plain old integers
-            selection.add(int(i))
-        except:
-            # if not, then it might be a range
-            try:
-                token = [int(k.strip()) for k in i.split("-")]
-                if len(token) > 1:
-                    token.sort()
-                    # we have items seperated by a dash
-                    # try to build a valid range
-                    first = token[0]
-                    last = token[len(token) - 1]
-                    for x in range(first, last + 1):
-                        selection.add(x)
-            except:
-                # not an int and not a range...
-                invalid.add(i)
-    return selection
+        cell.irqchips = new_irqchips
+
+    def _prepare_memory_regions(self, cell):
+        pass
+
+    def prepare(self):
+        if self.config is None:
+            raise Exception(
+                "A configuration without cells_yml is not supported at the moment"
+            )
+
+        print("Preparing cell config")
+
+        for cell_name, cell in self.config.cells.items():
+            self._prepare_irqchips(cell)
+            self._prepare_memory_regions(cell)
+
+    def read_cell_yml(self, cells_yml):
+        print("Reading cell configuration", str(cells_yml))
+        with open(cells_yml, "r") as stream:
+            yaml = ruamel.YAML()
+            yaml_info = yaml.load(stream)
+            config = JailhouseConfig(**yaml_info)
+            self.config = config
 
 
 if __name__ == "__main__":
@@ -496,6 +386,7 @@ if __name__ == "__main__":
 
     extractor = BoardInfoExtractor(sys.argv[1], sys.argv[2], sys.argv[3])
     board_info = extractor.extract()
-    testwriter = BoardConfigurator()
-    read_cell = testwriter.read_Cell_YML(board_info)
-    test = testwriter.writeToFile(board_info, read_cell)
+    testwriter = BoardConfigurator(board_info)
+    testwriter.read_cell_yml(sys.argv[4])
+    testwriter.prepare()
+    testwriter.write_config(sys.argv[5])

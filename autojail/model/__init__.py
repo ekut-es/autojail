@@ -1,2 +1,3 @@
-from .board import *
-from .datatypes import *
+from .board import *  # noqa
+from .datatypes import *  # noqa
+from .config import *  # noqa

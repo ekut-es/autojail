@@ -1,6 +1,9 @@
 import re
 
-from typing import Union
+from typing import Union, List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pydantic.typing import CallableGenerator
 
 __all__ = ["ByteSize"]
 
@@ -27,7 +30,9 @@ BYTE_SIZES = {
     "pib": 2 ** 50,
     "eib": 2 ** 60,
 }
-BYTE_SIZES.update({k.lower()[0]: v for k, v in BYTE_SIZES.items() if "i" not in k})
+BYTE_SIZES.update(
+    {k.lower()[0]: v for k, v in BYTE_SIZES.items() if "i" not in k}
+)
 byte_string_re = re.compile(r"^\s*(\d*\.?\d+)\s*(\w+)?", re.IGNORECASE)
 
 
@@ -46,7 +51,7 @@ class ByteSize(int):
 
         str_match = byte_string_re.match(str(v))
         if str_match is None:
-            raise errors.InvalidByteSize()
+            raise ValueError(f"Invalid byte size in {v}")
 
         scalar, unit = str_match.groups()
         if unit is None:
@@ -55,7 +60,7 @@ class ByteSize(int):
         try:
             unit_mult = BYTE_SIZES[unit.lower()]
         except KeyError:
-            raise errors.InvalidByteSizeUnit(unit=unit)
+            raise ValueError(f"Invalid unit for Bytesize {unit}")
 
         return cls(int(float(scalar) * unit_mult))
 
@@ -78,7 +83,7 @@ class ByteSize(int):
         try:
             unit_div = BYTE_SIZES[unit.lower()]
         except KeyError:
-            raise errors.InvalidByteSizeUnit(unit=unit)
+            raise ValueError(f"Invalid unit for Bytesize {unit}")
 
         return self / unit_div
 
@@ -91,7 +96,10 @@ class IntegerList(list):
         yield cls.validate
 
     @classmethod
-    def validate(cls, v: str) -> "IntegerList":
+    def validate(cls, v: Union[str, List[int]]) -> "IntegerList":
+        if isinstance(v, list):
+            return cls(v)
+
         selection = set()
         # tokens are comma seperated values
         tokens = [x.strip() for x in v.split(",")]
@@ -99,7 +107,7 @@ class IntegerList(list):
             try:
                 # typically tokens are plain old integers
                 selection.add(int(i))
-            except:
+            except Exception:
                 # if not, then it might be a range
                 try:
                     token = [int(k.strip()) for k in i.split("-")]
@@ -112,11 +120,11 @@ class IntegerList(list):
                         for x in range(first, last + 1):
                             selection.add(x)
                     else:
-                        raise Exception(
+                        raise ValueError(
                             "Could not read integer list item {}".format(str(i))
                         )
-                except:
-                    raise Exception(
+                except Exception:
+                    raise ValueError(
                         "Could not read integer list item {}".format(str(i))
                     )
 
