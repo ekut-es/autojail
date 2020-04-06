@@ -3,7 +3,7 @@ from pathlib import Path
 from cleo import Command
 from ruamel.yaml import YAML
 
-from ..model import AutojailConfig
+from ..model import AutojailConfig, AutojailArch, AutojailLogin
 
 automate_available = False
 # try:
@@ -144,4 +144,13 @@ class InitCommand(Command):
 
         with config_path.open("w") as config_file:
             yaml = YAML()
-            yaml.dump(config.dict(), config_file)
+
+            def represent_str(representer, data: str):
+                return representer.represent_scalar(
+                    "tag:yaml.org,2002:str", data
+                )
+
+            yaml.representer.add_representer(AutojailArch, represent_str)
+            yaml.representer.add_representer(AutojailLogin, represent_str)
+            config_dict = config.dict()
+            yaml.dump(config_dict, config_file)
