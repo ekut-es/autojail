@@ -1,20 +1,12 @@
 from pathlib import Path
 
-from cleo import Command
-from ruamel.yaml import YAML
+import ruamel.yaml
 
+from .base import BaseCommand
 from ..model import AutojailConfig, AutojailArch, AutojailLogin
 
-automate_available = False
-# try:
-#    import automate
-#
-#    automate_available = True
-# except ImportError:
-#    automate_available = False
 
-
-class InitCommand(Command):
+class InitCommand(BaseCommand):
     """ Initializes an autojail project
 
     init
@@ -27,6 +19,8 @@ class InitCommand(Command):
        {--host= : hostname or ip address of target board}
        {--user= : username on target board}
        {--uart= : device tree of local uart connected to target board}
+       {--board= : if automate is installed the automate board id (if given selects automate backend)}
+       {--a|automate : use automate as backend}
     """
 
     def handle(self):
@@ -44,6 +38,89 @@ class InitCommand(Command):
         )
         self.line("")
 
+        if self.option("board"):
+            config = self._init_automate()
+        elif self.option("host"):
+            config = self._init_ssh()
+        else:
+            if self.automate_context:
+                choices = ["ssh", "automate"]
+                backend = self.choice(
+                    "Which backend should be used to connect to the board",
+                    choices,
+                    attempts=3,
+                    default=0,
+                )
+
+                if isinstance(backend, int):
+                    backend = choices[backend]
+
+                if backend == "ssh":
+                    config = self._init_ssh()
+                else:
+                    config = self._init_automate()
+
+            else:
+                config = self._init_ssh()
+
+        with config_path.open("w") as config_file:
+            yaml = ruamel.yaml.YAML()
+
+            def represent_str(representer, data: str):
+                return representer.represent_scalar(
+                    "tag:yaml.org,2002:str", data
+                )
+
+            yaml.representer.add_representer(AutojailArch, represent_str)
+            yaml.representer.add_representer(AutojailLogin, represent_str)
+            config_dict = config.dict()
+            yaml.dump(config_dict, config_file)
+
+    def _init_automate(self) -> AutojailConfig:
+        "Initialize the backend with test rack"
+
+        name = self.option("name")
+        if not name:
+            name = Path.cwd().name.lower()
+
+            question = self.create_question(
+                f"Project name [<comment>{name}</comment>]", default=name
+            )
+            name = self.ask(question)
+
+        board = self.option("board")
+        if not board:
+            choices = [b.name for b in self.automate_context.boards()]
+            board = self.choice(
+                "Which target board should be used:",
+                choices,
+                attempts=3,
+                default=0,
+            )
+
+        automate_board = self.automate_context.board()
+
+        os = automate_board.os
+        arch = "ARM64" if os.triple.arch.name == "aarch64" else "ARM"
+        compiler = board.compiler(toolchain="gcc")
+        cross_compile = str(compiler.bin_path / compiler.prefix)
+        kernel_dir = "kernel"
+        jailhouse_dir = "jailhouse"
+        uart = None
+
+        config = AutojailConfig(
+            login=f"automate:{board}",
+            arch=arch,
+            cross_compile=cross_compile,
+            kernel_dir=kernel_dir,
+            jailhouse_dir=jailhouse_dir,
+            uart=uart,
+        )
+
+        return config
+
+    def _init_ssh(self) -> AutojailConfig:
+        "Initialize the project with direct ssh connection"
         name = self.option("name")
         if not name:
             name = Path.cwd().name.lower()
@@ -126,13 +203,12 @@ class InitCommand(Command):
         if not jailhouse_dir:
             jailhouse_dir = "./jailhouse"
             question = self.create_question(
-                f"Directory containing the jailhouse sources [<comment>{kernel_dir}</comment>]",
+                f"Directory containing the jailhouse sources [<comment>{jailhouse_dir}</comment>]",
                 default=jailhouse_dir,
             )
             jailhouse_dir = self.ask(question)
 
         # TODO: ask for baud rate and rest of uart config
-
         config = AutojailConfig(
             login=f"ssh:{user}@{host}",
             arch=arch,
@@ -142,15 +218,4 @@ class InitCommand(Command):
             uart=uart,
         )
 
-        with config_path.open("w") as config_file:
-            yaml = YAML()
-
-            def represent_str(representer, data: str):
-                return representer.represent_scalar(
-                    "tag:yaml.org,2002:str", data
-                )
-
-            yaml.representer.add_representer(AutojailArch, represent_str)
-            yaml.representer.add_representer(AutojailLogin, represent_str)
-            config_dict = config.dict()
-            yaml.dump(config_dict, config_file)
+        return config

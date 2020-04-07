@@ -912,7 +912,7 @@ socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7)", "win-inet-pton"]
 category = "main"
 description = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
 name = "ruamel.yaml"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.16.10"
 
@@ -930,7 +930,7 @@ category = "main"
 description = "C version of reader, parser and emitter for ruamel.yaml derived from libyaml"
 marker = "platform_python_implementation == \"CPython\" and python_version < \"3.9\""
 name = "ruamel.yaml.clib"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.2.0"
 
@@ -1087,7 +1087,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 automate = ["automate"]
 
 [metadata]
-content-hash = "56c9a327d05aa167212c7235317e1dbf4846f2716ca595e24f2d8bcdefb19e7f"
+content-hash = "931bca88048037cc4a572bf3bbb0ac0b548cec7a41cd8c193cdd4434532beeeb"
 python-versions = "^3.6"
 
 [metadata.files]

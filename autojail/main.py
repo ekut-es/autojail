@@ -1,6 +1,6 @@
 from cleo import Application
 
-from .commands import InitCommand
+from .commands import InitCommand, ExtractCommand, ConfigCommand
 
 
 class AutojailApp(Application):
@@ -9,6 +9,8 @@ class AutojailApp(Application):
         super().__init__()
 
         self.add(InitCommand())
+        self.add(ExtractCommand())
+        self.add(ConfigCommand())
 
 
 app = AutojailApp()
