@@ -18,14 +18,14 @@ class InitCommand(BaseCommand):
        {--kernel= : directory containing the kernel build}
        {--host= : hostname or ip address of target board}
        {--user= : username on target board}
-       {--uart= : device tree of local uart connected to target board}
+       {--uart= : device node of local uart connected to target board}
        {--board= : if automate is installed the automate board id (if given selects automate backend)}
        {--a|automate : use automate as backend}
     """
 
     def handle(self):
-        config_path = Path.cwd() / "autojail.yml"
-        if config_path.exists():
+        """ Initialize the project """
+        if self.config_path.exists():
             if not self.option("force"):
                 self.line(
                     "<error>This directory already contains an <comment>autojail.yml</comment> use -f to overwrite</error>"
@@ -52,6 +52,7 @@ class InitCommand(BaseCommand):
                     default=0,
                 )
 
+                # FIXME: should be fixed in updated clikit
                 if isinstance(backend, int):
                     backend = choices[backend]
 
@@ -63,7 +64,7 @@ class InitCommand(BaseCommand):
             else:
                 config = self._init_ssh()
 
-        with config_path.open("w") as config_file:
+        with self.config_path.open("w") as config_file:
             yaml = ruamel.yaml.YAML()
 
             def represent_str(representer, data: str):
@@ -98,11 +99,11 @@ class InitCommand(BaseCommand):
                 default=0,
             )
 
-        automate_board = self.automate_context.board()
+        automate_board = self.automate_context.board(board)
 
         os = automate_board.os
-        arch = "ARM64" if os.triple.arch.name == "aarch64" else "ARM"
-        compiler = board.compiler(toolchain="gcc")
+        arch = "ARM64" if os.triple.machine.name == "aarch64" else "ARM"
+        compiler = automate_board.compiler(toolchain="gcc")
         cross_compile = str(compiler.bin_path / compiler.prefix)
         kernel_dir = "kernel"
         jailhouse_dir = "jailhouse"
