@@ -18,7 +18,7 @@ def test_parse_jetsonagx():
     assert "/xhci@3610000" in regions
 
     assert regions["System RAM"].physical_start_addr == 0x80000000
-    assert regions["System RAM"].size == 0xAAFFFFFF - 0x80000000
+    assert regions["System RAM"].size == 0xAAFFFFFF - 0x80000000 + 1
 
 
 def test_parse_iomem():
@@ -28,7 +28,7 @@ def test_parse_iomem():
 
     assert "System RAM" in regions
     assert regions["System RAM"].physical_start_addr == 0x80000000
-    assert regions["System RAM"].size == 0x6FFFFFFF  # 0x80000000-0xefffffff
+    assert regions["System RAM"].size == 0x70000000  # 0x80000000-0xefffffff
 
 
 def test_parse_raspberrypi2b():
