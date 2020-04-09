@@ -66,6 +66,8 @@ class AutojailArch(str):
 
 
 class AutojailConfig(BaseModel):
+    name: str
+    board: str
     login: AutojailLogin
     arch: AutojailArch
     cross_compile: str

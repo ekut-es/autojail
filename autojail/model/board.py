@@ -1,18 +1,18 @@
 from pydantic import BaseModel
 from typing import Dict, List, Union, Optional
 
-from .datatypes import ByteSize, IntegerList
+from .datatypes import ByteSize, IntegerList, HexInt
 
 
 class MemoryRegion(BaseModel):
-    physical_start_addr: int
-    virtual_start_addr: int
+    physical_start_addr: HexInt
+    virtual_start_addr: HexInt
     size: ByteSize
     flags: List[str]  # FIXME: Use list of ENUM
 
 
 class ShMemNetRegion(BaseModel):
-    start_addr: int
+    start_addr: HexInt
     device_id: int
 
 
@@ -23,20 +23,20 @@ class Board(BaseModel):
 
 
 class HypervisorMemory(BaseModel):
-    physical_start_addr: int
+    physical_start_addr: HexInt
     size: ByteSize
 
 
 class DebugConsole(BaseModel):
-    address: int
+    address: HexInt
     size: ByteSize
     type: str
     flags: List[str]  # FIXME: Use list of ENUM
 
 
 class PlatformInfo(BaseModel):
-    pci_mmconfig_base: int
-    pci_mmconfig_end_bus: int
+    pci_mmconfig_base: HexInt
+    pci_mmconfig_end_bus: HexInt
     pci_is_virtual: int
     pci_domain: int
     arm: List[str]

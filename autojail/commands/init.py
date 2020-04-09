@@ -110,6 +110,8 @@ class InitCommand(BaseCommand):
         uart = None
 
         config = AutojailConfig(
+            name=name,
+            board=board,
             login=f"automate:{board}",
             arch=arch,
             cross_compile=cross_compile,
@@ -211,6 +213,8 @@ class InitCommand(BaseCommand):
 
         # TODO: ask for baud rate and rest of uart config
         config = AutojailConfig(
+            name=name,
+            board=name,  # FIXME: for users
             login=f"ssh:{user}@{host}",
             arch=arch,
             cross_compile=cross_compile,

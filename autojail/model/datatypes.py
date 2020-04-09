@@ -5,9 +5,25 @@ from typing import Union, List, TYPE_CHECKING
 if TYPE_CHECKING:
     from pydantic.typing import CallableGenerator
 
-__all__ = ["ByteSize"]
 
 StrIntFloat = Union[str, int, float]
+
+
+class HexInt(int):
+    """An integer that is represented by a hexadecimal value in JSON dumps"""
+
+    @classmethod
+    def __get_validators__(cls) -> "CallableGenerator":
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v: StrIntFloat) -> "ByteSize":
+        return cls(int(v))
+
+    @classmethod
+    def to_yaml(cls, representer, node):
+        return representer.represent_scalar("tag:yaml.org,2002:int", hex(node))
+
 
 BYTE_SIZES = {
     "b": 1,
@@ -87,6 +103,10 @@ class ByteSize(int):
 
         return self / unit_div
 
+    @classmethod
+    def to_yaml(cls, representer, node):
+        return representer.represent_scalar("tag:yaml.org,2002:int", hex(node))
+
 
 class IntegerList(list):
     """Integer List that can be initialized with , separated values and ranges 0,2-4 representing [0,2,3,4]"""
@@ -129,3 +149,9 @@ class IntegerList(list):
                     )
 
         return cls(sorted(selection))
+
+    @classmethod
+    def to_yaml(cls, representer, node):
+        return representer.represent_scalar(
+            "tag:yaml.org,2002:str", ",".join(node)
+        )

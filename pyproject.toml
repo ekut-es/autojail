@@ -14,6 +14,7 @@ pyfdt = "^0.3"
 cleo = "^0.8.0"
 pyserial = "^3.4"
 "ruamel.yaml" = "^0.16.10"
+fabric = "^2.5.0"
 
 [tool.poetry.extras]
 automate = ["automate"]
