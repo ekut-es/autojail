@@ -262,7 +262,7 @@ class BoardConfigurator:
                     f.write(
                         "\n\t\t.virt_start = " + hex(v.virtual_start_addr) + ","
                     )
-                    tmp_size = hex(v.size + 1)
+                    tmp_size = hex(v.size)
 
                     f.write("\n\t\t.size = " + tmp_size + ",")
                     s = "|"
