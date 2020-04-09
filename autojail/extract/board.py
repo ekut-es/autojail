@@ -93,22 +93,10 @@ class BoardInfoExtractor:
             )
             mem_regs[name] = memory_region
 
-        tmp = "reserved"
-        if tmp in mem_regs:
-            del mem_regs[tmp]
-
-        for i in range(len(mem_regs)):
-            tmp = "reserved_" + str(i)
-            if tmp in mem_regs:
-                del mem_regs[tmp]
-
-        tmp = "Kernel data"
-        if tmp in mem_regs:
-            del mem_regs[tmp]
-
-        tmp = "Kernel code"
-        if tmp in mem_regs:
-            del mem_regs[tmp]
+        # FIXME: it would be better to check if some regions are part of an outer region and merge accordingly
+        for k in mem_regs:
+            if k.startswith("reserved") or k.startswith("Kernel"):
+                del mem_regs[k]
 
         return mem_regs
 
