@@ -46,7 +46,7 @@ class ExtractCommand(BaseCommand):
             )
             board_data = extractor.extract()
 
-            with (Path.cwd() / "board.yml").open("w") as f:
+            with (Path.cwd() / self.BOARD_CONFIG_NAME).open("w") as f:
                 yaml = ruamel.yaml.YAML()
                 yaml.register_class(HexInt)
                 yaml.register_class(ByteSize)

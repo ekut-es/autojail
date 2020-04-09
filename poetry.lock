@@ -554,6 +554,7 @@ setuptools = ">=18.5"
 reference = "abf14392b0ed0c7022210b32c4e7c9c3e4c5c68a"
 type = "git"
 url = "https://github.com/pugong/mkdocs-mermaid-plugin.git"
+
 [[package]]
 category = "dev"
 description = "More routines for operating on iterables, beyond itertools"

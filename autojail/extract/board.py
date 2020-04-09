@@ -94,9 +94,13 @@ class BoardInfoExtractor:
             mem_regs[name] = memory_region
 
         # FIXME: it would be better to check if some regions are part of an outer region and merge accordingly
+        to_delete = []
         for k in mem_regs:
             if k.startswith("reserved") or k.startswith("Kernel"):
-                del mem_regs[k]
+                to_delete.append(k)
+
+        for k in to_delete:
+            del mem_regs[k]
 
         return mem_regs
 
@@ -363,7 +367,7 @@ class BoardConfigurator:
     def read_cell_yml(self, cells_yml):
         print("Reading cell configuration", str(cells_yml))
         with open(cells_yml, "r") as stream:
-            yaml = ruamel.YAML()
+            yaml = ruamel.yaml.YAML()
             yaml_info = yaml.load(stream)
             config = JailhouseConfig(**yaml_info)
             self.config = config

@@ -17,6 +17,8 @@ except ImportError:
 
 class BaseCommand(Command):
     CONFIG_NAME = "autojail.yml"
+    CELLS_CONFIG_NAME = "cells.yml"
+    BOARD_CONFIG_NAME = "board.yml"
 
     def __init__(self):
         super().__init__()
