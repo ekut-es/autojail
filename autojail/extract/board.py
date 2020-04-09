@@ -43,7 +43,7 @@ class BoardInfoExtractor:
                 end_addr, temp = temp.split(":", 1)
 
                 end_addr = end_addr.split(" ", 1)[0]
-                size_calculated = int(end_addr, 16) - int(start_addr, 16)
+                size_calculated = int(end_addr, 16) - int(start_addr, 16) + 1
                 size.append(size_calculated)
                 temp = temp.strip()
                 res = any(temp in sublist for sublist in memory_regions)
