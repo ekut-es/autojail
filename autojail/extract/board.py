@@ -85,11 +85,16 @@ class BoardInfoExtractor:
             else:
                 flags = (mem_flags,)
 
+            allocatable = False
+            if "System RAM" in name:
+                allocatable = True
+
             memory_region = MemoryRegion(
                 physical_start_addr=int(physical_start_addr[i], 16),
                 virtual_start_addr=int(physical_start_addr[i], 16),
                 size=size[i],
                 flags=flags,
+                allocatable=allocatable,
             )
             mem_regs[name] = memory_region
 
