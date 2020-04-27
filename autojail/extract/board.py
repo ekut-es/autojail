@@ -352,6 +352,12 @@ class BoardConfigurator:
     def _prepare_memory_regions(self, cell):
         pass
 
+    def _lower_shmem_config(self):
+        pass
+
+    def _allocate_memory(self):
+        pass
+
     def prepare(self):
         if self.config is None:
             raise Exception(
@@ -360,9 +366,11 @@ class BoardConfigurator:
 
         print("Preparing cell config")
 
+        self._lower_shmem_config()
         for cell_name, cell in self.config.cells.items():
             self._prepare_irqchips(cell)
             self._prepare_memory_regions(cell)
+        self._allocate_memory()
 
     def read_cell_yml(self, cells_yml):
         print("Reading cell configuration", str(cells_yml))

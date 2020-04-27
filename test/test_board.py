@@ -10,6 +10,7 @@ def test_board():
     test_data = {
         "name": "test_name",
         "board": "test_board",
+        "pagesize": 0x1000,
         "memory_regions": {
             "test_region": {
                 "virtual_start_addr": 0x1000,
@@ -38,6 +39,7 @@ def test_board_from_yaml():
         board_model = Board(**board_dict)
 
         assert board_model.name == "board1"
+        assert board_model.pagesize == 0x1000
 
 
 def test_board_from_yaml_bytesize():

@@ -1,9 +1,10 @@
 id: board1
 name: board1
 board: board
+pagesize: 4KB
 
 memory_regions:
-  ram: 
+  ram:
     physical_start_addr: 0x100
     virtual_start_addr: 0x100
     size: 10
