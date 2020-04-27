@@ -154,7 +154,7 @@ class IntegerList(list):
             return cls(v)
 
         selection = set()
-        # tokens are comma seperated values
+        # tokens are comma separated values
         tokens = [x.strip() for x in v.split(",")]
         for i in tokens:
             try:
