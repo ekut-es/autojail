@@ -104,11 +104,30 @@ class BoardInfoExtractor:
 
         return mem_regs
 
+    def read_getconf_out(self, getconf_path: Path):
+        # Return values
+        pagesize = 4096
+
+        if getconf_path.exists():
+            with getconf_path.open() as getconf_data:
+                for line in getconf_data.readlines():
+                    line = line.strip()
+                    splitted_line = line.split()
+                    if len(splitted_line) == 2:
+                        name, value = splitted_line
+                        if name == "PAGESIZE" or name == "PAGE_SIZE":
+                            pagesize = int(value)
+        return pagesize
+
     def extract(self):
         memory_regions = self.read_iomem(self.data_root / "proc" / "iomem")
+        pagesize = self.read_getconf_out(self.data_root / "getconf.out")
 
         board = Board(
-            name=self.name, board=self.board, memory_regions=memory_regions
+            name=self.name,
+            board=self.board,
+            memory_regions=memory_regions,
+            pagesize=pagesize,
         )
         return board
 

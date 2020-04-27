@@ -26,8 +26,8 @@ class Board(BaseModel):
 
 
 class HypervisorMemory(BaseModel):
-    physical_start_addr: HexInt
-    size: ByteSize
+    physical_start_addr: Optional[HexInt] = None
+    size: ByteSize = "16 MB"
 
 
 class DebugConsole(BaseModel):
