@@ -120,7 +120,6 @@ class BoardConfigurator:
 
     def write_config(self, output_path):
         """Write configuration data to file"""
-        board = self.board
 
         for cell_id, cell in self.config.cells.items():
             output_name = str(cell.name).lower().replace(" ", "-")
@@ -132,12 +131,14 @@ class BoardConfigurator:
 
             f = open(output_file, "w+")
             amount_pci_devices = len(cell.pci_devices)
-            amount_memory_regions = len(board.memory_regions)
+            amount_memory_regions = len(cell.memory_regions)
             amount_irqchips = len(cell.irqchips)
             cpu_set = cell.cpus
-            cpu_calculated = (
-                len(cpu_set) // 64
-            ) + 1  # 64 von rpi4.c  Datentypgröße :__u64
+
+            # 64 von rpi4.c  size of datatype __u64
+            # FIXME: check if feasible for higher number of cpu sets
+            #        should probably be maximum over all cpu sets
+            cpu_calculated = max(*cpu_set) // 64 + 1
 
             f.write("#include <jailhouse/types.h>\n")
             f.write("#include <jailhouse/cell-config.h>\n")
@@ -242,7 +243,7 @@ class BoardConfigurator:
             f.write(s + "},")
             f.write("\n\t")
             f.write("\n\t.mem_regions = {\n")
-            for k, v in board.memory_regions.items():
+            for k, v in cell.memory_regions.items():
                 if isinstance(v, MemoryRegion):
                     f.write(
                         "\t/*"
@@ -350,7 +351,49 @@ class BoardConfigurator:
         cell.irqchips = new_irqchips
 
     def _prepare_memory_regions(self, cell):
-        pass
+        for name, memory_region in self.board.memory_regions.items():
+            p_start = memory_region.physical_start_addr
+            v_start = memory_region.virtual_start_addr
+            p_end = memory_region.physical_start_addr
+            v_end = memory_region.virtual_start_addr
+
+            skip = False
+            for cell_name, cell_region in cell.memory_regions.items():
+                if not isinstance(cell_region, MemoryRegion):
+                    continue
+
+                if (
+                    p_start >= cell_region.physical_start_addr
+                    and p_start
+                    < cell_region.physical_start_addr + cell_region.size
+                ):
+                    skip = True
+
+                if (
+                    p_end >= cell_region.physical_start_addr
+                    and p_end
+                    < cell_region.physical_start_addr + cell_region.size
+                ):
+                    skip = True
+
+                if (
+                    v_start >= cell_region.virtual_start_addr
+                    and v_start
+                    < cell_region.virtual_start_addr + cell_region.size
+                ):
+                    skip = True
+
+                if (
+                    v_end >= cell_region.virtual_start_addr
+                    and v_end
+                    < cell_region.virtual_start_addr + cell_region.size
+                ):
+                    skip = True
+
+            if skip is True:
+                continue
+
+            cell.memory_regions[name] = memory_region
 
     def prepare(self):
         if self.config is None:
