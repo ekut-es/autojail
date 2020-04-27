@@ -5,10 +5,12 @@ from .datatypes import ByteSize, IntegerList, HexInt
 
 
 class MemoryRegion(BaseModel):
-    physical_start_addr: HexInt
-    virtual_start_addr: HexInt
+    physical_start_addr: Optional[HexInt] = None
+    virtual_start_addr: Optional[HexInt] = None
     size: ByteSize
     flags: List[str]  # FIXME: Use list of ENUM
+    allocatable: bool = False
+    next_region: Optional[str] = None
 
 
 class ShMemNetRegion(BaseModel):
@@ -19,12 +21,13 @@ class ShMemNetRegion(BaseModel):
 class Board(BaseModel):
     name: str
     board: str
+    pagesize: ByteSize
     memory_regions: Dict[str, MemoryRegion]
 
 
 class HypervisorMemory(BaseModel):
-    physical_start_addr: HexInt
-    size: ByteSize
+    physical_start_addr: Optional[HexInt] = None
+    size: ByteSize = "16 MB"
 
 
 class DebugConsole(BaseModel):
@@ -68,7 +71,18 @@ class IRQChip(BaseModel):
         return res
 
 
-PCIDevice = List[str]  # TODO: Implement PCI Device
+class PCIDevice(BaseModel):
+    type: str
+    domain: int
+    bdf: int
+    bar_mask: str
+    shmem_regions_start: Optional[int]
+    shmem_dev_id: Optional[int]
+    shmem_peers: Optional[int]
+    shmem_protocol: Optional[str]
+
+    # List of corresponding memory regions
+    memory_regions: List[MemoryRegion] = []
 
 
 class CellConfig(BaseModel):
@@ -86,13 +100,16 @@ class CellConfig(BaseModel):
     pci_devices: Dict[str, PCIDevice]
 
 
-class CommunicationConfig(BaseModel):
-    pass
+class ShmemConfig(BaseModel):
+    protocol: str
+    peers: List[str]
+    common_output_region_size: Optional[ByteSize] = None
+    per_device_region_size: Optional[ByteSize] = None
 
 
 class JailhouseConfig(BaseModel):
     cells: Dict[str, CellConfig]
-    communication: Optional[Dict[str, CommunicationConfig]] = None
+    shmem: Optional[Dict[str, ShmemConfig]] = None
 
 
 if __name__ == "__main__":

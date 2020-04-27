@@ -13,3 +13,4 @@ elbe-build*
 initvm/
 .history/
 .pytest_cache/
+tmp/

@@ -1,0 +1,4 @@
+protocol: SHMEM_PROTO_UNDEFINED
+peers: [root, linux, baremetal]
+common_output_region_size: 36 KB
+per_device_region_size: 8 KB

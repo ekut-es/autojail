@@ -75,6 +75,8 @@ class ExtractCommand(BaseCommand):
                     hide="both",
                 )
 
+            res = connection.run(f"getconf -a > {target_tmpdir}/getconf.out")
+
             connection.run("sudo tar czf extract.tar.gz *")
             connection.get(
                 f"{target_tmpdir}/extract.tar.gz",
