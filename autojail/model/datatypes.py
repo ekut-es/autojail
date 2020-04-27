@@ -1,12 +1,45 @@
+import ast
+import operator
 import re
 
 from typing import Union, List, TYPE_CHECKING
+
+import simpleeval
 
 if TYPE_CHECKING:
     from pydantic.typing import CallableGenerator
 
 
 StrIntFloat = Union[str, int, float]
+
+
+class ExpressionInt(int):
+    """An Integer that might be initialized from a string containing 
+    a python expression evaluating to an integer
+
+    Examples:
+       1 << 3
+       256 + 2
+    """
+
+    @classmethod
+    def __get_validators__(cls) -> "CallableGenerator":
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v: StrIntFloat) -> "ExpressionInt":
+        if isinstance(v, str):
+            evaluator = simpleeval.SimpleEval()
+            evaluator.operators[ast.And] = operator.and_
+            evaluator.operators[ast.Or] = operator.or_
+            evaluator.operators[ast.LShift] = operator.lshift
+            evaluator.operators[ast.RShift] = operator.rshift
+            v = evaluator.eval(v)
+        cls(v)
+
+    @classmethod
+    def to_yaml(cls, representer, node):
+        return representer.represent_scalar("tag:yaml.org,2002:int", node)
 
 
 class HexInt(int):

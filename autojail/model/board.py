@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Dict, List, Union, Optional
 
-from .datatypes import ByteSize, IntegerList, HexInt
+from .datatypes import ByteSize, ExpressionInt, IntegerList, HexInt
 
 
 class MemoryRegion(BaseModel):
@@ -46,7 +46,7 @@ class PlatformInfo(BaseModel):
 
 
 class IRQChip(BaseModel):
-    address: int
+    address: HexInt
     pin_base: int
     interrupts: IntegerList
 
@@ -74,7 +74,7 @@ class IRQChip(BaseModel):
 class PCIDevice(BaseModel):
     type: str
     domain: int
-    bdf: int
+    bdf: ExpressionInt
     bar_mask: str
     shmem_regions_start: Optional[int]
     shmem_dev_id: Optional[int]
@@ -88,7 +88,7 @@ class PCIDevice(BaseModel):
 class CellConfig(BaseModel):
     type: str
     name: str
-    vpci_irq_base: int
+    vpci_irq_base: ExpressionInt
     flags: List[str]  # FIXME: Use list of ENUM
 
     hypervisor_memory: HypervisorMemory

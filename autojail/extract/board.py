@@ -319,8 +319,23 @@ class BoardConfigurator:
                 f.write("\n\t\t/*" + name + "*/")
                 f.write("\n\t\t{")
 
-                for val in device:
-                    f.write("\n\t\t\t." + str(val).strip())
+                f.write(f"\n\t\t\ttype = JAILHOUSE_{device.type},")
+                f.write(f"\n\t\t\tdomain = {device.domain},")
+                f.write(f"\n\t\t\tbar_mask = JAILHOUSE_{device.bar_mask},")
+
+                if device.shmem_regions_start is not None:
+                    f.write(
+                        f"\n\t\t\tshmem_regions_start = {device.shmem_regions_start},"
+                    )
+                if device.shmem_dev_id is not None:
+                    f.write(f"\n\t\t\tshmem_dev_id = {device.shmem_dev_id},")
+                if device.shmem_peers is not None:
+                    f.write(f"\n\t\t\tshmem_peers = {device.shmem_peers},")
+                if device.shmem_protocol is not None:
+                    f.write(
+                        f"\n\t\t\tshmem_protocol = {device.shmem_protocol},"
+                    )
+
                 f.write("\n\t\t},")
             f.write("\n\t},\n")
 
