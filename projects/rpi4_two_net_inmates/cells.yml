@@ -77,10 +77,10 @@ cells:
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
 # FIXME: this does not work due to a bug in prepare_memory_cells
-#      "communication_region":
-#        virtual_start_addr: 0x80000000
-#        size: 0x00001000
-#        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
+      "communication_region":
+        virtual_start_addr: 0x80000000
+        size: 0x00001000
+        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
 
   linux2:
     type: "linux"
@@ -112,10 +112,10 @@ cells:
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
 # FIXME: this does not work due to a bug in prepare_memory_cells
-#      "communication_region":
-#        virtual_start_addr: 0x80000000
-#        size: 0x00001000
-#        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
+      "communication_region":
+        virtual_start_addr: 0x80000000
+        size: 0x00001000
+        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
 
 shmem:
   "net1":

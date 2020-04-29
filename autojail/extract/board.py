@@ -291,19 +291,24 @@ class BoardConfigurator:
                 if isinstance(v, MemoryRegion):
                     f.write(
                         "\t/*"
-                        + k
-                        + " "
-                        + hex(v.physical_start_addr)
-                        + "-"
-                        + hex(v.physical_start_addr + v.size)
-                        + "*/\n"
-                    )
-                    f.write("\t{")
-                    f.write(
-                        "\n\t\t.phys_start = "
-                        + hex(v.physical_start_addr)
-                        + ","
-                    )
+                        + k)
+
+                    if v.physical_start_addr:
+                        f.write(" "
+                            + hex(v.physical_start_addr)
+                            + "-"
+                            + hex(v.physical_start_addr + v.size)
+                        )
+
+                    f.write("*/\t{")
+
+                    if v.physical_start_addr:
+                        f.write(
+                            "\n\t\t.phys_start = "
+                            + hex(v.physical_start_addr)
+                            + ","
+                        )
+
                     f.write(
                         "\n\t\t.virt_start = " + hex(v.virtual_start_addr) + ","
                     )
@@ -422,33 +427,36 @@ class BoardConfigurator:
                 if not isinstance(cell_region, MemoryRegion):
                     continue
 
-                if (
-                    p_start >= cell_region.physical_start_addr
-                    and p_start
-                    < cell_region.physical_start_addr + cell_region.size
-                ):
-                    skip = True
+                # TODO correct?
+                if cell_region.physical_start_addr:
+                    if (
+                        p_start >= cell_region.physical_start_addr
+                        and p_start
+                        < cell_region.physical_start_addr + cell_region.size
+                    ):
+                        skip = True
 
-                if (
-                    p_end >= cell_region.physical_start_addr
-                    and p_end
-                    < cell_region.physical_start_addr + cell_region.size
-                ):
-                    skip = True
+                    if (
+                        p_end >= cell_region.physical_start_addr
+                        and p_end
+                        < cell_region.physical_start_addr + cell_region.size
+                    ):
+                        skip = True
 
-                if (
-                    v_start >= cell_region.virtual_start_addr
-                    and v_start
-                    < cell_region.virtual_start_addr + cell_region.size
-                ):
-                    skip = True
+                if cell_region.virtual_start_addr:
+                    if (
+                        v_start >= cell_region.virtual_start_addr
+                        and v_start
+                        < cell_region.virtual_start_addr + cell_region.size
+                    ):
+                        skip = True
 
-                if (
-                    v_end >= cell_region.virtual_start_addr
-                    and v_end
-                    < cell_region.virtual_start_addr + cell_region.size
-                ):
-                    skip = True
+                    if (
+                        v_end >= cell_region.virtual_start_addr
+                        and v_end
+                        < cell_region.virtual_start_addr + cell_region.size
+                    ):
+                        skip = True
 
             if skip is True:
                 continue
@@ -500,6 +508,7 @@ class BoardConfigurator:
 
             if shmem_config.protocol == "SHMEM_PROTO_VETH":
                 common_output_region_size = 0
+                per_device_region_size = self.board.pagesize
 
             table_region = MemoryRegion(size=0x1000,
                 physical_start_addr=0,
@@ -644,8 +653,7 @@ class BoardConfigurator:
         self._lower_shmem_config()
         for cell_name, cell in self.config.cells.items():
             self._prepare_irqchips(cell)
-            # FIXME
-            #self._prepare_memory_regions(cell)
+            self._prepare_memory_regions(cell)
         self._allocate_memory()
         self._regions_shmem_config
 
