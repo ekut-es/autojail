@@ -91,13 +91,13 @@ class CellConfig(BaseModel):
     vpci_irq_base: ExpressionInt
     flags: List[str]  # FIXME: Use list of ENUM
 
-    hypervisor_memory: HypervisorMemory
+    hypervisor_memory: Optional[HypervisorMemory]
     debug_console: DebugConsole
-    platform_info: PlatformInfo
+    platform_info: Optional[PlatformInfo]
     cpus: IntegerList
-    memory_regions: Dict[str, Union[MemoryRegion, ShMemNetRegion]]
-    irqchips: Dict[str, IRQChip]
-    pci_devices: Dict[str, PCIDevice]
+    memory_regions: Optional[Dict[str, Union[MemoryRegion, ShMemNetRegion]]] = {}
+    irqchips: Optional[Dict[str, IRQChip]] = {}
+    pci_devices: Optional[Dict[str, PCIDevice]] = {}
 
 
 class ShmemConfig(BaseModel):
