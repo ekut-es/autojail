@@ -317,7 +317,7 @@ class BoardConfigurator:
                     f.write("\n\t\t.size = " + tmp_size + ",")
                     s = "|"
                     # jailhouse_flags = ["JAILHOUSE_" + flag for flag in v.flags]
-                    jailhouse_flags = [f"JAILHOUSE_{flag}" for flag in v.flags]
+                    jailhouse_flags = [ f"JAILHOUSE_{flag}" if "JAILHOUSE" not in flag else flag for flag in v.flags]
                     f.write(
                         "\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ","
                     )
@@ -640,6 +640,11 @@ class BoardConfigurator:
                 cell.memory_regions[mem_region_name] = new_cell_output_region
 
     def _allocate_memory(self):
+        # TODO check if virtual address ranges are taken
+        # TODO assume physical addresses are not taken
+        #   - use highest allocatable address and allocate downwards
+        # TODO allow allocation of hypervisor memory (default 16 MB)
+
         pass
 
     def prepare(self):
