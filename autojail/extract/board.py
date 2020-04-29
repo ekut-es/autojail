@@ -4,6 +4,7 @@ from typing import Optional
 from pathlib import Path
 
 import ruamel.yaml
+import copy
 
 from ..model import (
     Board,
@@ -11,6 +12,7 @@ from ..model import (
     ShMemNetRegion,
     JailhouseConfig,
     IRQChip,
+    PCIDevice
 )
 
 
@@ -168,7 +170,12 @@ class BoardConfigurator:
             f.write("#include <jailhouse/cell-config.h>\n")
 
             f.write("struct { \n")
-            f.write("\tstruct jailhouse_system header; \n")
+
+            if cell.type == "root":
+                f.write("\tstruct jailhouse_system header; \n")
+            else:
+                f.write("\tstruct jailhouse_cell_desc cell; \n")
+
             f.write("\t__u64 cpus[" + str(cpu_calculated) + "];\n")
             f.write(
                 "\tstruct jailhouse_memory mem_regions["
@@ -185,18 +192,26 @@ class BoardConfigurator:
             )
             # f.write("\tstruct jailhouse_pci_capability pci_caps[39];\n")  # TODO:
             f.write("} __attribute__((packed)) config = {\n")
-            f.write("\n.header = {")
+
+            if cell.type == "root":
+                f.write("\n.header = {")
+            else:
+                f.write("\n.cell = {")
+
             f.write("\n\t.signature = JAILHOUSE_SYSTEM_SIGNATURE,")
             f.write("\n\t.revision = JAILHOUSE_CONFIG_REVISION,")
             f.write("\n\t.flags = JAILHOUSE_SYS_VIRTUAL_DEBUG_CONSOLE,")
-            f.write("\n\t.hypervisor_memory = {")
-            f.write(
-                "\n\t\t.phys_start = "
-                + hex(cell.hypervisor_memory.physical_start_addr)
-                + ","
-            )
-            f.write("\n\t\t.size = " + hex(cell.hypervisor_memory.size) + ",")
-            f.write("\n\t},\n")
+
+            if cell.type == "root":
+                f.write("\n\t.hypervisor_memory = {")
+                f.write(
+                    "\n\t\t.phys_start = "
+                    + hex(cell.hypervisor_memory.physical_start_addr)
+                    + ","
+                )
+                f.write("\n\t\t.size = " + hex(cell.hypervisor_memory.size) + ",")
+                f.write("\n\t},\n")
+
             f.write("\n\t.debug_console = {")
             f.write("\n\t\t.address = " + hex(cell.debug_console.address) + ",")
             f.write("\n\t\t.size = " + hex(cell.debug_console.size) + ",")
@@ -209,38 +224,40 @@ class BoardConfigurator:
             ]
             f.write("\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ",")
             f.write("\n\t},\n")
-            f.write("\n\t.platform_info = {")
-            f.write(
-                "\n\t\t.pci_mmconfig_base = "
-                + hex(cell.platform_info.pci_mmconfig_base)
-                + ","
-            )
-            f.write(
-                "\n\t\t.pci_mmconfig_end_bus = "
-                + str(cell.platform_info.pci_mmconfig_end_bus)
-                + ","
-            )
-            f.write(
-                "\n\t\t.pci_is_virtual = "
-                + str(cell.platform_info.pci_is_virtual)
-                + ","
-            )
-            f.write(
-                "\n\t\t.pci_domain = "
-                + str(cell.platform_info.pci_domain)
-                + ","
-            )
-            f.write("\n\t\t.arm = {")
-            arm_values = cell.platform_info.arm
-            for i in range(len(arm_values)):
-                f.write("\n\t\t\t." + str(arm_values[i]).strip() + ",")
-            f.write("\n\t\t},\n")
-            f.write("\n\t},\n")
+
+            if cell.type == "root":
+                f.write("\n\t.platform_info = {")
+                f.write(
+                    "\n\t\t.pci_mmconfig_base = "
+                    + hex(cell.platform_info.pci_mmconfig_base)
+                    + ","
+                )
+                f.write(
+                    "\n\t\t.pci_mmconfig_end_bus = "
+                    + str(cell.platform_info.pci_mmconfig_end_bus)
+                    + ","
+                )
+                f.write(
+                    "\n\t\t.pci_is_virtual = "
+                    + str(cell.platform_info.pci_is_virtual)
+                    + ","
+                )
+                f.write(
+                    "\n\t\t.pci_domain = "
+                    + str(cell.platform_info.pci_domain)
+                    + ","
+                )
+                f.write("\n\t\t.arm = {")
+                arm_values = cell.platform_info.arm
+                for i in range(len(arm_values)):
+                    f.write("\n\t\t\t." + str(arm_values[i]).strip() + ",")
+                f.write("\n\t\t},\n")
+                f.write("\n\t},\n")
+
             cell_type_temp = cell.type
             if cell_type_temp == "root":
                 f.write("\n\t.root_cell = {")
-            else:
-                f.write("\n\t.guest_cell = {")
+
             f.write("\n\t\t.name =" + ' "' + cell.name + '" ' + ",")
             f.write("\n\t\t.vpci_irq_base = " + str(cell.vpci_irq_base) + ",")
             f.write(
@@ -255,7 +272,10 @@ class BoardConfigurator:
             )  # lookatthis later
             f.write("\n\t\t.num_irqchips = ARRAY_SIZE(config.irqchips)" + ",")
             # f.write("\n\t\t//.num_pci_caps !!//TODO: = " + ",")
-            f.write("\n\t},")
+
+            if cell.type == "root":
+                f.write("\n\t},")
+
             f.write("\n\t},")
 
             f.write("\n\t.cpus = {")
@@ -319,21 +339,22 @@ class BoardConfigurator:
                 f.write("\n\t\t/*" + name + "*/")
                 f.write("\n\t\t{")
 
-                f.write(f"\n\t\t\ttype = JAILHOUSE_{device.type},")
-                f.write(f"\n\t\t\tdomain = {device.domain},")
-                f.write(f"\n\t\t\tbar_mask = JAILHOUSE_{device.bar_mask},")
+                f.write(f"\n\t\t\t.type = JAILHOUSE_{device.type},")
+                f.write(f"\n\t\t\t.domain = {device.domain},")
+                f.write(f"\n\t\t\t.bar_mask = JAILHOUSE_{device.bar_mask},")
+                f.write(f"\n\t\t\t.bdf = {device.bdf},")
 
                 if device.shmem_regions_start is not None:
                     f.write(
-                        f"\n\t\t\tshmem_regions_start = {device.shmem_regions_start},"
+                        f"\n\t\t\t.shmem_regions_start = {device.shmem_regions_start},"
                     )
                 if device.shmem_dev_id is not None:
-                    f.write(f"\n\t\t\tshmem_dev_id = {device.shmem_dev_id},")
+                    f.write(f"\n\t\t\t.shmem_dev_id = {device.shmem_dev_id},")
                 if device.shmem_peers is not None:
-                    f.write(f"\n\t\t\tshmem_peers = {device.shmem_peers},")
+                    f.write(f"\n\t\t\t.shmem_peers = {device.shmem_peers},")
                 if device.shmem_protocol is not None:
                     f.write(
-                        f"\n\t\t\tshmem_protocol = {device.shmem_protocol},"
+                        f"\n\t\t\t.shmem_protocol = JAILHOUSE_{device.shmem_protocol},"
                     )
 
                 f.write("\n\t\t},")
@@ -435,7 +456,179 @@ class BoardConfigurator:
             cell.memory_regions[name] = memory_region
 
     def _lower_shmem_config(self):
-        pass
+        if not self.config.shmem:
+            return
+
+        root_cell = None
+        for name, cell_config in self.config.cells.items():
+            if cell_config.type == "root":
+                root_cell = cell_config
+                break
+
+        if not root_cell:
+            raise Exception(
+                "A configuration without a root cell is not supported at the moment"
+            )
+
+        if len(self.config.shmem) > 4:
+            raise Exception(
+                "Configuring more than 4 shmem devices is not supported at the moment"
+            )
+
+        current_bdf = 0
+        pci_domain = root_cell.platform_info.pci_domain
+
+        for name, shmem_config in self.config.shmem.items():
+            if shmem_config.protocol == "SHMEM_PROTO_VETH":
+                if len(shmem_config.peers) != 2:
+                    raise Exception(
+                        "shmem-net devices must have exactly 2 peers"
+                    )
+
+            # create mem regions
+            common_output_region_size = shmem_config.common_output_region_size
+            per_device_region_size = shmem_config.per_device_region_size
+
+            if not common_output_region_size:
+                common_output_region_size = 0
+
+            if not per_device_region_size:
+                per_device_region_size = 0
+
+            mem_regions = list()
+            mem_regions_index = 0
+
+            if shmem_config.protocol == "SHMEM_PROTO_VETH":
+                common_output_region_size = 0
+
+            table_region = MemoryRegion(size=0x1000,
+                physical_start_addr=0,
+                virtual_start_addr=0,
+                allocatable=False,
+                flags=[
+                    "MEM_READ",
+                    "MEM_ROOTSHARED"
+                ],
+                next_region=f"{name}_{mem_regions_index+1}"
+            )
+            mem_regions.append((f"{name}_{mem_regions_index}", table_region))
+            mem_regions_index += 1
+
+            common_output_region = MemoryRegion(size=common_output_region_size,
+                allocatable=False,
+                physical_start_addr=0,
+                virtual_start_addr=0,
+                flags=[
+                    "MEM_READ",
+                    "MEM_WRITE",
+                    "MEM_ROOTSHARED"
+                ],
+                next_region=f"{name}_{mem_regions_index+1}"
+            )
+            mem_regions.append((f"{name}_{mem_regions_index}", common_output_region))
+            mem_regions_index += 1
+
+            for cell_name in shmem_config.peers:
+                mem_region = MemoryRegion(size=per_device_region_size,
+                    allocatable=False,
+                    physical_start_addr=0,
+                    virtual_start_addr=0,
+                    flags=[
+                        "MEM_READ",
+                        "MEM_ROOTSHARED"
+                    ],
+                    next_region=f"{name}_{mem_regions_index+1}"
+                )
+                mem_regions.append((f"{name}_{mem_regions_index}", mem_region))
+                mem_regions_index += 1
+
+            mem_regions[-1][1].next_region = None
+
+            # add PCI device to each affected cell
+            root_added = False
+            current_device_id = 0
+
+            for cell_name in shmem_config.peers:
+                cell = self.config.cells[cell_name]
+                if cell.type == "root":
+                    root_added = True
+
+                pci_dev = PCIDevice(type="PCI_TYPE_IVSHMEM",
+                    domain=pci_domain,
+                    bdf=current_bdf << 3,
+                    bar_mask="IVSHMEM_BAR_MASK_INTX",
+                    shmem_regions_start=-1,
+                    shmem_dev_id=current_device_id,
+                    shmem_peers=len(shmem_config.peers),
+                    shmem_protocol=shmem_config.protocol
+                )
+                pci_dev.memory_regions = mem_regions
+
+                cell.pci_devices[name] = pci_dev
+                cell.memory_regions.update(mem_regions)
+
+                # set interrupt pins
+                intx_pin = (current_bdf & 0x3)
+                intx_pin += cell.vpci_irq_base + 32
+
+                root_irq_chip = None
+                for name, chip in root_cell.irqchips.items():
+                    if intx_pin in chip.interrupts:
+                        root_irq_chip = chip
+                        break
+
+                if not root_irq_chip:
+                    raise Exception(
+                        f"No IRQ chip availbe for interrupt: {intx_pin}"
+                    )
+
+                irq_chip = None
+                for name, chip in cell.irqchips.items():
+                    if intx_pin in chip.interrupts:
+                        irq_chip = chip
+                        break
+
+                if not irq_chip:
+                    irq_chip = IRQChip(address=root_irq_chip.address,
+                        pin_base = root_irq_chip.pin_base,
+                        interrupts = []
+                    )
+
+                    cell.irqchips[f"{name}_{len(cell.irqchips) + 1}"] = irq_chip
+
+                irq_chip.interrupts.append(intx_pin)
+                irq_chip.interrupts.sort()
+
+                root_irq_chip.interrupts.append(intx_pin)
+                root_irq_chip.interrupts.sort()
+
+                current_device_id += 1
+
+            if not root_added:
+                root_cell.mem_regions.update(mem_regions)
+
+            current_bdf += 1
+
+    def _regions_shmem_config(self):
+        """ set MEM_WRITE flags accordingly """
+        if not self.config.shmem:
+            return
+
+        for name, shmem_config in self.config.shmem.items():
+            for cell_name in shmem_config.peers:
+                cell = self.config.cells[cell_name]
+
+                # offset 2, since mem_regions always
+                # start with table_region and common_output_region
+                dev_id = cell.pci_devices[name].shmem_dev_id
+                mem_region_name = f"{name}_{dev_id + 2}"
+                cell_output_region = cell.memory_regions[mem_region_name]
+
+                new_cell_output_region = copy.copy(cell_output_region)
+                new_cell_output_region.flags = copy.copy(cell_output_region.flags)
+                new_cell_output_region.flags.append("MEM_WRITE")
+
+                cell.memory_regions[mem_region_name] = new_cell_output_region
 
     def _allocate_memory(self):
         pass
@@ -451,8 +644,10 @@ class BoardConfigurator:
         self._lower_shmem_config()
         for cell_name, cell in self.config.cells.items():
             self._prepare_irqchips(cell)
-            self._prepare_memory_regions(cell)
+            # FIXME
+            #self._prepare_memory_regions(cell)
         self._allocate_memory()
+        self._regions_shmem_config
 
     def read_cell_yml(self, cells_yml):
         print("Reading cell configuration", str(cells_yml))
