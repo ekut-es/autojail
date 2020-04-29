@@ -35,7 +35,7 @@ class ExpressionInt(int):
             evaluator.operators[ast.LShift] = operator.lshift
             evaluator.operators[ast.RShift] = operator.rshift
             v = evaluator.eval(v)
-        cls(v)
+        return cls(v)
 
     @classmethod
     def to_yaml(cls, representer, node):
