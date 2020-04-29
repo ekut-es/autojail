@@ -312,7 +312,7 @@ class BoardConfigurator:
                     f.write("\n\t\t.size = " + tmp_size + ",")
                     s = "|"
                     # jailhouse_flags = ["JAILHOUSE_" + flag for flag in v.flags]
-                    jailhouse_flags = [flag for flag in v.flags]
+                    jailhouse_flags = [f"JAILHOUSE_{flag}" for flag in v.flags]
                     f.write(
                         "\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ","
                     )
