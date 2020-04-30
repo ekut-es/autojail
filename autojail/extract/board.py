@@ -293,7 +293,7 @@ class BoardConfigurator:
                         "\t/*"
                         + k)
 
-                    if v.physical_start_addr:
+                    if v.physical_start_addr != None:
                         f.write(" "
                             + hex(v.physical_start_addr)
                             + "-"
@@ -302,7 +302,7 @@ class BoardConfigurator:
 
                     f.write("*/\t{")
 
-                    if v.physical_start_addr:
+                    if v.physical_start_addr != None:
                         f.write(
                             "\n\t\t.phys_start = "
                             + hex(v.physical_start_addr)
@@ -316,7 +316,6 @@ class BoardConfigurator:
 
                     f.write("\n\t\t.size = " + tmp_size + ",")
                     s = "|"
-                    # jailhouse_flags = ["JAILHOUSE_" + flag for flag in v.flags]
                     jailhouse_flags = [ f"JAILHOUSE_{flag}" if "JAILHOUSE" not in flag else flag for flag in v.flags]
                     f.write(
                         "\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ","
@@ -428,7 +427,7 @@ class BoardConfigurator:
                     continue
 
                 # TODO correct?
-                if cell_region.physical_start_addr:
+                if cell_region.physical_start_addr != None:
                     if (
                         p_start >= cell_region.physical_start_addr
                         and p_start
@@ -443,7 +442,7 @@ class BoardConfigurator:
                     ):
                         skip = True
 
-                if cell_region.virtual_start_addr:
+                if cell_region.virtual_start_addr != None:
                     if (
                         v_start >= cell_region.virtual_start_addr
                         and v_start
