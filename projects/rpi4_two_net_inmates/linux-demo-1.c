@@ -46,22 +46,26 @@ struct {
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_COMM_REGION,
 	},
-	/*net1_0*/	{
+	/*net1_0 0x0-0x1000*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net1_1*/	{
+	/*net1_1 0x0-0x0*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x0,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net1_2*/	{
+	/*net1_2 0x0-0x1000*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net1_3*/	{
+	/*net1_3 0x0-0x1000*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,

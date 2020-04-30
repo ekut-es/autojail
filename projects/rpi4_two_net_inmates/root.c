@@ -3,7 +3,7 @@
 struct { 
 	struct jailhouse_system header; 
 	__u64 cpus[1];
-	struct jailhouse_memory mem_regions[33];
+	struct jailhouse_memory mem_regions[32];
 	struct jailhouse_irqchip irqchips[2];
 	struct jailhouse_pci_device pci_devices[2];
 } __attribute__((packed)) config = {
@@ -52,57 +52,59 @@ struct {
 	.cpus = {0b11111},
 	
 	.mem_regions = {
-	/*System RAM 0x80000-0x3b400000*/	{
-		.phys_start = 0x80000,
-		.virt_start = 0x80000,
-		.size = 0x3b380000,
-		.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE,
+	/*System RAM 0x0-0x4fa10000*/	{
+		.phys_start = 0x0,
+		.virt_start = 0x0,
+		.size = 0x4fa10000,
+		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE,
 	},
-	/*net1_0*/	{
+	/*net1_0 0x0-0x1000*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net1_1*/	{
+	/*net1_1 0x0-0x0*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x0,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net1_2*/	{
+	/*net1_2 0x0-0x1000*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net1_3*/	{
+	/*net1_3 0x0-0x1000*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net2_0*/	{
+	/*net2_0 0x0-0x1000*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net2_1*/	{
+	/*net2_1 0x0-0x0*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x0,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net2_2*/	{
+	/*net2_2 0x0-0x1000*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net2_3*/	{
+	/*net2_3 0x0-0x1000*/	{
+		.phys_start = 0x0,
 		.virt_start = 0x0,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
-	},
-	/*System RAM_2 0x40000000-0xfc000000*/	{
-		.phys_start = 0x40000000,
-		.virt_start = 0x40000000,
-		.size = 0xbc000000,
-		.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE,
 	},
 	/*fd500000.pcie 0xfd500000-0xfd509310*/	{
 		.phys_start = 0xfd500000,
