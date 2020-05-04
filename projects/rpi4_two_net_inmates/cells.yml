@@ -76,7 +76,6 @@ cells:
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
-# FIXME: this does not work due to a bug in prepare_memory_cells
       "communication_region":
         virtual_start_addr: 0x80000000
         size: 0x00001000
@@ -111,7 +110,6 @@ cells:
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
-# FIXME: this does not work due to a bug in prepare_memory_cells
       "communication_region":
         virtual_start_addr: 0x80000000
         size: 0x00001000
