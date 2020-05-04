@@ -39,6 +39,7 @@ cells:
         physical_start_addr: 0x0
         virtual_start_addr: 0x0
         size: 0x4fa10000
+        allocatable: True
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
 
     irqchips:
