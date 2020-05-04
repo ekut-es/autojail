@@ -58,51 +58,41 @@ struct {
 		.size = 0x4fa10000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE,
 	},
-	/*net1_0 0x0-0x1000*/	{
-		.phys_start = 0x0,
-		.virt_start = 0x0,
+	/*net1_0 0x4fa0d000-0x4fa0e000*/	{
+		.phys_start = 0x4fa0d000,
+		.virt_start = 0x4fa0d000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net1_1 0x0-0x0*/	{
-		.phys_start = 0x0,
-		.virt_start = 0x0,
-		.size = 0x0,
-		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_ROOTSHARED,
-	},
-	/*net1_2 0x0-0x1000*/	{
-		.phys_start = 0x0,
-		.virt_start = 0x0,
+	/* empty optional region */ { 0 },
+	/*net1_2 0x4fa0e000-0x4fa0f000*/	{
+		.phys_start = 0x4fa0e000,
+		.virt_start = 0x4fa0e000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net1_3 0x0-0x1000*/	{
-		.phys_start = 0x0,
-		.virt_start = 0x0,
+	/*net1_3 0x4fa0f000-0x4fa10000*/	{
+		.phys_start = 0x4fa0f000,
+		.virt_start = 0x4fa0f000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net2_0 0x0-0x1000*/	{
-		.phys_start = 0x0,
-		.virt_start = 0x0,
+	/*net2_0 0x4fa0a000-0x4fa0b000*/	{
+		.phys_start = 0x4fa0a000,
+		.virt_start = 0x9f41b000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net2_1 0x0-0x0*/	{
-		.phys_start = 0x0,
-		.virt_start = 0x0,
-		.size = 0x0,
-		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_ROOTSHARED,
-	},
-	/*net2_2 0x0-0x1000*/	{
-		.phys_start = 0x0,
-		.virt_start = 0x0,
+	/* empty optional region */ { 0 },
+	/*net2_2 0x4fa0b000-0x4fa0c000*/	{
+		.phys_start = 0x4fa0b000,
+		.virt_start = 0x9f41c000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net2_3 0x0-0x1000*/	{
-		.phys_start = 0x0,
-		.virt_start = 0x0,
+	/*net2_3 0x4fa0c000-0x4fa0d000*/	{
+		.phys_start = 0x4fa0c000,
+		.virt_start = 0x9f41d000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},

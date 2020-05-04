@@ -95,7 +95,9 @@ class CellConfig(BaseModel):
     debug_console: DebugConsole
     platform_info: Optional[PlatformInfo]
     cpus: IntegerList
-    memory_regions: Optional[Dict[str, Union[MemoryRegion, ShMemNetRegion]]] = {}
+    memory_regions: Optional[
+        Dict[str, Union[MemoryRegion, ShMemNetRegion]]
+    ] = {}
     irqchips: Optional[Dict[str, IRQChip]] = {}
     pci_devices: Optional[Dict[str, PCIDevice]] = {}
 

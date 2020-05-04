@@ -1,4 +1,5 @@
 import os
+import bisect
 
 from typing import Optional
 from pathlib import Path
@@ -12,7 +13,7 @@ from ..model import (
     ShMemNetRegion,
     JailhouseConfig,
     IRQChip,
-    PCIDevice
+    PCIDevice,
 )
 
 
@@ -209,7 +210,9 @@ class BoardConfigurator:
                     + hex(cell.hypervisor_memory.physical_start_addr)
                     + ","
                 )
-                f.write("\n\t\t.size = " + hex(cell.hypervisor_memory.size) + ",")
+                f.write(
+                    "\n\t\t.size = " + hex(cell.hypervisor_memory.size) + ","
+                )
                 f.write("\n\t},\n")
 
             f.write("\n\t.debug_console = {")
@@ -288,13 +291,16 @@ class BoardConfigurator:
             f.write("\n\t")
             f.write("\n\t.mem_regions = {\n")
             for k, v in cell.memory_regions.items():
+                if v.size == 0:
+                    f.write("\t/* empty optional region */ { 0 },\n")
+                    continue
+
                 if isinstance(v, MemoryRegion):
-                    f.write(
-                        "\t/*"
-                        + k)
+                    f.write("\t/*" + k)
 
                     if v.physical_start_addr != None:
-                        f.write(" "
+                        f.write(
+                            " "
                             + hex(v.physical_start_addr)
                             + "-"
                             + hex(v.physical_start_addr + v.size)
@@ -316,7 +322,10 @@ class BoardConfigurator:
 
                     f.write("\n\t\t.size = " + tmp_size + ",")
                     s = "|"
-                    jailhouse_flags = [ f"JAILHOUSE_{flag}" if "JAILHOUSE" not in flag else flag for flag in v.flags]
+                    jailhouse_flags = [
+                        f"JAILHOUSE_{flag}" if "JAILHOUSE" not in flag else flag
+                        for flag in v.flags
+                    ]
                     f.write(
                         "\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ","
                     )
@@ -509,43 +518,32 @@ class BoardConfigurator:
                 common_output_region_size = 0
                 per_device_region_size = self.board.pagesize
 
-            table_region = MemoryRegion(size=0x1000,
-                physical_start_addr=0,
-                virtual_start_addr=0,
+            table_region = MemoryRegion(
+                size=0x1000,
                 allocatable=False,
-                flags=[
-                    "MEM_READ",
-                    "MEM_ROOTSHARED"
-                ],
-                next_region=f"{name}_{mem_regions_index+1}"
+                flags=["MEM_READ", "MEM_ROOTSHARED"],
+                next_region=f"{name}_{mem_regions_index+1}",
             )
             mem_regions.append((f"{name}_{mem_regions_index}", table_region))
             mem_regions_index += 1
 
-            common_output_region = MemoryRegion(size=common_output_region_size,
+            common_output_region = MemoryRegion(
+                size=common_output_region_size,
                 allocatable=False,
-                physical_start_addr=0,
-                virtual_start_addr=0,
-                flags=[
-                    "MEM_READ",
-                    "MEM_WRITE",
-                    "MEM_ROOTSHARED"
-                ],
-                next_region=f"{name}_{mem_regions_index+1}"
+                flags=["MEM_READ", "MEM_WRITE", "MEM_ROOTSHARED"],
+                next_region=f"{name}_{mem_regions_index+1}",
             )
-            mem_regions.append((f"{name}_{mem_regions_index}", common_output_region))
+            mem_regions.append(
+                (f"{name}_{mem_regions_index}", common_output_region)
+            )
             mem_regions_index += 1
 
             for cell_name in shmem_config.peers:
-                mem_region = MemoryRegion(size=per_device_region_size,
+                mem_region = MemoryRegion(
+                    size=per_device_region_size,
                     allocatable=False,
-                    physical_start_addr=0,
-                    virtual_start_addr=0,
-                    flags=[
-                        "MEM_READ",
-                        "MEM_ROOTSHARED"
-                    ],
-                    next_region=f"{name}_{mem_regions_index+1}"
+                    flags=["MEM_READ", "MEM_ROOTSHARED"],
+                    next_region=f"{name}_{mem_regions_index+1}",
                 )
                 mem_regions.append((f"{name}_{mem_regions_index}", mem_region))
                 mem_regions_index += 1
@@ -561,14 +559,15 @@ class BoardConfigurator:
                 if cell.type == "root":
                     root_added = True
 
-                pci_dev = PCIDevice(type="PCI_TYPE_IVSHMEM",
+                pci_dev = PCIDevice(
+                    type="PCI_TYPE_IVSHMEM",
                     domain=pci_domain,
                     bdf=current_bdf << 3,
                     bar_mask="IVSHMEM_BAR_MASK_INTX",
                     shmem_regions_start=-1,
                     shmem_dev_id=current_device_id,
                     shmem_peers=len(shmem_config.peers),
-                    shmem_protocol=shmem_config.protocol
+                    shmem_protocol=shmem_config.protocol,
                 )
                 pci_dev.memory_regions = mem_regions
 
@@ -576,7 +575,7 @@ class BoardConfigurator:
                 cell.memory_regions.update(mem_regions)
 
                 # set interrupt pins
-                intx_pin = (current_bdf & 0x3)
+                intx_pin = current_bdf & 0x3
                 intx_pin += cell.vpci_irq_base + 32
 
                 root_irq_chip = None
@@ -597,9 +596,10 @@ class BoardConfigurator:
                         break
 
                 if not irq_chip:
-                    irq_chip = IRQChip(address=root_irq_chip.address,
-                        pin_base = root_irq_chip.pin_base,
-                        interrupts = []
+                    irq_chip = IRQChip(
+                        address=root_irq_chip.address,
+                        pin_base=root_irq_chip.pin_base,
+                        interrupts=[],
                     )
 
                     cell.irqchips[f"{name}_{len(cell.irqchips) + 1}"] = irq_chip
@@ -633,18 +633,175 @@ class BoardConfigurator:
                 cell_output_region = cell.memory_regions[mem_region_name]
 
                 new_cell_output_region = copy.copy(cell_output_region)
-                new_cell_output_region.flags = copy.copy(cell_output_region.flags)
+                new_cell_output_region.flags = copy.copy(
+                    cell_output_region.flags
+                )
                 new_cell_output_region.flags.append("MEM_WRITE")
 
                 cell.memory_regions[mem_region_name] = new_cell_output_region
 
     def _allocate_memory(self):
-        # TODO check if virtual address ranges are taken
-        # TODO assume physical addresses are not taken
-        #   - use highest allocatable address and allocate downwards
-        # TODO allow allocation of hypervisor memory (default 16 MB)
+        root = self.config.cells["root"]
 
-        pass
+        # sorted list of pairs: (virtual_start_address, virtual_end_address)
+        virtual_alloc_ranges = list()
+
+        allocatable_memory = sorted(
+            map(
+                lambda x: (x[1].physical_start_addr, x[1].size),
+                filter(lambda x: x[1].allocatable, root.memory_regions.items()),
+            ),
+            key=lambda x: x[0] + x[1],
+            reverse=True,
+        )
+
+        if not len(allocatable_memory):
+            raise Exception(
+                "Invalid cells.yaml: No allocatable memory specified"
+            )
+
+        # get allocated virtual regions and unallocated
+        # physical regions
+        unallocated_regions = dict()
+        for name, region in root.memory_regions.items():
+            if (
+                region.virtual_start_addr != None
+                and region.size != None
+                and not region.allocatable
+            ):
+                mem_range = (
+                    region.virtual_start_addr,
+                    region.virtual_start_addr + region.size,
+                )
+                bisect.insort(virtual_alloc_ranges, mem_range)
+
+            if region.physical_start_addr == None:
+                unallocated_regions[name] = region
+
+        def get_virtual_mem(start, size):
+            if not virtual_alloc_ranges:
+                return start
+
+            invalid = False
+            for ref_start, ref_size in virtual_alloc_ranges:
+                if (ref_start <= start and start <= ref_start + ref_size) or (
+                    ref_start <= start + size
+                    and start + size <= ref_start + ref_size
+                ):
+                    invalid = True
+
+            if invalid:
+                # if (start, start + size) can not be used as
+                # virtual address range, since it overlaps with
+                # another region, take the first unused region that is
+                # large enough
+                for i in range(len(virtual_alloc_ranges) - 1):
+                    left_start, left_size = virtual_alloc_ranges[i]
+                    right_start, _ = virtual_alloc_ranges[i + 1]
+
+                    diff = right_start - (left_start + left_size)
+                    if diff > size:
+                        return left_start + left_size
+
+                return virtual_alloc_ranges[-1][0] + virtual_alloc_ranges[-1][1]
+
+            return start
+
+        def get_physical_mem(size):
+            mem = None
+            for i in range(len(allocatable_memory)):
+                if allocatable_memory[i][1] >= size:
+                    mem = i
+                    break
+
+            if mem == None:
+                raise Exception(
+                    "Invalid cells.yml: Not enough allocatable memory available"
+                )
+
+            start_addr, total_size = allocatable_memory[mem]
+            ret_addr = start_addr + total_size - size
+
+            total_size -= size
+            if total_size <= 0:
+                del allocatable_memory[mem]
+            else:
+                allocatable_memory[mem] = (start_addr, total_size)
+
+            return ret_addr
+
+        # allocate unallocated regions
+        keys_in_order = sorted(
+            unallocated_regions.keys(),
+            key=lambda x: "}"  # or " " if reversed
+            if unallocated_regions[x].next_region == None
+            else unallocated_regions[x].next_region,
+        )
+
+        # TODO sort regions such that those, that are not
+        # referenced via 'next_region' come first
+
+        for key in keys_in_order:
+            region = unallocated_regions[key]
+            print(f"Region: {key}")
+
+        region = None
+        while unallocated_regions:
+            if not region:
+                name = keys_in_order.pop(0)
+                region = unallocated_regions[name]
+
+            linked_regions = [(name, region)]
+            while region.next_region:
+                name = region.next_region
+                region = unallocated_regions[name]
+
+                linked_regions.append((name, region))
+
+            region_size = sum(
+                map(lambda region: region[1].size, linked_regions)
+            )
+            physical_start_addr = get_physical_mem(region_size)
+            virtual_start_address = None
+
+            if not linked_regions[0][1].virtual_start_addr:
+                virtual_start_address = get_virtual_mem(
+                    physical_start_addr, region_size
+                )
+                virtual_range = (
+                    virtual_start_address,
+                    virtual_start_address + region.size,
+                )
+                bisect.insort(virtual_alloc_ranges, virtual_range)
+
+            for name, region in linked_regions:
+                region.physical_start_addr = physical_start_addr
+
+                if virtual_start_address:
+                    region.virtual_start_addr = virtual_start_address
+                    virtual_start_address += region.size
+
+                physical_start_addr += region.size
+
+                # TODO remove
+                print(f"Allocated region '{name}':")
+
+                print(
+                    f"\tphysical_start_addr: 0x{region.physical_start_addr:x}"
+                )
+                print(f"\tvirtual_start_addr: 0x{region.virtual_start_addr:x}")
+
+                print(f"\tsize: 0x{region.size:x}")
+
+                # remove region in case it was not popped
+                # from the beginning of unallocated_regions
+                if name in unallocated_regions:
+                    del unallocated_regions[name]
+
+                if name in keys_in_order:
+                    keys_in_order.remove(name)
+
+            region = None
 
     def prepare(self):
         if self.config is None:
