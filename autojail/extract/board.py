@@ -730,20 +730,20 @@ class BoardConfigurator:
 
             return ret_addr
 
+        # sort regions such that those, that are not
+        # referenced via 'next_region' come first
+        def is_a_next_region(name):
+            for _, region in unallocated_regions.items():
+                if name == region.next_region:
+                    return True
+
+            return False
+
         # allocate unallocated regions
         keys_in_order = sorted(
             unallocated_regions.keys(),
-            key=lambda x: "}"  # or " " if reversed
-            if unallocated_regions[x].next_region == None
-            else unallocated_regions[x].next_region,
+            key=lambda x: 1 if is_a_next_region(x) else -1,
         )
-
-        # TODO sort regions such that those, that are not
-        # referenced via 'next_region' come first
-
-        for key in keys_in_order:
-            region = unallocated_regions[key]
-            print(f"Region: {key}")
 
         region = None
         while unallocated_regions:
@@ -782,16 +782,6 @@ class BoardConfigurator:
                     virtual_start_address += region.size
 
                 physical_start_addr += region.size
-
-                # TODO remove
-                print(f"Allocated region '{name}':")
-
-                print(
-                    f"\tphysical_start_addr: 0x{region.physical_start_addr:x}"
-                )
-                print(f"\tvirtual_start_addr: 0x{region.virtual_start_addr:x}")
-
-                print(f"\tsize: 0x{region.size:x}")
 
                 # remove region in case it was not popped
                 # from the beginning of unallocated_regions
