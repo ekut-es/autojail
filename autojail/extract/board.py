@@ -3,6 +3,7 @@ import bisect
 
 from typing import Optional
 from pathlib import Path
+from collections import defaultdict
 
 import ruamel.yaml
 import copy
@@ -572,7 +573,7 @@ class BoardConfigurator:
                 pci_dev.memory_regions = mem_regions
 
                 cell.pci_devices[name] = pci_dev
-                cell.memory_regions.update(mem_regions)
+                cell.memory_regions.update(copy.deepcopy(mem_regions))
 
                 # set interrupt pins
                 intx_pin = current_bdf & 0x3
@@ -613,7 +614,7 @@ class BoardConfigurator:
                 current_device_id += 1
 
             if not root_added:
-                root_cell.mem_regions.update(mem_regions)
+                root_cell.mem_regions.update(copy.deepcopy(mem_regions))
 
             current_bdf += 1
 
@@ -643,8 +644,9 @@ class BoardConfigurator:
     def _allocate_memory(self):
         root = self.config.cells["root"]
 
+        # virtual_alloc_ranges: map from cell name to
         # sorted list of pairs: (virtual_start_address, virtual_end_address)
-        virtual_alloc_ranges = list()
+        virtual_alloc_ranges = defaultdict(list)
 
         allocatable_memory = sorted(
             map(
@@ -660,52 +662,36 @@ class BoardConfigurator:
                 "Invalid cells.yaml: No allocatable memory specified"
             )
 
-        # get allocated virtual regions and unallocated
-        # physical regions
-        unallocated_regions = dict()
-        for name, region in root.memory_regions.items():
-            if (
-                region.virtual_start_addr != None
-                and region.size != None
-                and not region.allocatable
-            ):
-                mem_range = (
-                    region.virtual_start_addr,
-                    region.virtual_start_addr + region.size,
-                )
-                bisect.insort(virtual_alloc_ranges, mem_range)
+        def get_virtual_mem(start, size, cell_name):
+            ranges = virtual_alloc_ranges[cell_name]
 
-            if region.physical_start_addr == None:
-                unallocated_regions[name] = region
-
-        def get_virtual_mem(start, size):
-            if not virtual_alloc_ranges:
+            if not ranges:
                 return start
 
-            invalid = False
-            for ref_start, ref_size in virtual_alloc_ranges:
-                if (ref_start <= start and start <= ref_start + ref_size) or (
-                    ref_start <= start + size
-                    and start + size <= ref_start + ref_size
+            range_req = (start, start + size)
+
+            def ranges_overlap(r1, r2):
+                start1, end1 = r1
+                start2, end2 = r2
+
+                if (
+                    (start1 <= start2 and start2 <= end1)
+                    or (start1 <= end2 and end2 <= end1)
+                    or (start2 <= start1 and start1 <= end2)
+                    or (start2 <= end1 and end1 <= end2)
                 ):
-                    invalid = True
+                    print(
+                        f"Ranges overlap: (0x{r1[0]:x}, 0x{r1[1]:x}) and (0x{r2[0]:x}, 0x{r2[1]:x})"
+                    )
+                    return True
 
-            if invalid:
-                # if (start, start + size) can not be used as
-                # virtual address range, since it overlaps with
-                # another region, take the first unused region that is
-                # large enough
-                for i in range(len(virtual_alloc_ranges) - 1):
-                    left_start, left_size = virtual_alloc_ranges[i]
-                    right_start, _ = virtual_alloc_ranges[i + 1]
+                return False
 
-                    diff = right_start - (left_start + left_size)
-                    if diff > size:
-                        return left_start + left_size
+            for ref_start, ref_end in ranges:
+                if ranges_overlap(range_req, (ref_start, ref_end)):
+                    range_req = (ref_end, size)
 
-                return virtual_alloc_ranges[-1][0] + virtual_alloc_ranges[-1][1]
-
-            return start
+            return range_req[0]
 
         def get_physical_mem(size):
             mem = None
@@ -730,10 +716,32 @@ class BoardConfigurator:
 
             return ret_addr
 
+        # get allocated virtual regions and unallocated
+        # physical regions
+        # maps region name to a list of pairs: (region, cell name)
+        unallocated_regions = defaultdict(list)
+        for cell_name, cell in self.config.cells.items():
+            for region_name, region in cell.memory_regions.items():
+                if (
+                    region.virtual_start_addr != None
+                    and region.size != None
+                    and not region.allocatable
+                ):
+                    mem_range = (
+                        region.virtual_start_addr,
+                        region.virtual_start_addr + region.size,
+                    )
+                    bisect.insort(virtual_alloc_ranges[cell_name], mem_range)
+
+                if region.physical_start_addr == None:
+                    unallocated_regions[region_name].append((region, cell_name))
+
         # sort regions such that those, that are not
         # referenced via 'next_region' come first
         def is_a_next_region(name):
-            for _, region in unallocated_regions.items():
+            for _, lst in unallocated_regions.items():
+                region = lst[0][0]
+
                 if name == region.next_region:
                     return True
 
@@ -745,53 +753,76 @@ class BoardConfigurator:
             key=lambda x: 1 if is_a_next_region(x) else -1,
         )
 
-        region = None
+        regions = None
         while unallocated_regions:
-            if not region:
+            if not regions:
                 name = keys_in_order.pop(0)
-                region = unallocated_regions[name]
+                regions = unallocated_regions[name]
 
-            linked_regions = [(name, region)]
-            while region.next_region:
-                name = region.next_region
-                region = unallocated_regions[name]
+            linked_regions = dict()
+            region_size = -1
 
-                linked_regions.append((name, region))
+            for region, cell_name in regions:
+                linked_region = [(name, region)]
+                current_size = region.size
 
-            region_size = sum(
-                map(lambda region: region[1].size, linked_regions)
-            )
+                while region.next_region:
+                    name = region.next_region
+                    region = list(
+                        filter(
+                            lambda x: x[1] == cell_name,
+                            unallocated_regions[name],
+                        )
+                    )[0][0]
+
+                    current_size += region.size
+                    linked_region.append((name, region))
+
+                if region_size < 0:
+                    region_size = current_size
+                elif region_size != current_size:
+                    raise Exception(
+                        "Invalid cells.yml: linked regions not consistent accross cells"
+                    )
+
+                linked_regions[cell_name] = linked_region
+
             physical_start_addr = get_physical_mem(region_size)
-            virtual_start_address = None
 
-            if not linked_regions[0][1].virtual_start_addr:
-                virtual_start_address = get_virtual_mem(
-                    physical_start_addr, region_size
-                )
-                virtual_range = (
-                    virtual_start_address,
-                    virtual_start_address + region.size,
-                )
-                bisect.insort(virtual_alloc_ranges, virtual_range)
+            for cell_name, linked_region in linked_regions.items():
+                virtual_start_address = None
 
-            for name, region in linked_regions:
-                region.physical_start_addr = physical_start_addr
+                if not linked_region[0][1].virtual_start_addr:
+                    virtual_start_address = get_virtual_mem(
+                        physical_start_addr, region_size, cell_name
+                    )
+                    virtual_range = (
+                        virtual_start_address,
+                        virtual_start_address + region.size,
+                    )
+                    bisect.insort(
+                        virtual_alloc_ranges[cell_name], virtual_range
+                    )
 
-                if virtual_start_address:
-                    region.virtual_start_addr = virtual_start_address
-                    virtual_start_address += region.size
+                phy_start_addr = physical_start_addr
+                for name, region in linked_region:
+                    region.physical_start_addr = phy_start_addr
 
-                physical_start_addr += region.size
+                    if virtual_start_address:
+                        region.virtual_start_addr = virtual_start_address
+                        virtual_start_address += region.size
 
-                # remove region in case it was not popped
-                # from the beginning of unallocated_regions
-                if name in unallocated_regions:
-                    del unallocated_regions[name]
+                    phy_start_addr += region.size
 
-                if name in keys_in_order:
-                    keys_in_order.remove(name)
+                    # remove region in case it was not popped
+                    # from the beginning of unallocated_regions
+                    if name in unallocated_regions:
+                        del unallocated_regions[name]
 
-            region = None
+                    if name in keys_in_order:
+                        keys_in_order.remove(name)
+
+            regions = None
 
     def prepare(self):
         if self.config is None:
