@@ -2,18 +2,20 @@ name: rpi4_default
 board: raspberrypi4b-jh1
 pagesize: 4KB
 memory_regions:
-  #  System RAM:
-  #    physical_start_addr: 0x80000
-  #    virtual_start_addr: 0x80000
-  #    size: 0x3b380000
-  #    flags:
-  #    - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE
-  #  System RAM_2:
-  #    physical_start_addr: 0x40000000
-  #    virtual_start_addr: 0x40000000
-  #    size:               0xbc000000
-  #    flags:
-  #    - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE
+  System RAM:
+    physical_start_addr: 0x80000
+    virtual_start_addr: 0x80000
+    size: 0x3b380000
+    allocatable: True
+    flags:
+      - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE
+  System RAM_2:
+    physical_start_addr: 0x40000000
+    virtual_start_addr: 0x40000000
+    size: 0xbc000000
+    allocatable: True
+    flags:
+      - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE
   fd500000.pcie:
     physical_start_addr: 0xfd500000
     virtual_start_addr: 0xfd500000

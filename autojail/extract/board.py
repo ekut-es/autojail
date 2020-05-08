@@ -426,6 +426,9 @@ class BoardConfigurator:
 
     def _prepare_memory_regions(self, cell):
         for name, memory_region in self.board.memory_regions.items():
+            if memory_region.allocatable and cell.name != "root":
+                continue
+
             p_start = memory_region.physical_start_addr
             v_start = memory_region.virtual_start_addr
             p_end = memory_region.physical_start_addr
@@ -436,7 +439,6 @@ class BoardConfigurator:
                 if not isinstance(cell_region, MemoryRegion):
                     continue
 
-                # TODO correct?
                 if cell_region.physical_start_addr != None:
                     if (
                         p_start >= cell_region.physical_start_addr
