@@ -12,7 +12,7 @@ struct {
 	.signature = JAILHOUSE_SYSTEM_SIGNATURE,
 	.revision = JAILHOUSE_CONFIG_REVISION,
 	.flags = JAILHOUSE_SYS_VIRTUAL_DEBUG_CONSOLE,
-	.debug_console = {
+	.console = {
 		.address = 0xfe215040,
 		.size = 0x40,
 		.type = JAILHOUSE_CON_TYPE_8250,

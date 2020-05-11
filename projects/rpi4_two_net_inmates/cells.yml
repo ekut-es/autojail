@@ -25,12 +25,12 @@ cells:
       pci_is_virtual: 1
       pci_domain: 1
       arm:
-        - gic_version = 2,
-        - gicd_base = 0xff841000,
-        - gicc_base = 0xff842000,
-        - gich_base = 0xff844000,
-        - gicv_base = 0xff846000,
-        - maintenance_irq = 25,
+        - gic_version = 2
+        - gicd_base = 0xff841000
+        - gicc_base = 0xff842000
+        - gich_base = 0xff844000
+        - gicv_base = 0xff846000
+        - maintenance_irq = 25
 
     cpus: 0-4 # 1-3 oder 0,2 oder 1-3,5
 
@@ -120,7 +120,7 @@ shmem:
   "net1":
     protocol: SHMEM_PROTO_VETH
     peers: [root, "linux1"]
-  
+
   "net2":
     protocol: SHMEM_PROTO_VETH
     peers: [root, "linux2"]

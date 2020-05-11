@@ -30,12 +30,12 @@ struct {
 		.pci_is_virtual = 1,
 		.pci_domain = 1,
 		.arm = {
-			.gic_version = 2,,
-			.gicd_base = 0xff841000,,
-			.gicc_base = 0xff842000,,
-			.gich_base = 0xff844000,,
-			.gicv_base = 0xff846000,,
-			.maintenance_irq = 25,,
+			.gic_version = 2,
+			.gicd_base = 0xff841000,
+			.gicc_base = 0xff842000,
+			.gich_base = 0xff844000,
+			.gicv_base = 0xff846000,
+			.maintenance_irq = 25,
 		},
 
 	},
