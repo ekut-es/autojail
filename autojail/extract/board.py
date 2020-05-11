@@ -216,7 +216,11 @@ class BoardConfigurator:
                 )
                 f.write("\n\t},\n")
 
-            f.write("\n\t.debug_console = {")
+            if cell.type == "root":
+                f.write("\n\t.debug_console = {")
+            else:
+                f.write("\n\t.console = {")
+
             f.write("\n\t\t.address = " + hex(cell.debug_console.address) + ",")
             f.write("\n\t\t.size = " + hex(cell.debug_console.size) + ",")
             f.write(
