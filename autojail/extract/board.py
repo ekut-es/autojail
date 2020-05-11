@@ -257,8 +257,10 @@ class BoardConfigurator:
                 )
                 f.write("\n\t\t.arm = {")
                 arm_values = cell.platform_info.arm
+
                 for i in range(len(arm_values)):
                     f.write("\n\t\t\t." + str(arm_values[i]).strip() + ",")
+
                 f.write("\n\t\t},\n")
                 f.write("\n\t},\n")
 
@@ -586,7 +588,7 @@ class BoardConfigurator:
                 intx_pin += cell.vpci_irq_base + 32
 
                 root_irq_chip = None
-                for name, chip in root_cell.irqchips.items():
+                for chip_name, chip in root_cell.irqchips.items():
                     if intx_pin in chip.interrupts:
                         root_irq_chip = chip
                         break
@@ -597,7 +599,7 @@ class BoardConfigurator:
                     )
 
                 irq_chip = None
-                for name, chip in cell.irqchips.items():
+                for chip_name, chip in cell.irqchips.items():
                     if intx_pin in chip.interrupts:
                         irq_chip = chip
                         break
@@ -609,7 +611,7 @@ class BoardConfigurator:
                         interrupts=[],
                     )
 
-                    cell.irqchips[f"{name}_{len(cell.irqchips) + 1}"] = irq_chip
+                    cell.irqchips[f"{chip_name}_{len(cell.irqchips) + 1}"] = irq_chip
 
                 irq_chip.interrupts.append(intx_pin)
                 irq_chip.interrupts.sort()
@@ -638,6 +640,26 @@ class BoardConfigurator:
                 dev_id = cell.pci_devices[name].shmem_dev_id
                 mem_region_name = f"{name}_{dev_id + 2}"
                 cell_output_region = cell.memory_regions[mem_region_name]
+
+                def get_mem_region_index(cell, name):
+                    ret = -1
+                    index = 0
+
+                    for region_name, _ in cell.memory_regions.items():
+                        if region_name == name:
+                            ret = index
+                            break
+
+                        index += 1
+
+                    if ret == -1:
+                        raise Exception(f"Invalid cells.yaml, not a memory-region: {name}")
+
+                    return ret
+
+                first_mem_region_name = f"{name}_0"
+                shmem_regions_start = get_mem_region_index(cell, first_mem_region_name)
+                cell.pci_devices[name].shmem_regions_start = shmem_regions_start
 
                 new_cell_output_region = copy.copy(cell_output_region)
                 new_cell_output_region.flags = copy.copy(
@@ -843,7 +865,7 @@ class BoardConfigurator:
             self._prepare_irqchips(cell)
             self._prepare_memory_regions(cell)
         self._allocate_memory()
-        self._regions_shmem_config
+        self._regions_shmem_config()
 
     def read_cell_yml(self, cells_yml):
         print("Reading cell configuration", str(cells_yml))
