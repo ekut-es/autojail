@@ -166,7 +166,7 @@ class BoardConfigurator:
             # 64 von rpi4.c  size of datatype __u64
             # FIXME: check if feasible for higher number of cpu sets
             #        should probably be maximum over all cpu sets
-            cpu_calculated = max(*cpu_set) // 64 + 1
+            cpu_calculated = max(list(cpu_set)) // 64 + 1
 
             f.write("#include <jailhouse/types.h>\n")
             f.write("#include <jailhouse/cell-config.h>\n")

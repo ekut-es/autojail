@@ -149,9 +149,12 @@ class IntegerList(list):
         yield cls.validate
 
     @classmethod
-    def validate(cls, v: Union[str, List[int]]) -> "IntegerList":
+    def validate(cls, v: Union[str, int, List[int]]) -> "IntegerList":
         if isinstance(v, list):
             return cls(v)
+
+        if isinstance(v, int):
+            return cls([v])
 
         selection = set()
         # tokens are comma separated values
