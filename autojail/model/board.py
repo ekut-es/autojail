@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Dict, List, Union, Optional
+from typing import OrderedDict, List, Union, Optional
 
 from .datatypes import ByteSize, ExpressionInt, IntegerList, HexInt
 
@@ -22,7 +22,7 @@ class Board(BaseModel):
     name: str
     board: str
     pagesize: ByteSize
-    memory_regions: Dict[str, MemoryRegion]
+    memory_regions: OrderedDict[str, MemoryRegion]
 
 
 class HypervisorMemory(BaseModel):
@@ -96,10 +96,10 @@ class CellConfig(BaseModel):
     platform_info: Optional[PlatformInfo]
     cpus: IntegerList
     memory_regions: Optional[
-        Dict[str, Union[MemoryRegion, ShMemNetRegion]]
+        OrderedDict[str, Union[MemoryRegion, ShMemNetRegion]]
     ] = {}
-    irqchips: Optional[Dict[str, IRQChip]] = {}
-    pci_devices: Optional[Dict[str, PCIDevice]] = {}
+    irqchips: Optional[OrderedDict[str, IRQChip]] = {}
+    pci_devices: Optional[OrderedDict[str, PCIDevice]] = {}
 
 
 class ShmemConfig(BaseModel):
@@ -110,8 +110,8 @@ class ShmemConfig(BaseModel):
 
 
 class JailhouseConfig(BaseModel):
-    cells: Dict[str, CellConfig]
-    shmem: Optional[Dict[str, ShmemConfig]] = None
+    cells: OrderedDict[str, CellConfig]
+    shmem: Optional[OrderedDict[str, ShmemConfig]] = None
 
 
 if __name__ == "__main__":
