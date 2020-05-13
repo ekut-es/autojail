@@ -32,7 +32,7 @@ cells:
         - gicv_base = 0xff846000
         - maintenance_irq = 25
 
-    cpus: 0-4 # 1-3 oder 0,2 oder 1-3,5
+    cpus: 0-3 # 1-3 oder 0,2 oder 1-3,5
 
     memory_regions:
       "System RAM":
@@ -52,8 +52,8 @@ cells:
     type: "linux"
     name: "Linux demo 1"
     vpci_irq_base: 153 # 185 - 32
-    flags: [CELL_PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
-    cpus: 1,2
+    flags: [PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
+    cpus: 2
 
     hypervisor_memory:
     platform_info:
@@ -66,16 +66,22 @@ cells:
 
     memory_regions:
       "RAM 1":
-        physical_start_addr: 0x4f900000
         virtual_start_addr: 0
         size: 0x10000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
 
       "RAM 2":
-        physical_start_addr: 0x30000000
         virtual_start_addr: 0x30000000
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
+
+      fe215040.serial:
+        physical_start_addr: 0xfe215040
+        virtual_start_addr: 0xfe215040
+        size: 0x40
+        flags:
+          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
+            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
 
       "communication_region":
         virtual_start_addr: 0x80000000
@@ -86,8 +92,8 @@ cells:
     type: "linux"
     name: "Linux demo 2"
     vpci_irq_base: 153 # 185 - 32
-    flags: [CELL_PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
-    cpus: 3,4
+    flags: [PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
+    cpus: 3
 
     hypervisor_memory:
     platform_info:
@@ -99,14 +105,20 @@ cells:
       flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
 
     memory_regions:
-      "RAM 1":
-        physical_start_addr: 0x4fa00000
+      "RAM 2.1":
         virtual_start_addr: 0
         size: 0x10000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
 
-      "RAM 2":
-        physical_start_addr: 0x40000000
+      fe215040.serial:
+        physical_start_addr: 0xfe215040
+        virtual_start_addr: 0xfe215040
+        size: 0x40
+        flags:
+          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
+            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+
+      "RAM 2.2":
         virtual_start_addr: 0x40000000
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
