@@ -706,6 +706,9 @@ class BoardConfigurator:
                 "Invalid cells.yaml: No allocatable memory specified"
             )
 
+        # FIXME detects some non-overlapping ranges as
+        # overlapping and then assigns new regions that
+        # are overlapping
         def get_virtual_mem(start, size, cell_name):
             ranges = virtual_alloc_ranges[cell_name]
 
@@ -719,10 +722,10 @@ class BoardConfigurator:
                 start2, end2 = r2
 
                 if (
-                    (start1 <= start2 and start2 <= end1)
-                    or (start1 <= end2 and end2 <= end1)
-                    or (start2 <= start1 and start1 <= end2)
-                    or (start2 <= end1 and end1 <= end2)
+                    (start1 <= start2 and start2 < end1)
+                    or (start1 < end2 and end2 < end1)
+                    or (start2 <= start1 and start1 < end2)
+                    or (start2 < end1 and end1 < end2)
                 ):
                     print(
                         f"Ranges overlap: (0x{r1[0]:x}, 0x{r1[1]:x}) and (0x{r2[0]:x}, 0x{r2[1]:x})"
