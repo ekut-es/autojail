@@ -689,13 +689,12 @@ class BoardConfigurator:
         # sorted list of pairs: (virtual_start_address, virtual_end_address)
         virtual_alloc_ranges = defaultdict(list)
 
-        # FIXME shrink allocatable memory
         allocatable_memory = sorted(
             map(
-                lambda x: x[1],
+                lambda x: (x[1].physical_start_addr, x[1].size),
                 filter(lambda x: x[1].allocatable, root.memory_regions.items()),
             ),
-            key=lambda x: x.physical_start_addr + x.size,
+            key=lambda x: x[0] + x[1],
             reverse=True,
         )
 
@@ -738,7 +737,7 @@ class BoardConfigurator:
         def get_physical_mem(size):
             mem = None
             for i in range(len(allocatable_memory)):
-                if allocatable_memory[i].size >= size:
+                if allocatable_memory[i][1] >= size:
                     mem = i
                     break
 
@@ -747,13 +746,12 @@ class BoardConfigurator:
                     "Invalid cells.yml: Not enough allocatable memory available"
                 )
 
-            memory = allocatable_memory[mem]
-            start_addr, total_size = (memory.physical_start_addr, memory.size)
+            start_addr, total_size = allocatable_memory[mem]
             ret_addr = start_addr + total_size - size
 
             total_size -= size
 
-            allocatable_memory[mem].size = total_size
+            allocatable_memory[mem] = (start_addr, total_size)
             if total_size <= 0:
                 del allocatable_memory[mem]
 
@@ -762,6 +760,8 @@ class BoardConfigurator:
         # get allocated virtual regions and unallocated
         # physical regions
         # maps region name to a list of pairs: (region, cell name)
+        # FIXME: allocating the same physical address across cells
+        # for same-named memory regions breaks RAM regions
         unallocated_regions = defaultdict(list)
         for cell_name, cell in self.config.cells.items():
             for region_name, region in cell.memory_regions.items():
@@ -835,7 +835,7 @@ class BoardConfigurator:
             for cell_name, linked_region in linked_regions.items():
                 virtual_start_address = None
 
-                if not linked_region[0][1].virtual_start_addr:
+                if linked_region[0][1].virtual_start_addr == None:
                     virtual_start_address = get_virtual_mem(
                         physical_start_addr, region_size, cell_name
                     )
