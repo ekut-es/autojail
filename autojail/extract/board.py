@@ -694,10 +694,10 @@ class BoardConfigurator:
 
         allocatable_memory = sorted(
             map(
-                lambda x: (x[1].physical_start_addr, x[1].size),
+                lambda x: x[1],
                 filter(lambda x: x[1].allocatable, root.memory_regions.items()),
             ),
-            key=lambda x: x[0] + x[1],
+            key=lambda x: x.physical_start_addr + x.size,
             reverse=True,
         )
 
@@ -706,9 +706,6 @@ class BoardConfigurator:
                 "Invalid cells.yaml: No allocatable memory specified"
             )
 
-        # FIXME detects some non-overlapping ranges as
-        # overlapping and then assigns new regions that
-        # are overlapping
         def get_virtual_mem(start, size, cell_name):
             ranges = virtual_alloc_ranges[cell_name]
 
@@ -743,7 +740,7 @@ class BoardConfigurator:
         def get_physical_mem(size):
             mem = None
             for i in range(len(allocatable_memory)):
-                if allocatable_memory[i][1] >= size:
+                if allocatable_memory[i].size >= size:
                     mem = i
                     break
 
@@ -752,12 +749,13 @@ class BoardConfigurator:
                     "Invalid cells.yml: Not enough allocatable memory available"
                 )
 
-            start_addr, total_size = allocatable_memory[mem]
+            allocatable_region = allocatable_memory[mem]
+            start_addr, total_size = (allocatable_region.physical_start_addr, allocatable_region.size)
             ret_addr = start_addr + total_size - size
 
             total_size -= size
 
-            allocatable_memory[mem] = (start_addr, total_size)
+            allocatable_memory[mem].size = total_size
             if total_size <= 0:
                 del allocatable_memory[mem]
 
@@ -803,6 +801,21 @@ class BoardConfigurator:
             key=lambda x: 1 if is_a_next_region(x) else -1,
         )
 
+        # TODO add all unallocated regions that are not
+        # part of the root cell, to the root cell
+        # Do cross-cell region identification name-based
+        for region_name, lst in unallocated_regions.items():
+            if region_name not in root.memory_regions:
+                new_root_regions = list()
+                for region, cell_name in lst:
+                    new_region = copy.deepcopy(region)
+
+                    root.memory_regions[f"{cell_name}_{region_name}"] = new_region 
+                    new_root_regions.append((new_region, root.name))
+
+                lst += new_root_regions
+
+
         regions = None
         while unallocated_regions:
             if not regions:
@@ -839,8 +852,6 @@ class BoardConfigurator:
 
             physical_start_addr = get_physical_mem(region_size)
 
-            # FIXME consecutive virtual address ranges sometimes somehow broken?
-            # see root.c virtual addresses for networking memory regions
             for cell_name, linked_region in linked_regions.items():
                 virtual_start_address = None
 
