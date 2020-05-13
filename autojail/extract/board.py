@@ -200,9 +200,22 @@ class BoardConfigurator:
             else:
                 f.write("\n.cell = {")
 
-            f.write("\n\t.signature = JAILHOUSE_SYSTEM_SIGNATURE,")
+            if cell.type == "root":
+                f.write("\n\t.signature = JAILHOUSE_SYSTEM_SIGNATURE,")
+            else:
+                f.write("\n\t.signature = JAILHOUSE_CELL_DESC_SIGNATURE,")
+
             f.write("\n\t.revision = JAILHOUSE_CONFIG_REVISION,")
-            f.write("\n\t.flags = JAILHOUSE_SYS_VIRTUAL_DEBUG_CONSOLE,")
+
+            cell_flags = " | ".join(
+                list(
+                    map(
+                        lambda x: f"JAILHOUSE_CELL_{x}",
+                        cell.flags
+                    )
+                )
+            )
+            f.write(f"\n\t.flags = {cell_flags},")
 
             if cell.type == "root":
                 f.write("\n\t.hypervisor_memory = {")
@@ -362,7 +375,7 @@ class BoardConfigurator:
                 f.write(f"\n\t\t\t.type = JAILHOUSE_{device.type},")
                 f.write(f"\n\t\t\t.domain = {device.domain},")
                 f.write(f"\n\t\t\t.bar_mask = JAILHOUSE_{device.bar_mask},")
-                f.write(f"\n\t\t\t.bdf = {device.bdf},")
+                f.write(f"\n\t\t\t.bdf = {device.bdf} << 3,")
 
                 if device.shmem_regions_start is not None:
                     f.write(
@@ -571,7 +584,7 @@ class BoardConfigurator:
                 pci_dev = PCIDevice(
                     type="PCI_TYPE_IVSHMEM",
                     domain=pci_domain,
-                    bdf=current_bdf << 3,
+                    bdf=current_bdf,
                     bar_mask="IVSHMEM_BAR_MASK_INTX",
                     shmem_regions_start=-1,
                     shmem_dev_id=current_device_id,
@@ -613,10 +626,10 @@ class BoardConfigurator:
 
                     cell.irqchips[f"{chip_name}_{len(cell.irqchips) + 1}"] = irq_chip
 
-                irq_chip.interrupts.append(intx_pin)
+                irq_chip.interrupts.append(intx_pin - irq_chip.pin_base)
                 irq_chip.interrupts.sort()
 
-                root_irq_chip.interrupts.append(intx_pin)
+                root_irq_chip.interrupts.append(intx_pin - irq_chip.pin_base)
                 root_irq_chip.interrupts.sort()
 
                 current_device_id += 1
@@ -676,12 +689,13 @@ class BoardConfigurator:
         # sorted list of pairs: (virtual_start_address, virtual_end_address)
         virtual_alloc_ranges = defaultdict(list)
 
+        # FIXME shrink allocatable memory
         allocatable_memory = sorted(
             map(
-                lambda x: (x[1].physical_start_addr, x[1].size),
+                lambda x: x[1],
                 filter(lambda x: x[1].allocatable, root.memory_regions.items()),
             ),
-            key=lambda x: x[0] + x[1],
+            key=lambda x: x.physical_start_addr + x.size,
             reverse=True,
         )
 
@@ -724,7 +738,7 @@ class BoardConfigurator:
         def get_physical_mem(size):
             mem = None
             for i in range(len(allocatable_memory)):
-                if allocatable_memory[i][1] >= size:
+                if allocatable_memory[i].size >= size:
                     mem = i
                     break
 
@@ -733,14 +747,15 @@ class BoardConfigurator:
                     "Invalid cells.yml: Not enough allocatable memory available"
                 )
 
-            start_addr, total_size = allocatable_memory[mem]
+            memory = allocatable_memory[mem]
+            start_addr, total_size = (memory.physical_start_addr, memory.size)
             ret_addr = start_addr + total_size - size
 
             total_size -= size
+
+            allocatable_memory[mem].size = total_size
             if total_size <= 0:
                 del allocatable_memory[mem]
-            else:
-                allocatable_memory[mem] = (start_addr, total_size)
 
             return ret_addr
 
