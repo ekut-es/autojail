@@ -4,10 +4,6 @@ cells:
     name: "Raspberry PI4"
     vpci_irq_base: 150 # 182-32
     flags: [SYS_VIRTUAL_DEBUG_CONSOLE]
-    ram_settings:
-      physical_start_addr: 0x0
-      virtual_start_addr: 0x0
-      size: 1 GB
 
     hypervisor_memory:
       physical_start_addr: 0x3fc00000 # 0x11319sollte es eig sein
