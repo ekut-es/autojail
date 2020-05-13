@@ -195,22 +195,22 @@ class BoardConfigurator:
             # f.write("\tstruct jailhouse_pci_capability pci_caps[39];\n")  # TODO:
             f.write("} __attribute__((packed)) config = {\n")
 
+            prefix = ""
             if cell.type == "root":
                 f.write("\n.header = {")
+                f.write("\n\t.signature = JAILHOUSE_SYSTEM_SIGNATURE,")
+                prefix = "JAILHOUSE"
             else:
                 f.write("\n.cell = {")
-
-            if cell.type == "root":
-                f.write("\n\t.signature = JAILHOUSE_SYSTEM_SIGNATURE,")
-            else:
                 f.write("\n\t.signature = JAILHOUSE_CELL_DESC_SIGNATURE,")
+                prefix = "JAILHOUSE_CELL"
 
             f.write("\n\t.revision = JAILHOUSE_CONFIG_REVISION,")
 
             cell_flags = " | ".join(
                 list(
                     map(
-                        lambda x: f"JAILHOUSE_CELL_{x}",
+                        lambda x: f"{prefix}_{x}",
                         cell.flags
                     )
                 )
