@@ -38,7 +38,6 @@ cells:
       "System RAM":
         physical_start_addr: 0x0
         virtual_start_addr: 0x0
-#        size: 0x4fa10000
         size: 0x40000000
         allocatable: True
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
@@ -151,6 +150,6 @@ shmem:
     protocol: SHMEM_PROTO_VETH
     peers: [root, "linux1"]
 
-#  "net2":
-#    protocol: SHMEM_PROTO_VETH
-#    peers: [root, "linux2"]
+  "net2":
+    protocol: SHMEM_PROTO_VETH
+    peers: [root, "linux2"]

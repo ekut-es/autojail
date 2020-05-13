@@ -29,14 +29,14 @@ struct {
 	.cpus = {0b100},
 	
 	.mem_regions = {
-	/*RAM 1 0xfbfed000-0xfbffd000*/	{
-		.phys_start = 0xfbfed000,
+	/*RAM 1 0xfbfea000-0xfbffa000*/	{
+		.phys_start = 0xfbfea000,
 		.virt_start = 0x0,
 		.size = 0x10000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE|JAILHOUSE_MEM_LOADABLE,
 	},
-	/*RAM 2 0xf3fed000-0xfbfed000*/	{
-		.phys_start = 0xf3fed000,
+	/*RAM 2 0xf3fea000-0xfbfea000*/	{
+		.phys_start = 0xf3fea000,
 		.virt_start = 0x30000000,
 		.size = 0x8000000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE|JAILHOUSE_MEM_DMA|JAILHOUSE_MEM_LOADABLE,
@@ -53,8 +53,8 @@ struct {
 		.size = 0xb4,
 		.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*communication_region 0xf3fec000-0xf3fed000*/	{
-		.phys_start = 0xf3fec000,
+	/*communication_region 0xf3fe9000-0xf3fea000*/	{
+		.phys_start = 0xf3fe9000,
 		.virt_start = 0x80000000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_COMM_REGION,

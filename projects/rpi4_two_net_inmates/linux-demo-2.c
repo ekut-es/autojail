@@ -3,9 +3,9 @@
 struct { 
 	struct jailhouse_cell_desc cell; 
 	__u64 cpus[1];
-	struct jailhouse_memory mem_regions[5];
-	struct jailhouse_irqchip irqchips[0];
-	struct jailhouse_pci_device pci_devices[0];
+	struct jailhouse_memory mem_regions[9];
+	struct jailhouse_irqchip irqchips[2];
+	struct jailhouse_pci_device pci_devices[1];
 } __attribute__((packed)) config = {
 
 .cell = {
@@ -29,8 +29,8 @@ struct {
 	.cpus = {0b1000},
 	
 	.mem_regions = {
-	/*RAM 2.1 0xf3fdc000-0xf3fec000*/	{
-		.phys_start = 0xf3fdc000,
+	/*RAM 2.1 0xf3fd9000-0xf3fe9000*/	{
+		.phys_start = 0xf3fd9000,
 		.virt_start = 0x0,
 		.size = 0x10000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE|JAILHOUSE_MEM_LOADABLE,
@@ -47,23 +47,63 @@ struct {
 		.size = 0xb4,
 		.flags = JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*RAM 2.2 0xebfdc000-0xf3fdc000*/	{
-		.phys_start = 0xebfdc000,
+	/*RAM 2.2 0xebfd9000-0xf3fd9000*/	{
+		.phys_start = 0xebfd9000,
 		.virt_start = 0x40000000,
 		.size = 0x8000000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE|JAILHOUSE_MEM_DMA|JAILHOUSE_MEM_LOADABLE,
 	},
-	/*communication_region 0xf3fec000-0xf3fed000*/	{
-		.phys_start = 0xf3fec000,
+	/*communication_region 0xf3fe9000-0xf3fea000*/	{
+		.phys_start = 0xf3fe9000,
 		.virt_start = 0x80000000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_COMM_REGION,
 	},
+	/*net2_0 0xfbffa000-0xfbffb000*/	{
+		.phys_start = 0xfbffa000,
+		.virt_start = 0xfbffa000,
+		.size = 0x1000,
+		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
+	},
+	/* empty optional region */ { 0 },
+	/*net2_2 0xfbffb000-0xfbffc000*/	{
+		.phys_start = 0xfbffb000,
+		.virt_start = 0xfbffb000,
+		.size = 0x1000,
+		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
+	},
+	/*net2_3 0xfbffc000-0xfbffd000*/	{
+		.phys_start = 0xfbffc000,
+		.virt_start = 0xfbffc000,
+		.size = 0x1000,
+		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED|JAILHOUSE_MEM_WRITE,
+	},
 	},
 	.irqchips = {
+		{
+			.address = 0xff841000,
+			.pin_base = 32,
+			.pin_bitmap = {},
+		},
+		{
+			.address = 0xff841000,
+			.pin_base = 160,
+			.pin_bitmap = {0x4000000},
+		},
 	},
 
 	.pci_devices = {
+		/*net2*/
+		{
+			.type = JAILHOUSE_PCI_TYPE_IVSHMEM,
+			.domain = 1,
+			.bar_mask = JAILHOUSE_IVSHMEM_BAR_MASK_INTX,
+			.bdf = 1 << 3,
+			.shmem_regions_start = 5,
+			.shmem_dev_id = 1,
+			.shmem_peers = 2,
+			.shmem_protocol = JAILHOUSE_SHMEM_PROTO_VETH,
+		},
 	},
 
 };
