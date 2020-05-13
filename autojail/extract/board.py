@@ -760,6 +760,7 @@ class BoardConfigurator:
         # get allocated virtual regions and unallocated
         # physical regions
         # maps region name to a list of pairs: (region, cell name)
+
         # FIXME: allocating the same physical address across cells
         # for same-named memory regions breaks RAM regions
         unallocated_regions = defaultdict(list)
@@ -832,6 +833,8 @@ class BoardConfigurator:
 
             physical_start_addr = get_physical_mem(region_size)
 
+            # FIXME consecutive virtual address ranges sometimes somehow broken?
+            # see root.c virtual addresses for networking memory regions
             for cell_name, linked_region in linked_regions.items():
                 virtual_start_address = None
 
