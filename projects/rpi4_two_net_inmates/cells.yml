@@ -10,7 +10,7 @@ cells:
       size: 1 GB
 
     hypervisor_memory:
-      physical_start_addr: 0x3fc00000 # 0x11319sollte es eig sein
+      physical_start_addr: 0x3fc00000 # 0x11319 sollte es eig sein
       size: 16 MB
 
     debug_console:
@@ -38,7 +38,8 @@ cells:
       "System RAM":
         physical_start_addr: 0x0
         virtual_start_addr: 0x0
-        size: 0x4fa10000
+#        size: 0x4fa10000
+        size: 0x40000000
         allocatable: True
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
 
@@ -81,7 +82,15 @@ cells:
         size: 0x40
         flags:
           - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
-            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
+
+      fe200000.gpio:
+        physical_start_addr: 0xfe200000
+        virtual_start_addr: 0xfe200000
+        size: 0xb4
+        flags:
+          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
+            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
 
       "communication_region":
         virtual_start_addr: 0x80000000
@@ -116,7 +125,16 @@ cells:
         size: 0x40
         flags:
           - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
-            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
+
+
+      fe200000.gpio:
+        physical_start_addr: 0xfe200000
+        virtual_start_addr: 0xfe200000
+        size: 0xb4
+        flags:
+          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
+            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
 
       "RAM 2.2":
         virtual_start_addr: 0x40000000
@@ -133,6 +151,6 @@ shmem:
     protocol: SHMEM_PROTO_VETH
     peers: [root, "linux1"]
 
-  "net2":
-    protocol: SHMEM_PROTO_VETH
-    peers: [root, "linux2"]
+#  "net2":
+#    protocol: SHMEM_PROTO_VETH
+#    peers: [root, "linux2"]

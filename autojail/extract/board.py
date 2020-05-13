@@ -444,6 +444,9 @@ class BoardConfigurator:
         cell.irqchips = new_irqchips
 
     def _prepare_memory_regions(self, cell):
+        if cell.type != "root":
+            return
+
         for name, memory_region in self.board.memory_regions.items():
             if memory_region.allocatable and cell.name != "root":
                 continue
