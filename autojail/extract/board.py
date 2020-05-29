@@ -1,5 +1,6 @@
 import os
 import bisect
+import math
 
 from typing import Optional
 from pathlib import Path
@@ -706,8 +707,16 @@ class BoardConfigurator:
                 "Invalid cells.yaml: No allocatable memory specified"
             )
 
-        def get_virtual_mem(start, size, cell_name):
+        def get_virtual_mem(size, cell_name, start = -1, max_addr_bits = 64):
             ranges = virtual_alloc_ranges[cell_name]
+            top = int(math.pow(2, max_addr_bits) - 1)
+
+            if start == -1:
+                start = top - size
+
+                # make sure addresses are page aligned
+                mod = int(start % self.board.pagesize)
+                start -= mod
 
             if not ranges:
                 return start
@@ -734,6 +743,11 @@ class BoardConfigurator:
             for ref_start, ref_end in ranges:
                 if ranges_overlap(range_req, (ref_start, ref_end)):
                     range_req = (ref_end, size)
+
+            if range_req[0] > top:
+                raise Exception(
+                    f"Unable to find virtual address range of {size} bytes in {max_addr_bits} bit address space"
+                )
 
             return range_req[0]
 
@@ -764,9 +778,6 @@ class BoardConfigurator:
         # get allocated virtual regions and unallocated
         # physical regions
         # maps region name to a list of pairs: (region, cell name)
-
-        # FIXME: allocating the same physical address across cells
-        # for same-named memory regions breaks RAM regions
         unallocated_regions = defaultdict(list)
         for cell_name, cell in self.config.cells.items():
             for region_name, region in cell.memory_regions.items():
@@ -783,6 +794,28 @@ class BoardConfigurator:
 
                 if region.physical_start_addr == None:
                     unallocated_regions[region_name].append((region, cell_name))
+
+        # get physical address for root.platform_info.pci_mmconfig_base
+        # - has to be in 32-bit address space
+        root.platform_info.pci_mmconfig_base = get_virtual_mem(0x1000000, "root", max_addr_bits=32)
+
+        # add all unallocated regions that are not
+        # part of the root cell, to the root cell
+        # Do cross-cell region identification name-based
+        for region_name, lst in unallocated_regions.items():
+            if region_name not in root.memory_regions:
+                if not lst:
+                    continue
+
+                region, cell_name = lst[0]
+                new_region = copy.deepcopy(region)
+                region.flags.append("MEM_ROOTSHARED")
+
+                new_region.virtual_start_addr = None
+                root.memory_regions[f"{cell_name}_{region_name}"] = new_region 
+
+                lst.append((new_region, root.name))
+
 
         # sort regions such that those, that are not
         # referenced via 'next_region' come first
@@ -801,21 +834,6 @@ class BoardConfigurator:
             key=lambda x: 1 if is_a_next_region(x) else -1,
         )
 
-        # TODO add all unallocated regions that are not
-        # part of the root cell, to the root cell
-        # Do cross-cell region identification name-based
-        for region_name, lst in unallocated_regions.items():
-            if region_name not in root.memory_regions:
-                new_root_regions = list()
-                for region, cell_name in lst:
-                    new_region = copy.deepcopy(region)
-
-                    root.memory_regions[f"{cell_name}_{region_name}"] = new_region 
-                    new_root_regions.append((new_region, root.name))
-
-                lst += new_root_regions
-
-
         regions = None
         while unallocated_regions:
             if not regions:
@@ -825,21 +843,23 @@ class BoardConfigurator:
             linked_regions = dict()
             region_size = -1
 
+            local_name = None
             for region, cell_name in regions:
                 linked_region = [(name, region)]
                 current_size = region.size
 
+
                 while region.next_region:
-                    name = region.next_region
+                    local_name = region.next_region
                     region = list(
                         filter(
                             lambda x: x[1] == cell_name,
-                            unallocated_regions[name],
+                            unallocated_regions[local_name],
                         )
                     )[0][0]
 
                     current_size += region.size
-                    linked_region.append((name, region))
+                    linked_region.append((local_name, region))
 
                 if region_size < 0:
                     region_size = current_size
@@ -850,6 +870,7 @@ class BoardConfigurator:
 
                 linked_regions[cell_name] = linked_region
 
+            name = local_name
             physical_start_addr = get_physical_mem(region_size)
 
             for cell_name, linked_region in linked_regions.items():
@@ -857,7 +878,7 @@ class BoardConfigurator:
 
                 if linked_region[0][1].virtual_start_addr == None:
                     virtual_start_address = get_virtual_mem(
-                        physical_start_addr, region_size, cell_name
+                        region_size, cell_name, start = physical_start_addr
                     )
                     virtual_range = (
                         virtual_start_address,
@@ -874,6 +895,11 @@ class BoardConfigurator:
                     if virtual_start_address:
                         region.virtual_start_addr = virtual_start_address
                         virtual_start_address += region.size
+
+                    if region.virtual_start_addr == None:
+                        print(f"Cell: {cell_name}")
+                        print(f"Region: {name}")
+                        assert(False)
 
                     phy_start_addr += region.size
 

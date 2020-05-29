@@ -38,7 +38,7 @@ class DebugConsole(BaseModel):
 
 
 class PlatformInfo(BaseModel):
-    pci_mmconfig_base: HexInt
+    pci_mmconfig_base: Optional[HexInt]
     pci_mmconfig_end_bus: HexInt
     pci_is_virtual: int
     pci_domain: int
