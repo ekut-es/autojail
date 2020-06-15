@@ -3,7 +3,7 @@
 struct { 
 	struct jailhouse_system header; 
 	__u64 cpus[1];
-	struct jailhouse_memory mem_regions[39];
+	struct jailhouse_memory mem_regions[38];
 	struct jailhouse_irqchip irqchips[2];
 	struct jailhouse_pci_device pci_devices[2];
 } __attribute__((packed)) config = {
@@ -25,7 +25,7 @@ struct {
 	},
 
 	.platform_info = {
-		.pci_mmconfig_base = 0xe0000000,
+		.pci_mmconfig_base = 0xfefff000,
 		.pci_mmconfig_end_bus = 0,
 		.pci_is_virtual = 1,
 		.pci_domain = 1,
@@ -242,36 +242,31 @@ struct {
 	},
 	/*linux1_RAM 1 0xfbfea000-0xfbffa000*/	{
 		.phys_start = 0xfbfea000,
-		.virt_start = 0x0,
+		.virt_start = 0xfbfea000,
 		.size = 0x10000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE|JAILHOUSE_MEM_LOADABLE,
 	},
 	/*linux1_RAM 2 0xf3fea000-0xfbfea000*/	{
 		.phys_start = 0xf3fea000,
-		.virt_start = 0x30000000,
+		.virt_start = 0xf3fea000,
 		.size = 0x8000000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE|JAILHOUSE_MEM_DMA|JAILHOUSE_MEM_LOADABLE,
 	},
-	/*linux1_communication_region*/	{
-		.virt_start = 0x80000000,
-		.size = 0x1000,
-		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_COMM_REGION,
-	},
-	/*linux2_communication_region 0xf3fe9000-0xf3fea000*/	{
+	/*linux1_communication_region 0xf3fe9000-0xf3fea000*/	{
 		.phys_start = 0xf3fe9000,
-		.virt_start = 0x80000000,
+		.virt_start = 0xf3fe9000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_COMM_REGION,
 	},
 	/*linux2_RAM 2.1 0xf3fd9000-0xf3fe9000*/	{
 		.phys_start = 0xf3fd9000,
-		.virt_start = 0x0,
+		.virt_start = 0xf3fd9000,
 		.size = 0x10000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE|JAILHOUSE_MEM_LOADABLE,
 	},
 	/*linux2_RAM 2.2 0xebfd9000-0xf3fd9000*/	{
 		.phys_start = 0xebfd9000,
-		.virt_start = 0x40000000,
+		.virt_start = 0xebfd9000,
 		.size = 0x8000000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE|JAILHOUSE_MEM_DMA|JAILHOUSE_MEM_LOADABLE,
 	},
