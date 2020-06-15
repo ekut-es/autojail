@@ -16,7 +16,7 @@ class ConfigSHMemRegionsPass(BasePass):
         self.board = board
         self.config = config
 
-        self._lower_shmem_config()
+        self._regions_shmem_config()
 
         return self.board, self.config
 

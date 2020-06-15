@@ -18,6 +18,30 @@ class ShMemNetRegion(BaseModel):
     device_id: int
     allocatable: bool = False
 
+    @property
+    def virtual_start_addr(self):
+        return self.start_addr
+
+    @property
+    def physical_start_addr(self):
+        return self.start_addr
+
+    @property
+    def size(self):
+        return 0x1000 + 2 * 0x7F000
+
+    @property
+    def flags(self):
+        return []
+
+    @property
+    def allocatable(self):
+        return False
+
+    @property
+    def next_region(self):
+        return []
+
 
 class Board(BaseModel):
     name: str
