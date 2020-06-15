@@ -16,6 +16,7 @@ class MemoryRegion(BaseModel):
 class ShMemNetRegion(BaseModel):
     start_addr: HexInt
     device_id: int
+    allocatable: bool = False
 
 
 class Board(BaseModel):
@@ -37,12 +38,53 @@ class DebugConsole(BaseModel):
     flags: List[str]  # FIXME: Use list of ENUM
 
 
+class AMDIOMMUConfig(BaseModel):
+    bdf: Optional[ExpressionInt]
+    base_cap: Optional[HexInt]
+    msi_cap: Optional[HexInt]
+    features: Optional[ExpressionInt]
+
+
+class TIPVUIOMMUConfig(BaseModel):
+    tlb_base: Optional[ExpressionInt]
+    tlb_size: Optional[ByteSize]
+
+
+class IOMMUConfig(BaseModel):
+    type: Optional[str]
+    base: Optional[HexInt]
+    size: Optional[ByteSize]
+    arch: Union[AMDIOMMUConfig, TIPVUIOMMUConfig, None] = None
+
+
+class PlatformInfoArm(BaseModel):
+    maintenance_irq: Optional[ExpressionInt]
+    gic_version: Optional[ExpressionInt]
+    gicd_base: Optional[HexInt]
+    gicc_base: Optional[HexInt]
+    gich_base: Optional[HexInt]
+    gicv_base: Optional[HexInt]
+    gicr_base: Optional[HexInt]
+
+    iommu_units: List[IOMMUConfig] = []
+
+
+class PlatformInfoX86(BaseModel):
+    pm_timer_address: Optional[HexInt]
+    vtd_interrupt_limit: Optional[ExpressionInt]
+    apic_mode: Optional[HexInt]
+    tsc_khz: Optional[ExpressionInt]
+    apic_khz: Optional[ExpressionInt]
+
+    iommu_units: List[IOMMUConfig] = []
+
+
 class PlatformInfo(BaseModel):
     pci_mmconfig_base: HexInt
     pci_mmconfig_end_bus: HexInt
     pci_is_virtual: int
     pci_domain: int
-    arm: List[str]
+    arch: Union[PlatformInfoArm, PlatformInfoX86]
 
 
 class IRQChip(BaseModel):
@@ -105,13 +147,13 @@ class CellConfig(BaseModel):
 class ShmemConfig(BaseModel):
     protocol: str
     peers: List[str]
-    common_output_region_size: Optional[ByteSize] = None
-    per_device_region_size: Optional[ByteSize] = None
+    common_output_region_size: Optional[ByteSize]
+    per_device_region_size: Optional[ByteSize]
 
 
 class JailhouseConfig(BaseModel):
     cells: OrderedDict[str, CellConfig]
-    shmem: Optional[OrderedDict[str, ShmemConfig]] = None
+    shmem: Optional[OrderedDict[str, ShmemConfig]]
 
 
 if __name__ == "__main__":
