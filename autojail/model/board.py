@@ -13,6 +13,16 @@ class MemoryRegion(BaseModel):
     next_region: Optional[str] = None
 
 
+class GroupedMemoryRegion(MemoryRegion):
+    "Represents a list of memory regions that are allocated at contiguous physical and virtual adresses"
+
+    def __init__(self, regions: List[MemoryRegion]):
+        self.regions = regions
+        self.size = sum((r.size for r in regions))
+        self.physical_start_addr = regions[0].physical_start_addr
+        self.virtual_start_addr = regions[0].virtual_start_addr
+
+
 class ShMemNetRegion(BaseModel):
     start_addr: HexInt
     device_id: int

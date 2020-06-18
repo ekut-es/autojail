@@ -16,6 +16,7 @@ pyserial = "^3.4"
 "ruamel.yaml" = "^0.16.10"
 fabric = "^2.5.0"
 simpleeval = "^0.9.10"
+tabulate = "^0.8.7"
 
 [tool.poetry.extras]
 automate = ["automate"]

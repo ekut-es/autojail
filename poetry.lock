@@ -1015,7 +1015,7 @@ version = "1.9.5"
 category = "main"
 description = "Pretty-print tabular data"
 name = "tabulate"
-optional = true
+optional = false
 python-versions = "*"
 version = "0.8.7"
 
@@ -1129,7 +1129,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 automate = ["automate"]
 
 [metadata]
-content-hash = "b93aee31ebb5b944e477be477d17a1d0c1b8a6a2fd8b84c0d3c341b75ab156c8"
+content-hash = "929464ebc44f58a354c13e879edb3bf68c4ce90f1bb146a2d1615da103175983"
 python-versions = "^3.6"
 
 [metadata.files]

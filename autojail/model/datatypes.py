@@ -3,7 +3,7 @@ import operator
 import re
 
 from typing import Union, List, TYPE_CHECKING
-from ..utils import remove_prefix
+from ..utils.string import remove_prefix
 
 import simpleeval
 
