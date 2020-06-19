@@ -4,16 +4,27 @@ from typing import OrderedDict, List, Union, Optional
 from .datatypes import ByteSize, ExpressionInt, IntegerList, HexInt
 
 
-class MemoryRegion(BaseModel):
+class BaseMemoryRegion(BaseModel):
+    """Base class for memory region definitions"""
+
     physical_start_addr: Optional[HexInt] = None
     virtual_start_addr: Optional[HexInt] = None
     size: ByteSize
-    flags: List[str]  # FIXME: Use list of ENUM
+    flags: List[str] = []
     allocatable: bool = False
+
+
+class MemoryRegion(BaseMemoryRegion):
     next_region: Optional[str] = None
 
 
-class GroupedMemoryRegion(MemoryRegion):
+class DeviceMemoryRegion(BaseMemoryRegion):
+    """Adds a path to the corresponding device tree node"""
+
+    path: str
+
+
+class GroupedMemoryRegion(BaseMemoryRegion):
     "Represents a list of memory regions that are allocated at contiguous physical and virtual adresses"
 
     def __init__(self, regions: List[MemoryRegion]):
@@ -21,6 +32,11 @@ class GroupedMemoryRegion(MemoryRegion):
         self.size = sum((r.size for r in regions))
         self.physical_start_addr = regions[0].physical_start_addr
         self.virtual_start_addr = regions[0].virtual_start_addr
+
+
+class HypervisorMemoryRegion(BaseMemoryRegion):
+    physical_start_addr: Optional[HexInt] = None
+    size: ByteSize = "16 MB"
 
 
 class ShMemNetRegion(BaseModel):
@@ -58,11 +74,6 @@ class Board(BaseModel):
     board: str
     pagesize: ByteSize
     memory_regions: OrderedDict[str, MemoryRegion]
-
-
-class HypervisorMemory(BaseModel):
-    physical_start_addr: Optional[HexInt] = None
-    size: ByteSize = "16 MB"
 
 
 class DebugConsole(BaseModel):
@@ -167,7 +178,7 @@ class CellConfig(BaseModel):
     vpci_irq_base: ExpressionInt
     flags: List[str]  # FIXME: Use list of ENUM
 
-    hypervisor_memory: Optional[HypervisorMemory]
+    hypervisor_memory: Optional[HypervisorMemoryRegion]
     debug_console: DebugConsole
     platform_info: Optional[PlatformInfo]
     cpus: IntegerList
