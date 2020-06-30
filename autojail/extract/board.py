@@ -2,6 +2,7 @@ from pathlib import Path
 
 
 from ..model import Board, MemoryRegion
+from .device_tree import DeviceTreeExtractor
 
 
 class BoardInfoExtractor:
@@ -114,9 +115,18 @@ class BoardInfoExtractor:
                             pagesize = int(value)
         return pagesize
 
+    def extract_from_devicetree(self, memory_regions):
+        extractor = DeviceTreeExtractor(self.data_root / "proc" / "device-tree")
+        extractor.run()
+
+        return memory_regions, extractor, extractor.interrupt_controllers
+
     def extract(self):
         memory_regions = self.read_iomem(self.data_root / "proc" / "iomem")
         pagesize = self.read_getconf_out(self.data_root / "getconf.out")
+        memory_regions, interrupt_controllers = self.extract_from_devicetree(
+            memory_regions
+        )
 
         board = Board(
             name=self.name,

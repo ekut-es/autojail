@@ -9,7 +9,7 @@ import tabulate
 
 from dataclasses import dataclass, field
 
-from ..model import MemoryRegion, DeviceMemoryRegion
+from ..model import MemoryRegion, DeviceMemoryRegion, GIC
 from ..model.datatypes import ByteSize
 from ..utils.logging import getLogger
 
@@ -74,6 +74,7 @@ class DeviceTreeExtractor:
         self.aliases = OrderedDict()
         self.handles = OrderedDict()
         self.memory_regions = OrderedDict()
+        self.interrupt_controllers = []
 
         self.logger = getLogger()
 
@@ -208,6 +209,7 @@ class DeviceTreeExtractor:
 
         elif node.get_property("interrupt-controller"):
             print("Handling interrup controller", node.name)
+            # FIXME: some of the version two's are v1
             gic_versions = {
                 "arm,arm11mp-gic": 2,
                 "arm,cortex-a15-gic": 2,
@@ -233,6 +235,47 @@ class DeviceTreeExtractor:
                 self.logger.warning(
                     "Could not find GIC version for %s", node.path
                 )
+                return
+
+            maintenance_irq = interrupts[1]
+
+            gicd_base, gicc_base, gich_base, gicv_base, gicr_base = (
+                0,
+                0,
+                0,
+                0,
+                0,
+            )
+
+            if gic_version <= 2:
+                try:
+                    gicd_base = reg[0]
+                    gicc_base = reg[2]
+                    gich_base = reg[4]
+                    gicv_base = reg[6]
+                except IndexError:
+                    self.logger.warning(
+                        "GIC %s does not have virtualization extensions",
+                        node.name,
+                    )
+            else:
+                gicd_base = reg[0]
+                gicr_base = reg[2]
+                gicc_base = reg[4]
+                gich_base = reg[6]
+                gicv_base = reg[8]
+
+            gic = GIC(
+                gic_version=gic_version,
+                maintenance_irq=maintenance_irq,
+                gicd_base=gicd_base,
+                gicc_base=gicc_base,
+                gich_base=gich_base,
+                gicv_base=gicv_base,
+                gicr_base=gicr_base,
+                interrupts=[],
+            )
+            self.interrupt_controllers.append(gic)
 
         else:
             device_registers = []
@@ -310,10 +353,19 @@ class DeviceTreeExtractor:
                         )
                     )
 
-    def run(self):
-        self._extract_aliases()
-        self._walk_tree()
+    def _add_interrupts(self):
+        interrupts = set()
+        for name, region in self.memory_regions.items():
+            interrupts = interrupts.union(
+                set(getattr(region, "interrupts", []))
+            )
 
+        interrupt_list = list(sorted(interrupts))
+
+        for controller in self.interrupt_controllers:
+            controller.interrupts = interrupt_list
+
+    def _summarize(self):
         table = []
         for name, region in sorted(
             self.memory_regions.items(), key=lambda x: x[1].physical_start_addr
@@ -331,7 +383,8 @@ class DeviceTreeExtractor:
                 )
             )
 
-        print(
+        self.logger.info("Memory Regions from Device Tree")
+        self.logger.info(
             tabulate.tabulate(
                 table,
                 headers=[
@@ -344,3 +397,43 @@ class DeviceTreeExtractor:
                 ],
             )
         )
+
+        interrupt_table = []
+        for controller in self.interrupt_controllers:
+            interrupt_table.append(
+                (
+                    controller.maintenance_irq,
+                    hex(controller.gicd_base),
+                    hex(controller.gicc_base),
+                    hex(controller.gich_base),
+                    hex(controller.gicv_base),
+                    hex(controller.gicr_base),
+                    str(min(controller.interrupts))
+                    + "-"
+                    + str(max(controller.interrupts)),
+                )
+            )
+
+        self.logger.info("")
+        self.logger.info("Extracted interrupt controller:")
+        self.logger.info(
+            tabulate.tabulate(
+                interrupt_table,
+                headers=[
+                    "mIRQ",
+                    "GICD",
+                    "GICC",
+                    "GICH",
+                    "GICV",
+                    "GICR",
+                    "Interrupts",
+                ],
+            )
+        )
+
+    def run(self):
+        self._extract_aliases()
+        self._walk_tree()
+        self._add_interrupts()
+
+        self._summarize()
