@@ -116,10 +116,12 @@ class BoardInfoExtractor:
         return pagesize
 
     def extract_from_devicetree(self, memory_regions):
-        extractor = DeviceTreeExtractor(self.data_root / "proc" / "device-tree")
+        extractor = DeviceTreeExtractor(
+            self.data_root / "sys" / "firmware" / "devicetree" / "base"
+        )
         extractor.run()
 
-        return memory_regions, extractor, extractor.interrupt_controllers
+        return memory_regions, extractor.interrupt_controllers
 
     def extract(self):
         memory_regions = self.read_iomem(self.data_root / "proc" / "iomem")
@@ -133,5 +135,6 @@ class BoardInfoExtractor:
             board=self.board,
             memory_regions=memory_regions,
             pagesize=pagesize,
+            interrupt_controllers=interrupt_controllers,
         )
         return board

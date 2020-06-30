@@ -237,7 +237,7 @@ class DeviceTreeExtractor:
                 )
                 return
 
-            maintenance_irq = interrupts[1]
+            maintenance_irq = interrupts[1] + 16
 
             gicd_base, gicc_base, gich_base, gicv_base, gicr_base = (
                 0,

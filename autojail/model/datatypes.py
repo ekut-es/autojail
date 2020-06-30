@@ -39,6 +39,10 @@ class JailhouseFlagList(list):
 
         return cls(res)
 
+    @classmethod
+    def to_yaml(cls, representer, node):
+        return representer.represent_scalar("tag:yaml.org,2002:str", str(node))
+
 
 class ExpressionInt(int):
     """An Integer that might be initialized from a string containing 
@@ -66,7 +70,7 @@ class ExpressionInt(int):
 
     @classmethod
     def to_yaml(cls, representer, node):
-        return representer.represent_scalar("tag:yaml.org,2002:int", node)
+        return representer.represent_scalar("tag:yaml.org,2002:int", str(node))
 
 
 class HexInt(int):
