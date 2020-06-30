@@ -1,6 +1,9 @@
 import os.path
-from autojail.extract import BoardInfoExtractor
+import tarfile
+
+from autojail.extract import BoardInfoExtractor, DeviceTreeExtractor
 from devtools import debug
+from pathlib import Path
 
 test_data_folder = os.path.join(os.path.dirname(__file__), "test_data")
 
@@ -45,3 +48,30 @@ def test_parse_raspberrypi4b():
     regions = extractor.read_iomem(iomem_name)
 
     assert "System RAM" in regions
+
+
+def test_parse_getconf():
+    getconf_name = Path(os.path.join(test_data_folder, "getconf_x86"))
+    extractor = BoardInfoExtractor("x86", "x6", "")
+    pagesize = extractor.read_getconf_out(getconf_name)
+    assert pagesize == 4096
+
+
+def test_device_tree(tmpdir):
+    devicetree_name = Path(os.path.join(test_data_folder, "device-tree.tar.gz"))
+
+    with tarfile.open(devicetree_name) as tar_file:
+        tar_file.extractall(tmpdir)
+
+    extractor = DeviceTreeExtractor(os.path.join(tmpdir, "device-tree"))
+
+    extractor.run()
+
+    alias_pairs = [
+        ("uart0", "/soc/serial@7e201000"),
+        ("mailbox", "/soc/mailbox@7e00b880"),
+    ]
+
+    for alias, path in alias_pairs:
+        assert extractor.aliases[alias] == path
+        # assert extractor.reverse_aliases[path] == alias

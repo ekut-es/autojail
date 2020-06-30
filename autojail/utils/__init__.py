@@ -1,5 +1,5 @@
 from .connection import connect  # noqa
-from .string import remove_prefix
+from .string import remove_prefix, pprint_tree
 from .logging import ClikitLoggingHandler
 from .collections import SortedCollection
 from .debug import debug
@@ -10,4 +10,5 @@ __all__ = [
     "ClikitLoggingHandler",
     "SortedCollection",
     "debug",
+    "pprint_tree",
 ]
