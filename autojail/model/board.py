@@ -24,6 +24,8 @@ class DeviceMemoryRegion(BaseMemoryRegion):
     """Adds a path to the corresponding device tree node"""
 
     path: str
+    compatible: Optional[str]
+    interrupts: List[int] = []
 
 
 class GroupedMemoryRegion(BaseMemoryRegion):
