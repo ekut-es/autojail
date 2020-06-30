@@ -79,6 +79,8 @@ class LowerSHMemPass(BasePass):
         self.board = board
         self.config = config
 
+        self._lower_shmem_config()
+
         return self.board, self.config
 
     def _lower_shmem_config(self):

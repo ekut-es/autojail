@@ -1,8 +1,8 @@
 cells:
   root:
-    type: root #linux, generic
+    type: root 
     name: "root"
-    vpci_irq_base: 150 # 182-32
+    vpci_irq_base: 150 
     flags: [SYS_VIRTUAL_DEBUG_CONSOLE]
 
     hypervisor_memory:
@@ -26,7 +26,7 @@ cells:
         gicv_base: 0xff846000
         maintenance_irq: 25
 
-    cpus: 0-3 # 1-3 oder 0,2 oder 1-3,5
+    cpus: 0-3
 
     memory_regions:
       "System RAM":
@@ -56,12 +56,12 @@ cells:
       flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
 
     memory_regions:
-      "RAM 1":
+      RAM 1:
         virtual_start_addr: 0
         size: 0x10000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
 
-      "RAM 2":
+      RAM 2:
         virtual_start_addr: 0x30000000
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
@@ -82,9 +82,7 @@ cells:
           - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
             | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
 
-      "communication_region":
-        virtual_start_addr: 0x80000000
-        size: 0x00001000
+      communication_region:
         flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
 
   linux2:
@@ -101,7 +99,7 @@ cells:
       flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
 
     memory_regions:
-      "RAM 2.1":
+      RAM:
         virtual_start_addr: 0
         size: 0x10000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
@@ -123,21 +121,19 @@ cells:
           - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
             | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
 
-      "RAM 2.2":
-        virtual_start_addr: 0x40000000
+      RAM 2:
+        virtual_start_addr: 0x30000000
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
-      "communication_region":
-        virtual_start_addr: 0x80000000
-        size: 0x00001000
+      communication_region:
         flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
 
 shmem:
-  "net1":
+  net1:
     protocol: SHMEM_PROTO_VETH
     peers: [root, "linux1"]
 
-  "net2":
+  net2:
     protocol: SHMEM_PROTO_VETH
     peers: [root, "linux2"]

@@ -4,18 +4,90 @@ import tabulate
 
 from .passes import BasePass
 
-from ..model import MemoryRegion
+from ..model import BaseMemoryRegion, ByteSize
+from ..utils import SortedCollection
 
 
-class FreeBlock:
-    "Represents an unallocated chunk of memory"
+class MemoryBlock:
+    "Represents a chunk of memory in the allocator"
 
     def __init__(self, start_addr, size):
         self.start_addr = start_addr
         self.size = size
 
+    @property
+    def end_addr(self):
+        return self.start_addr + self.size
+
     def __repr__(self):
-        return f"FreeBlock(start_addr={hex(self.start_addr)},size={self.size})"
+        return (
+            f"MemoryBlock(start_addr={hex(self.start_addr)},size={self.size})"
+        )
+
+    def __lt__(self, other):
+        if self.start_addr < other.start_addr:
+            return True
+        return False
+
+
+class FreeList(SortedCollection):
+    def __init__(self):
+        super().__init__(key=lambda x: x.start_addr)
+
+    def _overlap(self, block1, block2):
+        if block2 < block1:
+            block1, block2 = block2, block1
+
+        if block1.end_addr >= block2.start_addr:
+            return True
+        return False
+
+    def _sub(self, current_block, sub_block):
+        """Remove overlapping parts of block at index"""
+
+        if not self._overlap(current_block, sub_block):
+            return
+
+        if current_block in self:
+            self.remove(current_block)
+
+        if current_block.start_addr < sub_block.start_addr:
+            new_size = sub_block.start_addr - current_block.start_addr
+            if new_size > 0:
+                self.insert(MemoryBlock(current_block.start_addr, new_size))
+
+        if current_block.end_addr > sub_block.end_addr:
+            new_size = current_block.end_addr - sub_block.end_addr
+            if new_size > 0:
+                self.insert(MemoryBlock(sub_block.end_addr, new_size))
+
+    def insert(self, block: MemoryBlock):
+        pred_block = self.find_le(block.start_addr)
+        if pred_block and self._overlap(pred_block, block):
+            self.remove(pred_block)
+            diff = pred_block.end_addr - block.start_addr
+            block.start = pred_block.start_addr
+            block.size = pred_block.size + block.size - diff
+
+        succ_block = self.find_ge(block.start_addr)
+
+        while succ_block and self._overlap(block, succ_block):
+            self.remove(succ_block)
+            diff = block.end_addr - succ_block.start
+            block.size = block.size + succ_block.size - diff
+
+            succ_block = self.find_ge(block.start_addr)
+
+        super().insert(block)
+
+    def _reserve(self, block):
+        # FIXME: use binary search to find start
+        for local_block in self:
+            if self._overlap(local_block, block):
+                self._sub(local_block, block)
+
+    def reserve(self, start_addr, size):
+        self._reserve(MemoryBlock(start_addr, size))
 
 
 class AllocatorSegment:
@@ -34,7 +106,7 @@ class AllocateMemoryPass(BasePass):
         self.config = None
         self.board = None
         self.root_cell = None
-        self.freelist = []
+        self.freelist = FreeList()
         self.allocatable_regions = []
 
         self.unallocated_segments = []
@@ -53,16 +125,7 @@ class AllocateMemoryPass(BasePass):
                 break
 
         self._build_freelist()
-        self.logger.info("")
-        self.logger.info("Free memory cells:")
-
-        table = [
-            [hex(b.start_addr), hex(b.start_addr + b.size), b.size]
-            for b in self.freelist
-        ]
-        self.logger.info(
-            tabulate.tabulate(table, headers=["Start", "End", "Size (Byte)"])
-        )
+        self._log_freelist(self.freelist, "Free memory cells:")
 
         self.unallocated_segments = self._build_unallocated_segments()
 
@@ -79,36 +142,58 @@ class AllocateMemoryPass(BasePass):
             )
         )
 
-        # _self._reserve_preallocated_physical()
-        # self._allocate_physical()
-        # for name, cell in config.cells:
-        #    self._preallocate_virtual(cell)
-        #    self._allocate_virtual()
+        self._preallocate_physical()
+        self._log_freelist(
+            self.freelist, "Free memory cells (after preallocation):"
+        )
+
+        self._allocate_physical()
+        self._log_freelist(self.freelist, "Free Memory (after allocation)")
+
+        for name, cell in config.cells.items():
+            freelist_virtual = FreeList()
+            vmem_size = 2 ** 32
+            if self.board.virtual_address_bits > 32:
+                vmem_size = 2 ** (self.board.virtual_address_bits - 1)
+            freelist_virtual.insert(MemoryBlock(0, vmem_size))
+            self._log_freelist(
+                freelist_virtual, f"Initial free vmem of cell {name}"
+            )
+
+            freelist_virtual = self._preallocate_virtual(freelist_virtual, cell)
+            self._log_freelist(
+                freelist_virtual,
+                f"Free vmem of cell {name} after preallocation",
+            )
+
+            # self._allocate_virtual()
 
         return self.board, self.config
 
+    def _log_freelist(self, freelist, message=""):
+
+        self.logger.info("")
+        if message:
+            self.logger.info(message)
+
+        table = [
+            [
+                hex(b.start_addr),
+                hex(b.start_addr + b.size),
+                ByteSize(b.size).human_readable(),
+            ]
+            for b in freelist
+        ]
+        self.logger.info(
+            tabulate.tabulate(table, headers=["Start", "End", "Size (Byte)"])
+        )
+
     def _build_freelist(self):
-        temp_freelist = []
         for name, region in self.root_cell.memory_regions.items():
             if region.allocatable:
-                new_block = FreeBlock(region.physical_start_addr, region.size)
-                temp_freelist.append(new_block)
+                new_block = MemoryBlock(region.physical_start_addr, region.size)
+                self.freelist.insert(new_block)
                 self.allocatable_regions.append(region)
-
-        temp_freelist.sort(key=lambda x: x.start_addr)
-
-        last_segment = None
-        for segment in temp_freelist:
-            segments_fuseable = (
-                last_segment is not None
-                and last_segment.start_addr + last_segment.size
-                == segment.start_addr
-            )
-            if segments_fuseable:
-                last_segment.size += segment.size
-            else:
-                last_segment = segment
-                self.freelist.append(segment)
 
     def _build_unallocated_segments(self, key=lambda x: x.physical_start_addr):
         """Group Memory Regions into Segments that are allocated continuously"""
@@ -141,8 +226,56 @@ class AllocateMemoryPass(BasePass):
 
         return unallocated
 
-    def _allocate_memory(self):
-        pass
+    def _allocate(self, physical_start_addr, size):
+        for free_segment in self.freelist:
+            pass
+
+    def _preallocate_physical(self):
+        for cell_name, cell in self.config.cells.items():
+            for region_name, memory_region in cell.memory_regions.items():
+                if memory_region.allocatable:
+                    continue
+                if memory_region.physical_start_addr is not None:
+                    self.freelist.reserve(
+                        memory_region.physical_start_addr, memory_region.size
+                    )
+
+    def _preallocate_virtual(self, freelist, cell):
+        for region_name, memory_region in cell.memory_regions.items():
+            if memory_region.allocatable:
+                continue
+            if memory_region.virtual_start_addr is not None:
+                freelist.reserve(
+                    memory_region.virtual_start_addr, memory_region.size
+                )
+
+        return freelist
+
+    def _find_next_fit(self, size, alignment=0, reverse=True):
+        freelist = self.freelist
+        if reverse:
+            freelist = reversed(freelist)
+
+        for block in freelist:
+            if block.size >= size:
+                if reversed:
+                    diff = block.size - size
+                    return block.start_addr + diff
+                return block.start_addr
+
+        raise Exception(f"Could not find continuous Memory with size: {size}")
+
+    def _allocate_physical(self):
+        for unallocated_region in self.unallocated_segments:
+            alignment = 0
+            if unallocated_region.size % self.board.pagesize == 0:
+                alignment = self.board.pagesize
+
+            start_addr = self._find_next_fit(
+                unallocated_region.size, alignment=alignment, reverse=True
+            )
+            self.freelist.reserve(start_addr, unallocated_region.size)
+            unallocated_region.physical_start_addr = start_addr
 
 
 class PrepareMemoryRegionsPass(BasePass):
@@ -157,13 +290,16 @@ class PrepareMemoryRegionsPass(BasePass):
         self.config = config
 
         for name, cell in self.config.cells.items():
-            self._prepare_memory_regions(cell)
+            for region_name, region in cell.memory_regions.items():
+                if hasattr(region, "size") and region.size is None:
+                    region.size = self.board.pagesize
+
+            if cell.type == "root":
+                self._prepare_memory_regions_root(cell)
 
         return self.board, self.config
 
-    def _prepare_memory_regions(self, cell):
-        if cell.type != "root":
-            return
+    def _prepare_memory_regions_root(self, cell):
 
         for name, memory_region in self.board.memory_regions.items():
 
@@ -174,7 +310,7 @@ class PrepareMemoryRegionsPass(BasePass):
 
             skip = False
             for cell_name, cell_region in cell.memory_regions.items():
-                if not isinstance(cell_region, MemoryRegion):
+                if not isinstance(cell_region, BaseMemoryRegion):
                     continue
 
                 if cell_region.physical_start_addr is not None:

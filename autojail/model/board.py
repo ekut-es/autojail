@@ -11,7 +11,7 @@ class BaseMemoryRegion(BaseModel):
 
     physical_start_addr: Optional[HexInt] = None
     virtual_start_addr: Optional[HexInt] = None
-    size: ByteSize
+    size: Optional[ByteSize] = None
     flags: List[str] = []
     allocatable: bool = False
 
@@ -75,6 +75,7 @@ class Board(BaseModel):
     name: str
     board: str
     pagesize: ByteSize
+    virtual_address_bits: int = 48  # FIXME: that seems correct for most ARM64 Boards
     memory_regions: OrderedDict[str, MemoryRegion]
 
 

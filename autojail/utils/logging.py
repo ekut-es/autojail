@@ -3,11 +3,15 @@ import logging
 from clikit.api.io import flags as verbosity
 
 
+def getLogger():
+    return logging.getLogger("autojail")
+
+
 _levels = {
     logging.CRITICAL: verbosity.NORMAL,
     logging.ERROR: verbosity.NORMAL,
     logging.WARNING: verbosity.NORMAL,
-    logging.INFO: verbosity.VERY_VERBOSE,
+    logging.INFO: verbosity.VERBOSE,
     logging.DEBUG: verbosity.DEBUG,
 }
 
@@ -21,12 +25,8 @@ class ClikitLoggingHandler(logging.Handler):
 
     def emit(self, record: logging.LogRecord):
         level = _levels[record.levelno]
-        if record.levelno >= logging.WARNING:
-            text = record.getMessage()
-            self.io.error_line(text, flags=level)
-        elif self.io.verbosity >= level:
-            text = record.getMessage()
-            self.io.write_line(text)
+        text = record.getMessage()
+        self.io.write_line(text, flags=level)
 
     @classmethod
     def setup_for(cls, name, io):
