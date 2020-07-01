@@ -161,6 +161,18 @@ class DeviceTreeExtractor:
 
         return list(current_state.ranges)
 
+    def _add_memreserve(self, node):
+        memreserve = node.get_property("memreserve")
+        if memreserve is not None:
+            region = MemoryRegion(
+                virtual_start_addr=memreserve[0],
+                physical_start_addr=memreserve[0],
+                size=memreserve[1],
+                flags=["MEM_READ", "MEM_WRITE", "MEM_EXECUTE"],
+            )
+
+            self._insert_named_region("memreserve", region)
+
     def _insert_named_region(self, orig_name, region):
         count = 0
         name = orig_name
@@ -195,6 +207,7 @@ class DeviceTreeExtractor:
                     physical_start_addr=start,
                     virtual_start_addr=start,
                     size=size,
+                    flags=["MEM_READ", "MEM_WRITE", "MEM_EXECUTE"],
                 )
 
                 if device_type and device_type.value == "memory":
@@ -237,6 +250,12 @@ class DeviceTreeExtractor:
                 )
                 return
 
+            if interrupts is None:
+                self.logger.warning(
+                    "Could not get maintenance interrupt for %s", node.path
+                )
+                return
+
             maintenance_irq = interrupts[1] + 16
 
             gicd_base, gicc_base, gich_base, gicv_base, gicr_base = (
@@ -249,21 +268,21 @@ class DeviceTreeExtractor:
 
             if gic_version <= 2:
                 try:
-                    gicd_base = reg[0]
-                    gicc_base = reg[2]
-                    gich_base = reg[4]
-                    gicv_base = reg[6]
+                    gicd_base = state.translate_addr(reg[0])
+                    gicc_base = state.translate_addr(reg[2])
+                    gich_base = state.translate_addr(reg[4])
+                    gicv_base = state.translate_addr(reg[6])
                 except IndexError:
                     self.logger.warning(
                         "GIC %s does not have virtualization extensions",
                         node.name,
                     )
             else:
-                gicd_base = reg[0]
-                gicr_base = reg[2]
-                gicc_base = reg[4]
-                gich_base = reg[6]
-                gicv_base = reg[8]
+                gicd_base = state.translate_addr(reg[0])
+                gicr_base = state.translate_addr(reg[2])
+                gicc_base = state.translate_addr(reg[4])
+                gich_base = state.translate_addr(reg[6])
+                gicv_base = state.translate_addr(reg[8])
 
             gic = GIC(
                 gic_version=gic_version,
@@ -289,6 +308,15 @@ class DeviceTreeExtractor:
                     physical_start_addr=start,
                     virtual_start_addr=start,
                     size=size,
+                    flags=[
+                        "MEM_READ",
+                        "MEM_WRITE",
+                        "MEM_IO",
+                        "MEM_IO_8",
+                        "MEM_IO_16",
+                        "MEM_IO_32",
+                        "MEM_IO_64",
+                    ],
                 )
                 device_registers.append(region)
 
@@ -312,6 +340,15 @@ class DeviceTreeExtractor:
                     path=path,
                     compatible=compatible,
                     interrupts=extracted_interrupts,
+                    flags=[
+                        "MEM_READ",
+                        "MEM_WRITE",
+                        "MEM_IO",
+                        "MEM_IO_8",
+                        "MEM_IO_16",
+                        "MEM_IO_32",
+                        "MEM_IO_64",
+                    ],
                 )
 
                 name = node.name
@@ -332,6 +369,7 @@ class DeviceTreeExtractor:
 
             node = current_state.node
 
+            self._add_memreserve(node)
             self._extract_device(node, current_state)
 
             new_address_cells, new_size_cells = self._current_cells(

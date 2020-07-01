@@ -1,8 +1,7 @@
 cells:
   root:
-    type: root #linux, generic
+    type: root 
     name: "Raspberry PI4"
-    vpci_irq_base: 182-32
     flags: [SYS_VIRTUAL_DEBUG_CONSOLE]
 
     hypervisor_memory:
@@ -14,23 +13,5 @@ cells:
       type: CON_TYPE_8250
       flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
 
-    platform_info:
-      pci_mmconfig_base: 0xe0000000
-      pci_mmconfig_end_bus: 0
-      pci_is_virtual: 1
-      pci_domain: 1
-      arch:
-        gic_version: 2
-        gicd_base: 0xff841000
-        gicc_base: 0xff842000
-        gich_base: 0xff844000
-        gicv_base: 0xff846000
-        maintenance_irq: 25
-
     cpus: 0-3
 
-    irqchips:
-      gic:
-        address: 0xff841000
-        pin_base: 32
-        interrupts: 0-223

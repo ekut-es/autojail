@@ -1,5 +1,5 @@
 from .passes import BasePass
-from ..model import IRQChip, PlatformInfoArm
+from ..model import IRQChip, PlatformInfo, PlatformInfoArm
 
 
 class TransferBoardInfoPass(BasePass):
@@ -78,7 +78,19 @@ class TransferBoardInfoPass(BasePass):
         for name, cell in config.cells.items():
             print(name, cell.vpci_irq_base)
 
+    def _create_platform_info(self, board, config):
+        for cell in config.cells.values():
+            if cell.type == "root":
+                if cell.platform_info is None:
+                    cell.platform_info = PlatformInfo(
+                        pci_mmconfig_base=0xE0000000,
+                        pci_mmconfig_end_bus=0,
+                        pci_is_virtual=True,
+                        pci_domain=1,
+                    )
+
     def __call__(self, board, config):
+        self._create_platform_info(board, config)
         self._create_irqchips(board, config)
         self._create_arm_info(board, config)
         self._create_vpci_base(board, config)

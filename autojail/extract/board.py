@@ -121,7 +121,7 @@ class BoardInfoExtractor:
         )
         extractor.run()
 
-        return memory_regions, extractor.interrupt_controllers
+        return extractor.memory_regions, extractor.interrupt_controllers
 
     def extract(self):
         memory_regions = self.read_iomem(self.data_root / "proc" / "iomem")
