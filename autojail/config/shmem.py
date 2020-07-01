@@ -192,13 +192,13 @@ class LowerSHMemPass(BasePass):
 
                 root_irq_chip = None
                 for chip_name, chip in root_cell.irqchips.items():
-                    if intx_pin in chip.interrupts:
+                    if intx_pin - 32 in chip.interrupts:
                         root_irq_chip = chip
                         break
 
                 if not root_irq_chip:
                     raise Exception(
-                        f"No IRQ chip availbe for interrupt: {intx_pin}"
+                        f"No IRQ chip available for interrupt: {intx_pin}"
                     )
 
                 irq_chip = None

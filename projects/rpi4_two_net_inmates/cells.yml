@@ -2,7 +2,6 @@ cells:
   root:
     type: root 
     name: "root"
-    vpci_irq_base: 150 
     flags: [SYS_VIRTUAL_DEBUG_CONSOLE]
 
     hypervisor_memory:
@@ -18,34 +17,19 @@ cells:
       pci_mmconfig_end_bus: 0
       pci_is_virtual: 1
       pci_domain: 1
-      arch:
-        gic_version: 2
-        gicd_base: 0xff841000
-        gicc_base: 0xff842000
-        gich_base: 0xff844000
-        gicv_base: 0xff846000
-        maintenance_irq: 25
 
     cpus: 0-3
 
     memory_regions:
       "System RAM":
-        physical_start_addr: 0x0
-        virtual_start_addr: 0x0
-        size: 0x40000000
-        allocatable: True
+        size: 128 MB
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
 
-    irqchips:
-      gic:
-        address: 0xff841000
-        pin_base: 32
-        interrupts: 0-223
+
 
   linux1:
     type: "linux"
     name: "Linux demo 1"
-    vpci_irq_base: 153 # 185 - 32
     flags: [PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
     cpus: 2
 
@@ -88,7 +72,6 @@ cells:
   linux2:
     type: "linux"
     name: "Linux demo 2"
-    vpci_irq_base: 153 # 185 - 32
     flags: [PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
     cpus: 3
 
@@ -109,8 +92,7 @@ cells:
         virtual_start_addr: 0xfe215040
         size: 0x40
         flags:
-          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
-            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
+          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
 
 
       fe200000.gpio:
@@ -118,8 +100,7 @@ cells:
         virtual_start_addr: 0xfe200000
         size: 0xb4
         flags:
-          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
-            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
+          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
 
       RAM 2:
         virtual_start_addr: 0x30000000
@@ -132,8 +113,8 @@ cells:
 shmem:
   net1:
     protocol: SHMEM_PROTO_VETH
-    peers: [root, "linux1"]
+    peers: [root, linux1]
 
   net2:
     protocol: SHMEM_PROTO_VETH
-    peers: [root, "linux2"]
+    peers: [root, linux2]

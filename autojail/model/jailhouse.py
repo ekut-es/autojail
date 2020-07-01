@@ -58,7 +58,7 @@ class PlatformInfo(BaseModel):
     pci_mmconfig_end_bus: HexInt
     pci_is_virtual: bool
     pci_domain: int
-    arch: Union[PlatformInfoArm, PlatformInfoX86]
+    arch: Union[PlatformInfoArm, PlatformInfoX86, None]
 
 
 class IRQChip(BaseModel):
@@ -104,7 +104,7 @@ class PCIDevice(BaseModel):
 class CellConfig(BaseModel):
     type: str
     name: str
-    vpci_irq_base: ExpressionInt
+    vpci_irq_base: Optional[ExpressionInt]
     flags: List[str]  # FIXME: Use list of ENUM
 
     hypervisor_memory: Optional[HypervisorMemoryRegion]

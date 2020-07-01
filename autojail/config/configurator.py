@@ -14,6 +14,7 @@ from ..model import (
 from .memory import PrepareMemoryRegionsPass, AllocateMemoryPass
 from .shmem import LowerSHMemPass, ConfigSHMemRegionsPass
 from .irq import PrepareIRQChipsPass
+from .board_info import TransferBoardInfoPass
 
 
 class JailhouseConfigurator:
@@ -21,6 +22,7 @@ class JailhouseConfigurator:
         self.board = board
         self.config: Optional[JailhouseConfig] = None
         self.passes = [
+            TransferBoardInfoPass(),
             LowerSHMemPass(),
             PrepareIRQChipsPass(),
             PrepareMemoryRegionsPass(),
@@ -45,9 +47,6 @@ class JailhouseConfigurator:
             amount_irqchips = len(cell.irqchips)
             cpu_set = cell.cpus
 
-            # 64 von rpi4.c  size of datatype __u64
-            # FIXME: check if feasible for higher number of cpu sets
-            #        should probably be maximum over all cpu sets
             cpu_calculated = max(list(cpu_set)) // 64 + 1
 
             f.write("#include <jailhouse/types.h>\n")
@@ -125,11 +124,12 @@ class JailhouseConfigurator:
 
             if cell.type == "root":
                 f.write("\n\t.platform_info = {")
-                f.write(
-                    "\n\t\t.pci_mmconfig_base = "
-                    + hex(cell.platform_info.pci_mmconfig_base)
-                    + ","
-                )
+                if cell.platform_info.pci_mmconfig_base:
+                    f.write(
+                        "\n\t\t.pci_mmconfig_base = "
+                        + hex(cell.platform_info.pci_mmconfig_base)
+                        + ","
+                    )
                 f.write(
                     "\n\t\t.pci_mmconfig_end_bus = "
                     + str(cell.platform_info.pci_mmconfig_end_bus)
@@ -137,7 +137,7 @@ class JailhouseConfigurator:
                 )
                 f.write(
                     "\n\t\t.pci_is_virtual = "
-                    + str(cell.platform_info.pci_is_virtual)
+                    + ("1" if cell.platform_info.pci_is_virtual else "0")
                     + ","
                 )
                 f.write(
@@ -146,10 +146,12 @@ class JailhouseConfigurator:
                     + ","
                 )
                 f.write("\n\t\t.arm = {")
-                arm_values = cell.platform_info.arm
+                arm_values = cell.platform_info.arch
 
-                for i in range(len(arm_values)):
-                    f.write("\n\t\t\t." + str(arm_values[i]).strip() + ",")
+                for name, val in arm_values.dict().items():
+                    if name == "iommu_units":
+                        continue
+                    f.write("\n\t\t\t." + str(name) + " = " + str(val) + ",")
 
                 f.write("\n\t\t},\n")
                 f.write("\n\t},\n")

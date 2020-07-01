@@ -97,6 +97,15 @@ class AllocatorSegment:
         self.sharer_names = sharer_names
         self.size = sum(r.size for r in self.memory_regions)
 
+    @property
+    def physical_start_addr(self):
+        return self.memory_regions[0].physical_start_addr
+
+    def set_physical_start_addr(self, addr):
+        for region in self.memory_regions:
+            region.physical_start_addr = addr
+            addr += region.size
+
 
 class AllocateMemoryPass(BasePass):
     """Implements a simple MemoryAllocator for AutoJail"""
@@ -166,7 +175,7 @@ class AllocateMemoryPass(BasePass):
                 f"Free vmem of cell {name} after preallocation",
             )
 
-            # self._allocate_virtual()
+            self._allocate_virtual(freelist_virtual)
 
         return self.board, self.config
 
@@ -275,9 +284,10 @@ class AllocateMemoryPass(BasePass):
                 unallocated_region.size, alignment=alignment, reverse=True
             )
             self.freelist.reserve(start_addr, unallocated_region.size)
-            unallocated_region.physical_start_addr = start_addr
+            unallocated_region.set_physical_start_addr(start_addr)
 
 
+# FIXME: this pass might not be needed any more
 class PrepareMemoryRegionsPass(BasePass):
     """ Prepare memory regions by merging  regions from Extracted Board Info and Cell Configuration"""
 
