@@ -14,6 +14,7 @@ class BaseMemoryRegion(BaseModel):
     size: Optional[ByteSize] = None
     flags: List[str] = []
     allocatable: bool = False
+    shared: bool = False
 
 
 class MemoryRegion(BaseMemoryRegion):

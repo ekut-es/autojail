@@ -106,6 +106,11 @@ class AllocatorSegment:
             region.physical_start_addr = addr
             addr += region.size
 
+    def set_virtual_start_addr(self, addr):
+        for region in self.memory_regions:
+            region.virtual_start_addr = addr
+            addr += region.size
+
 
 class AllocateMemoryPass(BasePass):
     """Implements a simple MemoryAllocator for AutoJail"""
@@ -175,7 +180,12 @@ class AllocateMemoryPass(BasePass):
                 f"Free vmem of cell {name} after preallocation",
             )
 
-            self._allocate_virtual(freelist_virtual)
+            unallocated_virtual = self._build_unallocated_segments_virtual(cell)
+            self._allocate_virtual(freelist_virtual, unallocated_virtual)
+
+            self._log_freelist(
+                freelist_virtual, f"Free vmem of cell {name} after allocation",
+            )
 
         return self.board, self.config
 
@@ -235,6 +245,13 @@ class AllocateMemoryPass(BasePass):
 
         return unallocated
 
+    def _build_unallocated_segments_virtual(self, cell):
+        unallocated = []
+        for name, region in cell.memory_regions.items():
+            if region.virtual_start_addr is None:
+                unallocated.append(AllocatorSegment(name, [region]))
+        return unallocated
+
     def _allocate(self, physical_start_addr, size):
         for free_segment in self.freelist:
             pass
@@ -260,14 +277,16 @@ class AllocateMemoryPass(BasePass):
 
         return freelist
 
-    def _find_next_fit(self, size, alignment=0, reverse=True):
-        freelist = self.freelist
+    def _find_next_fit(self, size, alignment=0, reverse=True, freelist=None):
+        if freelist is None:
+            freelist = self.freelist
+
         if reverse:
             freelist = reversed(freelist)
 
         for block in freelist:
             if block.size >= size:
-                if reversed:
+                if reverse:
                     diff = block.size - size
                     return block.start_addr + diff
                 return block.start_addr
@@ -285,6 +304,21 @@ class AllocateMemoryPass(BasePass):
             )
             self.freelist.reserve(start_addr, unallocated_region.size)
             unallocated_region.set_physical_start_addr(start_addr)
+
+    def _allocate_virtual(self, freelist, unallocated_segments):
+        for unallocated_region in unallocated_segments:
+            alignment = 0
+            if unallocated_region.size % self.board.pagesize == 0:
+                alignment = self.board.pagesize
+
+            start_addr = self._find_next_fit(
+                unallocated_region.size,
+                alignment=alignment,
+                reverse=False,
+                freelist=freelist,
+            )
+            freelist.reserve(start_addr, unallocated_region.size)
+            unallocated_region.set_virtual_start_addr(start_addr)
 
 
 # FIXME: this pass might not be needed any more

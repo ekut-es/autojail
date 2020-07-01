@@ -21,7 +21,7 @@ cells:
     cpus: 0-3
 
     memory_regions:
-      "System RAM":
+      "Main Memory":
         size: 128 MB
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
 
@@ -46,7 +46,6 @@ cells:
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
 
       RAM 2:
-        virtual_start_addr: 0x30000000
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
@@ -82,7 +81,7 @@ cells:
       flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
 
     memory_regions:
-      RAM:
+      RAM 1:
         virtual_start_addr: 0
         size: 0x10000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
@@ -103,7 +102,6 @@ cells:
           - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
 
       RAM 2:
-        virtual_start_addr: 0x30000000
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 

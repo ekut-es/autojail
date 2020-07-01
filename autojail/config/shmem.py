@@ -135,6 +135,7 @@ class LowerSHMemPass(BasePass):
                 allocatable=False,
                 flags=["MEM_READ", "MEM_ROOTSHARED"],
                 next_region=f"{name}_{mem_regions_index+1}",
+                shared=True,
             )
             mem_regions.append((f"{name}_{mem_regions_index}", table_region))
             mem_regions_index += 1
@@ -144,6 +145,7 @@ class LowerSHMemPass(BasePass):
                 allocatable=False,
                 flags=["MEM_READ", "MEM_WRITE", "MEM_ROOTSHARED"],
                 next_region=f"{name}_{mem_regions_index+1}",
+                shared=True,
             )
             mem_regions.append(
                 (f"{name}_{mem_regions_index}", common_output_region)
@@ -156,6 +158,7 @@ class LowerSHMemPass(BasePass):
                     allocatable=False,
                     flags=["MEM_READ", "MEM_ROOTSHARED"],
                     next_region=f"{name}_{mem_regions_index+1}",
+                    shared=True,
                 )
                 mem_regions.append((f"{name}_{mem_regions_index}", mem_region))
                 mem_regions_index += 1
