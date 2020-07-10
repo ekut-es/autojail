@@ -68,7 +68,7 @@ class IRQChip(BaseModel):
 
     @property
     def pin_bitmap(self) -> List[int]:
-        SIZE = 32
+        SIZE = 32  # noqa
 
         count = 0
         res = []

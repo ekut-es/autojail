@@ -12,7 +12,7 @@ class PrepareIRQChipsPass(BasePass):
         self.board = board
         self.config = config
 
-        for name, cell in self.config.cells.items():
+        for cell in self.config.cells.values():
             self._prepare_irqchips(cell)
 
         return self.board, self.config

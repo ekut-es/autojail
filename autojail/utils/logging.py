@@ -3,7 +3,7 @@ import logging
 from clikit.api.io import flags as verbosity
 
 
-def getLogger():
+def getLogger():  # noqa
     return logging.getLogger("autojail")
 
 

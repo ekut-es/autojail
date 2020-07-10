@@ -7,7 +7,7 @@ class TransferBoardInfoPass(BasePass):
         pass
 
     def _create_irqchips(self, board, config):
-        for name, cell in config.cells.items():
+        for cell in config.cells.values():
             if cell.irqchips:
                 continue
 
@@ -22,7 +22,7 @@ class TransferBoardInfoPass(BasePass):
             )
 
     def _create_arm_info(self, board, config):
-        for name, cell in config.cells.items():
+        for cell in config.cells.values():
             if cell.type != "root":
                 continue
 

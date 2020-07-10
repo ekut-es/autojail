@@ -33,7 +33,7 @@ class JailhouseConfigurator:
     def write_config(self, output_path):
         """Write configuration data to file"""
 
-        for cell_id, cell in self.config.cells.items():
+        for cell in self.config.cells.values():
             output_name = str(cell.name).lower().replace(" ", "-")
             output_name += ".c"
 
@@ -236,7 +236,7 @@ class JailhouseConfigurator:
 
             f.write("\t},")
             f.write("\n\t.irqchips = {")
-            for name, chip in cell.irqchips.items():
+            for chip in cell.irqchips.values():
                 f.write("\n\t\t{")
                 f.write("\n\t\t\t.address = " + hex(chip.address) + ",")
                 hex_bitmap = ", ".join(["0x%x" % b for b in chip.pin_bitmap])
