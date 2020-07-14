@@ -115,6 +115,48 @@ class BoardInfoExtractor:
                             pagesize = int(value)
         return pagesize
 
+    def extract_cpuinfo(self):
+        path = self.data_root / "proc" / "cpuinfo"
+
+        cpuinfo = []
+
+        with path.open() as f:
+            current_cpu = {}
+            for line in f:
+                line = line.strip()
+                started = False
+                if line == "":
+                    if current_cpu:
+                        cpuinfo.append(current_cpu)
+                        current_cpu = {}
+                        started = False
+
+                    if line.startswith("processor"):
+                        started = True
+
+                    if started is False:
+                        continue
+
+                    key, val = line.split()
+
+                    key = key.strip()
+                    val = val.strip()
+
+                    try:
+                        val = int(val)
+                    except ValueError:
+                        try:
+                            val = float(val)
+                        except ValueError:
+                            pass
+
+                    current_cpu[key] = val
+
+        if current_cpu:
+            cpuinfo.append(current_cpu)
+
+        return cpuinfo
+
     def extract_from_devicetree(self, memory_regions):
         extractor = DeviceTreeExtractor(
             self.data_root / "sys" / "firmware" / "devicetree" / "base"
@@ -130,11 +172,14 @@ class BoardInfoExtractor:
             memory_regions
         )
 
+        cpuinfo = self.extract_cpuinfo()
+
         board = Board(
             name=self.name,
             board=self.board,
             memory_regions=memory_regions,
             pagesize=pagesize,
             interrupt_controllers=interrupt_controllers,
+            cpuinfo=cpuinfo,
         )
         return board

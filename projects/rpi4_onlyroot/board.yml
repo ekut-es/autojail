@@ -1101,6 +1101,21 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
+  pci@0:
+    physical_start_addr: 0xe0000000
+    virtual_start_addr: 0xe0000000
+    size: 0x100000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
 interrupt_controllers:
 - maintenance_irq: 25
   gic_version: 2

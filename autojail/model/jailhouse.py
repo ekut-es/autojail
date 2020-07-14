@@ -105,12 +105,12 @@ class CellConfig(BaseModel):
     type: str
     name: str
     vpci_irq_base: Optional[ExpressionInt]
-    flags: List[str]  # FIXME: Use list of ENUM
+    flags: List[str] = []
 
     hypervisor_memory: Optional[HypervisorMemoryRegion]
     debug_console: DebugConsole
     platform_info: Optional[PlatformInfo]
-    cpus: IntegerList
+    cpus: Optional[IntegerList]
     memory_regions: Optional[
         OrderedDict[str, Union[MemoryRegion, ShMemNetRegion]]
     ] = {}
