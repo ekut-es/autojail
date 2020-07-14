@@ -20,6 +20,7 @@ class MemoryRegion(BaseMemoryRegion):
     path: Optional[str]
     compatible: List[str] = []
     interrupts: List[int] = []
+    aliases: List[str] = []
 
 
 class GroupedMemoryRegion(BaseMemoryRegion):
