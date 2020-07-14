@@ -342,7 +342,7 @@ class DeviceTreeExtractor:
                     path=path,
                     compatible=list(compatible),
                     interrupts=extracted_interrupts,
-                    aliases=self.aliases_reversed(path),
+                    aliases=self.aliases_reversed[path],
                     flags=[
                         "MEM_READ",
                         "MEM_WRITE",
