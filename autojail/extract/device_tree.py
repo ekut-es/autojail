@@ -198,7 +198,7 @@ class DeviceTreeExtractor:
         device_type = node.get_property("device_type")
         interrupts = node.get_property("interrupts")
 
-        if (compatible and compatible.value == "memory") or compatible is None:
+        if (compatible and "memory" in compatible.data) or compatible is None:
             next_pos = 0
             while next_pos < len(reg):
                 start, size, offset = state.parse_range(reg[next_pos:])
@@ -333,16 +333,12 @@ class DeviceTreeExtractor:
                             extracted_interrupts.append(int_num)
             path = node.path + "/" + node.name
             for device_register in device_registers:
-                print(
-                    "compatible", compatible, type(compatible), dir(compatible)
-                )
-
                 device = MemoryRegion(
                     physical_start_addr=device_register.physical_start_addr,
                     virtual_start_addr=device_register.virtual_start_addr,
                     size=device_registers[0].size,
                     path=path,
-                    compatible=compatible,
+                    compatible=list(compatible),
                     interrupts=extracted_interrupts,
                     flags=[
                         "MEM_READ",

@@ -18,7 +18,7 @@ class BaseMemoryRegion(BaseModel):
 class MemoryRegion(BaseMemoryRegion):
     next_region: Optional[str] = None
     path: Optional[str]
-    compatible: Optional[str]
+    compatible: List[str] = []
     interrupts: List[int] = []
 
 
