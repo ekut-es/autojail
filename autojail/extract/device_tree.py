@@ -332,7 +332,6 @@ class DeviceTreeExtractor:
                         if int_type == 0:
                             extracted_interrupts.append(int_num)
             path = node.path + "/" + node.name
-            compatible = getattr(node.get_property(compatible), "value", None)
             for device_register in device_registers:
                 device = DeviceMemoryRegion(
                     physical_start_addr=device_register.physical_start_addr,
