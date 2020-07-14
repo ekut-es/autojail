@@ -1,6 +1,6 @@
 cells:
   root:
-    type: root 
+    type: root
     name: "root"
     flags: [SYS_VIRTUAL_DEBUG_CONSOLE]
 
@@ -13,19 +13,12 @@ cells:
       type: CON_TYPE_8250
       flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
 
-    platform_info:
-      pci_mmconfig_end_bus: 0
-      pci_is_virtual: 1
-      pci_domain: 1
-
     cpus: 0-3
 
     memory_regions:
       "Main Memory":
         size: 128 MB
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
-
-
 
   linux1:
     type: "linux"
@@ -92,7 +85,6 @@ cells:
         size: 0x40
         flags:
           - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
-
 
       fe200000.gpio:
         physical_start_addr: 0xfe200000
