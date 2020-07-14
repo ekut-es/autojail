@@ -2,7 +2,7 @@ import subprocess
 from pathlib import Path
 from typing import Any, List, Union
 from tempfile import mktemp
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 import fdt
 import tabulate
@@ -73,6 +73,7 @@ class DeviceTreeExtractor:
                 self.fdt = fdt.parse_dtb(f.read())
 
         self.aliases = OrderedDict()
+        self.aliases_reversed = defaultdict(list)
         self.handles = OrderedDict()
         self.memory_regions = OrderedDict()
         self.interrupt_controllers = []
@@ -84,6 +85,7 @@ class DeviceTreeExtractor:
             aliases_node = self.fdt.get_node("/aliases")
             for prop in aliases_node.props:
                 self.aliases[prop.name] = prop.value
+                self.aliases_reversed[prop.value].append(prop.name)
 
     def _is_simple_bus(self, node):
         compatible = node.get_property("compatible")
@@ -340,6 +342,7 @@ class DeviceTreeExtractor:
                     path=path,
                     compatible=list(compatible),
                     interrupts=extracted_interrupts,
+                    aliases=self.aliases_reversed(path),
                     flags=[
                         "MEM_READ",
                         "MEM_WRITE",
