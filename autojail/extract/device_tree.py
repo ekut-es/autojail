@@ -333,6 +333,10 @@ class DeviceTreeExtractor:
                             extracted_interrupts.append(int_num)
             path = node.path + "/" + node.name
             for device_register in device_registers:
+                print(
+                    "compatible", compatible, type(compatible), dir(compatible)
+                )
+
                 device = MemoryRegion(
                     physical_start_addr=device_register.physical_start_addr,
                     virtual_start_addr=device_register.virtual_start_addr,
