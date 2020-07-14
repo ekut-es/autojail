@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import OrderedDict, List, Optional
+from typing import OrderedDict, List, Optional, Union
 
 from .datatypes import ByteSize, ExpressionInt, IntegerList, HexInt
 
@@ -88,5 +88,5 @@ class Board(BaseModel):
     board: str
     pagesize: ByteSize
     virtual_address_bits: int = 48  # FIXME: that seems correct for most ARM64 Boards
-    memory_regions: OrderedDict[str, MemoryRegion]
+    memory_regions: OrderedDict[str, Union[MemoryRegion, DeviceMemoryRegion]]
     interrupt_controllers: List[GIC] = []
