@@ -1,10 +1,11 @@
 from .passes import BasePass
 from ..model import IRQChip, PlatformInfoArm, PlatformInfo
+from ..utils.logging import getLogger
 
 
 class TransferBoardInfoPass(BasePass):
     def __init__(self):
-        pass
+        self.logger = getLogger()
 
     def _create_irqchips(self, board, config):
         for cell in config.cells.values():
@@ -26,7 +27,12 @@ class TransferBoardInfoPass(BasePass):
             if cell.type != "root":
                 continue
 
-            if cell.paltform_info is None:
+            if cell.platform_info is None:
+                self.logger.warn("Platform info has not been defined")
+                self.logger.warn("Assuming:")
+                self.logger.warn("  pci_mmconfig_end_bus=0")
+                self.logger.warn("  pci_is_virtual=1")
+                self.logger.warn("  pci_domain=1")
                 cell.platform_info = PlatformInfo(
                     pci_mmconfig_end_bus=0, pci_is_virtual=1, pci_domain=1
                 )
