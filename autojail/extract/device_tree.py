@@ -9,7 +9,7 @@ import tabulate
 
 from dataclasses import dataclass, field
 
-from ..model import MemoryRegion, DeviceMemoryRegion, GIC
+from ..model import MemoryRegion, GIC
 from ..model.datatypes import ByteSize
 from ..utils.logging import getLogger
 
@@ -334,7 +334,7 @@ class DeviceTreeExtractor:
             path = node.path + "/" + node.name
             compatible = getattr(node.get_property(compatible), "value", None)
             for device_register in device_registers:
-                device = DeviceMemoryRegion(
+                device = MemoryRegion(
                     physical_start_addr=device_register.physical_start_addr,
                     virtual_start_addr=device_register.virtual_start_addr,
                     size=device_registers[0].size,
