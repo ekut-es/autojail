@@ -59,7 +59,8 @@ class DeviceTreeExtractor:
             temp_file = mktemp(suffix=".dtb")
             try:
                 subprocess.run(
-                    f"dtc -I fs -O dtb -o {temp_file} {str(dt_path)}".split()
+                    f"dtc -I fs -O dtb -o {temp_file} {str(dt_path)}".split(),
+                    stderr=subprocess.DEVNULL,
                 )
 
                 with open(temp_file, "rb") as f:
