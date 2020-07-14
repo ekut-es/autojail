@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import OrderedDict, List, Optional, Union
+from typing import OrderedDict, List, Optional
 
 from .datatypes import ByteSize, ExpressionInt, IntegerList, HexInt
 
@@ -17,12 +17,7 @@ class BaseMemoryRegion(BaseModel):
 
 class MemoryRegion(BaseMemoryRegion):
     next_region: Optional[str] = None
-
-
-class DeviceMemoryRegion(BaseMemoryRegion):
-    """Adds a path to the corresponding device tree node"""
-
-    path: str
+    path: Optional[str]
     compatible: Optional[str]
     interrupts: List[int] = []
 
@@ -88,5 +83,5 @@ class Board(BaseModel):
     board: str
     pagesize: ByteSize
     virtual_address_bits: int = 48  # FIXME: that seems correct for most ARM64 Boards
-    memory_regions: OrderedDict[str, Union[MemoryRegion, DeviceMemoryRegion]]
+    memory_regions: OrderedDict[str, MemoryRegion]
     interrupt_controllers: List[GIC] = []
