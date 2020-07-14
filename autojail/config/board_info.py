@@ -7,21 +7,20 @@ class TransferBoardInfoPass(BasePass):
     def __init__(self):
         self.logger = getLogger()
 
+    def _create_irqchips(self, board, config):
+        for cell in config.cells.values():
+            if cell.irqchips:
+                continue
 
-def _create_irqchips(self, board, config):
-    for cell in config.cells.values():
-        if cell.irqchips:
-            continue
+            gic = board.interrupt_controllers[0]
 
-        gic = board.interrupt_controllers[0]
+            interrupts = []
+            if cell.type == "root":
+                interrupts = gic.interrupts
 
-        interrupts = []
-        if cell.type == "root":
-            interrupts = gic.interrupts
-
-        cell.irqchips["gic"] = IRQChip(
-            address=gic.gicd_base, pin_base=32, interrupts=interrupts
-        )
+            cell.irqchips["gic"] = IRQChip(
+                address=gic.gicd_base, pin_base=32, interrupts=interrupts
+            )
 
     def _create_platform_info(self, board, config):
         for cell in config.cells.values():
@@ -96,6 +95,7 @@ def _create_irqchips(self, board, config):
             print(name, cell.vpci_irq_base)
 
     def __call__(self, board, config):
+        self.logger.info("Lowering board info")
         self._create_platform_info(board, config)
         self._create_irqchips(board, config)
         self._create_arm_info(board, config)
