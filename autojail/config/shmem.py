@@ -88,7 +88,7 @@ class LowerSHMemPass(BasePass):
             return
 
         root_cell = None
-        for name, cell_config in self.config.cells.items():
+        for cell_config in self.config.cells.values():
             if cell_config.type == "root":
                 root_cell = cell_config
                 break
@@ -152,7 +152,7 @@ class LowerSHMemPass(BasePass):
             )
             mem_regions_index += 1
 
-            for cell_name in shmem_config.peers:
+            for _cell_name in shmem_config.peers:
                 mem_region = MemoryRegion(
                     size=per_device_region_size,
                     allocatable=False,
@@ -194,7 +194,7 @@ class LowerSHMemPass(BasePass):
                 intx_pin += cell.vpci_irq_base + 32
 
                 root_irq_chip = None
-                for chip_name, chip in root_cell.irqchips.items():
+                for chip in root_cell.irqchips.values():
                     if intx_pin - 32 in chip.interrupts:
                         root_irq_chip = chip
                         break
@@ -205,9 +205,11 @@ class LowerSHMemPass(BasePass):
                     )
 
                 irq_chip = None
-                for chip_name, chip in cell.irqchips.items():
+                chip_name = ""
+                for _chip_name, chip in cell.irqchips.items():
                     if intx_pin in chip.interrupts:
                         irq_chip = chip
+                        chip_name = _chip_name
                         break
 
                 if not irq_chip:

@@ -3,8 +3,6 @@ from typing import OrderedDict, List, Optional
 
 from .datatypes import ByteSize, ExpressionInt, IntegerList, HexInt
 
-# FIXME: Split and Rename this file
-
 
 class BaseMemoryRegion(BaseModel):
     """Base class for memory region definitions"""

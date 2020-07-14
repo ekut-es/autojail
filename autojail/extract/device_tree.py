@@ -394,7 +394,7 @@ class DeviceTreeExtractor:
 
     def _add_interrupts(self):
         interrupts = set()
-        for name, region in self.memory_regions.items():
+        for region in self.memory_regions.values():
             interrupts = interrupts.union(
                 set(getattr(region, "interrupts", []))
             )

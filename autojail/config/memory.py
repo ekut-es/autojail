@@ -91,10 +91,12 @@ class FreeList(SortedCollection):
 
 
 class AllocatorSegment:
-    def __init__(self, name="unnamed", memory_regions=[], sharer_names=[]):
+    def __init__(self, name="unnaamed", memory_regions=None, sharer_names=None):
         self.name = name
-        self.memory_regions = memory_regions
-        self.sharer_names = sharer_names
+        self.memory_regions = (
+            memory_regions if memory_regions is not None else []
+        )
+        self.sharer_names = sharer_names if sharer_names is not None else []
         self.size = sum(r.size for r in self.memory_regions)
 
     @property
@@ -133,7 +135,7 @@ class AllocateMemoryPass(BasePass):
         self.config = config
         self.root_cell = None
 
-        for name, cell in self.config.cells.items():
+        for cell in self.config.cells.values():
             if cell.type == "root":
                 self.root_cell = cell
                 break
@@ -208,7 +210,7 @@ class AllocateMemoryPass(BasePass):
         )
 
     def _build_freelist(self):
-        for name, region in self.root_cell.memory_regions.items():
+        for region in self.root_cell.memory_regions.values():
             if region.allocatable:
                 new_block = MemoryBlock(region.physical_start_addr, region.size)
                 self.freelist.insert(new_block)
@@ -252,13 +254,9 @@ class AllocateMemoryPass(BasePass):
                 unallocated.append(AllocatorSegment(name, [region]))
         return unallocated
 
-    def _allocate(self, physical_start_addr, size):
-        for free_segment in self.freelist:
-            pass
-
     def _preallocate_physical(self):
-        for cell_name, cell in self.config.cells.items():
-            for region_name, memory_region in cell.memory_regions.items():
+        for cell in self.config.cells.values():
+            for memory_region in cell.memory_regions.values():
                 if memory_region.allocatable:
                     continue
                 if memory_region.physical_start_addr is not None:
@@ -267,7 +265,7 @@ class AllocateMemoryPass(BasePass):
                     )
 
     def _preallocate_virtual(self, freelist, cell):
-        for region_name, memory_region in cell.memory_regions.items():
+        for memory_region in cell.memory_regions.values():
             if memory_region.allocatable:
                 continue
             if memory_region.virtual_start_addr is not None:
@@ -333,8 +331,8 @@ class PrepareMemoryRegionsPass(BasePass):
         self.board = board
         self.config = config
 
-        for name, cell in self.config.cells.items():
-            for region_name, region in cell.memory_regions.items():
+        for cell in self.config.cells.values():
+            for region in cell.memory_regions.values():
                 if hasattr(region, "size") and region.size is None:
                     region.size = self.board.pagesize
 
@@ -353,7 +351,7 @@ class PrepareMemoryRegionsPass(BasePass):
             v_end = memory_region.virtual_start_addr
 
             skip = False
-            for cell_name, cell_region in cell.memory_regions.items():
+            for cell_region in cell.memory_regions.values():
                 if not isinstance(cell_region, BaseMemoryRegion):
                     continue
 
