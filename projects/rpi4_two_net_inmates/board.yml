@@ -1,5 +1,5 @@
 name: rpi4_two_net_inmates
-board: raspberrypi4b-jh1
+board: rpi4_two_net_inmates
 pagesize: 0x1000
 virtual_address_bits: 48
 memory_regions:
@@ -48,10 +48,10 @@ memory_regions:
     compatible: []
     interrupts: []
     aliases: []
-  v3d@7ec04000:
-    physical_start_addr: 0xfec00000
-    virtual_start_addr: 0xfec00000
-    size: 0x4000
+  pcie@7d500000:
+    physical_start_addr: 0xfd500000
+    virtual_start_addr: 0xfd500000
+    size: 0x9310
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -63,16 +63,19 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /v3dbus/v3d@7ec04000
+    path: /scb/pcie@7d500000
     compatible:
-    - brcm,2711-v3d
+    - brcm,bcm7211-pcie
+    - brcm,bcm7445-pcie
+    - brcm,pci-plat-dev
     interrupts:
-    - 74
+    - 148
+    - 148
     aliases: []
-  v3d@7ec04000.0:
-    physical_start_addr: 0xfec04000
-    virtual_start_addr: 0xfec04000
-    size: 0x4000
+  pcie@7d500000.0:
+    physical_start_addr: 0xfe00f300
+    virtual_start_addr: 0xfe00f300
+    size: 0x9310
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -84,12 +87,447 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /v3dbus/v3d@7ec04000
+    path: /scb/pcie@7d500000
     compatible:
-    - brcm,2711-v3d
+    - brcm,bcm7211-pcie
+    - brcm,bcm7445-pcie
+    - brcm,pci-plat-dev
     interrupts:
-    - 74
+    - 148
+    - 148
     aliases: []
+  hevc-decoder@7eb00000:
+    physical_start_addr: 0xfeb00000
+    virtual_start_addr: 0xfeb00000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /scb/hevc-decoder@7eb00000
+    compatible:
+    - raspberrypi,rpivid-hevc-decoder
+    interrupts: []
+    aliases: []
+  xhci@7e9c0000:
+    physical_start_addr: 0xfe9c0000
+    virtual_start_addr: 0xfe9c0000
+    size: 0x100000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /scb/xhci@7e9c0000
+    compatible:
+    - generic-xhci
+    interrupts:
+    - 176
+    aliases: []
+  mailbox@7e00b840:
+    physical_start_addr: 0xfe00b840
+    virtual_start_addr: 0xfe00b840
+    size: 0x3c
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /scb/mailbox@7e00b840
+    compatible:
+    - brcm,bcm2838-vchiq
+    interrupts:
+    - 34
+    aliases: []
+  h264-decoder@7eb20000:
+    physical_start_addr: 0xfeb20000
+    virtual_start_addr: 0xfeb20000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /scb/h264-decoder@7eb20000
+    compatible:
+    - raspberrypi,rpivid-h264-decoder
+    interrupts: []
+    aliases: []
+  genet@7d580000:
+    physical_start_addr: 0xfd580000
+    virtual_start_addr: 0xfd580000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /scb/genet@7d580000
+    compatible:
+    - brcm,genet-v5
+    interrupts:
+    - 157
+    - 158
+    aliases:
+    - ethernet0
+  vp9-decoder@7eb30000:
+    physical_start_addr: 0xfeb30000
+    virtual_start_addr: 0xfeb30000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /scb/vp9-decoder@7eb30000
+    compatible:
+    - raspberrypi,rpivid-vp9-decoder
+    interrupts: []
+    aliases: []
+  dma@7e007b00:
+    physical_start_addr: 0xfe007b00
+    virtual_start_addr: 0xfe007b00
+    size: 0x400
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /scb/dma@7e007b00
+    compatible:
+    - brcm,bcm2838-dma
+    interrupts:
+    - 89
+    - 90
+    - 91
+    - 92
+    aliases: []
+  rpivid-local-intc@7eb10000:
+    physical_start_addr: 0xfeb10000
+    virtual_start_addr: 0xfeb10000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /scb/rpivid-local-intc@7eb10000
+    compatible:
+    - raspberrypi,rpivid-local-intc
+    interrupts:
+    - 98
+    aliases: []
+  i2s@7e203000:
+    physical_start_addr: 0xfe203000
+    virtual_start_addr: 0xfe203000
+    size: 0x24
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2s@7e203000
+    compatible:
+    - brcm,bcm2835-i2s
+    interrupts: []
+    aliases:
+    - i2s
+  smi@7e600000:
+    physical_start_addr: 0xfe600000
+    virtual_start_addr: 0xfe600000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/smi@7e600000
+    compatible:
+    - brcm,bcm2835-smi
+    interrupts:
+    - 112
+    aliases: []
+  txp@7e004000:
+    physical_start_addr: 0xfe004000
+    virtual_start_addr: 0xfe004000
+    size: 0x20
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/txp@7e004000
+    compatible:
+    - brcm,bcm2835-txp
+    interrupts:
+    - 75
+    aliases: []
+  spi@7e204a00:
+    physical_start_addr: 0xfe204a00
+    virtual_start_addr: 0xfe204a00
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/spi@7e204a00
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - 118
+    aliases: []
+  aux@7e215000:
+    physical_start_addr: 0xfe215000
+    virtual_start_addr: 0xfe215000
+    size: 0x8
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/aux@7e215000
+    compatible:
+    - brcm,bcm2835-aux
+    interrupts: []
+    aliases:
+    - aux
+  i2c@7e804000:
+    physical_start_addr: 0xfe804000
+    virtual_start_addr: 0xfe804000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@7e804000
+    compatible:
+    - brcm,bcm2835-i2c
+    interrupts:
+    - 117
+    aliases:
+    - i2c_arm
+    - i2c1
+    - i2c
+  pixelvalve@7e207000:
+    physical_start_addr: 0xfe207000
+    virtual_start_addr: 0xfe207000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/pixelvalve@7e207000
+    compatible:
+    - brcm,bcm2835-pixelvalve1
+    interrupts:
+    - 110
+    aliases: []
+  serial@7e201000:
+    physical_start_addr: 0xfe201000
+    virtual_start_addr: 0xfe201000
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/serial@7e201000
+    compatible:
+    - brcm,bcm2835-pl011
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - 121
+    aliases:
+    - serial1
+    - uart0
+  pixelvalve@7e807000:
+    physical_start_addr: 0xfe807000
+    virtual_start_addr: 0xfe807000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/pixelvalve@7e807000
+    compatible:
+    - brcm,bcm2835-pixelvalve2
+    interrupts:
+    - 106
+    aliases: []
+  rng@7e104000:
+    physical_start_addr: 0xfe104000
+    virtual_start_addr: 0xfe104000
+    size: 0x10
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/rng@7e104000
+    compatible:
+    - brcm,bcm2838-rng200
+    interrupts:
+    - 125
+    aliases:
+    - random
+  i2c@7e205a00:
+    physical_start_addr: 0xfe205a00
+    virtual_start_addr: 0xfe205a00
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@7e205a00
+    compatible:
+    - brcm,bcm2835-i2c
+    interrupts:
+    - 117
+    aliases:
+    - i2c5
+  thermal@7d5d2200:
+    physical_start_addr: 0xfd5d2200
+    virtual_start_addr: 0xfd5d2200
+    size: 0x2c
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/thermal@7d5d2200
+    compatible:
+    - brcm,avs-tmon-bcm2838
+    interrupts:
+    - 137
+    aliases:
+    - thermal
   i2c@7e205000:
     physical_start_addr: 0xfe205000
     virtual_start_addr: 0xfe205000
@@ -113,9 +551,139 @@ memory_regions:
     aliases:
     - i2c0
     - i2c_vc
-  i2c@7e804000:
-    physical_start_addr: 0xfe804000
-    virtual_start_addr: 0xfe804000
+  pwm@7e20c800:
+    physical_start_addr: 0xfe20c800
+    virtual_start_addr: 0xfe20c800
+    size: 0x28
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/pwm@7e20c800
+    compatible:
+    - brcm,bcm2835-pwm
+    interrupts: []
+    aliases: []
+  i2c@7e205c00:
+    physical_start_addr: 0xfe205c00
+    virtual_start_addr: 0xfe205c00
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@7e205c00
+    compatible:
+    - brcm,bcm2835-i2c
+    interrupts:
+    - 117
+    aliases:
+    - i2c6
+  local_intc@40000000:
+    physical_start_addr: 0xff800000
+    virtual_start_addr: 0xff800000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/local_intc@40000000
+    compatible:
+    - brcm,bcm2836-l1-intc
+    interrupts: []
+    aliases: []
+  i2c@7e205600:
+    physical_start_addr: 0xfe205600
+    virtual_start_addr: 0xfe205600
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@7e205600
+    compatible:
+    - brcm,bcm2835-i2c
+    interrupts:
+    - 117
+    aliases:
+    - i2c3
+  mmc@7e202000:
+    physical_start_addr: 0xfe202000
+    virtual_start_addr: 0xfe202000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/mmc@7e202000
+    compatible:
+    - brcm,bcm2835-sdhost
+    interrupts:
+    - 120
+    aliases:
+    - mmc2
+    - sdhost
+  mmcnr@7e300000:
+    physical_start_addr: 0xfe300000
+    virtual_start_addr: 0xfe300000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/mmcnr@7e300000
+    compatible:
+    - brcm,bcm2835-mmc
+    - brcm,bcm2835-sdhci
+    interrupts:
+    - 126
+    aliases:
+    - mmc1
+  i2c@7e805000:
+    physical_start_addr: 0xfe805000
+    virtual_start_addr: 0xfe805000
     size: 0x1000
     flags:
     - MEM_READ
@@ -128,15 +696,57 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /soc/i2c@7e804000
+    path: /soc/i2c@7e805000
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
     - 117
     aliases:
-    - i2c_arm
-    - i2c
-    - i2c1
+    - i2c2
+  serial@7e215040:
+    physical_start_addr: 0xfe215040
+    virtual_start_addr: 0xfe215040
+    size: 0x40
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/serial@7e215040
+    compatible:
+    - brcm,bcm2835-aux-uart
+    interrupts:
+    - 93
+    aliases:
+    - serial0
+    - uart1
+  spi@7e204800:
+    physical_start_addr: 0xfe204800
+    virtual_start_addr: 0xfe204800
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/spi@7e204800
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - 118
+    aliases: []
   mmc@7e300000:
     physical_start_addr: 0xfe300000
     virtual_start_addr: 0xfe300000
@@ -160,10 +770,10 @@ memory_regions:
     - 126
     aliases:
     - mmc
-  local_intc@40000000:
-    physical_start_addr: 0xff800000
-    virtual_start_addr: 0xff800000
-    size: 0x100
+  dsi@7e700000:
+    physical_start_addr: 0xfe700000
+    virtual_start_addr: 0xfe700000
+    size: 0x8c
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -175,14 +785,15 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /soc/local_intc@40000000
+    path: /soc/dsi@7e700000
     compatible:
-    - brcm,bcm2836-l1-intc
-    interrupts: []
+    - brcm,bcm2835-dsi1
+    interrupts:
+    - 108
     aliases: []
-  spi@7e204600:
-    physical_start_addr: 0xfe204600
-    virtual_start_addr: 0xfe204600
+  spi@7e204c00:
+    physical_start_addr: 0xfe204c00
+    virtual_start_addr: 0xfe204c00
     size: 0x200
     flags:
     - MEM_READ
@@ -195,15 +806,15 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /soc/spi@7e204600
+    path: /soc/spi@7e204c00
     compatible:
     - brcm,bcm2835-spi
     interrupts:
     - 118
     aliases: []
-  spi@7e2150c0:
-    physical_start_addr: 0xfe2150c0
-    virtual_start_addr: 0xfe2150c0
+  spi@7e215080:
+    physical_start_addr: 0xfe215080
+    virtual_start_addr: 0xfe215080
     size: 0x40
     flags:
     - MEM_READ
@@ -216,13 +827,80 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /soc/spi@7e2150c0
+    path: /soc/spi@7e215080
     compatible:
     - brcm,bcm2835-aux-spi
     interrupts:
     - 93
     aliases:
-    - spi2
+    - spi1
+  serial@7e201600:
+    physical_start_addr: 0xfe201600
+    virtual_start_addr: 0xfe201600
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/serial@7e201600
+    compatible:
+    - brcm,bcm2835-pl011
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - 121
+    aliases: []
+  hdmi@7e902000:
+    physical_start_addr: 0xfe902000
+    virtual_start_addr: 0xfe902000
+    size: 0x600
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/hdmi@7e902000
+    compatible:
+    - brcm,bcm2835-hdmi
+    interrupts:
+    - 104
+    - 105
+    aliases: []
+  hdmi@7e902000.0:
+    physical_start_addr: 0xfe808000
+    virtual_start_addr: 0xfe808000
+    size: 0x600
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/hdmi@7e902000
+    compatible:
+    - brcm,bcm2835-hdmi
+    interrupts:
+    - 104
+    - 105
+    aliases: []
   pwm@7e20c000:
     physical_start_addr: 0xfe20c000
     virtual_start_addr: 0xfe20c000
@@ -243,10 +921,10 @@ memory_regions:
     - brcm,bcm2835-pwm
     interrupts: []
     aliases: []
-  thermal@7d5d2200:
-    physical_start_addr: 0xfd5d2200
-    virtual_start_addr: 0xfd5d2200
-    size: 0x2c
+  pixelvalve@7e206000:
+    physical_start_addr: 0xfe206000
+    virtual_start_addr: 0xfe206000
+    size: 0x100
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -258,13 +936,12 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /soc/thermal@7d5d2200
+    path: /soc/pixelvalve@7e206000
     compatible:
-    - brcm,avs-tmon-bcm2838
+    - brcm,bcm2835-pixelvalve0
     interrupts:
-    - 137
-    aliases:
-    - thermal
+    - 109
+    aliases: []
   usb@7e980000:
     physical_start_addr: 0xfe980000
     virtual_start_addr: 0xfe980000
@@ -311,9 +988,9 @@ memory_regions:
     - 40
     aliases:
     - usb
-  i2c@7e205c00:
-    physical_start_addr: 0xfe205c00
-    virtual_start_addr: 0xfe205c00
+  i2c@7e205800:
+    physical_start_addr: 0xfe205800
+    virtual_start_addr: 0xfe205800
     size: 0x200
     flags:
     - MEM_READ
@@ -326,68 +1003,13 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /soc/i2c@7e205c00
+    path: /soc/i2c@7e205800
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
     - 117
     aliases:
-    - i2c6
-  serial@7e215040:
-    physical_start_addr: 0xfe215040
-    virtual_start_addr: 0xfe215040
-    size: 0x40
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/serial@7e215040
-    compatible:
-    - brcm,bcm2835-aux-uart
-    interrupts:
-    - 93
-    aliases:
-    - serial0
-    - uart1
-  dma@7e007000:
-    physical_start_addr: 0xfe007000
-    virtual_start_addr: 0xfe007000
-    size: 0xb00
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/dma@7e007000
-    compatible:
-    - brcm,bcm2835-dma
-    interrupts:
-    - 80
-    - 81
-    - 82
-    - 83
-    - 84
-    - 85
-    - 86
-    - 87
-    - 87
-    - 88
-    - 88
-    aliases:
-    - dma
+    - i2c4
   serial@7e201400:
     physical_start_addr: 0xfe201400
     virtual_start_addr: 0xfe201400
@@ -404,29 +1026,6 @@ memory_regions:
     shared: false
     next_region:
     path: /soc/serial@7e201400
-    compatible:
-    - brcm,bcm2835-pl011
-    - arm,pl011
-    - arm,primecell
-    interrupts:
-    - 121
-    aliases: []
-  serial@7e201800:
-    physical_start_addr: 0xfe201800
-    virtual_start_addr: 0xfe201800
-    size: 0x200
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/serial@7e201800
     compatible:
     - brcm,bcm2835-pl011
     - arm,pl011
@@ -454,10 +1053,10 @@ memory_regions:
     - brcm,bcm2711-cprman
     interrupts: []
     aliases: []
-  pixelvalve@7e807000:
-    physical_start_addr: 0xfe807000
-    virtual_start_addr: 0xfe807000
-    size: 0x100
+  dsi@7e209000:
+    physical_start_addr: 0xfe209000
+    virtual_start_addr: 0xfe209000
+    size: 0x78
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -469,35 +1068,12 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /soc/pixelvalve@7e807000
+    path: /soc/dsi@7e209000
     compatible:
-    - brcm,bcm2835-pixelvalve2
+    - brcm,bcm2835-dsi0
     interrupts:
-    - 106
+    - 100
     aliases: []
-  mmcnr@7e300000:
-    physical_start_addr: 0xfe300000
-    virtual_start_addr: 0xfe300000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/mmcnr@7e300000
-    compatible:
-    - brcm,bcm2835-mmc
-    - brcm,bcm2835-sdhci
-    interrupts:
-    - 126
-    aliases:
-    - mmc1
   dpi@7e208000:
     physical_start_addr: 0xfe208000
     virtual_start_addr: 0xfe208000
@@ -518,222 +1094,6 @@ memory_regions:
     - brcm,bcm2835-dpi
     interrupts: []
     aliases: []
-  serial@7e201000:
-    physical_start_addr: 0xfe201000
-    virtual_start_addr: 0xfe201000
-    size: 0x200
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/serial@7e201000
-    compatible:
-    - brcm,bcm2835-pl011
-    - arm,pl011
-    - arm,primecell
-    interrupts:
-    - 121
-    aliases:
-    - uart0
-    - serial1
-  csi@7e800000:
-    physical_start_addr: 0xfe800000
-    virtual_start_addr: 0xfe800000
-    size: 0x800
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/csi@7e800000
-    compatible:
-    - brcm,bcm2835-unicam
-    interrupts:
-    - 102
-    aliases: []
-  csi@7e800000.0:
-    physical_start_addr: 0xfe802000
-    virtual_start_addr: 0xfe802000
-    size: 0x800
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/csi@7e800000
-    compatible:
-    - brcm,bcm2835-unicam
-    interrupts:
-    - 102
-    aliases: []
-  txp@7e004000:
-    physical_start_addr: 0xfe004000
-    virtual_start_addr: 0xfe004000
-    size: 0x20
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/txp@7e004000
-    compatible:
-    - brcm,bcm2835-txp
-    interrupts:
-    - 75
-    aliases: []
-  i2c@7e205a00:
-    physical_start_addr: 0xfe205a00
-    virtual_start_addr: 0xfe205a00
-    size: 0x200
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/i2c@7e205a00
-    compatible:
-    - brcm,bcm2835-i2c
-    interrupts:
-    - 117
-    aliases:
-    - i2c5
-  axiperf:
-    physical_start_addr: 0xfe009800
-    virtual_start_addr: 0xfe009800
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/axiperf
-    compatible:
-    - brcm,bcm2835-axiperf
-    interrupts: []
-    aliases:
-    - axiperf
-  axiperf.0:
-    physical_start_addr: 0xfee08000
-    virtual_start_addr: 0xfee08000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/axiperf
-    compatible:
-    - brcm,bcm2835-axiperf
-    interrupts: []
-    aliases:
-    - axiperf
-  i2c@7e805000:
-    physical_start_addr: 0xfe805000
-    virtual_start_addr: 0xfe805000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/i2c@7e805000
-    compatible:
-    - brcm,bcm2835-i2c
-    interrupts:
-    - 117
-    aliases:
-    - i2c2
-  i2s@7e203000:
-    physical_start_addr: 0xfe203000
-    virtual_start_addr: 0xfe203000
-    size: 0x24
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/i2s@7e203000
-    compatible:
-    - brcm,bcm2835-i2s
-    interrupts: []
-    aliases:
-    - i2s
-  aux@7e215000:
-    physical_start_addr: 0xfe215000
-    virtual_start_addr: 0xfe215000
-    size: 0x8
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/aux@7e215000
-    compatible:
-    - brcm,bcm2835-aux
-    interrupts: []
-    aliases:
-    - aux
   csi@7e801000:
     physical_start_addr: 0xfe801000
     virtual_start_addr: 0xfe801000
@@ -776,113 +1136,6 @@ memory_regions:
     interrupts:
     - 103
     aliases: []
-  serial@7e201600:
-    physical_start_addr: 0xfe201600
-    virtual_start_addr: 0xfe201600
-    size: 0x200
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/serial@7e201600
-    compatible:
-    - brcm,bcm2835-pl011
-    - arm,pl011
-    - arm,primecell
-    interrupts:
-    - 121
-    aliases: []
-  vec@7e806000:
-    physical_start_addr: 0xfe806000
-    virtual_start_addr: 0xfe806000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/vec@7e806000
-    compatible:
-    - brcm,bcm2835-vec
-    interrupts:
-    - 123
-    aliases: []
-  pwm@7e20c800:
-    physical_start_addr: 0xfe20c800
-    virtual_start_addr: 0xfe20c800
-    size: 0x28
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/pwm@7e20c800
-    compatible:
-    - brcm,bcm2835-pwm
-    interrupts: []
-    aliases: []
-  spi@7e215080:
-    physical_start_addr: 0xfe215080
-    virtual_start_addr: 0xfe215080
-    size: 0x40
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/spi@7e215080
-    compatible:
-    - brcm,bcm2835-aux-spi
-    interrupts:
-    - 93
-    aliases:
-    - spi1
-  spi@7e204800:
-    physical_start_addr: 0xfe204800
-    virtual_start_addr: 0xfe204800
-    size: 0x200
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/spi@7e204800
-    compatible:
-    - brcm,bcm2835-spi
-    interrupts:
-    - 118
-    aliases: []
   hvs@7e400000:
     physical_start_addr: 0xfe400000
     virtual_start_addr: 0xfe400000
@@ -904,331 +1157,6 @@ memory_regions:
     interrupts:
     - 97
     aliases: []
-  rng@7e104000:
-    physical_start_addr: 0xfe104000
-    virtual_start_addr: 0xfe104000
-    size: 0x10
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/rng@7e104000
-    compatible:
-    - brcm,bcm2838-rng200
-    interrupts:
-    - 125
-    aliases:
-    - random
-  dsi@7e209000:
-    physical_start_addr: 0xfe209000
-    virtual_start_addr: 0xfe209000
-    size: 0x78
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/dsi@7e209000
-    compatible:
-    - brcm,bcm2835-dsi0
-    interrupts:
-    - 100
-    aliases: []
-  emmc2@7e340000:
-    physical_start_addr: 0xfe340000
-    virtual_start_addr: 0xfe340000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/emmc2@7e340000
-    compatible:
-    - brcm,bcm2711-emmc2
-    interrupts:
-    - 126
-    aliases:
-    - mmc0
-  spi@7e204a00:
-    physical_start_addr: 0xfe204a00
-    virtual_start_addr: 0xfe204a00
-    size: 0x200
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/spi@7e204a00
-    compatible:
-    - brcm,bcm2835-spi
-    interrupts:
-    - 118
-    aliases: []
-  hdmi@7e902000:
-    physical_start_addr: 0xfe902000
-    virtual_start_addr: 0xfe902000
-    size: 0x600
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/hdmi@7e902000
-    compatible:
-    - brcm,bcm2835-hdmi
-    interrupts:
-    - 104
-    - 105
-    aliases: []
-  hdmi@7e902000.0:
-    physical_start_addr: 0xfe808000
-    virtual_start_addr: 0xfe808000
-    size: 0x600
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/hdmi@7e902000
-    compatible:
-    - brcm,bcm2835-hdmi
-    interrupts:
-    - 104
-    - 105
-    aliases: []
-  pixelvalve@7e207000:
-    physical_start_addr: 0xfe207000
-    virtual_start_addr: 0xfe207000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/pixelvalve@7e207000
-    compatible:
-    - brcm,bcm2835-pixelvalve1
-    interrupts:
-    - 110
-    aliases: []
-  mailbox@7e00b880:
-    physical_start_addr: 0xfe00b880
-    virtual_start_addr: 0xfe00b880
-    size: 0x40
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/mailbox@7e00b880
-    compatible:
-    - brcm,bcm2835-mbox
-    interrupts:
-    - 33
-    aliases:
-    - mailbox
-  i2c@7e205800:
-    physical_start_addr: 0xfe205800
-    virtual_start_addr: 0xfe205800
-    size: 0x200
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/i2c@7e205800
-    compatible:
-    - brcm,bcm2835-i2c
-    interrupts:
-    - 117
-    aliases:
-    - i2c4
-  pixelvalve@7e206000:
-    physical_start_addr: 0xfe206000
-    virtual_start_addr: 0xfe206000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/pixelvalve@7e206000
-    compatible:
-    - brcm,bcm2835-pixelvalve0
-    interrupts:
-    - 109
-    aliases: []
-  smi@7e600000:
-    physical_start_addr: 0xfe600000
-    virtual_start_addr: 0xfe600000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/smi@7e600000
-    compatible:
-    - brcm,bcm2835-smi
-    interrupts:
-    - 112
-    aliases: []
-  firmwarekms@7e600000:
-    physical_start_addr: 0xfe600000
-    virtual_start_addr: 0xfe600000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/firmwarekms@7e600000
-    compatible:
-    - raspberrypi,rpi-firmware-kms
-    interrupts:
-    - 112
-    aliases: []
-  serial@7e201a00:
-    physical_start_addr: 0xfe201a00
-    virtual_start_addr: 0xfe201a00
-    size: 0x200
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/serial@7e201a00
-    compatible:
-    - brcm,bcm2835-pl011
-    - arm,pl011
-    - arm,primecell
-    interrupts:
-    - 121
-    aliases: []
-  dsi@7e700000:
-    physical_start_addr: 0xfe700000
-    virtual_start_addr: 0xfe700000
-    size: 0x8c
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/dsi@7e700000
-    compatible:
-    - brcm,bcm2835-dsi1
-    interrupts:
-    - 108
-    aliases: []
-  mmc@7e202000:
-    physical_start_addr: 0xfe202000
-    virtual_start_addr: 0xfe202000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/mmc@7e202000
-    compatible:
-    - brcm,bcm2835-sdhost
-    interrupts:
-    - 120
-    aliases:
-    - sdhost
-    - mmc2
   watchdog@7e100000:
     physical_start_addr: 0xfe100000
     virtual_start_addr: 0xfe100000
@@ -1295,9 +1223,51 @@ memory_regions:
     interrupts: []
     aliases:
     - watchdog
-  spi@7e204c00:
-    physical_start_addr: 0xfe204c00
-    virtual_start_addr: 0xfe204c00
+  csi@7e800000:
+    physical_start_addr: 0xfe800000
+    virtual_start_addr: 0xfe800000
+    size: 0x800
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/csi@7e800000
+    compatible:
+    - brcm,bcm2835-unicam
+    interrupts:
+    - 102
+    aliases: []
+  csi@7e800000.0:
+    physical_start_addr: 0xfe802000
+    virtual_start_addr: 0xfe802000
+    size: 0x800
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/csi@7e800000
+    compatible:
+    - brcm,bcm2835-unicam
+    interrupts:
+    - 102
+    aliases: []
+  serial@7e201800:
+    physical_start_addr: 0xfe201800
+    virtual_start_addr: 0xfe201800
     size: 0x200
     flags:
     - MEM_READ
@@ -1310,11 +1280,33 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /soc/spi@7e204c00
+    path: /soc/serial@7e201800
     compatible:
-    - brcm,bcm2835-spi
+    - brcm,bcm2835-pl011
+    - arm,pl011
+    - arm,primecell
     interrupts:
-    - 118
+    - 121
+    aliases: []
+  gpiomem:
+    physical_start_addr: 0xfe200000
+    virtual_start_addr: 0xfe200000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/gpiomem
+    compatible:
+    - brcm,bcm2835-gpiomem
+    interrupts: []
     aliases: []
   spi@7e204000:
     physical_start_addr: 0xfe204000
@@ -1338,10 +1330,10 @@ memory_regions:
     - 118
     aliases:
     - spi0
-  gpiomem:
-    physical_start_addr: 0xfe200000
-    virtual_start_addr: 0xfe200000
-    size: 0x1000
+  dma@7e007000:
+    physical_start_addr: 0xfe007000
+    virtual_start_addr: 0xfe007000
+    size: 0xb00
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -1353,14 +1345,26 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /soc/gpiomem
+    path: /soc/dma@7e007000
     compatible:
-    - brcm,bcm2835-gpiomem
-    interrupts: []
-    aliases: []
-  i2c@7e205600:
-    physical_start_addr: 0xfe205600
-    virtual_start_addr: 0xfe205600
+    - brcm,bcm2835-dma
+    interrupts:
+    - 80
+    - 81
+    - 82
+    - 83
+    - 84
+    - 85
+    - 86
+    - 87
+    - 87
+    - 88
+    - 88
+    aliases:
+    - dma
+  serial@7e201a00:
+    physical_start_addr: 0xfe201a00
+    virtual_start_addr: 0xfe201a00
     size: 0x200
     flags:
     - MEM_READ
@@ -1373,17 +1377,18 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /soc/i2c@7e205600
+    path: /soc/serial@7e201a00
     compatible:
-    - brcm,bcm2835-i2c
+    - brcm,bcm2835-pl011
+    - arm,pl011
+    - arm,primecell
     interrupts:
-    - 117
-    aliases:
-    - i2c3
-  xhci@7e9c0000:
-    physical_start_addr: 0xfe9c0000
-    virtual_start_addr: 0xfe9c0000
-    size: 0x100000
+    - 121
+    aliases: []
+  emmc2@7e340000:
+    physical_start_addr: 0xfe340000
+    virtual_start_addr: 0xfe340000
+    size: 0x100
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -1395,15 +1400,101 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /scb/xhci@7e9c0000
+    path: /soc/emmc2@7e340000
     compatible:
-    - generic-xhci
+    - brcm,bcm2711-emmc2
     interrupts:
-    - 176
+    - 126
+    aliases:
+    - mmc0
+  spi@7e2150c0:
+    physical_start_addr: 0xfe2150c0
+    virtual_start_addr: 0xfe2150c0
+    size: 0x40
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/spi@7e2150c0
+    compatible:
+    - brcm,bcm2835-aux-spi
+    interrupts:
+    - 93
+    aliases:
+    - spi2
+  firmwarekms@7e600000:
+    physical_start_addr: 0xfe600000
+    virtual_start_addr: 0xfe600000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/firmwarekms@7e600000
+    compatible:
+    - raspberrypi,rpi-firmware-kms
+    interrupts:
+    - 112
     aliases: []
-  rpivid-local-intc@7eb10000:
-    physical_start_addr: 0xfeb10000
-    virtual_start_addr: 0xfeb10000
+  axiperf:
+    physical_start_addr: 0xfe009800
+    virtual_start_addr: 0xfe009800
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/axiperf
+    compatible:
+    - brcm,bcm2835-axiperf
+    interrupts: []
+    aliases:
+    - axiperf
+  axiperf.0:
+    physical_start_addr: 0xfee08000
+    virtual_start_addr: 0xfee08000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/axiperf
+    compatible:
+    - brcm,bcm2835-axiperf
+    interrupts: []
+    aliases:
+    - axiperf
+  vec@7e806000:
+    physical_start_addr: 0xfe806000
+    virtual_start_addr: 0xfe806000
     size: 0x1000
     flags:
     - MEM_READ
@@ -1416,16 +1507,16 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /scb/rpivid-local-intc@7eb10000
+    path: /soc/vec@7e806000
     compatible:
-    - raspberrypi,rpivid-local-intc
+    - brcm,bcm2835-vec
     interrupts:
-    - 98
+    - 123
     aliases: []
-  h264-decoder@7eb20000:
-    physical_start_addr: 0xfeb20000
-    virtual_start_addr: 0xfeb20000
-    size: 0x10000
+  mailbox@7e00b880:
+    physical_start_addr: 0xfe00b880
+    virtual_start_addr: 0xfe00b880
+    size: 0x40
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -1437,110 +1528,17 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /scb/h264-decoder@7eb20000
+    path: /soc/mailbox@7e00b880
     compatible:
-    - raspberrypi,rpivid-h264-decoder
-    interrupts: []
-    aliases: []
-  pcie@7d500000:
-    physical_start_addr: 0xfd500000
-    virtual_start_addr: 0xfd500000
-    size: 0x9310
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /scb/pcie@7d500000
-    compatible:
-    - brcm,bcm7211-pcie
-    - brcm,bcm7445-pcie
-    - brcm,pci-plat-dev
+    - brcm,bcm2835-mbox
     interrupts:
-    - 148
-    - 148
-    aliases: []
-  pcie@7d500000.0:
-    physical_start_addr: 0xfe00f300
-    virtual_start_addr: 0xfe00f300
-    size: 0x9310
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /scb/pcie@7d500000
-    compatible:
-    - brcm,bcm7211-pcie
-    - brcm,bcm7445-pcie
-    - brcm,pci-plat-dev
-    interrupts:
-    - 148
-    - 148
-    aliases: []
-  dma@7e007b00:
-    physical_start_addr: 0xfe007b00
-    virtual_start_addr: 0xfe007b00
-    size: 0x400
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /scb/dma@7e007b00
-    compatible:
-    - brcm,bcm2838-dma
-    interrupts:
-    - 89
-    - 90
-    - 91
-    - 92
-    aliases: []
-  genet@7d580000:
-    physical_start_addr: 0xfd580000
-    virtual_start_addr: 0xfd580000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /scb/genet@7d580000
-    compatible:
-    - brcm,genet-v5
-    interrupts:
-    - 157
-    - 158
+    - 33
     aliases:
-    - ethernet0
-  mailbox@7e00b840:
-    physical_start_addr: 0xfe00b840
-    virtual_start_addr: 0xfe00b840
-    size: 0x3c
+    - mailbox
+  spi@7e204600:
+    physical_start_addr: 0xfe204600
+    virtual_start_addr: 0xfe204600
+    size: 0x200
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -1552,16 +1550,16 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /scb/mailbox@7e00b840
+    path: /soc/spi@7e204600
     compatible:
-    - brcm,bcm2838-vchiq
+    - brcm,bcm2835-spi
     interrupts:
-    - 34
+    - 118
     aliases: []
-  vp9-decoder@7eb30000:
-    physical_start_addr: 0xfeb30000
-    virtual_start_addr: 0xfeb30000
-    size: 0x10000
+  v3d@7ec04000:
+    physical_start_addr: 0xfec00000
+    virtual_start_addr: 0xfec00000
+    size: 0x4000
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -1573,15 +1571,16 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /scb/vp9-decoder@7eb30000
+    path: /v3dbus/v3d@7ec04000
     compatible:
-    - raspberrypi,rpivid-vp9-decoder
-    interrupts: []
+    - brcm,2711-v3d
+    interrupts:
+    - 74
     aliases: []
-  hevc-decoder@7eb00000:
-    physical_start_addr: 0xfeb00000
-    virtual_start_addr: 0xfeb00000
-    size: 0x10000
+  v3d@7ec04000.0:
+    physical_start_addr: 0xfec04000
+    virtual_start_addr: 0xfec04000
+    size: 0x4000
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -1593,10 +1592,11 @@ memory_regions:
     allocatable: false
     shared: false
     next_region:
-    path: /scb/hevc-decoder@7eb00000
+    path: /v3dbus/v3d@7ec04000
     compatible:
-    - raspberrypi,rpivid-hevc-decoder
-    interrupts: []
+    - brcm,2711-v3d
+    interrupts:
+    - 74
     aliases: []
 interrupt_controllers:
 - maintenance_irq: 25
