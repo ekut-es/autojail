@@ -1,16 +1,33 @@
+stages:
+  - sca
+  - test
+  - deploy
+
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
+  - apt-get update
+  - apt-get install device-tree-compiler -y 
   - python3 -m ensurepip --user
   - python3 -m pip install virtualenv --user
   - python3 -m virtualenv venv
   - source venv/bin/activate
   - python3 -m pip install poetry
   
+run_pre_commit: 
+  image: python:3.6
+  stage: sca
+  script: 
+    - set -e 
+    - poetry install 
+    - poetry run pre-commit
+  tags:
+    - docker
+
 test:
   image: python:3.6
-
+  stage: test
   script:
     - set -e
     - poetry install
@@ -20,7 +37,7 @@ test:
 
 test_python_latest:
   image: python:latest
-
+  stage: test
   script:
     - set -e
     - poetry install
@@ -35,7 +52,7 @@ build_doc:
     - poetry install
     - poetry run mkdocs build
     - cp -r site/* /afs/wsi/home/gerum/public_html/autojail
-
+  stage: deploy
   tags:
     - afs
     

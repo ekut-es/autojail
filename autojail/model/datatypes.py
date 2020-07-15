@@ -3,6 +3,7 @@ import operator
 import re
 
 from typing import Union, List, TYPE_CHECKING
+from ..utils.string import remove_prefix
 
 import simpleeval
 
@@ -11,6 +12,36 @@ if TYPE_CHECKING:
 
 
 StrIntFloat = Union[str, int, float]
+
+
+class JailhouseFlagList(list):
+    """A list that can also parse JAILHOUSE flags
+
+       If input is a string it is splitted at | 
+
+       If strings in the list start with JAILHOUSE_ the JAILHOUSE_ is removed
+    """
+
+    @classmethod
+    def __get_validators__(cls) -> "CallableGenerator":
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v: Union[List[str], str]) -> "JailhouseFlagList":
+        if isinstance(v, str):
+            v = v.split("|")
+
+        prefix = "JAILHOUSE_"
+        res = []
+        for value in v:
+            value.strip()
+            value = remove_prefix(value, prefix)
+
+        return cls(res)
+
+    @classmethod
+    def to_yaml(cls, representer, node):
+        return representer.represent_scalar("tag:yaml.org,2002:str", str(node))
 
 
 class ExpressionInt(int):
@@ -39,7 +70,7 @@ class ExpressionInt(int):
 
     @classmethod
     def to_yaml(cls, representer, node):
-        return representer.represent_scalar("tag:yaml.org,2002:int", node)
+        return representer.represent_scalar("tag:yaml.org,2002:int", str(node))
 
 
 class HexInt(int):
@@ -149,9 +180,12 @@ class IntegerList(list):
         yield cls.validate
 
     @classmethod
-    def validate(cls, v: Union[str, List[int]]) -> "IntegerList":
+    def validate(cls, v: Union[str, int, List[int]]) -> "IntegerList":
         if isinstance(v, list):
             return cls(v)
+
+        if isinstance(v, int):
+            return cls([v])
 
         selection = set()
         # tokens are comma separated values

@@ -206,3 +206,4 @@ Further documentation on ARM-GICs can be found here:
 - <https://elinux.org/Device_Tree_Reference>
 - <https://elinux.org/images/c/cf/Power_ePAPR_APPROVED_v1.1.pdf>
 - <https://elinux.org/images/f/f9/Petazzoni-device-tree-dummies_0.pdf>
+- <https://www.nxp.com/docs/en/application-note/AN5125.pdf>

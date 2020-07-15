@@ -1,6 +1,6 @@
 import tempfile
-import tarfile
 import os
+import subprocess
 
 from pathlib import Path
 from shutil import rmtree
@@ -10,7 +10,13 @@ import ruamel.yaml
 from .base import BaseCommand
 from ..utils import connect
 from ..extract import BoardInfoExtractor
-from ..model import HexInt, ByteSize, IntegerList
+from ..model import (
+    ExpressionInt,
+    HexInt,
+    ByteSize,
+    IntegerList,
+    JailhouseFlagList,
+)
 
 
 class ExtractCommand(BaseCommand):
@@ -51,6 +57,8 @@ class ExtractCommand(BaseCommand):
                 yaml.register_class(HexInt)
                 yaml.register_class(ByteSize)
                 yaml.register_class(IntegerList)
+                yaml.register_class(JailhouseFlagList)
+                yaml.register_class(ExpressionInt)
                 yaml.dump(board_data.dict(), f)
         finally:
             if connection:
@@ -84,8 +92,7 @@ class ExtractCommand(BaseCommand):
             )
             connection.run(f"sudo rm -rf {target_tmpdir}")
 
-        with tarfile.open(f"{base_folder}/extract.tar.gz") as f:
-            f.extractall(f"{base_folder}")
+        subprocess.run("tar xzf extract.tar.gz".split(), cwd=base_folder)
 
         os.unlink(f"{base_folder}/extract.tar.gz")
 

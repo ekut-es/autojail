@@ -64,7 +64,7 @@ def build(c, board_ids="all", sync_kernel=False):
                 logging.warning(
                     f"Could not find cached kernel build directory for board {board.id}"
                 )
-                logging.warning(f"Skipping jailhouse build")
+                logging.warning("Skipping jailhouse build")
                 continue
 
             kernel_path = ROOT_PATH / "kernels" / board_id / kernel_name
@@ -104,7 +104,7 @@ def build(c, board_ids="all", sync_kernel=False):
                         "Could not build with device trees retrying build without device trees"
                     )
                     c.run(
-                        f"rm -rf configs/*/dts"
+                        "rm -rf configs/*/dts"
                     )  # Currently does not build for many targets
 
                     result = c.run(
@@ -124,7 +124,7 @@ def deploy(c, board_ids="all"):
     with c.cd(str(ROOT_PATH)):
         for board_id in board_ids:
             board = c.board(board_id)
-            build_dir = Path("builds") / board_id / "jailhouse"
+            build_dir = ROOT_PATH / "builds" / board_id / "jailhouse"
             with board.connect() as con:
                 rsync(con, str(build_dir), str(board.rundir))
 
