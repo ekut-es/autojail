@@ -6,6 +6,7 @@ from fabric import Connection
 from paramiko.ssh_exception import (
     AuthenticationException,
     PasswordRequiredException,
+    SSHException,
 )
 
 if TYPE_CHECKING:
@@ -19,7 +20,11 @@ def connect(config: "AutojailConfig", context, passwd_retries=5):
         try:
             connection = Connection(login.host, user=login.user)
             connection.open()
-        except (AuthenticationException, PasswordRequiredException):
+        except (
+            AuthenticationException,
+            PasswordRequiredException,
+            SSHException,
+        ):
             for _retry in range(passwd_retries):
 
                 password = getpass.getpass(
@@ -32,7 +37,11 @@ def connect(config: "AutojailConfig", context, passwd_retries=5):
                         connect_kwargs={"password": password},
                     )
                     connection.open()
-                except (AuthenticationException, PasswordRequiredException):
+                except (
+                    AuthenticationException,
+                    PasswordRequiredException,
+                    SSHException,
+                ):
                     continue
 
     else:
