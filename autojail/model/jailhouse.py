@@ -1,5 +1,7 @@
 from pydantic import BaseModel
-from typing import OrderedDict, List, Union, Optional
+
+# FIXME:  Dicts should be replaced by OrderedDict when 3.6 support is dropped
+from typing import Dict, List, Union, Optional
 
 from .datatypes import ByteSize, ExpressionInt, IntegerList, HexInt
 from .board import MemoryRegion, HypervisorMemoryRegion, ShMemNetRegion, Board
@@ -116,10 +118,10 @@ class CellConfig(BaseModel):
     platform_info: Optional[PlatformInfo]
     cpus: Optional[IntegerList]
     memory_regions: Optional[
-        OrderedDict[str, Union[str, MemoryRegion, ShMemNetRegion]]
+        Dict[str, Union[str, MemoryRegion, ShMemNetRegion]]
     ] = {}
-    irqchips: Optional[OrderedDict[str, IRQChip]] = {}
-    pci_devices: Optional[OrderedDict[str, PCIDevice]] = {}
+    irqchips: Optional[Dict[str, IRQChip]] = {}
+    pci_devices: Optional[Dict[str, PCIDevice]] = {}
 
 
 class ShmemConfig(BaseModel):
@@ -130,8 +132,8 @@ class ShmemConfig(BaseModel):
 
 
 class JailhouseConfig(BaseModel):
-    cells: OrderedDict[str, CellConfig]
-    shmem: Optional[OrderedDict[str, ShmemConfig]]
+    cells: Dict[str, CellConfig]
+    shmem: Optional[Dict[str, ShmemConfig]]
 
 
 if __name__ == "__main__":
