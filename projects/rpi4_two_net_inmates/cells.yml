@@ -7,11 +7,7 @@ cells:
     hypervisor_memory:
       size: 16 MB
 
-    debug_console:
-      address: 0xfe215040
-      size: 0x40
-      type: CON_TYPE_8250
-      flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
+    debug_console: serial0
 
     cpus: 0-3
 
@@ -26,11 +22,7 @@ cells:
     flags: [PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
     cpus: 2
 
-    debug_console:
-      address: 0xfe215040
-      type: CON_TYPE_8250
-      size: 0x40
-      flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
+    debug_console: serial0
 
     memory_regions:
       RAM 1:
@@ -42,24 +34,7 @@ cells:
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
-      fe215040.serial:
-        physical_start_addr: 0xfe215040
-        virtual_start_addr: 0xfe215040
-        size: 0x40
-        flags:
-          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
-            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
-
-      fe200000.gpio:
-        physical_start_addr: 0xfe200000
-        virtual_start_addr: 0xfe200000
-        size: 0xb4
-        flags:
-          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
-            | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
-
-      communication_region:
-        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
+      gpio: /soc/gpiomem
 
   linux2:
     type: "linux"
@@ -67,11 +42,7 @@ cells:
     flags: [PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
     cpus: 3
 
-    debug_console:
-      address: 0xfe215040
-      type: CON_TYPE_8250
-      size: 0x40
-      flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
+    debug_console: serial0
 
     memory_regions:
       RAM 1:
@@ -79,26 +50,11 @@ cells:
         size: 0x10000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
 
-      fe215040.serial:
-        physical_start_addr: 0xfe215040
-        virtual_start_addr: 0xfe215040
-        size: 0x40
-        flags:
-          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
-
-      fe200000.gpio:
-        physical_start_addr: 0xfe200000
-        virtual_start_addr: 0xfe200000
-        size: 0xb4
-        flags:
-          - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64 | JAILHOUSE_MEM_ROOTSHARED
-
       RAM 2:
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
-      communication_region:
-        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
+      gpio: /soc/gpiomem
 
 shmem:
   net1:

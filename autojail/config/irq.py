@@ -20,10 +20,6 @@ class PrepareIRQChipsPass(BasePass):
     def _prepare_irqchips(self, cell):
         "Splits irqchips that handle more interrupts than are possible in one autojail config entry"
 
-        from ..utils import debug
-
-        debug(cell.irqchips)
-
         split_factor = 32 * 4  # One entry can handle only  4*32 interrupts
         new_irqchips = {}
         for name, irqchip in cell.irqchips.items():
@@ -54,4 +50,7 @@ class PrepareIRQChipsPass(BasePass):
 
             new_irqchips[new_name] = new_chip
 
-        cell.irqchips = new_irqchips
+        cell.irqchips = {}
+        for name, chip in new_irqchips.items():
+            if len(chip.interrupts) > 0:
+                cell.irqchips[name] = chip

@@ -15,6 +15,7 @@ from .memory import PrepareMemoryRegionsPass, AllocateMemoryPass
 from .shmem import LowerSHMemPass, ConfigSHMemRegionsPass
 from .irq import PrepareIRQChipsPass
 from .board_info import TransferBoardInfoPass
+from .devices import LowerDevicesPass
 
 
 class JailhouseConfigurator:
@@ -23,6 +24,7 @@ class JailhouseConfigurator:
         self.config: Optional[JailhouseConfig] = None
         self.passes = [
             TransferBoardInfoPass(),
+            LowerDevicesPass(),
             LowerSHMemPass(),
             PrepareIRQChipsPass(),
             PrepareMemoryRegionsPass(),
@@ -191,7 +193,7 @@ class JailhouseConfigurator:
             f.write("\n\t.mem_regions = {\n")
             for k, v in cell.memory_regions.items():
                 if v.size == 0:
-                    f.write("\t/* empty optional region */ { 0 },\n")
+                    f.write("\t/* empty optional region */\n\t{ 0 },\n")
                     continue
 
                 if isinstance(v, MemoryRegion):
@@ -205,7 +207,7 @@ class JailhouseConfigurator:
                             + hex(v.physical_start_addr + v.size)
                         )
 
-                    f.write("*/\t{")
+                    f.write("*/\n\t{")
 
                     if v.physical_start_addr is not None:
                         f.write(

@@ -75,14 +75,18 @@ class IRQChip(BaseModel):
         current_item = 0
 
         for irq in self.interrupts:
+            irq = irq - self.pin_base
             if irq >= count + SIZE:
                 res.append(current_item)
                 current_item = 0
                 count += SIZE
-            current_item |= 1 << irq - count
+            current_item |= 1 << (irq - count)
 
         if current_item > 0:
             res.append(current_item)
+
+        while len(res) < 4:
+            res.append(0)
 
         return res
 
@@ -108,11 +112,11 @@ class CellConfig(BaseModel):
     flags: List[str] = []
 
     hypervisor_memory: Optional[HypervisorMemoryRegion]
-    debug_console: DebugConsole
+    debug_console: Union[str, DebugConsole]
     platform_info: Optional[PlatformInfo]
     cpus: Optional[IntegerList]
     memory_regions: Optional[
-        OrderedDict[str, Union[MemoryRegion, ShMemNetRegion]]
+        OrderedDict[str, Union[str, MemoryRegion, ShMemNetRegion]]
     ] = {}
     irqchips: Optional[OrderedDict[str, IRQChip]] = {}
     pci_devices: Optional[OrderedDict[str, PCIDevice]] = {}

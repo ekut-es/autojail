@@ -2,7 +2,7 @@ import copy
 
 from .passes import BasePass
 
-from ..model import MemoryRegion, PCIDevice, IRQChip
+from ..model import MemoryRegion, PCIDevice
 
 
 class ConfigSHMemRegionsPass(BasePass):
@@ -193,35 +193,9 @@ class LowerSHMemPass(BasePass):
                 intx_pin = current_bdf & 0x3
                 intx_pin += cell.vpci_irq_base + 32
 
-                root_irq_chip = None
-                for chip in root_cell.irqchips.values():
-                    if intx_pin - 32 in chip.interrupts:
-                        root_irq_chip = chip
-                        break
-
-                if not root_irq_chip:
-                    raise Exception(
-                        f"No IRQ chip available for interrupt: {intx_pin}"
-                    )
-
-                irq_chip = None
-                chip_name = ""
-                for _chip_name, chip in cell.irqchips.items():
-                    if intx_pin in chip.interrupts:
-                        irq_chip = chip
-                        chip_name = _chip_name
-                        break
-
-                if not irq_chip:
-                    irq_chip = IRQChip(
-                        address=root_irq_chip.address,
-                        pin_base=root_irq_chip.pin_base,
-                        interrupts=[],
-                    )
-
-                    cell.irqchips[
-                        f"{chip_name}_{len(cell.irqchips) + 1}"
-                    ] = irq_chip
+                # FIXME: what happens when irqchips are manually configured
+                root_irq_chip = list(root_cell.irqchips.values())[0]
+                irq_chip = list(cell.irqchips.values())[0]
 
                 irq_chip.interrupts.append(intx_pin - irq_chip.pin_base)
                 irq_chip.interrupts.sort()
