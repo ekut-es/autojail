@@ -585,3 +585,39 @@ struct {
 	.irqchips = {
 		{
 			.address = 0xff841000,
+			.pin_base = 32,
+			.pin_bitmap = {0x3fffffff, 0xfffffffe, 0x3fff0e7f, 0xeb6177d6},
+		},
+		{
+			.address = 0xff841000,
+			.pin_base = 160,
+			.pin_bitmap = {0xe3ffffff, 0xffff3fff, 0x0, 0x0},
+		},
+	},
+
+	.pci_devices = {
+		/*net1*/
+		{
+			.type = JAILHOUSE_PCI_TYPE_IVSHMEM,
+			.domain = 1,
+			.bar_mask = JAILHOUSE_IVSHMEM_BAR_MASK_INTX,
+			.bdf = 0 << 3,
+			.shmem_regions_start = 2,
+			.shmem_dev_id = 0,
+			.shmem_peers = 2,
+			.shmem_protocol = JAILHOUSE_SHMEM_PROTO_VETH,
+		},
+		/*net2*/
+		{
+			.type = JAILHOUSE_PCI_TYPE_IVSHMEM,
+			.domain = 1,
+			.bar_mask = JAILHOUSE_IVSHMEM_BAR_MASK_INTX,
+			.bdf = 1 << 3,
+			.shmem_regions_start = 6,
+			.shmem_dev_id = 0,
+			.shmem_peers = 2,
+			.shmem_protocol = JAILHOUSE_SHMEM_PROTO_VETH,
+		},
+	},
+
+};

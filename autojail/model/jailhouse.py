@@ -75,7 +75,7 @@ class IRQChip(BaseModel):
         current_item = 0
 
         for irq in self.interrupts:
-            irq = irq - self.pin_base
+            irq = irq
             if irq >= count + SIZE:
                 res.append(current_item)
                 current_item = 0
