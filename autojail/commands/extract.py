@@ -70,7 +70,7 @@ class ExtractCommand(BaseCommand):
     def _sync(self, connection, base_folder):
         base_folder = Path(base_folder)
         if not base_folder.exists():
-            base_folder.mkdir(exists_ok=True, recursive=True)
+            base_folder.mkdir(exist_ok=True, parents=True)
 
         res = connection.run("mktemp -d", warn=True, hide="both")
         target_tmpdir = res.stdout.strip()
