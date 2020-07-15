@@ -44,6 +44,8 @@ def connect(config: "AutojailConfig", context, passwd_retries=5):
                 ):
                     continue
 
+                break
+
     else:
         assert context is not None
         connection = context.board(login.host).connect()
