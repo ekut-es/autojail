@@ -18,6 +18,7 @@ def connect(config: "AutojailConfig", context, passwd_retries=5):
     if login.is_ssh:
         try:
             connection = Connection(login.host, user=login.user)
+            connection.open()
         except (AuthenticationException, PasswordRequiredException):
             for _retry in range(passwd_retries):
 
