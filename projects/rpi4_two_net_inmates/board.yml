@@ -1,5 +1,5 @@
 name: rpi4_two_net_inmates
-board: raspberrypi4b-jh1
+board: rpi4_two_net_inmates
 pagesize: 0x1000
 virtual_address_bits: 48
 memory_regions:
@@ -434,8 +434,8 @@ memory_regions:
     interrupts:
     - 121
     aliases:
-    - uart0
     - serial1
+    - uart0
   serial@7e201400:
     physical_start_addr: 0xfe201400
     virtual_start_addr: 0xfe201400
@@ -549,8 +549,8 @@ memory_regions:
     interrupts:
     - 120
     aliases:
-    - sdhost
     - mmc2
+    - sdhost
   i2s@7e203000:
     physical_start_addr: 0xfe203000
     virtual_start_addr: 0xfe203000
@@ -1089,27 +1089,6 @@ memory_regions:
     interrupts:
     - 97
     aliases: []
-  smi@7e600000:
-    physical_start_addr: 0xfe600000
-    virtual_start_addr: 0xfe600000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-    next_region:
-    path: /soc/smi@7e600000
-    compatible:
-    - brcm,bcm2835-smi
-    interrupts:
-    - 112
-    aliases: []
   firmwarekms@7e600000:
     physical_start_addr: 0xfe600000
     virtual_start_addr: 0xfe600000
@@ -1128,6 +1107,27 @@ memory_regions:
     path: /soc/firmwarekms@7e600000
     compatible:
     - raspberrypi,rpi-firmware-kms
+    interrupts:
+    - 112
+    aliases: []
+  smi@7e600000:
+    physical_start_addr: 0xfe600000
+    virtual_start_addr: 0xfe600000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/smi@7e600000
+    compatible:
+    - brcm,bcm2835-smi
     interrupts:
     - 112
     aliases: []
@@ -1257,9 +1257,9 @@ memory_regions:
     interrupts:
     - 117
     aliases:
-    - i2c_arm
     - i2c
     - i2c1
+    - i2c_arm
   i2c@7e805000:
     physical_start_addr: 0xfe805000
     virtual_start_addr: 0xfe805000

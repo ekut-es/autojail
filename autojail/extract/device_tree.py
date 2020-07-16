@@ -83,7 +83,7 @@ class DeviceTreeExtractor:
     def _extract_aliases(self):
         if self.fdt.exist_node("/aliases"):
             aliases_node = self.fdt.get_node("/aliases")
-            for prop in aliases_node.props:
+            for prop in sorted(aliases_node.props, key=lambda x: x.name):
                 self.aliases[prop.name] = prop.value
                 self.aliases_reversed[prop.value].append(prop.name)
 
@@ -480,7 +480,7 @@ class DeviceTreeExtractor:
         self.memory_regions = OrderedDict(
             sorted(
                 self.memory_regions.items(),
-                key=lambda x: x[1].physical_start_addr,
+                key=lambda x: (x[1].physical_start_addr, x[0]),
             )
         )
 
