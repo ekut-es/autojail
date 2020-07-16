@@ -478,8 +478,10 @@ class DeviceTreeExtractor:
         self._add_interrupts()
 
         self.memory_regions = OrderedDict(
-            sorted(self.memory_regions.items()),
-            key=lambda x: x[1].physical_start_addr,
+            sorted(
+                self.memory_regions.items(),
+                key=lambda x: x[1].physical_start_addr,
+            )
         )
 
         self._summarize()
