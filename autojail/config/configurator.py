@@ -153,7 +153,12 @@ class JailhouseConfigurator:
                 for name, val in arm_values.dict().items():
                     if name == "iommu_units":
                         continue
-                    f.write("\n\t\t\t." + str(name) + " = " + str(val) + ",")
+                    if "_base" in name:
+                        val = hex(val)
+                    else:
+                        val = str(val)
+
+                    f.write("\n\t\t\t." + str(name) + " = " + val + ",")
 
                 f.write("\n\t\t},\n")
                 f.write("\n\t},\n")
