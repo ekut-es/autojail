@@ -69,23 +69,44 @@ class IRQChip(BaseModel):
     interrupts: IntegerList
 
     @property
-    def pin_bitmap(self) -> List[int]:
+    def pin_bitmap(self) -> List[str]:
         SIZE = 32  # noqa
-
         count = 0
-        res = []
-        current_item = 0
 
+        res = []
+
+        update = None
+        store = lambda x: x
+        init = None
+
+        if len(self.interrupts) > 5:
+            update = lambda current_item, irq, count: current_item | (
+                1 << (irq - count)
+            )
+            store = lambda item: "0x%x" % item
+            init = 0
+        else:
+            update = (
+                lambda current_item, irq, count: current_item
+                + ("" if not current_item else " | ")
+                + f"1 << {(irq - count)}"
+            )
+            init = ""
+
+
+        current_item = init
         for irq in self.interrupts:
             irq = irq
-            if irq >= count + SIZE:
-                res.append(current_item)
-                current_item = 0
-                count += SIZE
-            current_item |= 1 << (irq - count)
 
-        if current_item > 0:
-            res.append(current_item)
+            if irq >= count + SIZE:
+                res.append(store(current_item))
+                current_item = init
+                count += SIZE
+
+            current_item = update(current_item, irq, count)
+
+        if current_item:
+            res.append(store(current_item))
 
         while len(res) < 4:
             res.append(0)
@@ -117,9 +138,7 @@ class CellConfig(BaseModel):
     debug_console: Union[str, DebugConsole]
     platform_info: Optional[PlatformInfo]
     cpus: Optional[IntegerList]
-    memory_regions: Optional[
-        Dict[str, Union[str, MemoryRegion, ShMemNetRegion]]
-    ] = {}
+    memory_regions: Optional[Dict[str, Union[str, MemoryRegion, ShMemNetRegion]]] = {}
     irqchips: Optional[Dict[str, IRQChip]] = {}
     pci_devices: Optional[Dict[str, PCIDevice]] = {}
 
