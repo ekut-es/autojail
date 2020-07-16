@@ -1,5 +1,7 @@
-name: rpi4_default
+name: tmp
 board: raspberrypi4b-jh1
+pagesize: 0x1000
+virtual_address_bits: 48
 memory_regions:
   System RAM:
     physical_start_addr: 0x80000
@@ -7,12 +9,16 @@ memory_regions:
     size: 0x3b380000
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE
+    allocatable: true
+    next_region:
   System RAM_2:
     physical_start_addr: 0x40000000
     virtual_start_addr: 0x40000000
     size: 0xbc000000
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_EXECUTE
+    allocatable: true
+    next_region:
   fd500000.pcie:
     physical_start_addr: 0xfd500000
     virtual_start_addr: 0xfd500000
@@ -20,6 +26,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fd580000.genet:
     physical_start_addr: 0xfd580000
     virtual_start_addr: 0xfd580000
@@ -27,6 +35,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   unimac-mdio.-19:
     physical_start_addr: 0xfd580e14
     virtual_start_addr: 0xfd580e14
@@ -34,6 +44,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fd5d2200.thermal:
     physical_start_addr: 0xfd5d2200
     virtual_start_addr: 0xfd5d2200
@@ -41,6 +53,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe007000.dma:
     physical_start_addr: 0xfe007000
     virtual_start_addr: 0xfe007000
@@ -48,6 +62,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe007b00.dma:
     physical_start_addr: 0xfe007b00
     virtual_start_addr: 0xfe007b00
@@ -55,6 +71,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe100000.watchdog:
     physical_start_addr: 0xfe00a000
     virtual_start_addr: 0xfe00a000
@@ -62,6 +80,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   dwc_otg:
     physical_start_addr: 0xfe00b200
     virtual_start_addr: 0xfe00b200
@@ -69,6 +89,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe00b840.mailbox:
     physical_start_addr: 0xfe00b840
     virtual_start_addr: 0xfe00b840
@@ -76,6 +98,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe00b880.mailbox:
     physical_start_addr: 0xfe00b880
     virtual_start_addr: 0xfe00b880
@@ -83,6 +107,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe100000.watchdog_2:
     physical_start_addr: 0xfe100000
     virtual_start_addr: 0xfe100000
@@ -90,6 +116,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe101000.cprman:
     physical_start_addr: 0xfe101000
     virtual_start_addr: 0xfe101000
@@ -97,6 +125,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe104000.rng:
     physical_start_addr: 0xfe104000
     virtual_start_addr: 0xfe104000
@@ -104,6 +134,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe200000.gpio:
     physical_start_addr: 0xfe200000
     virtual_start_addr: 0xfe200000
@@ -111,6 +143,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   serial@7e201000:
     physical_start_addr: 0xfe201000
     virtual_start_addr: 0xfe201000
@@ -118,6 +152,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe201000.serial:
     physical_start_addr: 0xfe201000
     virtual_start_addr: 0xfe201000
@@ -125,6 +161,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe204000.spi:
     physical_start_addr: 0xfe204000
     virtual_start_addr: 0xfe204000
@@ -132,6 +170,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe215000.aux:
     physical_start_addr: 0xfe215000
     virtual_start_addr: 0xfe215000
@@ -139,6 +179,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe215040.serial:
     physical_start_addr: 0xfe215040
     virtual_start_addr: 0xfe215040
@@ -146,6 +188,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe300000.mmcnr:
     physical_start_addr: 0xfe300000
     virtual_start_addr: 0xfe300000
@@ -153,6 +197,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe340000.emmc2:
     physical_start_addr: 0xfe340000
     virtual_start_addr: 0xfe340000
@@ -160,6 +206,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe804000.i2c:
     physical_start_addr: 0xfe804000
     virtual_start_addr: 0xfe804000
@@ -167,6 +215,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   dwc_otg_2:
     physical_start_addr: 0xfe980000
     virtual_start_addr: 0xfe980000
@@ -174,6 +224,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   fe100000.watchdog_3:
     physical_start_addr: 0xfec11000
     virtual_start_addr: 0xfec11000
@@ -181,6 +233,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   pcie@7d500000:
     physical_start_addr: 0x600000000
     virtual_start_addr: 0x600000000
@@ -188,6 +242,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   PCI Bus 0000:01:
     physical_start_addr: 0x600000000
     virtual_start_addr: 0x600000000
@@ -195,6 +251,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   0000:01:00.0:
     physical_start_addr: 0x600000000
     virtual_start_addr: 0x600000000
@@ -202,6 +260,8 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
   xhci-hcd:
     physical_start_addr: 0x600000000
     virtual_start_addr: 0x600000000
@@ -209,3 +269,58 @@ memory_regions:
     flags:
     - JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8
       | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64
+    allocatable: false
+    next_region:
+interrupt_controllers:
+- maintenance_irq: 25
+  gic_version: 2
+  gicd_base: 0x40041000
+  gicc_base: 0x40042000
+  gich_base: 0x40044000
+  gicv_base: 0x40046000
+  gicr_base: 0x0
+  interrupts:
+  - 33
+  - 34
+  - 40
+  - 73
+  - 74
+  - 75
+  - 80
+  - 81
+  - 82
+  - 83
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 90
+  - 91
+  - 92
+  - 93
+  - 97
+  - 98
+  - 100
+  - 102
+  - 103
+  - 104
+  - 105
+  - 106
+  - 108
+  - 109
+  - 110
+  - 112
+  - 117
+  - 118
+  - 120
+  - 121
+  - 123
+  - 125
+  - 126
+  - 137
+  - 148
+  - 157
+  - 158
+  - 176

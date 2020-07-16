@@ -1,127 +1,66 @@
 cells:
   root:
-    type: root #linux, generic
+    type: root
     name: "root"
-    vpci_irq_base: 150 # 182-32
     flags: [SYS_VIRTUAL_DEBUG_CONSOLE]
-    ram_settings:
-      physical_start_addr: 0x0
-      virtual_start_addr: 0x0
-      size: 1 GB
 
     hypervisor_memory:
-      physical_start_addr: 0x3fc00000 # 0x11319sollte es eig sein
       size: 16 MB
 
-    debug_console:
-      address: 0xfe215040
-      size: 0x40
-      type: CON_TYPE_8250
-      flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
+    debug_console: serial0
 
-    platform_info:
-      pci_mmconfig_base: 0xe0000000
-      pci_mmconfig_end_bus: 0
-      pci_is_virtual: 1
-      pci_domain: 1
-      arm:
-        - gic_version = 2,
-        - gicd_base = 0xff841000,
-        - gicc_base = 0xff842000,
-        - gich_base = 0xff844000,
-        - gicv_base = 0xff846000,
-        - maintenance_irq = 25,
-
-    cpus: 0-4 # 1-3 oder 0,2 oder 1-3,5
+    cpus: 0-3
 
     memory_regions:
-      "System RAM":
-        physical_start_addr: 0x0
-        virtual_start_addr: 0x0
-        size: 0x4fa10000
+      "Main Memory":
+        size: 128 MB
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
-
-    irqchips:
-      gic:
-        address: 0xff841000
-        pin_base: 32
-        interrupts: 0-223
 
   linux1:
     type: "linux"
     name: "Linux demo 1"
-    vpci_irq_base: 153 # 185 - 32
-    flags: [CELL_PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
-    cpus: 1,2
+    flags: [PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
+    cpus: 2
 
-    hypervisor_memory:
-    platform_info:
-
-    debug_console:
-      address: 0xfe215040
-      type: CON_TYPE_8250
-      size: 0x40
-      flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
+    debug_console: serial0
 
     memory_regions:
-      "RAM 1":
-        physical_start_addr: 0x4f900000
+      RAM 1:
         virtual_start_addr: 0
         size: 0x10000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
 
-      "RAM 2":
-        physical_start_addr: 0x30000000
-        virtual_start_addr: 0x30000000
+      RAM 2:
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
-# FIXME: this does not work due to a bug in prepare_memory_cells
-      "communication_region":
-        virtual_start_addr: 0x80000000
-        size: 0x00001000
-        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
+      gpio: /soc/gpiomem
 
   linux2:
     type: "linux"
     name: "Linux demo 2"
-    vpci_irq_base: 153 # 185 - 32
-    flags: [CELL_PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
-    cpus: 3,4
+    flags: [PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
+    cpus: 3
 
-    hypervisor_memory:
-    platform_info:
-
-    debug_console:
-      address: 0xfe215040
-      type: CON_TYPE_8250
-      size: 0x40
-      flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
+    debug_console: serial0
 
     memory_regions:
-      "RAM 1":
-        physical_start_addr: 0x4fa00000
+      RAM 1:
         virtual_start_addr: 0
         size: 0x10000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
 
-      "RAM 2":
-        physical_start_addr: 0x40000000
-        virtual_start_addr: 0x40000000
+      RAM 2:
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
-# FIXME: this does not work due to a bug in prepare_memory_cells
-      "communication_region":
-        virtual_start_addr: 0x80000000
-        size: 0x00001000
-        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
+      gpio: /soc/gpiomem
 
 shmem:
-  "net1":
+  net1:
     protocol: SHMEM_PROTO_VETH
-    peers: [root, "linux1"]
-  
-  "net2":
+    peers: [root, linux1]
+
+  net2:
     protocol: SHMEM_PROTO_VETH
-    peers: [root, "linux2"]
+    peers: [root, linux2]

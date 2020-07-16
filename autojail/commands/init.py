@@ -148,6 +148,8 @@ class InitCommand(BaseCommand):
             if isinstance(arch, int):
                 arch = choices[arch]
 
+        arch = arch.upper()
+
         cross_compile = self.option("cross-compile")
         if not cross_compile:
             defaults = {
