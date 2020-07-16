@@ -7,8 +7,6 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
-  - apt-get update
-  - apt-get install device-tree-compiler -y 
   - python3 -m ensurepip --user
   - python3 -m pip install virtualenv --user
   - python3 -m virtualenv venv
@@ -30,6 +28,8 @@ test:
   stage: test
   script:
     - set -e
+    - apt-get update
+    - apt-get install device-tree-compiler -y 
     - poetry install
     - poetry run python -m pytest test
   tags:
@@ -40,6 +40,8 @@ test_python_latest:
   stage: test
   script:
     - set -e
+    - apt-get update
+    - apt-get install device-tree-compiler -y 
     - poetry install
     - poetry run python -m pytest test
   tags:
