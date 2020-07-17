@@ -20,6 +20,7 @@ class PrepareIRQChipsPass(BasePass):
     def _prepare_irqchips(self, cell):
         "Splits irqchips that handle more interrupts than are possible in one autojail config entry"
 
+        split_factor = 32 * 4
         new_irqchips = {}
 
         for name, irqchip in cell.irqchips.items():
@@ -34,15 +35,11 @@ class PrepareIRQChipsPass(BasePass):
             # first GIC has pin_base 0 and only handles SGIs
             # and PPIs, which have ID0-ID31
             current_base = 0
-            split_factor = 32
 
             for irq in sorted(irqchip.interrupts):
                 while irq >= current_base + split_factor:
                     new_irqchips[new_name] = new_chip
-
                     current_base += split_factor
-                    # all other IRQ chips (pin_base <= 32) handle 4 * 32 interrupts
-                    split_factor = 32 * 4
 
                     new_chip = IRQChip(
                         address=irqchip.address,
