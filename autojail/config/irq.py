@@ -28,15 +28,17 @@ class PrepareIRQChipsPass(BasePass):
             new_name = name
             new_chip = IRQChip(
                 address=irqchip.address,
-                pin_base=0,
+                pin_base=irqchip.pin_base,
                 interrupts=[],
             )
 
             # first GIC has pin_base 0 and only handles SGIs
             # and PPIs, which have ID0-ID31
-            current_base = 0
+            current_base = irqchip.pin_base
 
             for irq in sorted(irqchip.interrupts):
+                assert(irq > current_base and "Invalid state detected")
+
                 while irq >= current_base + split_factor:
                     new_irqchips[new_name] = new_chip
                     current_base += split_factor
