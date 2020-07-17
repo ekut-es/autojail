@@ -76,12 +76,14 @@ class IRQChip(BaseModel):
         res = []
 
         update = None
-        store = lambda x: x
+        store = None
         init = None
+
+        pin_base = self.pin_base
 
         if len(self.interrupts) > 5:
             update = lambda current_item, irq, count: current_item | (
-                1 << (irq - count)
+                1 << (irq - (pin_base + count))
             )
             store = lambda item: "0x%x" % item
             init = 0
@@ -89,16 +91,15 @@ class IRQChip(BaseModel):
             update = (
                 lambda current_item, irq, count: current_item
                 + ("" if not current_item else " | ")
-                + f"1 << {(irq - count)}"
+                + f"1 << ({irq} - {pin_base + count})"
             )
+            store = lambda x: "0" if x == "" else x
             init = ""
 
 
         current_item = init
         for irq in self.interrupts:
-            irq = irq
-
-            if irq >= count + SIZE:
+            if irq - pin_base >= count + SIZE:
                 res.append(store(current_item))
                 current_item = init
                 count += SIZE
