@@ -76,7 +76,7 @@ class TransferBoardInfoPass(BasePass):
 
         for cell in config.cells.values():
             if cell.vpci_irq_base is None:
-                for i in range(0, max(used_interrupts) + 2):
+                for i in range(32, max(used_interrupts) + 2):
                     sentinel = set(range(i, i + num_interrupts))
 
                     if not (used_interrupts & sentinel):
