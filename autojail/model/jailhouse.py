@@ -99,7 +99,7 @@ class IRQChip(BaseModel):
 
         current_item = init
         for irq in self.interrupts:
-            if irq - pin_base >= count + SIZE:
+            while irq - pin_base >= count + SIZE:
                 res.append(store(current_item))
                 current_item = init
                 count += SIZE
