@@ -2,9 +2,9 @@ from pathlib import Path
 
 import ruamel.yaml
 
-from .base import BaseCommand
 from ..config import JailhouseConfigurator
 from ..model import Board
+from .base import BaseCommand
 
 
 class ConfigCommand(BaseCommand):

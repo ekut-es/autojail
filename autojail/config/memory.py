@@ -2,10 +2,9 @@ import logging
 
 import tabulate
 
-from .passes import BasePass
-
 from ..model import BaseMemoryRegion, ByteSize
 from ..utils import SortedCollection
+from .passes import BasePass
 
 
 class MemoryBlock:

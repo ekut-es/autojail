@@ -1,14 +1,22 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
-    - id: check-yaml
-    - id: check-ast
-   
-      
+      - id: check-yaml
+      - id: check-ast
 
--   repo: local
+  - repo: local
     hooks:
+      - id: isort
+        name: isort check
+        entry: poetry run python -m isort -c --profile=black --py 36 -l 80
+        language: system
+        types: [python]
+      - id: mypy
+        name: mypy
+        entry: poetry run mypy
+        language: system
+        types: [python]
       - id: flake8
         name: flake8
         entry: poetry run flake8

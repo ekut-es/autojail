@@ -1,11 +1,11 @@
 import ast
 import operator
 import re
-
-from typing import Union, List, TYPE_CHECKING
-from ..utils.string import remove_prefix
+from typing import TYPE_CHECKING, List, Union
 
 import simpleeval
+
+from ..utils.string import remove_prefix
 
 if TYPE_CHECKING:
     from pydantic.typing import CallableGenerator

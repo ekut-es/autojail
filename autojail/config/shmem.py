@@ -1,8 +1,7 @@
 import copy
 
-from .passes import BasePass
-
 from ..model import MemoryRegion, PCIDevice
+from .passes import BasePass
 
 
 class ConfigSHMemRegionsPass(BasePass):

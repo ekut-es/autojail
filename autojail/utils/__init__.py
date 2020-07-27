@@ -1,8 +1,8 @@
-from .connection import connect  # noqa
-from .string import remove_prefix, pprint_tree
-from .logging import ClikitLoggingHandler
 from .collections import SortedCollection
+from .connection import connect  # noqa
 from .debug import debug
+from .logging import ClikitLoggingHandler
+from .string import pprint_tree, remove_prefix
 
 __all__ = [
     "connect",

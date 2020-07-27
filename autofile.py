@@ -1,10 +1,10 @@
 import logging
-from pathlib import Path
 import os.path
+from pathlib import Path
 
-from invoke import task
 from automate.utils import fix_symlinks
 from automate.utils.network import rsync
+from invoke import task
 
 ROOT_PATH = Path(os.path.dirname(os.path.abspath(__file__)))
 JAILHOUSE_REPO = "https://github.com/siemens/jailhouse.git"

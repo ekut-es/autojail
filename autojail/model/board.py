@@ -1,9 +1,9 @@
-from pydantic import BaseModel
-
 # FIXME:  Dicts should be replaced by OrderedDict when 3.6 support is dropped
 from typing import Dict, List, Optional
 
-from .datatypes import ByteSize, ExpressionInt, IntegerList, HexInt
+from pydantic import BaseModel
+
+from .datatypes import ByteSize, ExpressionInt, HexInt, IntegerList
 
 
 class BaseMemoryRegion(BaseModel):

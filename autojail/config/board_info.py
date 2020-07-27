@@ -1,6 +1,6 @@
-from .passes import BasePass
-from ..model import IRQChip, PlatformInfoArm, PlatformInfo
+from ..model import IRQChip, PlatformInfo, PlatformInfoArm
 from ..utils.logging import getLogger
+from .passes import BasePass
 
 
 class TransferBoardInfoPass(BasePass):

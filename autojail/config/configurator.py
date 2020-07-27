@@ -1,21 +1,14 @@
 import os
-
 from typing import Optional
 
 import ruamel.yaml
 
-from ..model import (
-    Board,
-    MemoryRegion,
-    ShMemNetRegion,
-    JailhouseConfig,
-)
-
-from .memory import PrepareMemoryRegionsPass, AllocateMemoryPass
-from .shmem import LowerSHMemPass, ConfigSHMemRegionsPass
-from .irq import PrepareIRQChipsPass
+from ..model import Board, JailhouseConfig, MemoryRegion, ShMemNetRegion
 from .board_info import TransferBoardInfoPass
 from .devices import LowerDevicesPass
+from .irq import PrepareIRQChipsPass
+from .memory import AllocateMemoryPass, PrepareMemoryRegionsPass
+from .shmem import ConfigSHMemRegionsPass, LowerSHMemPass
 
 
 class JailhouseConfigurator:

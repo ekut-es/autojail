@@ -1,6 +1,5 @@
-from .passes import BasePass
-
 from ..model import IRQChip
+from .passes import BasePass
 
 
 class PrepareIRQChipsPass(BasePass):

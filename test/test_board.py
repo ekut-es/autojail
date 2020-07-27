@@ -1,4 +1,5 @@
 import os.path
+
 import yaml
 
 from autojail.model import Board

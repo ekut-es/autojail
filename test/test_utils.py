@@ -1,6 +1,6 @@
 import pytest
 
-from autojail.utils import remove_prefix, SortedCollection
+from autojail.utils import SortedCollection, remove_prefix
 
 
 @pytest.mark.parametrize(

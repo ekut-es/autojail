@@ -1,15 +1,14 @@
 import subprocess
-from pathlib import Path
-from typing import Any, MutableMapping, List, Union
-from tempfile import mktemp
 from collections import OrderedDict, defaultdict
+from pathlib import Path
+from tempfile import mktemp
+from typing import Any, List, MutableMapping, Union
 
 import fdt
 import tabulate
-
 from dataclasses import dataclass, field
 
-from ..model import MemoryRegion, GIC
+from ..model import GIC, MemoryRegion
 from ..model.datatypes import ByteSize
 from ..utils.logging import getLogger
 

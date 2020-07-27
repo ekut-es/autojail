@@ -1,10 +1,10 @@
+# FIXME:  Dicts should be replaced by OrderedDict when 3.6 support is dropped
+from typing import Dict, List, Optional, Union
+
 from pydantic import BaseModel
 
-# FIXME:  Dicts should be replaced by OrderedDict when 3.6 support is dropped
-from typing import Dict, List, Union, Optional
-
-from .datatypes import ByteSize, ExpressionInt, IntegerList, HexInt
-from .board import MemoryRegion, HypervisorMemoryRegion, ShMemNetRegion, Board
+from .board import Board, HypervisorMemoryRegion, MemoryRegion, ShMemNetRegion
+from .datatypes import ByteSize, ExpressionInt, HexInt, IntegerList
 
 
 class DebugConsole(BaseModel):
@@ -164,9 +164,10 @@ class JailhouseConfig(BaseModel):
 
 
 if __name__ == "__main__":
-    import yaml
     import sys
     from pprint import pprint
+
+    import yaml
 
     with open(sys.argv[1]) as yaml_file:
         yaml_dict = yaml.safe_load(yaml_file)

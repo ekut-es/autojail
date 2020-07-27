@@ -1,9 +1,9 @@
 import os
 
 from cleo import CommandTester
+from ruamel.yaml import YAML
 
 from autojail.main import AutojailApp
-from ruamel.yaml import YAML
 
 project_folder = os.path.join(os.path.dirname(__file__), "..", "projects")
 

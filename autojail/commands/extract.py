@@ -1,22 +1,21 @@
-import tempfile
 import os
 import subprocess
-
+import tempfile
 from pathlib import Path
 from shutil import rmtree
 
 import ruamel.yaml
 
-from .base import BaseCommand
-from ..utils import connect
 from ..extract import BoardInfoExtractor
 from ..model import (
+    ByteSize,
     ExpressionInt,
     HexInt,
-    ByteSize,
     IntegerList,
     JailhouseFlagList,
 )
+from ..utils import connect
+from .base import BaseCommand
 
 
 class ExtractCommand(BaseCommand):
