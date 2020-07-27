@@ -219,23 +219,22 @@ class LowerSHMemPass(BasePass):
                 for irq in irqchip.interrupts:
                     used_interrupts.add(irq)
 
-
         num_interrupts = dict()
         for shmem_config in self.config.shmem.values():
             for cell_name in shmem_config.peers:
                 cell_name = self.config.cells[cell_name].name
                 print(f"Cell_name: {cell_name}")
 
-                if not cell_name in num_interrupts:
+                if cell_name not in num_interrupts:
                     num_interrupts[cell_name] = 0
 
                 num_interrupts[cell_name] += 1
 
-
         for cell in self.config.cells.values():
             if cell.vpci_irq_base:
                 for i in range(
-                    cell.vpci_irq_base, cell.vpci_irq_base + num_interrupts[cell.name]
+                    cell.vpci_irq_base,
+                    cell.vpci_irq_base + num_interrupts[cell.name],
                 ):
                     used_interrupts.add(i)
 

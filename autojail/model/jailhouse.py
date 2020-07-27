@@ -82,20 +82,25 @@ class IRQChip(BaseModel):
         pin_base = self.pin_base
 
         if len(self.interrupts) > 5:
-            update = lambda current_item, irq, count: current_item | (
-                1 << (irq - (pin_base + count))
-            )
-            store = lambda item: "0x%x" % item
+
+            def update(current_item, irq, count):
+                return current_item | 1 << (irq - (pin_base + count))
+
+            def store(item):
+                return "0x%x" % item
+
             init = 0
         else:
-            update = (
-                lambda current_item, irq, count: current_item
-                + ("" if not current_item else " | ")
-                + f"1 << ({irq} - {pin_base + count})"
-            )
-            store = lambda x: "0" if x == "" else x
-            init = ""
 
+            def update(current_item, irq, count):
+                return current_item
+                +("" if not current_item else " | ")
+                +f"1 << ({irq} - {pin_base + count})"
+
+            def store(x):
+                return "0" if x == "" else x
+
+            init = ""
 
         current_item = init
         for irq in self.interrupts:
@@ -139,7 +144,9 @@ class CellConfig(BaseModel):
     debug_console: Union[str, DebugConsole]
     platform_info: Optional[PlatformInfo]
     cpus: Optional[IntegerList]
-    memory_regions: Optional[Dict[str, Union[str, MemoryRegion, ShMemNetRegion]]] = {}
+    memory_regions: Optional[
+        Dict[str, Union[str, MemoryRegion, ShMemNetRegion]]
+    ] = {}
     irqchips: Optional[Dict[str, IRQChip]] = {}
     pci_devices: Optional[Dict[str, PCIDevice]] = {}
 

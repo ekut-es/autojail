@@ -37,7 +37,7 @@ class PrepareIRQChipsPass(BasePass):
             current_base = irqchip.pin_base
 
             for irq in sorted(irqchip.interrupts):
-                assert(irq >= current_base and "Invalid state detected")
+                assert irq >= current_base and "Invalid state detected"
 
                 while irq >= current_base + split_factor:
                     new_irqchips[new_name] = new_chip

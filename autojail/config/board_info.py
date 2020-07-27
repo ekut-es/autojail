@@ -2,6 +2,7 @@ from .passes import BasePass
 from ..model import IRQChip, PlatformInfoArm, PlatformInfo
 from ..utils.logging import getLogger
 
+
 class TransferBoardInfoPass(BasePass):
     def __init__(self):
         self.logger = getLogger()
