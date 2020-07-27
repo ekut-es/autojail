@@ -153,7 +153,12 @@ class JailhouseConfigurator:
                 for name, val in arm_values.dict().items():
                     if name == "iommu_units":
                         continue
-                    f.write("\n\t\t\t." + str(name) + " = " + str(val) + ",")
+                    if "_base" in name:
+                        val = hex(val)
+                    else:
+                        val = str(val)
+
+                    f.write("\n\t\t\t." + str(name) + " = " + val + ",")
 
                 f.write("\n\t\t},\n")
                 f.write("\n\t},\n")
@@ -241,9 +246,11 @@ class JailhouseConfigurator:
             for chip in cell.irqchips.values():
                 f.write("\n\t\t{")
                 f.write("\n\t\t\t.address = " + hex(chip.address) + ",")
-                hex_bitmap = ", ".join(["0x%x" % b for b in chip.pin_bitmap])
                 f.write("\n\t\t\t.pin_base = " + str(chip.pin_base) + ",")
-                bitmap_temp = hex_bitmap + "},"
+
+                bitmap_temp = ", ".join(["\n\t\t\t\t%s" % b for b in chip.pin_bitmap])
+                bitmap_temp = bitmap_temp + "\n\t\t\t" + "},"
+
                 f.write("\n\t\t\t.pin_bitmap = {" + bitmap_temp)
                 f.write("\n\t\t},")
             f.write("\n\t},\n")
