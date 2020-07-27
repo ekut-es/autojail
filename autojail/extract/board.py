@@ -1,6 +1,5 @@
 from pathlib import Path
 
-
 from ..model import Board, MemoryRegion
 from .device_tree import DeviceTreeExtractor
 

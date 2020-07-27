@@ -1,7 +1,7 @@
 from collections import namedtuple
 
-from .passes import BasePass
 from ..model import DebugConsole
+from .passes import BasePass
 
 ConsoleSettings = namedtuple("ConsoleSettings", ["type", "flags"])
 

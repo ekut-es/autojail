@@ -2,10 +2,9 @@ import logging
 
 import tabulate
 
-from .passes import BasePass
-
 from ..model import BaseMemoryRegion, ByteSize
 from ..utils import SortedCollection
+from .passes import BasePass
 
 
 class MemoryBlock:
@@ -66,7 +65,7 @@ class FreeList(SortedCollection):
         if pred_block and self._overlap(pred_block, block):
             self.remove(pred_block)
             diff = pred_block.end_addr - block.start_addr
-            block.start = pred_block.start_addr
+            block.start_addr = pred_block.start_addr
             block.size = pred_block.size + block.size - diff
 
         succ_block = self.find_ge(block.start_addr)

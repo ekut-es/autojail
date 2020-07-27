@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import ruamel.yaml
-
 from cleo import Command
 
 from ..model import AutojailConfig

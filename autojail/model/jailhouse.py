@@ -1,10 +1,10 @@
+# FIXME:  Dicts should be replaced by OrderedDict when 3.6 support is dropped
+from typing import Dict, List, Optional, Union
+
 from pydantic import BaseModel
 
-# FIXME:  Dicts should be replaced by OrderedDict when 3.6 support is dropped
-from typing import Dict, List, Union, Optional
-
-from .datatypes import ByteSize, ExpressionInt, IntegerList, HexInt
-from .board import MemoryRegion, HypervisorMemoryRegion, ShMemNetRegion, Board
+from .board import Board, HypervisorMemoryRegion, MemoryRegion, ShMemNetRegion
+from .datatypes import ByteSize, ExpressionInt, HexInt, IntegerList
 
 
 class DebugConsole(BaseModel):
@@ -69,23 +69,50 @@ class IRQChip(BaseModel):
     interrupts: IntegerList
 
     @property
-    def pin_bitmap(self) -> List[int]:
+    def pin_bitmap(self) -> List[str]:
         SIZE = 32  # noqa
-
         count = 0
+
         res = []
-        current_item = 0
 
+        update = None
+        store = None
+        init: Union[None, str, int] = None
+
+        pin_base = self.pin_base
+
+        if len(self.interrupts) > 5:
+
+            def update(current_item, irq, count):
+                return current_item | 1 << (irq - (pin_base + count))
+
+            def store(item):
+                return "0x%x" % item
+
+            init = 0
+        else:
+
+            def update(current_item, irq, count):
+                return current_item
+                +("" if not current_item else " | ")
+                +f"1 << ({irq} - {pin_base + count})"
+
+            def store(x):
+                return "0" if x == "" else x
+
+            init = ""
+
+        current_item = init
         for irq in self.interrupts:
-            irq = irq
-            if irq >= count + SIZE:
-                res.append(current_item)
-                current_item = 0
+            while irq - pin_base >= count + SIZE:
+                res.append(store(current_item))
+                current_item = init
                 count += SIZE
-            current_item |= 1 << (irq - count)
 
-        if current_item > 0:
-            res.append(current_item)
+            current_item = update(current_item, irq, count)
+
+        if current_item:
+            res.append(store(current_item))
 
         while len(res) < 4:
             res.append(0)
@@ -137,9 +164,10 @@ class JailhouseConfig(BaseModel):
 
 
 if __name__ == "__main__":
-    import yaml
     import sys
     from pprint import pprint
+
+    import yaml
 
     with open(sys.argv[1]) as yaml_file:
         yaml_dict = yaml.safe_load(yaml_file)

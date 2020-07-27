@@ -1,9 +1,10 @@
 import os.path
 import tarfile
+from pathlib import Path
+
+from devtools import debug
 
 from autojail.extract import BoardInfoExtractor, DeviceTreeExtractor
-from devtools import debug
-from pathlib import Path
 
 test_data_folder = os.path.join(os.path.dirname(__file__), "test_data")
 

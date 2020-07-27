@@ -2,8 +2,8 @@ from pathlib import Path
 
 import ruamel.yaml
 
+from ..model import AutojailArch, AutojailConfig, AutojailLogin
 from .base import BaseCommand
-from ..model import AutojailConfig, AutojailArch, AutojailLogin
 
 
 class InitCommand(BaseCommand):

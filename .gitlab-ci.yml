@@ -12,14 +12,14 @@ before_script:
   - python3 -m virtualenv venv
   - source venv/bin/activate
   - python3 -m pip install poetry
-  
-run_pre_commit: 
+
+run_pre_commit:
   image: python:3.6
   stage: sca
-  script: 
-    - set -e 
-    - poetry install 
-    - poetry run pre-commit
+  script:
+    - set -e
+    - poetry install
+    - poetry run pre-commit run -a
   tags:
     - docker
 
@@ -29,7 +29,7 @@ test:
   script:
     - set -e
     - apt-get update
-    - apt-get install device-tree-compiler -y 
+    - apt-get install device-tree-compiler -y
     - poetry install
     - poetry run python -m pytest test
   tags:
@@ -41,13 +41,12 @@ test_python_latest:
   script:
     - set -e
     - apt-get update
-    - apt-get install device-tree-compiler -y 
+    - apt-get install device-tree-compiler -y
     - poetry install
     - poetry run python -m pytest test
   tags:
     - docker
 
-  
 build_doc:
   script:
     - set -e
@@ -57,7 +56,7 @@ build_doc:
   stage: deploy
   tags:
     - afs
-    
+
   only:
     refs:
       - master

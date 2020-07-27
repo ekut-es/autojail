@@ -1,8 +1,7 @@
 from abc import ABC
-
 from typing import Tuple
 
-from ..model import JailhouseConfig, Board
+from ..model import Board, JailhouseConfig
 
 
 class BasePass(ABC):

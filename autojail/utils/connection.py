@@ -2,7 +2,6 @@ import getpass
 from typing import TYPE_CHECKING
 
 from fabric import Connection
-
 from paramiko.ssh_exception import (
     AuthenticationException,
     PasswordRequiredException,

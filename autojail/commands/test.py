@@ -7,5 +7,5 @@ class TestCommand(BaseCommand):
     test
     """
 
-    def handle():
+    def handle(self) -> None:
         pass

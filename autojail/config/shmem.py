@@ -1,8 +1,7 @@
 import copy
 
-from .passes import BasePass
-
 from ..model import MemoryRegion, PCIDevice
+from .passes import BasePass
 
 
 class ConfigSHMemRegionsPass(BasePass):
@@ -79,6 +78,7 @@ class LowerSHMemPass(BasePass):
         self.board = board
         self.config = config
 
+        self._create_vpci_base()
         self._lower_shmem_config()
 
         return self.board, self.config
@@ -191,16 +191,16 @@ class LowerSHMemPass(BasePass):
 
                 # set interrupt pins
                 intx_pin = current_bdf & 0x3
-                intx_pin += cell.vpci_irq_base + 32
+                intx_pin += cell.vpci_irq_base
 
                 # FIXME: what happens when irqchips are manually configured
                 root_irq_chip = list(root_cell.irqchips.values())[0]
                 irq_chip = list(cell.irqchips.values())[0]
 
-                irq_chip.interrupts.append(intx_pin - irq_chip.pin_base)
+                irq_chip.interrupts.append(intx_pin)
                 irq_chip.interrupts.sort()
 
-                root_irq_chip.interrupts.append(intx_pin - irq_chip.pin_base)
+                root_irq_chip.interrupts.append(intx_pin)
                 root_irq_chip.interrupts.sort()
 
                 current_device_id += 1
@@ -209,3 +209,51 @@ class LowerSHMemPass(BasePass):
                 root_cell.mem_regions.update(copy.deepcopy(mem_regions))
 
             current_bdf += 1
+
+    def _create_vpci_base(self):
+        used_interrupts = set()
+
+        for cell in self.config.cells.values():
+            for irqchip in cell.irqchips.values():
+                for irq in irqchip.interrupts:
+                    used_interrupts.add(irq)
+
+        num_interrupts = dict()
+        for shmem_config in self.config.shmem.values():
+            for cell_name in shmem_config.peers:
+                cell_name = self.config.cells[cell_name].name
+                print(f"Cell_name: {cell_name}")
+
+                if cell_name not in num_interrupts:
+                    num_interrupts[cell_name] = 0
+
+                num_interrupts[cell_name] += 1
+
+        for cell in self.config.cells.values():
+            if cell.vpci_irq_base:
+                for i in range(
+                    cell.vpci_irq_base,
+                    cell.vpci_irq_base + num_interrupts[cell.name],
+                ):
+                    used_interrupts.add(i)
+
+        for cell in self.config.cells.values():
+            if cell.vpci_irq_base is None:
+                print(f"virq_base == None for Cell_name: {cell.name}")
+                for i in range(32, max(used_interrupts) + 2):
+                    sentinel = set(range(i, i + num_interrupts[cell.name]))
+
+                    if not (used_interrupts & sentinel):
+                        used_interrupts |= sentinel
+                        cell.vpci_irq_base = i
+                        continue
+
+        for cell in self.config.cells.values():
+            if cell.type == "root":
+                for irqchip in cell.irqchips.values():
+                    for irq in used_interrupts:
+                        if irq not in irqchip.interrupts:
+                            irqchip.interrupts.append(irq)
+
+        for name, cell in self.config.cells.items():
+            print(name, cell.vpci_irq_base)

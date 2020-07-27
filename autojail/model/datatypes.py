@@ -1,11 +1,11 @@
 import ast
 import operator
 import re
-
-from typing import Union, List, TYPE_CHECKING
-from ..utils.string import remove_prefix
+from typing import TYPE_CHECKING, List, Union
 
 import simpleeval
+
+from ..utils.string import remove_prefix
 
 if TYPE_CHECKING:
     from pydantic.typing import CallableGenerator
@@ -32,7 +32,7 @@ class JailhouseFlagList(list):
             v = v.split("|")
 
         prefix = "JAILHOUSE_"
-        res = []
+        res: List[str] = []
         for value in v:
             value.strip()
             value = remove_prefix(value, prefix)
@@ -81,7 +81,7 @@ class HexInt(int):
         yield cls.validate
 
     @classmethod
-    def validate(cls, v: StrIntFloat) -> "ByteSize":
+    def validate(cls, v: StrIntFloat) -> "HexInt":
         return cls(int(v))
 
     @classmethod

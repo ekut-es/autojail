@@ -1,9 +1,9 @@
 from cleo import Application
 from cleo.config.application_config import ApplicationConfig
 
-from .commands import InitCommand, ExtractCommand, ConfigCommand, TestCommand
-from .utils import ClikitLoggingHandler
 from . import __version__
+from .commands import ConfigCommand, ExtractCommand, InitCommand, TestCommand
+from .utils import ClikitLoggingHandler
 
 
 class LoggingAppConfig(ApplicationConfig):
