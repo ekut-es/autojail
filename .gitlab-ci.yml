@@ -19,7 +19,7 @@ run_pre_commit:
   script:
     - set -e
     - poetry install
-    - poetry run pre-commit -a
+    - poetry run pre-commit run -a
   tags:
     - docker
 
