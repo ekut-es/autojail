@@ -1,5 +1,5 @@
 name: rpi4_two_net_inmates
-board: rpi4_two_net_inmates
+board: raspberrypi4b-jh1
 pagesize: 0x1000
 virtual_address_bits: 48
 memory_regions:
