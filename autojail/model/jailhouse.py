@@ -77,7 +77,7 @@ class IRQChip(BaseModel):
 
         update = None
         store = None
-        init = None
+        init: Union[None, str, int] = None
 
         pin_base = self.pin_base
 

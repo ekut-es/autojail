@@ -1,6 +1,6 @@
 import subprocess
 from pathlib import Path
-from typing import Any, List, Union
+from typing import Any, MutableMapping, List, Union
 from tempfile import mktemp
 from collections import OrderedDict, defaultdict
 
@@ -72,11 +72,11 @@ class DeviceTreeExtractor:
             with dt_path.open("rb") as f:
                 self.fdt = fdt.parse_dtb(f.read())
 
-        self.aliases = OrderedDict()
-        self.aliases_reversed = defaultdict(list)
-        self.handles = OrderedDict()
-        self.memory_regions = OrderedDict()
-        self.interrupt_controllers = []
+        self.aliases: MutableMapping[str, str] = OrderedDict()
+        self.aliases_reversed: MutableMapping[str, str] = defaultdict(list)  # type: ignore
+        self.handles: MutableMapping[str, str] = OrderedDict()
+        self.memory_regions: MutableMapping[str, str] = OrderedDict()
+        self.interrupt_controllers: List[GIC] = []
 
         self.logger = getLogger()
 

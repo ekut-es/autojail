@@ -30,20 +30,19 @@ class GroupedMemoryRegion(BaseMemoryRegion):
 
     def __init__(self, regions: List[MemoryRegion]):
         self.regions = regions
-        self.size = sum((r.size for r in regions))
+        self.size = ByteSize.validate(sum((int(r.size) for r in regions)))  # type: ignore
         self.physical_start_addr = regions[0].physical_start_addr
         self.virtual_start_addr = regions[0].virtual_start_addr
 
 
 class HypervisorMemoryRegion(BaseMemoryRegion):
     physical_start_addr: Optional[HexInt] = None
-    size: ByteSize = "16 MB"
+    size: ByteSize = ByteSize.validate("16 MB")
 
 
 class ShMemNetRegion(BaseModel):
     start_addr: HexInt
     device_id: int
-    allocatable: bool = False
 
     @property
     def virtual_start_addr(self):
