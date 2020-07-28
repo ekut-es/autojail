@@ -66,13 +66,16 @@ class DeviceTreeExtractor:
                 with open(temp_file, "rb") as f:
                     self.fdt = fdt.parse_dtb(f.read())
             finally:
-                Path(temp_file[1]).unlink()
+                pass
+                # Path(temp_file[1]).unlink()
         else:
             with dt_path.open("rb") as f:
                 self.fdt = fdt.parse_dtb(f.read())
 
         self.aliases: MutableMapping[str, str] = OrderedDict()
-        self.aliases_reversed: MutableMapping[str, List[str]] = defaultdict(list)  # type: ignore
+        self.aliases_reversed: MutableMapping[str, List[str]] = defaultdict(
+            list
+        )  # type: ignore
         self.handles: MutableMapping[str, str] = OrderedDict()
         self.memory_regions: MutableMapping[
             str, BaseMemoryRegion
