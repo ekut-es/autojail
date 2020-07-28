@@ -31,18 +31,17 @@ struct {
 		.arm = {
 			.maintenance_irq = 25,
 			.gic_version = 2,
-			.gicd_base = 4286844928,
-			.gicc_base = 4286849024,
-			.gich_base = 4286857216,
-			.gicv_base = 4286865408,
-			.gicr_base = 0,
+			.gicd_base = 0xff841000,
+			.gicc_base = 0xff842000,
+			.gich_base = 0xff844000,
+			.gicv_base = 0xff846000,
+			.gicr_base = 0x0,
 		},
 
 	},
 
 	.root_cell = {
 		.name = "Raspberry PI4" ,
-		.vpci_irq_base = 177,
 		.num_memory_regions = ARRAY_SIZE(config.mem_regions),
 		.num_pci_devices = ARRAY_SIZE(config.pci_devices),
 		.cpu_set_size = sizeof(config.cpus),
@@ -540,12 +539,22 @@ struct {
 		{
 			.address = 0xff841000,
 			.pin_base = 32,
-			.pin_bitmap = {0x3fffffff, 0xfffffffe, 0x3fff0e7f, 0xeb6177d6},
+			.pin_bitmap = {
+				0x106, 
+				0x3fff0e00, 
+				0x6b6177d6, 
+				0x60100200
+			},
 		},
 		{
 			.address = 0xff841000,
 			.pin_base = 160,
-			.pin_bitmap = {0xe3ffffff, 0x3f3fff, 0x0, 0x0},
+			.pin_bitmap = {
+				0, 
+				0, 
+				0, 
+				0
+			},
 		},
 	},
 

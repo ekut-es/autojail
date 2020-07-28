@@ -124,8 +124,7 @@ class BoardInfoExtractor:
         cpuinfo = []
 
         with path.open() as f:
-            current_cpu = {}
-            Dict[str, str] = {}
+            current_cpu: Dict[str, str] = {}
             for line in f:
                 line = line.strip()
                 started = False

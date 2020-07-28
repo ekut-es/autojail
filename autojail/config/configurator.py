@@ -97,10 +97,11 @@ class JailhouseConfigurator:
 
             f.write("\n\t.revision = JAILHOUSE_CONFIG_REVISION,")
 
-            cell_flags = " | ".join(
-                list(map(lambda x: f"{prefix}_{x}", cell.flags))
-            )
-            f.write(f"\n\t.flags = {cell_flags},")
+            if cell.flags:
+                cell_flags = " | ".join(
+                    list(map(lambda x: f"{prefix}_{x}", cell.flags))
+                )
+                f.write(f"\n\t.flags = {cell_flags},")
 
             if cell.type == "root":
                 assert cell.hypervisor_memory is not None
@@ -184,7 +185,10 @@ class JailhouseConfigurator:
                 f.write("\n\t.root_cell = {")
 
             f.write("\n\t\t.name =" + ' "' + cell.name + '" ' + ",")
-            f.write("\n\t\t.vpci_irq_base = " + str(cell.vpci_irq_base) + ",")
+            vpci_irq_base = cell.vpci_irq_base
+            if vpci_irq_base is not None:
+                f.write("\n\t\t.vpci_irq_base = " + str(vpci_irq_base) + ",")
+
             f.write(
                 "\n\t\t.num_memory_regions = ARRAY_SIZE(config.mem_regions)"
                 + ","

@@ -22,7 +22,7 @@ class ConfigSHMemRegionsPass(BasePass):
 
         self._regions_shmem_config()
 
-        return board, config
+        return self.board, self.config
 
     def _regions_shmem_config(self) -> None:
         """ set MEM_WRITE flags accordingly """
@@ -111,9 +111,7 @@ class LowerSHMemPass(BasePass):
                 break
 
         if not root_cell:
-            raise Exception(
-                "A configuration without a root cell is not supported at the moment"
-            )
+            raise Exception("A configuration needs to provide a root cell")
 
         if len(self.config.shmem) > 4:
             raise Exception(
@@ -230,6 +228,8 @@ class LowerSHMemPass(BasePass):
     def _create_vpci_base(self) -> None:
         assert self.config is not None
         assert self.board is not None
+        if self.config.shmem is None:
+            return
 
         used_interrupts = set()
 
