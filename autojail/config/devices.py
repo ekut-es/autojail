@@ -1,4 +1,5 @@
 from collections import namedtuple
+from copy import deepcopy
 from typing import Optional, Tuple
 
 from autojail.model.board import Board, MemoryRegion
@@ -61,7 +62,7 @@ class LowerDevicesPass(BasePass):
                 )
                 assert cell.memory_regions is not None
                 assert console_name is not None
-                cell.memory_regions[console_name] = console_region
+                cell.memory_regions[console_name] = deepcopy(console_region)
 
     def _lower_devices(self, board: Board, config: JailhouseConfig) -> None:
         for cell in config.cells.values():
@@ -74,7 +75,7 @@ class LowerDevicesPass(BasePass):
                             f"Could not find device named {memory_region}"
                         )
 
-                    cell.memory_regions[region_name] = device_region
+                    cell.memory_regions[region_name] = deepcopy(device_region)
 
     def _lower_interrupts(self, board: Board, config: JailhouseConfig) -> None:
         for cell in config.cells.values():
