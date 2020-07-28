@@ -3,6 +3,7 @@ from typing import List, Optional
 
 import ruamel.yaml
 
+from .. import utils
 from ..model import (
     Board,
     DebugConsole,
@@ -15,6 +16,7 @@ from .board_info import TransferBoardInfoPass
 from .devices import LowerDevicesPass
 from .irq import PrepareIRQChipsPass
 from .memory import AllocateMemoryPass, PrepareMemoryRegionsPass
+from .root_shared import InferRootSharedPass
 from .shmem import ConfigSHMemRegionsPass, LowerSHMemPass  # type: ignore
 
 
@@ -30,7 +32,10 @@ class JailhouseConfigurator:
             PrepareMemoryRegionsPass(),
             AllocateMemoryPass(),
             ConfigSHMemRegionsPass(),
+            InferRootSharedPass(),
         ]
+
+        self.logger = utils.logging.getLogger()
 
     def write_config(self, output_path: str) -> None:
         """Write configuration data to file"""
@@ -46,7 +51,7 @@ class JailhouseConfigurator:
             output_name = str(cell.name).lower().replace(" ", "-")
             output_name += ".c"
 
-            print("Writing cell config", output_name)
+            self.logger.info("Writing cell config %s", output_name)
 
             output_file = os.path.join(output_path, output_name)
 
@@ -319,7 +324,7 @@ class JailhouseConfigurator:
             pass_instance(self.board, self.config)
 
     def read_cell_yml(self, cells_yml: str) -> None:
-        print("Reading cell configuration", str(cells_yml))
+        self.logger.info("Reading cell configuration", str(cells_yml))
         with open(cells_yml, "r") as stream:
             yaml = ruamel.yaml.YAML()
             yaml_info = yaml.load(stream)

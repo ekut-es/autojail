@@ -66,8 +66,7 @@ class DeviceTreeExtractor:
                 with open(temp_file, "rb") as f:
                     self.fdt = fdt.parse_dtb(f.read())
             finally:
-                print(temp_file)
-                # Path(temp_file[1]).unlink()
+                Path(temp_file[1]).unlink()
         else:
             with dt_path.open("rb") as f:
                 self.fdt = fdt.parse_dtb(f.read())
@@ -234,7 +233,7 @@ class DeviceTreeExtractor:
             return
 
         elif node.get_property("interrupt-controller"):
-            print("Handling interrup controller", node.name)
+            self.logger.info("Handling interrup controller", node.name)
             # FIXME: some of the version two's are v1
             gic_versions = {
                 "arm,arm11mp-gic": 2,

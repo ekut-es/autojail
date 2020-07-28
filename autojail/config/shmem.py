@@ -242,7 +242,6 @@ class LowerSHMemPass(BasePass):
         for shmem_config in self.config.shmem.values():
             for cell_name in shmem_config.peers:
                 cell_name = self.config.cells[cell_name].name
-                print(f"Cell_name: {cell_name}")
 
                 if cell_name not in num_interrupts:
                     num_interrupts[cell_name] = 0
@@ -259,7 +258,6 @@ class LowerSHMemPass(BasePass):
 
         for cell in self.config.cells.values():
             if cell.vpci_irq_base is None:
-                print(f"virq_base == None for Cell_name: {cell.name}")
                 for i in range(32, max(used_interrupts) + 2):
                     sentinel = set(range(i, i + num_interrupts[cell.name]))
 

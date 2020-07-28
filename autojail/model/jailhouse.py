@@ -171,7 +171,7 @@ if __name__ == "__main__":
 
     with open(sys.argv[1]) as yaml_file:
         yaml_dict = yaml.safe_load(yaml_file)
-        pprint(yaml_dict, indent=2)
+        pprint(yaml_dict, indent=2)  # noqa
 
         board = Board(**yaml_dict)
-        pprint(board, indent=2)
+        pprint(board, indent=2)  # noqa
