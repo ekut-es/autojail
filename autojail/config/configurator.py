@@ -324,7 +324,7 @@ class JailhouseConfigurator:
             pass_instance(self.board, self.config)
 
     def read_cell_yml(self, cells_yml: str) -> None:
-        self.logger.info("Reading cell configuration", str(cells_yml))
+        self.logger.info("Reading cell configuration %s", str(cells_yml))
         with open(cells_yml, "r") as stream:
             yaml = ruamel.yaml.YAML()
             yaml_info = yaml.load(stream)
