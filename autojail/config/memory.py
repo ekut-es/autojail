@@ -1,8 +1,22 @@
 import logging
+from typing import Callable, List, Optional, Tuple, Union
 
 import tabulate
 
-from ..model import BaseMemoryRegion, ByteSize
+from autojail.model.board import (
+    Board,
+    HypervisorMemoryRegion,
+    MemoryRegion,
+    ShMemNetRegion,
+)
+
+from ..model import (
+    BaseMemoryRegion,
+    ByteSize,
+    CellConfig,
+    HexInt,
+    JailhouseConfig,
+)
 from ..utils import SortedCollection
 from .passes import BasePass
 
@@ -10,12 +24,14 @@ from .passes import BasePass
 class MemoryBlock:
     "Represents a chunk of memory in the allocator"
 
-    def __init__(self, start_addr, size):
+    def __init__(
+        self, start_addr: Union[HexInt, int], size: Union[ByteSize, int]
+    ) -> None:
         self.start_addr = start_addr
         self.size = size
 
     @property
-    def end_addr(self):
+    def end_addr(self) -> int:
         return self.start_addr + self.size
 
     def __repr__(self):
@@ -23,17 +39,17 @@ class MemoryBlock:
             f"MemoryBlock(start_addr={hex(self.start_addr)},size={self.size})"
         )
 
-    def __lt__(self, other):
+    def __lt__(self, other: "MemoryBlock") -> bool:
         if self.start_addr < other.start_addr:
             return True
         return False
 
 
 class FreeList(SortedCollection):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(key=lambda x: x.start_addr)
 
-    def _overlap(self, block1, block2):
+    def _overlap(self, block1: MemoryBlock, block2: MemoryBlock) -> bool:
         if block2 < block1:
             block1, block2 = block2, block1
 
@@ -41,7 +57,7 @@ class FreeList(SortedCollection):
             return True
         return False
 
-    def _sub(self, current_block, sub_block):
+    def _sub(self, current_block: MemoryBlock, sub_block: MemoryBlock) -> None:
         """Remove overlapping parts of block at index"""
 
         if not self._overlap(current_block, sub_block):
@@ -60,7 +76,7 @@ class FreeList(SortedCollection):
             if new_size > 0:
                 self.insert(MemoryBlock(sub_block.end_addr, new_size))
 
-    def insert(self, block: MemoryBlock):
+    def insert(self, block: "MemoryBlock") -> None:
         pred_block = self.find_le(block.start_addr)
         if pred_block and self._overlap(pred_block, block):
             self.remove(pred_block)
@@ -79,22 +95,31 @@ class FreeList(SortedCollection):
 
         super().insert(block)
 
-    def _reserve(self, block):
+    def _reserve(self, block: MemoryBlock) -> None:
         # FIXME: use binary search to find start
         for local_block in self:
             if self._overlap(local_block, block):
                 self._sub(local_block, block)
 
-    def reserve(self, start_addr, size):
+    def reserve(
+        self, start_addr: Union[HexInt, int], size: Union[int, ByteSize]
+    ) -> None:
         self._reserve(MemoryBlock(start_addr, size))
 
 
 class AllocatorSegment:
-    def __init__(self, name="unnaamed", memory_regions=None, sharer_names=None):
+    def __init__(
+        self,
+        name: str = "unnamed",
+        memory_regions: Optional[
+            List[Union[MemoryRegion, HypervisorMemoryRegion]]
+        ] = None,
+        sharer_names: Optional[List[str]] = None,
+    ) -> None:
         self.name = name
-        self.memory_regions = (
-            memory_regions if memory_regions is not None else []
-        )
+        self.memory_regions: List[
+            Union[MemoryRegion, HypervisorMemoryRegion]
+        ] = (memory_regions if memory_regions is not None else [])
         self.sharer_names = sharer_names if sharer_names is not None else []
         self.size = sum(r.size for r in self.memory_regions)
 
@@ -102,32 +127,36 @@ class AllocatorSegment:
     def physical_start_addr(self):
         return self.memory_regions[0].physical_start_addr
 
-    def set_physical_start_addr(self, addr):
+    def set_physical_start_addr(self, addr: int) -> None:
         for region in self.memory_regions:
-            region.physical_start_addr = addr
+            region.physical_start_addr = HexInt.validate(addr)
+            assert region.size is not None
             addr += region.size
 
-    def set_virtual_start_addr(self, addr):
+    def set_virtual_start_addr(self, addr: int) -> None:
         for region in self.memory_regions:
-            region.virtual_start_addr = addr
+            region.virtual_start_addr = HexInt.validate(addr)
+            assert region.size is not None
             addr += region.size
 
 
 class AllocateMemoryPass(BasePass):
     """Implements a simple MemoryAllocator for AutoJail"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = logging.getLogger("autojail")
-        self.config = None
-        self.board = None
-        self.root_cell = None
+        self.config: Optional[JailhouseConfig] = None
+        self.board: Optional[Board] = None
+        self.root_cell: Optional[CellConfig] = None
         self.freelist = FreeList()
-        self.allocatable_regions = []
+        self.allocatable_regions: List[MemoryRegion] = []
 
-        self.unallocated_segments = []
-        self.allocated_regions = []
+        self.unallocated_segments: List[AllocatorSegment] = []
+        self.allocated_regions: List[MemoryRegion] = []
 
-    def __call__(self, board, config):
+    def __call__(
+        self, board: Board, config: JailhouseConfig
+    ) -> Tuple[Board, JailhouseConfig]:
         self.logger.info("Memory Allocator")
 
         self.board = board
@@ -190,7 +219,7 @@ class AllocateMemoryPass(BasePass):
 
         return self.board, self.config
 
-    def _log_freelist(self, freelist, message=""):
+    def _log_freelist(self, freelist: FreeList, message: str = "") -> None:
 
         self.logger.info("")
         if message:
@@ -208,22 +237,35 @@ class AllocateMemoryPass(BasePass):
             tabulate.tabulate(table, headers=["Start", "End", "Size (Byte)"])
         )
 
-    def _build_freelist(self):
+    def _build_freelist(self) -> None:
+        assert self.root_cell is not None
+        assert self.root_cell.memory_regions is not None
         for region in self.root_cell.memory_regions.values():
-            if region.allocatable:
+            assert region is not None
+            if isinstance(region, MemoryRegion) and region.allocatable:
+                assert region.physical_start_addr is not None
+                assert region.size is not None
                 new_block = MemoryBlock(region.physical_start_addr, region.size)
                 self.freelist.insert(new_block)
                 self.allocatable_regions.append(region)
 
-    def _build_unallocated_segments(self, key=lambda x: x.physical_start_addr):
+    def _build_unallocated_segments(
+        self, key: Callable = lambda x: x.physical_start_addr
+    ) -> List[AllocatorSegment]:
         """Group Memory Regions into Segments that are allocated continuously"""
+        assert self.root_cell is not None
+        assert self.config is not None
 
         unallocated = []
 
         # Add cell memories
         self.logger.debug("building allocatable regions")
         for cell_name, cell in self.config.cells.items():
+            assert cell is not None
+            assert cell.memory_regions is not None
             for region_name, region in cell.memory_regions.items():
+                if not isinstance(region, MemoryRegion):
+                    continue
                 if region.allocatable:
                     continue
                 if key(region) is not None:
@@ -237,6 +279,7 @@ class AllocateMemoryPass(BasePass):
 
         # Add hypervisor memories
         hypervisor_memory = self.root_cell.hypervisor_memory
+        assert isinstance(hypervisor_memory, HypervisorMemoryRegion)
         if hypervisor_memory.physical_start_addr is None:
             unallocated.append(
                 AllocatorSegment(
@@ -246,27 +289,50 @@ class AllocateMemoryPass(BasePass):
 
         return unallocated
 
-    def _build_unallocated_segments_virtual(self, cell):
+    def _build_unallocated_segments_virtual(
+        self, cell: CellConfig
+    ) -> List[AllocatorSegment]:
         unallocated = []
+        assert cell.memory_regions is not None
         for name, region in cell.memory_regions.items():
+            if isinstance(region, str):
+                continue
+            if isinstance(region, ShMemNetRegion):
+                continue
             if region.virtual_start_addr is None:
                 unallocated.append(AllocatorSegment(name, [region]))
         return unallocated
 
-    def _preallocate_physical(self):
+    def _preallocate_physical(self) -> None:
+        assert self.config is not None
         for cell in self.config.cells.values():
+            assert cell.memory_regions is not None
             for memory_region in cell.memory_regions.values():
+                if isinstance(memory_region, str):
+                    continue
+                if isinstance(memory_region, ShMemNetRegion):
+                    continue
                 if memory_region.allocatable:
                     continue
+
+                assert memory_region.size is not None
                 if memory_region.physical_start_addr is not None:
                     self.freelist.reserve(
                         memory_region.physical_start_addr, memory_region.size
                     )
 
-    def _preallocate_virtual(self, freelist, cell):
+    def _preallocate_virtual(
+        self, freelist: FreeList, cell: CellConfig
+    ) -> FreeList:
+        if cell.memory_regions is None:
+            return freelist
+
         for memory_region in cell.memory_regions.values():
+            if isinstance(memory_region, str):
+                continue
             if memory_region.allocatable:
                 continue
+            assert memory_region.size is not None
             if memory_region.virtual_start_addr is not None:
                 freelist.reserve(
                     memory_region.virtual_start_addr, memory_region.size
@@ -274,12 +340,18 @@ class AllocateMemoryPass(BasePass):
 
         return freelist
 
-    def _find_next_fit(self, size, alignment=0, reverse=True, freelist=None):
+    def _find_next_fit(
+        self,
+        size: Union[int, ByteSize],
+        alignment: Union[int, ByteSize] = 0,
+        reverse: bool = True,
+        freelist: Optional[FreeList] = None,
+    ) -> int:
         if freelist is None:
             freelist = self.freelist
 
         if reverse:
-            freelist = reversed(freelist)
+            freelist = reversed(freelist)  # type: ignore
 
         for block in freelist:
             if block.size >= size:
@@ -290,8 +362,10 @@ class AllocateMemoryPass(BasePass):
 
         raise Exception(f"Could not find continuous Memory with size: {size}")
 
-    def _allocate_physical(self):
+    def _allocate_physical(self) -> None:
+        assert self.board is not None
         for unallocated_region in self.unallocated_segments:
+            assert unallocated_region.size is not None
             alignment = 0
             if unallocated_region.size % self.board.pagesize == 0:
                 alignment = self.board.pagesize
@@ -302,8 +376,12 @@ class AllocateMemoryPass(BasePass):
             self.freelist.reserve(start_addr, unallocated_region.size)
             unallocated_region.set_physical_start_addr(start_addr)
 
-    def _allocate_virtual(self, freelist, unallocated_segments):
+    def _allocate_virtual(
+        self, freelist: FreeList, unallocated_segments: List[AllocatorSegment]
+    ) -> None:
+        assert self.board is not None
         for unallocated_region in unallocated_segments:
+            assert unallocated_region.size is not None
             alignment = 0
             if unallocated_region.size % self.board.pagesize == 0:
                 alignment = self.board.pagesize
@@ -322,17 +400,23 @@ class AllocateMemoryPass(BasePass):
 class PrepareMemoryRegionsPass(BasePass):
     """ Prepare memory regions by merging  regions from Extracted Board Info and Cell Configuration"""
 
-    def __init__(self):
-        self.config = None
-        self.board = None
+    def __init__(self) -> None:
+        self.config: Optional[JailhouseConfig] = None
+        self.board: Optional[Board] = None
 
-    def __call__(self, board, config):
+    def __call__(
+        self, board: Board, config: JailhouseConfig
+    ) -> Tuple[Board, JailhouseConfig]:
         self.board = board
         self.config = config
 
+        assert self.board is not None
+        assert self.config is not None
+
         for cell in self.config.cells.values():
+            assert cell.memory_regions is not None
             for region in cell.memory_regions.values():
-                if hasattr(region, "size") and region.size is None:
+                if isinstance(region, BaseMemoryRegion) and region.size is None:
                     region.size = self.board.pagesize
 
             if cell.type == "root":
@@ -340,19 +424,36 @@ class PrepareMemoryRegionsPass(BasePass):
 
         return self.board, self.config
 
-    def _prepare_memory_regions_root(self, cell):
+    def _prepare_memory_regions_root(self, cell: CellConfig) -> None:
+        assert self.board is not None
+        assert self.board.memory_regions is not None
+        assert cell.memory_regions is not None
 
         for name, memory_region in self.board.memory_regions.items():
+            if memory_region.physical_start_addr is None:
+                continue
+            if memory_region.virtual_start_addr is None:
+                continue
+            if memory_region.size is None:
+                continue
 
             p_start = memory_region.physical_start_addr
             v_start = memory_region.virtual_start_addr
-            p_end = memory_region.physical_start_addr
-            v_end = memory_region.virtual_start_addr
+            p_end = memory_region.physical_start_addr + memory_region.size
+            v_end = memory_region.virtual_start_addr + memory_region.size
+
+            assert p_start is not None
+            assert v_start is not None
+            assert p_end is not None
+            assert v_end is not None
 
             skip = False
             for cell_region in cell.memory_regions.values():
+
                 if not isinstance(cell_region, BaseMemoryRegion):
                     continue
+
+                assert cell_region.size is not None
 
                 if cell_region.physical_start_addr is not None:
                     if (

@@ -1,4 +1,8 @@
 from collections import namedtuple
+from typing import Optional, Tuple
+
+from autojail.model.board import Board, MemoryRegion
+from autojail.model.jailhouse import JailhouseConfig
 
 from ..model import DebugConsole
 from .passes import BasePass
@@ -13,19 +17,26 @@ console_sentinels = {
 
 
 class LowerDevicesPass(BasePass):
-    def _find_device(self, board, name):
+    def _find_device(
+        self, board: Board, name: str
+    ) -> Tuple[Optional[str], Optional[MemoryRegion]]:
         for device_name, device in board.memory_regions.items():
             if name in device.aliases or device.path == name:
                 return device_name, device
 
         return None, None
 
-    def _lower_console(self, board, config):
+    def _lower_console(self, board: Board, config: JailhouseConfig) -> None:
         for cell in config.cells.values():
             if isinstance(cell.debug_console, str):
                 console_name, console_region = self._find_device(
                     board, cell.debug_console
                 )
+
+                if console_region is None:
+                    raise Exception(
+                        f"Could not find console devices with name: {cell.debug_console}"
+                    )
 
                 sentinel = None
                 for compatible in console_region.compatible:
@@ -48,24 +59,40 @@ class LowerDevicesPass(BasePass):
                     type=con_type,
                     flags=con_flags,
                 )
+                assert cell.memory_regions is not None
+                assert console_name is not None
                 cell.memory_regions[console_name] = console_region
 
-    def _lower_devices(self, board, config):
+    def _lower_devices(self, board: Board, config: JailhouseConfig) -> None:
         for cell in config.cells.values():
+            assert cell.memory_regions is not None
             for region_name, memory_region in cell.memory_regions.items():
                 if isinstance(memory_region, str):
                     _, device_region = self._find_device(board, memory_region)
+                    if device_region is None:
+                        raise Exception(
+                            f"Could not find device named {memory_region}"
+                        )
+
                     cell.memory_regions[region_name] = device_region
 
-    def _lower_interrupts(self, board, config):
+    def _lower_interrupts(self, board: Board, config: JailhouseConfig) -> None:
         for cell in config.cells.values():
+            assert cell.irqchips is not None
+            assert cell.memory_regions is not None
+
             irqchip = list(cell.irqchips.values())[0]
             for memory_region in cell.memory_regions.values():
-                for interrupt in memory_region.interrupts:
-                    irqchip.interrupts.append(interrupt)
+                if isinstance(memory_region, MemoryRegion):
+                    for interrupt in memory_region.interrupts:
+                        irqchip.interrupts.append(interrupt)
             irqchip.interrupts.sort()
 
-    def __call__(self, board, config):
+    def __call__(
+        self, board: Board, config: JailhouseConfig
+    ) -> Tuple[Board, JailhouseConfig]:
         self._lower_console(board, config)
         self._lower_devices(board, config)
         self._lower_interrupts(board, config)
+
+        return board, config

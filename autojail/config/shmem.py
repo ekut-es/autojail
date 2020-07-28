@@ -1,37 +1,50 @@
-import copy
+# type: ignore
 
-from ..model import MemoryRegion, PCIDevice
+import copy
+from typing import Optional, Tuple
+
+from ..model import Board, JailhouseConfig, MemoryRegion, PCIDevice
 from .passes import BasePass
 
 
 class ConfigSHMemRegionsPass(BasePass):
     """Set flags for shmem regions according to global config"""
 
-    def __init__(self):
-        self.board = None
-        self.config = None
+    def __init__(self) -> None:
+        self.board: Optional[Board] = None
+        self.config: Optional[JailhouseConfig] = None
 
-    def __call__(self, board, config):
+    def __call__(
+        self, board: Board, config: JailhouseConfig
+    ) -> Tuple[Board, JailhouseConfig]:
         self.board = board
         self.config = config
 
         self._regions_shmem_config()
 
-        return self.board, self.config
+        return board, config
 
-    def _regions_shmem_config(self):
+    def _regions_shmem_config(self) -> None:
         """ set MEM_WRITE flags accordingly """
+        assert self.config is not None
+        assert self.board is not None
+
         if not self.config.shmem:
             return
 
         for name, shmem_config in self.config.shmem.items():
             for cell_name in shmem_config.peers:
                 cell = self.config.cells[cell_name]
+                assert cell.pci_devices is not None
 
                 # offset 2, since mem_regions always
                 # start with table_region and common_output_region
                 dev_id = cell.pci_devices[name].shmem_dev_id
+                assert dev_id is not None
+
                 mem_region_name = f"{name}_{dev_id + 2}"
+
+                assert cell.memory_regions is not None
                 cell_output_region = cell.memory_regions[mem_region_name]
 
                 def get_mem_region_index(cell, name):
@@ -70,11 +83,13 @@ class ConfigSHMemRegionsPass(BasePass):
 class LowerSHMemPass(BasePass):
     """Generates per cell shmem regions and devices from global configuration"""
 
-    def __init__(self):
-        self.board = None
-        self.config = None
+    def __init__(self) -> None:
+        self.board: Optional[Board] = None
+        self.config: Optional[JailhouseConfig] = None
 
-    def __call__(self, board, config):
+    def __call__(
+        self, board: Board, config: JailhouseConfig
+    ) -> Tuple[Board, JailhouseConfig]:
         self.board = board
         self.config = config
 
@@ -83,7 +98,9 @@ class LowerSHMemPass(BasePass):
 
         return self.board, self.config
 
-    def _lower_shmem_config(self):
+    def _lower_shmem_config(self) -> None:
+        assert self.config is not None
+        assert self.board is not None
         if not self.config.shmem:
             return
 
@@ -210,7 +227,10 @@ class LowerSHMemPass(BasePass):
 
             current_bdf += 1
 
-    def _create_vpci_base(self):
+    def _create_vpci_base(self) -> None:
+        assert self.config is not None
+        assert self.board is not None
+
         used_interrupts = set()
 
         for cell in self.config.cells.values():
@@ -255,5 +275,6 @@ class LowerSHMemPass(BasePass):
                         if irq not in irqchip.interrupts:
                             irqchip.interrupts.append(irq)
 
+        self.logger.info("Infered vpci config")
         for name, cell in self.config.cells.items():
-            print(name, cell.vpci_irq_base)
+            self.logger.info(name, cell.vpci_irq_base)

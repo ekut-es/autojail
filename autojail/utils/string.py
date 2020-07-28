@@ -4,6 +4,7 @@ def remove_prefix(text: str, prefix: str) -> str:
 
 
 def pprint_tree(node, file=None, _prefix="", _last=True):
+    """pretty print a tree like datastructure"""
     print(_prefix, "`- " if _last else "|- ", node.value, sep="", file=file)
     _prefix += "   " if _last else "|  "
     child_count = len(node.children)

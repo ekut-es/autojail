@@ -1,7 +1,8 @@
 import getpass
 from typing import TYPE_CHECKING
 
-from fabric import Connection
+from automate.context import AutomateContext
+from fabric.connection import Connection
 from paramiko.ssh_exception import (
     AuthenticationException,
     PasswordRequiredException,
@@ -12,7 +13,9 @@ if TYPE_CHECKING:
     from ..model import AutojailConfig
 
 
-def connect(config: "AutojailConfig", context, passwd_retries=5):
+def connect(
+    config: "AutojailConfig", context: AutomateContext, passwd_retries: int = 5
+) -> Connection:
     login = config.login
     connection = None
     if login.is_ssh:

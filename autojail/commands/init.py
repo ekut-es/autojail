@@ -80,6 +80,8 @@ class InitCommand(BaseCommand):
     def _init_automate(self) -> AutojailConfig:
         "Initialize the backend with test rack"
 
+        assert self.automate_context is not None
+
         name = self.option("name")
         if not name:
             name = Path.cwd().name.lower()

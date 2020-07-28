@@ -1,18 +1,25 @@
 import os
-from typing import Optional
+from typing import List, Optional
 
 import ruamel.yaml
 
-from ..model import Board, JailhouseConfig, MemoryRegion, ShMemNetRegion
+from ..model import (
+    Board,
+    DebugConsole,
+    JailhouseConfig,
+    MemoryRegion,
+    PlatformInfoArm,
+    ShMemNetRegion,
+)
 from .board_info import TransferBoardInfoPass
 from .devices import LowerDevicesPass
 from .irq import PrepareIRQChipsPass
 from .memory import AllocateMemoryPass, PrepareMemoryRegionsPass
-from .shmem import ConfigSHMemRegionsPass, LowerSHMemPass
+from .shmem import ConfigSHMemRegionsPass, LowerSHMemPass  # type: ignore
 
 
 class JailhouseConfigurator:
-    def __init__(self, board: Board):
+    def __init__(self, board: Board) -> None:
         self.board = board
         self.config: Optional[JailhouseConfig] = None
         self.passes = [
@@ -25,10 +32,17 @@ class JailhouseConfigurator:
             ConfigSHMemRegionsPass(),
         ]
 
-    def write_config(self, output_path):
+    def write_config(self, output_path: str) -> None:
         """Write configuration data to file"""
+        assert self.config is not None
 
         for cell in self.config.cells.values():
+
+            assert cell.pci_devices is not None
+            assert cell.memory_regions is not None
+            assert cell.irqchips is not None
+            assert cell.cpus is not None
+
             output_name = str(cell.name).lower().replace(" ", "-")
             output_name += ".c"
 
@@ -62,7 +76,7 @@ class JailhouseConfigurator:
             )
             f.write(
                 f"\tstruct jailhouse_irqchip irqchips[{amount_irqchips}];\n"
-            )  # TODO:
+            )
             f.write(
                 "\tstruct jailhouse_pci_device pci_devices["
                 + str(amount_pci_devices)
@@ -89,6 +103,9 @@ class JailhouseConfigurator:
             f.write(f"\n\t.flags = {cell_flags},")
 
             if cell.type == "root":
+                assert cell.hypervisor_memory is not None
+                assert cell.hypervisor_memory.physical_start_addr is not None
+
                 f.write("\n\t.hypervisor_memory = {")
                 f.write(
                     "\n\t\t.phys_start = "
@@ -105,6 +122,8 @@ class JailhouseConfigurator:
             else:
                 f.write("\n\t.console = {")
 
+            assert isinstance(cell.debug_console, DebugConsole)
+
             f.write("\n\t\t.address = " + hex(cell.debug_console.address) + ",")
             f.write("\n\t\t.size = " + hex(cell.debug_console.size) + ",")
             f.write(
@@ -118,6 +137,7 @@ class JailhouseConfigurator:
             f.write("\n\t},\n")
 
             if cell.type == "root":
+                assert cell.platform_info is not None
                 f.write("\n\t.platform_info = {")
                 if cell.platform_info.pci_mmconfig_base:
                     f.write(
@@ -142,6 +162,9 @@ class JailhouseConfigurator:
                 )
                 f.write("\n\t\t.arm = {")
                 arm_values = cell.platform_info.arch
+
+                assert isinstance(arm_values, PlatformInfoArm)
+                assert arm_values is not None
 
                 for name, val in arm_values.dict().items():
                     if name == "iommu_units":
@@ -182,37 +205,42 @@ class JailhouseConfigurator:
 
             f.write("\n\t.cpus = {")
             cpu_set_tmp = "0b" + "0" * (max(cpu_set) + 1)
-            s = list(cpu_set_tmp)
+            cpu_list: List[str] = list(cpu_set_tmp)
             for e in cpu_set:
-                s[(max(cpu_set) + 2) - e] = str(1)
-            s = "".join(s)
-            f.write(s + "},")
+                cpu_list[(max(cpu_set) + 2) - e] = str(1)
+            cpu_res = "".join(cpu_list)
+            f.write(cpu_res + "},")
             f.write("\n\t")
             f.write("\n\t.mem_regions = {\n")
             for k, v in cell.memory_regions.items():
+                assert isinstance(v, MemoryRegion) or isinstance(
+                    v, ShMemNetRegion
+                )
                 if v.size == 0:
                     f.write("\t/* empty optional region */\n\t{ 0 },\n")
                     continue
 
                 if isinstance(v, MemoryRegion):
+                    assert v.virtual_start_addr is not None
+                    assert v.physical_start_addr is not None
+                    assert v.size is not None
+
                     f.write("\t/*" + k)
 
-                    if v.physical_start_addr is not None:
-                        f.write(
-                            " "
-                            + hex(v.physical_start_addr)
-                            + "-"
-                            + hex(v.physical_start_addr + v.size)
-                        )
+                    f.write(
+                        " "
+                        + hex(v.physical_start_addr)
+                        + "-"
+                        + hex(v.physical_start_addr + v.size)
+                    )
 
                     f.write("*/\n\t{")
 
-                    if v.physical_start_addr is not None:
-                        f.write(
-                            "\n\t\t.phys_start = "
-                            + hex(v.physical_start_addr)
-                            + ","
-                        )
+                    f.write(
+                        "\n\t\t.phys_start = "
+                        + hex(v.physical_start_addr)
+                        + ","
+                    )
 
                     f.write(
                         "\n\t\t.virt_start = " + hex(v.virtual_start_addr) + ","
@@ -277,7 +305,7 @@ class JailhouseConfigurator:
             f.write("\n\t},\n")
             f.write("\n};")
 
-    def prepare(self):
+    def prepare(self) -> None:
         if self.config is None:
             raise Exception(
                 "A configuration without cells_yml is not supported at the moment"
@@ -286,7 +314,7 @@ class JailhouseConfigurator:
         for pass_instance in self.passes:
             pass_instance(self.board, self.config)
 
-    def read_cell_yml(self, cells_yml):
+    def read_cell_yml(self, cells_yml: str) -> None:
         print("Reading cell configuration", str(cells_yml))
         with open(cells_yml, "r") as stream:
             yaml = ruamel.yaml.YAML()

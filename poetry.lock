@@ -508,6 +508,26 @@ testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pyt
 
 [[package]]
 category = "dev"
+description = "A concrete syntax tree with AST-like properties for Python 3.5, 3.6, 3.7 and 3.8 programs."
+name = "libcst"
+optional = false
+python-versions = ">=3.6"
+version = "0.3.8"
+
+[package.dependencies]
+pyyaml = ">=5.2"
+typing-extensions = ">=3.7.4.2"
+typing-inspect = ">=0.4.0"
+
+[package.dependencies.dataclasses]
+python = "<3.7"
+version = "*"
+
+[package.extras]
+dev = ["black", "codecov", "coverage", "hypothesis (>=4.36.0)", "hypothesmith (>=0.0.4)", "isort", "flake8", "jupyter", "nbsphinx", "pyre-check", "sphinx", "sphinx-rtd-theme"]
+
+[[package]]
+category = "dev"
 description = "Python LiveReload is an awesome tool for web developers"
 name = "livereload"
 optional = false
@@ -624,6 +644,19 @@ setuptools = ">=18.5"
 reference = "abf14392b0ed0c7022210b32c4e7c9c3e4c5c68a"
 type = "git"
 url = "https://github.com/pugong/mkdocs-mermaid-plugin.git"
+
+[[package]]
+category = "dev"
+description = "Generating type annotations from sampled production types"
+name = "monkeytype"
+optional = false
+python-versions = ">=3.6"
+version = "20.5.0"
+
+[package.dependencies]
+libcst = ">=0.3.5"
+mypy-extensions = "*"
+
 [[package]]
 category = "main"
 description = "More routines for operating on iterables, beyond itertools"
@@ -1146,6 +1179,18 @@ python-versions = "*"
 version = "3.7.4.2"
 
 [[package]]
+category = "dev"
+description = "Runtime inspection utilities for typing module."
+name = "typing-inspect"
+optional = false
+python-versions = "*"
+version = "0.6.0"
+
+[package.dependencies]
+mypy-extensions = ">=0.3.0"
+typing-extensions = ">=3.7.4"
+
+[[package]]
 category = "main"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 name = "urllib3"
@@ -1209,7 +1254,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 automate = ["automate"]
 
 [metadata]
-content-hash = "5fd8c3fbf6dd0a65541a92fe52c64c630565d4e39b7559eef7f024c31645b9a2"
+content-hash = "b1db43dd47f1c423f328c0b04371d9d261dccaaaa4af7369becfacea030ffeb3"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -1466,6 +1511,10 @@ keyring = [
     {file = "keyring-21.2.1-py3-none-any.whl", hash = "sha256:3401234209015144a5d75701e71cb47239e552b0882313e9f51e8976f9e27843"},
     {file = "keyring-21.2.1.tar.gz", hash = "sha256:c53e0e5ccde3ad34284a40ce7976b5b3a3d6de70344c3f8ee44364cc340976ec"},
 ]
+libcst = [
+    {file = "libcst-0.3.8-py3-none-any.whl", hash = "sha256:d514cd36e8da5e1444ec693b65a4b6751781af02496f9a2442c8590eb0d321fc"},
+    {file = "libcst-0.3.8.tar.gz", hash = "sha256:484fc3bf0b9b15773349548a466a36b137fbd94705fac8cdf25734fd8261fa17"},
+]
 livereload = [
     {file = "livereload-2.6.2.tar.gz", hash = "sha256:d1eddcb5c5eb8d2ca1fa1f750e580da624c0f7fcb734aa5780dc81b7dcbd89be"},
 ]
@@ -1520,6 +1569,10 @@ mkdocs-material = [
     {file = "mkdocs_material-4.6.3-py2.py3-none-any.whl", hash = "sha256:7f3afa0a09c07d0b89a6a9755fdb00513aee8f0cec3538bb903325c80f66f444"},
 ]
 mkdocs-mermaid-plugin = []
+monkeytype = [
+    {file = "MonkeyType-20.5.0-py3-none-any.whl", hash = "sha256:b8ed88485d2ffb05fb1597a6e5eacb05ba5420de682054403c06fac84fdc4038"},
+    {file = "MonkeyType-20.5.0.tar.gz", hash = "sha256:fe596bebc5e1b6a64eae71a40b880688de433e4f70507a31ada48510195251dd"},
+]
 more-itertools = [
     {file = "more-itertools-8.4.0.tar.gz", hash = "sha256:68c70cc7167bdf5c7c9d8f6954a7837089c6a36bf565383919bb595efb8a17e5"},
     {file = "more_itertools-8.4.0-py3-none-any.whl", hash = "sha256:b78134b2063dd214000685165d81c154522c3ee0a1c0d4d113c80361c234c5a2"},
@@ -1813,6 +1866,11 @@ typing-extensions = [
     {file = "typing_extensions-3.7.4.2-py2-none-any.whl", hash = "sha256:f8d2bd89d25bc39dabe7d23df520442fa1d8969b82544370e03d88b5a591c392"},
     {file = "typing_extensions-3.7.4.2-py3-none-any.whl", hash = "sha256:6e95524d8a547a91e08f404ae485bbb71962de46967e1b71a0cb89af24e761c5"},
     {file = "typing_extensions-3.7.4.2.tar.gz", hash = "sha256:79ee589a3caca649a9bfd2a8de4709837400dfa00b6cc81962a1e6a1815969ae"},
+]
+typing-inspect = [
+    {file = "typing_inspect-0.6.0-py2-none-any.whl", hash = "sha256:de08f50a22955ddec353876df7b2545994d6df08a2f45d54ac8c05e530372ca0"},
+    {file = "typing_inspect-0.6.0-py3-none-any.whl", hash = "sha256:3b98390df4d999a28cf5b35d8b333425af5da2ece8a4ea9e98f71e7591347b4f"},
+    {file = "typing_inspect-0.6.0.tar.gz", hash = "sha256:8f1b1dd25908dbfd81d3bebc218011531e7ab614ba6e5bf7826d887c834afab7"},
 ]
 urllib3 = [
     {file = "urllib3-1.25.10-py2.py3-none-any.whl", hash = "sha256:e7983572181f5e1522d9c98453462384ee92a0be7fac5f1413a1e35c56cc0461"},
