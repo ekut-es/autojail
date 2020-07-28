@@ -236,7 +236,7 @@ class DeviceTreeExtractor:
             return
 
         elif node.get_property("interrupt-controller"):
-            self.logger.info("Handling interrup controller", node.name)
+            self.logger.info("Handling interrup controller %s", node.name)
             # FIXME: some of the version two's are v1
             gic_versions = {
                 "arm,arm11mp-gic": 2,

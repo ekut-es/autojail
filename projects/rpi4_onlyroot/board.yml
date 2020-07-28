@@ -18,6 +18,26 @@ memory_regions:
     compatible: []
     interrupts: []
     aliases: []
+  pci@0:
+    physical_start_addr: 0x0
+    virtual_start_addr: 0x0
+    size: 0x100000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: //pci@0
+    compatible:
+    - pci-host-ecam-generic
+    interrupts: []
+    aliases: []
   memreserve:
     physical_start_addr: 0x3b400000
     virtual_start_addr: 0x3b400000
