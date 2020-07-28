@@ -42,13 +42,11 @@ class TransferBoardInfoPass(BasePass):
             if cell.platform_info is None:
                 self.logger.warn("Platform info has not been defined")
                 self.logger.warn("Assuming:")
-                self.logger.warn("  pci_mmconfig_end_bus=0x800000000")
+                self.logger.warn("  pci_mmconfig_end_bus=0")
                 self.logger.warn("  pci_is_virtual=1")
                 self.logger.warn("  pci_domain=1")
                 cell.platform_info = PlatformInfo(
-                    pci_mmconfig_end_bus=0x800000000,
-                    pci_is_virtual=1,
-                    pci_domain=1,
+                    pci_mmconfig_end_bus=0, pci_is_virtual=1, pci_domain=1,
                 )
 
     def _create_arm_info(self, board: Board, config: JailhouseConfig) -> None:

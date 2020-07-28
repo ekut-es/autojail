@@ -5,7 +5,7 @@ cells:
     flags: [SYS_VIRTUAL_DEBUG_CONSOLE]
 
     hypervisor_memory:
-      size: 16 MB
+      size: 4 MB
 
     debug_console: serial0
 
@@ -13,6 +13,8 @@ cells:
 
     memory_regions:
       Main Memory:
+        physical_start_addr: 0x0
+        virtual_start_addr: 0x0
         size: 768 MB
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
 
@@ -25,7 +27,7 @@ cells:
     memory_regions:
       Main Memory:
         virtual_start_addr: 0x0 # Needs to be specified We might be able to give a /elf/file
-        size: 8 MB
+        size: 128 MB
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
 
       Communication Region:

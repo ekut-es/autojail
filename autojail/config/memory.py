@@ -1,3 +1,4 @@
+import copy
 import logging
 from typing import Callable, List, Optional, Tuple, Union
 
@@ -114,6 +115,7 @@ class AllocatorSegment:
         memory_regions: Optional[
             List[Union[MemoryRegion, HypervisorMemoryRegion]]
         ] = None,
+        alignment: int = 0,
         sharer_names: Optional[List[str]] = None,
     ) -> None:
         self.name = name
@@ -122,6 +124,7 @@ class AllocatorSegment:
         ] = (memory_regions if memory_regions is not None else [])
         self.sharer_names = sharer_names if sharer_names is not None else []
         self.size = sum(r.size for r in self.memory_regions)
+        self.alignment = alignment
 
     @property
     def physical_start_addr(self):
@@ -194,6 +197,7 @@ class AllocateMemoryPass(BasePass):
         self._allocate_physical()
         self._log_freelist(self.freelist, "Free Memory (after allocation)")
 
+        self._lift_loadable()
         for name, cell in config.cells.items():
             freelist_virtual = FreeList()
             vmem_size = 2 ** 32
@@ -204,7 +208,9 @@ class AllocateMemoryPass(BasePass):
                 freelist_virtual, f"Initial free vmem of cell {name}"
             )
 
+            self._preallocate_vpci()
             freelist_virtual = self._preallocate_virtual(freelist_virtual, cell)
+
             self._log_freelist(
                 freelist_virtual,
                 f"Free vmem of cell {name} after preallocation",
@@ -217,7 +223,28 @@ class AllocateMemoryPass(BasePass):
                 freelist_virtual, f"Free vmem of cell {name} after allocation",
             )
 
+            self._remove_allocatable()
+
         return self.board, self.config
+
+    def _lift_loadable(self):
+        root_cell = self.root_cell
+        for cell_name, cell in self.config.cells.items():
+            if cell.type == "root":
+                continue
+
+            for name, region in cell.memory_regions.items():
+                if region.flags and "MEM_LOADABLE" in region.flags:
+                    print("Adding region:", name, "to root cell")
+                    copy_region = copy.deepcopy(region)
+                    copy_region.flags.remove("MEM_LOADABLE")
+                    # FIXME: is it really true, that that MEM_LOADABLE must be the same at their respective memory region
+                    copy_region.virtual_start_addr = (
+                        copy_region.physical_start_addr
+                    )
+                    root_cell.memory_regions[
+                        f"{name}@{cell_name}"
+                    ] = copy_region
 
     def _log_freelist(self, freelist: FreeList, message: str = "") -> None:
 
@@ -283,7 +310,10 @@ class AllocateMemoryPass(BasePass):
         if hypervisor_memory.physical_start_addr is None:
             unallocated.append(
                 AllocatorSegment(
-                    "hypervisor_memory", [hypervisor_memory], ["hypervisor"]
+                    "hypervisor_memory",
+                    [hypervisor_memory],
+                    alignment=hypervisor_memory.size,  # FIXME: this is to much alignment
+                    sharer_names=["hypervisor"],
                 )
             )
 
@@ -321,6 +351,17 @@ class AllocateMemoryPass(BasePass):
                         memory_region.physical_start_addr, memory_region.size
                     )
 
+    def _preallocate_vpci(self):
+        """Preallocate a virtual page on all devices"""
+        assert self.config is not None
+
+        if self.root_cell and self.root_cell.platform_info:
+            if self.root_cell.platform_info.pci_mmconfig_base:
+                # FIXME: preallocate pci
+                pass
+            else:
+                self.root_cell.platform_info.pci_mmconfig_base = 0x800000000
+
     def _preallocate_virtual(
         self, freelist: FreeList, cell: CellConfig
     ) -> FreeList:
@@ -354,21 +395,26 @@ class AllocateMemoryPass(BasePass):
             freelist = reversed(freelist)  # type: ignore
 
         for block in freelist:
-            if block.size >= size:
-                if reverse:
-                    diff = block.size - size
-                    return block.start_addr + diff
-                return block.start_addr
+            alignment_offset = block.start_addr % alignment
+            if reverse:
+                alignment_offset = (block.start_addr + block.size) % alignment
 
-        raise Exception(f"Could not find continuous Memory with size: {size}")
+            if block.size >= size + alignment_offset:
+                if reverse:
+                    diff = block.size - size - alignment_offset
+                    return block.start_addr + diff
+
+                return block.start_addr + alignment_offset
+
+        raise Exception(
+            f"Could not find continuous Memory with size: {hex(size)}"
+        )
 
     def _allocate_physical(self) -> None:
         assert self.board is not None
         for unallocated_region in self.unallocated_segments:
             assert unallocated_region.size is not None
-            alignment = 0
-            if unallocated_region.size % self.board.pagesize == 0:
-                alignment = self.board.pagesize
+            alignment = max(unallocated_region.alignment, self.board.pagesize)
 
             start_addr = self._find_next_fit(
                 unallocated_region.size, alignment=alignment, reverse=True
@@ -394,6 +440,20 @@ class AllocateMemoryPass(BasePass):
             )
             freelist.reserve(start_addr, unallocated_region.size)
             unallocated_region.set_virtual_start_addr(start_addr)
+
+    def _remove_allocatable(self):
+        """Finally remove allocatable memory regions from cells"""
+        assert self.config is not None
+
+        for cell in self.config.cells.values():
+            delete_list = []
+            for name, region in cell.memory_regions.items():
+                if isinstance(region, MemoryRegion):
+                    if region.allocatable:
+                        delete_list.append(name)
+
+            for name in delete_list:
+                del cell.memory_regions[name]
 
 
 # FIXME: this pass might not be needed any more
