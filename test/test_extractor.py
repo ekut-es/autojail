@@ -76,3 +76,7 @@ def test_device_tree(tmpdir):
     for alias, path in alias_pairs:
         assert extractor.aliases[alias] == path
         # assert extractor.reverse_aliases[path] == alias
+
+
+def test_extract_command():
+    pass

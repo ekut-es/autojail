@@ -1,0 +1,11 @@
+name: test_project
+board: raspberrypi4b-jh1
+login: automate:raspberrypi4b-jh1
+arch: ARM
+cross_compile: /afs/wsi/es/tools/arm/gcc-linaro-7.4.1-2019.02-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+kernel_dir: kernel
+jailhouse_dir: jailhouse
+uart:
+kernel_cmdline:
+jailhouse_git:
+kernel_git:
