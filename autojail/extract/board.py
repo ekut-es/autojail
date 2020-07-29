@@ -1,16 +1,20 @@
-from pathlib import Path
+# type: ignore
 
-from ..model import Board, MemoryRegion
+from collections import OrderedDict
+from pathlib import Path, PosixPath
+from typing import Any, Dict, List, Tuple
+
+from ..model import GIC, Board, MemoryRegion
 from .device_tree import DeviceTreeExtractor
 
 
 class BoardInfoExtractor:
-    def __init__(self, name, board, data_root):
+    def __init__(self, name: str, board: str, data_root: str) -> None:
         self.name = name
         self.board = board
         self.data_root = Path(data_root)
 
-    def read_iomem(self, filename):
+    def read_iomem(self, filename: PosixPath) -> Dict[str, MemoryRegion]:
         with open(filename, "r") as iomem_info:
             start_addr = 0
             end_addr = 0
@@ -20,7 +24,7 @@ class BoardInfoExtractor:
             physical_start_addr = []
 
             size = []
-            memory_regions = []
+            memory_regions: List[Any] = []
             res = 1
             res2 = 1
             mem_flags = "JAILHOUSE_MEM_READ | JAILHOUSE_MEM_WRITE | JAILHOUSE_MEM_IO | JAILHOUSE_MEM_IO_8 | JAILHOUSE_MEM_IO_16 | JAILHOUSE_MEM_IO_32 | JAILHOUSE_MEM_IO_64"
@@ -99,7 +103,7 @@ class BoardInfoExtractor:
 
         return mem_regs
 
-    def read_getconf_out(self, getconf_path: Path):
+    def read_getconf_out(self, getconf_path: Path) -> int:
         # Return values
         pagesize = 4096
 
@@ -114,13 +118,13 @@ class BoardInfoExtractor:
                             pagesize = int(value)
         return pagesize
 
-    def extract_cpuinfo(self):
+    def extract_cpuinfo(self) -> List[Any]:
         path = self.data_root / "proc" / "cpuinfo"
 
         cpuinfo = []
 
         with path.open() as f:
-            current_cpu = {}
+            current_cpu: Dict[str, str] = {}
             for line in f:
                 line = line.strip()
                 started = False
@@ -156,7 +160,9 @@ class BoardInfoExtractor:
 
         return cpuinfo
 
-    def extract_from_devicetree(self, memory_regions):
+    def extract_from_devicetree(
+        self, memory_regions: Dict[str, MemoryRegion]
+    ) -> Tuple[OrderedDict, List[GIC]]:
         extractor = DeviceTreeExtractor(
             self.data_root / "sys" / "firmware" / "devicetree" / "base"
         )
@@ -164,7 +170,7 @@ class BoardInfoExtractor:
 
         return extractor.memory_regions, extractor.interrupt_controllers
 
-    def extract(self):
+    def extract(self) -> Board:
         memory_regions = self.read_iomem(self.data_root / "proc" / "iomem")
         pagesize = self.read_getconf_out(self.data_root / "getconf.out")
         memory_regions, interrupt_controllers = self.extract_from_devicetree(

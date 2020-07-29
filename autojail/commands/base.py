@@ -19,7 +19,7 @@ class BaseCommand(Command):
     CELLS_CONFIG_NAME = "cells.yml"
     BOARD_CONFIG_NAME = "board.yml"
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
         self.autojail_config = None

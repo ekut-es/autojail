@@ -1,13 +1,20 @@
+from typing import Optional, Tuple
+
+from autojail.model.board import Board
+from autojail.model.jailhouse import CellConfig, JailhouseConfig
+
 from ..model import IRQChip
 from .passes import BasePass
 
 
 class PrepareIRQChipsPass(BasePass):
-    def __init__(self):
-        self.board = None
-        self.config = None
+    def __init__(self) -> None:
+        self.board: Optional[Board] = None
+        self.config: Optional[JailhouseConfig] = None
 
-    def __call__(self, board, config):
+    def __call__(
+        self, board: Board, config: JailhouseConfig
+    ) -> Tuple[Board, JailhouseConfig]:
         self.board = board
         self.config = config
 
@@ -16,11 +23,13 @@ class PrepareIRQChipsPass(BasePass):
 
         return self.board, self.config
 
-    def _prepare_irqchips(self, cell):
+    def _prepare_irqchips(self, cell: CellConfig) -> None:
         "Splits irqchips that handle more interrupts than are possible in one autojail config entry"
 
         split_factor = 32 * 4
         new_irqchips = {}
+
+        assert cell.irqchips is not None
 
         for name, irqchip in cell.irqchips.items():
             count = 0

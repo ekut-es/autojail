@@ -1,0 +1,36 @@
+cells:
+  root:
+    type: root
+    name: "rpi4 hello"
+    flags: [SYS_VIRTUAL_DEBUG_CONSOLE]
+
+    hypervisor_memory:
+      size: 4 MB
+
+    debug_console: serial0
+
+    cpus: 0-3
+
+    memory_regions:
+      Main Memory:
+        physical_start_addr: 0x0
+        virtual_start_addr: 0x0
+        size: 768 MB
+        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
+
+  guest1:
+    type: bare
+    name: "rpi4 hello guest"
+    debug_console: serial0
+    cpus: 1
+
+    memory_regions:
+      Main Memory:
+        virtual_start_addr: 0x0 # Needs to be specified We might be able to give a /elf/file
+        size: 128 MB
+        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
+
+      Communication Region:
+        virtual_start_addr: 0x80000000
+        size: 4 KB
+        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]

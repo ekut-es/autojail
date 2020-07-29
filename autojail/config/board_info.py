@@ -1,28 +1,40 @@
-from ..model import IRQChip, PlatformInfo, PlatformInfoArm
+from typing import Tuple
+
+from ..model import (
+    Board,
+    IntegerList,
+    IRQChip,
+    JailhouseConfig,
+    PlatformInfo,
+    PlatformInfoArm,
+)
 from ..utils.logging import getLogger
 from .passes import BasePass
 
 
 class TransferBoardInfoPass(BasePass):
-    def __init__(self):
+    def __init__(self) -> None:
         self.logger = getLogger()
 
-    def _create_irqchips(self, board, config):
+    def _create_irqchips(self, board: Board, config: JailhouseConfig) -> None:
         for cell in config.cells.values():
             if cell.irqchips:
                 continue
 
             gic = board.interrupt_controllers[0]
 
-            interrupts = []
+            interrupts = IntegerList.validate([])
             if cell.type == "root":
                 interrupts = gic.interrupts
 
+            assert cell.irqchips is not None
             cell.irqchips["gic"] = IRQChip(
                 address=gic.gicd_base, pin_base=32, interrupts=interrupts
             )
 
-    def _create_platform_info(self, board, config):
+    def _create_platform_info(
+        self, board: Board, config: JailhouseConfig
+    ) -> None:
         for cell in config.cells.values():
             if cell.type != "root":
                 continue
@@ -34,13 +46,15 @@ class TransferBoardInfoPass(BasePass):
                 self.logger.warn("  pci_is_virtual=1")
                 self.logger.warn("  pci_domain=1")
                 cell.platform_info = PlatformInfo(
-                    pci_mmconfig_end_bus=0, pci_is_virtual=1, pci_domain=1
+                    pci_mmconfig_end_bus=0, pci_is_virtual=1, pci_domain=1,
                 )
 
-    def _create_arm_info(self, board, config):
+    def _create_arm_info(self, board: Board, config: JailhouseConfig) -> None:
         for cell in config.cells.values():
             if cell.type != "root":
                 continue
+
+            assert cell.platform_info is not None
 
             if cell.platform_info.arch is not None:
                 return
@@ -57,8 +71,12 @@ class TransferBoardInfoPass(BasePass):
                 gicr_base=gic.gicr_base,
             )
 
-    def __call__(self, board, config):
+    def __call__(
+        self, board: Board, config: JailhouseConfig
+    ) -> Tuple[Board, JailhouseConfig]:
         self.logger.info("Lowering board info")
         self._create_platform_info(board, config)
         self._create_irqchips(board, config)
         self._create_arm_info(board, config)
+
+        return board, config

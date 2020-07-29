@@ -2,11 +2,12 @@ from abc import ABC
 from typing import Tuple
 
 from ..model import Board, JailhouseConfig
+from ..utils.logging import getLogger
 
 
 class BasePass(ABC):
     def __init__(self) -> None:
-        pass
+        self.logger = getLogger()
 
     def __call__(
         self, board: Board, config: JailhouseConfig

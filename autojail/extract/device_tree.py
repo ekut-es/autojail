@@ -2,14 +2,15 @@ import subprocess
 from collections import OrderedDict, defaultdict
 from pathlib import Path
 from tempfile import mktemp
-from typing import Any, List, MutableMapping, Union
+from typing import Any, List, MutableMapping, Set, Tuple, Union
 
 import fdt
 import tabulate
 from dataclasses import dataclass, field
+from fdt.items import Node
 
-from ..model import GIC, MemoryRegion
-from ..model.datatypes import ByteSize
+from ..model import GIC, BaseMemoryRegion, MemoryRegion
+from ..model.datatypes import ByteSize, IntegerList
 from ..utils.logging import getLogger
 
 
@@ -27,7 +28,7 @@ class WalkerState:
     size_cells: int = 1
     ranges: List[RangeEntry] = field(default_factory=list)
 
-    def translate_addr(self, addr):
+    def translate_addr(self, addr: int) -> int:
         """Translate address to global address"""
         for range in self.ranges:
             offset = addr - range.start
@@ -36,13 +37,13 @@ class WalkerState:
 
         return addr
 
-    def munge(self, range):
+    def munge(self, range: List[int]) -> int:
         res = 0
         for i, v in enumerate(reversed(range)):
             res += 2 ** (32 * i) * v
         return res
 
-    def parse_range(self, range):
+    def parse_range(self, range: List[int]) -> Tuple[int, int, int]:
         start = self.munge(range[: self.address_cells])
         size = self.munge(
             range[self.address_cells : self.address_cells + self.size_cells]
@@ -52,7 +53,7 @@ class WalkerState:
 
 
 class DeviceTreeExtractor:
-    def __init__(self, dt: Union[str, Path], pagesize=4096) -> None:
+    def __init__(self, dt: Union[str, Path], pagesize: int = 4096) -> None:
         dt_path = Path(dt)
         if dt_path.is_dir():
             temp_file = mktemp(suffix=".dtb")
@@ -65,28 +66,32 @@ class DeviceTreeExtractor:
                 with open(temp_file, "rb") as f:
                     self.fdt = fdt.parse_dtb(f.read())
             finally:
-                print(temp_file)
+                pass
                 # Path(temp_file[1]).unlink()
         else:
             with dt_path.open("rb") as f:
                 self.fdt = fdt.parse_dtb(f.read())
 
         self.aliases: MutableMapping[str, str] = OrderedDict()
-        self.aliases_reversed: MutableMapping[str, str] = defaultdict(list)  # type: ignore
+        self.aliases_reversed: MutableMapping[str, List[str]] = defaultdict(
+            list
+        )  # type: ignore
         self.handles: MutableMapping[str, str] = OrderedDict()
-        self.memory_regions: MutableMapping[str, str] = OrderedDict()
+        self.memory_regions: MutableMapping[
+            str, BaseMemoryRegion
+        ] = OrderedDict()
         self.interrupt_controllers: List[GIC] = []
 
         self.logger = getLogger()
 
-    def _extract_aliases(self):
+    def _extract_aliases(self) -> None:
         if self.fdt.exist_node("/aliases"):
             aliases_node = self.fdt.get_node("/aliases")
             for prop in sorted(aliases_node.props, key=lambda x: x.name):
                 self.aliases[prop.name] = prop.value
                 self.aliases_reversed[prop.value].append(prop.name)
 
-    def _is_simple_bus(self, node):
+    def _is_simple_bus(self, node: Node) -> bool:
         compatible = node.get_property("compatible")
         if (compatible is not None) and ("simple-bus" in compatible.value):
             size_cells = node.get_property("#size-cells")
@@ -96,12 +101,12 @@ class DeviceTreeExtractor:
                 return True
         return False
 
-    def _is_mmapped_bus(self, node):
+    def _is_mmapped_bus(self, node: Node) -> bool:
         if self._is_simple_bus(node) or node.name == "/":
             return True
         return False
 
-    def _current_cells(self, state, node):
+    def _current_cells(self, state: WalkerState, node: Node) -> Tuple[int, int]:
         address_cells = node.get_property("#address-cells")
         if address_cells is None:
             address_cells = state.address_cells
@@ -116,7 +121,7 @@ class DeviceTreeExtractor:
 
         return address_cells, size_cells
 
-    def _parse_cell(self, data):
+    def _parse_cell(self, data: List[int]) -> int:
         result = 0
 
         for num, val in enumerate(reversed(data)):
@@ -124,7 +129,13 @@ class DeviceTreeExtractor:
 
         return result
 
-    def _calc_ranges(self, current_state, node, address_cells, size_cells):
+    def _calc_ranges(
+        self,
+        current_state: WalkerState,
+        node: Node,
+        address_cells: int,
+        size_cells: int,
+    ) -> List[RangeEntry]:
         ranges = node.get_property("ranges")
         if ranges is not None and getattr(ranges, "value", None) is not None:
             values = list(ranges)
@@ -163,7 +174,7 @@ class DeviceTreeExtractor:
 
         return list(current_state.ranges)
 
-    def _add_memreserve(self, node):
+    def _add_memreserve(self, node: Node) -> None:
         memreserve = node.get_property("memreserve")
         if memreserve is not None:
             region = MemoryRegion(
@@ -175,7 +186,9 @@ class DeviceTreeExtractor:
 
             self._insert_named_region("memreserve", region)
 
-    def _insert_named_region(self, orig_name, region):
+    def _insert_named_region(
+        self, orig_name: str, region: MemoryRegion
+    ) -> None:
         count = 0
         name = orig_name
         while name in self.memory_regions:
@@ -184,7 +197,7 @@ class DeviceTreeExtractor:
 
         self.memory_regions[name] = region
 
-    def _extract_device(self, node, state):
+    def _extract_device(self, node: Node, state: WalkerState) -> None:
 
         blacklist = ["vc_mem"]
         if node.name in blacklist:
@@ -223,7 +236,7 @@ class DeviceTreeExtractor:
             return
 
         elif node.get_property("interrupt-controller"):
-            print("Handling interrup controller", node.name)
+            self.logger.info("Handling interrup controller %s", node.name)
             # FIXME: some of the version two's are v1
             gic_versions = {
                 "arm,arm11mp-gic": 2,
@@ -361,7 +374,7 @@ class DeviceTreeExtractor:
                     "Standard device has more than one register %s", node.name
                 )
 
-    def _walk_tree(self):
+    def _walk_tree(self) -> None:
         worklist = []
 
         worklist.append(WalkerState(self.fdt.root))
@@ -393,8 +406,8 @@ class DeviceTreeExtractor:
                         )
                     )
 
-    def _add_interrupts(self):
-        interrupts = set()
+    def _add_interrupts(self) -> None:
+        interrupts: Set[int] = set()
         for region in self.memory_regions.values():
             interrupts = interrupts.union(
                 set(getattr(region, "interrupts", []))
@@ -403,13 +416,17 @@ class DeviceTreeExtractor:
         interrupt_list = list(sorted(interrupts))
 
         for controller in self.interrupt_controllers:
-            controller.interrupts = interrupt_list
+            controller.interrupts = IntegerList.validate(interrupt_list)
 
-    def _summarize(self):
+    def _summarize(self) -> None:
         table = []
         for name, region in sorted(
             self.memory_regions.items(), key=lambda x: x[1].physical_start_addr
         ):
+
+            assert region.physical_start_addr is not None
+            assert region.size is not None
+
             table.append(
                 (
                     name,
@@ -471,7 +488,7 @@ class DeviceTreeExtractor:
             )
         )
 
-    def run(self):
+    def run(self) -> None:
         self._extract_aliases()
         self._walk_tree()
         self._add_interrupts()

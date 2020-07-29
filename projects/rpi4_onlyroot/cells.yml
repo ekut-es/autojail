@@ -7,11 +7,13 @@ cells:
     hypervisor_memory:
       size: 16 MB
 
-    debug_console:
-      address: 0xfe215040
-      size: 0x40
-      type: CON_TYPE_8250
-      flags: [CON_ACCESS_MMIO, CON_REGDIST_4]
+    debug_console: serial0 
 
     cpus: 0-3
+
+    memory_regions:
+      Main Memory:
+        size: 128 MB
+        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
+
 

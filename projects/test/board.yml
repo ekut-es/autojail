@@ -1,0 +1,2267 @@
+name: test
+board: odroidxu4
+pagesize: 0x1000
+virtual_address_bits: 48
+memory_regions:
+  gpiomem:
+    physical_start_addr: 0x13400000
+    virtual_start_addr: 0x13400000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: //gpiomem
+    compatible:
+    - samsung,exynos-gpiomem
+    interrupts: []
+  gpiomem.0:
+    physical_start_addr: 0x14010000
+    virtual_start_addr: 0x14010000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: //gpiomem
+    compatible:
+    - samsung,exynos-gpiomem
+    interrupts: []
+  firmware@02073000:
+    physical_start_addr: 0x2073000
+    virtual_start_addr: 0x2073000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: //firmware@02073000
+    compatible:
+    - samsung,secure-firmware
+    interrupts: []
+  mali@11800000:
+    physical_start_addr: 0x11800000
+    virtual_start_addr: 0x11800000
+    size: 0x5000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: //mali@11800000
+    compatible:
+    - samsung,exynos5422-mali
+    - arm,malit628
+    - arm,malit62x
+    - arm,malit6xx
+    - arm,mali-midgard
+    interrupts:
+    - 219
+    - 74
+    - 117
+  codec@11000000:
+    physical_start_addr: 0x11000000
+    virtual_start_addr: 0x11000000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/codec@11000000
+    compatible:
+    - samsung,mfc-v8
+    interrupts:
+    - 96
+  chipid@10000000:
+    physical_start_addr: 0x10000000
+    virtual_start_addr: 0x10000000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/chipid@10000000
+    compatible:
+    - samsung,exynos4210-chipid
+    interrupts: []
+  i2c@12C60000:
+    physical_start_addr: 0x12c60000
+    virtual_start_addr: 0x12c60000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@12C60000
+    compatible:
+    - samsung,s3c2440-i2c
+    interrupts:
+    - 56
+  i2c@12E00000:
+    physical_start_addr: 0x12e00000
+    virtual_start_addr: 0x12e00000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@12E00000
+    compatible:
+    - samsung,exynos5250-hsi2c
+    interrupts:
+    - 87
+  mmc@12210000:
+    physical_start_addr: 0x12210000
+    virtual_start_addr: 0x12210000
+    size: 0x2000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/mmc@12210000
+    compatible:
+    - samsung,exynos5420-dw-mshc-smu
+    interrupts:
+    - 76
+  sysmmu@0x13E90000:
+    physical_start_addr: 0x13e90000
+    virtual_start_addr: 0x13e90000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x13E90000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  serial@12C10000:
+    physical_start_addr: 0x12c10000
+    virtual_start_addr: 0x12c10000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/serial@12C10000
+    compatible:
+    - samsung,exynos4210-uart
+    interrupts:
+    - 52
+  nocp@11A51000:
+    physical_start_addr: 0x11a51000
+    virtual_start_addr: 0x11a51000
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/nocp@11A51000
+    compatible:
+    - samsung,exynos5420-nocp
+    interrupts: []
+  jpeg@11F60000:
+    physical_start_addr: 0x11f60000
+    virtual_start_addr: 0x11f60000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/jpeg@11F60000
+    compatible:
+    - samsung,exynos5420-jpeg
+    interrupts:
+    - 168
+  sysmmu@0x14680000:
+    physical_start_addr: 0x14680000
+    virtual_start_addr: 0x14680000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x14680000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  pinctrl@14010000:
+    physical_start_addr: 0x14010000
+    virtual_start_addr: 0x14010000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/pinctrl@14010000
+    compatible:
+    - samsung,exynos5420-pinctrl
+    interrupts:
+    - 50
+  watchdog@101d0000:
+    physical_start_addr: 0x101d0000
+    virtual_start_addr: 0x101d0000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/watchdog@101d0000
+    compatible:
+    - samsung,exynos5420-wdt
+    interrupts:
+    - 42
+  sysmmu@0x128A0000:
+    physical_start_addr: 0x128a0000
+    virtual_start_addr: 0x128a0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x128A0000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts:
+    - 188
+  sysmmu@0x128E0000:
+    physical_start_addr: 0x128e0000
+    virtual_start_addr: 0x128e0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x128E0000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  sysmmu@0x11200000:
+    physical_start_addr: 0x11200000
+    virtual_start_addr: 0x11200000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x11200000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  sysmmu@0x128D0000:
+    physical_start_addr: 0x128d0000
+    virtual_start_addr: 0x128d0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x128D0000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  nocp@10CA1000:
+    physical_start_addr: 0x10ca1000
+    virtual_start_addr: 0x10ca1000
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/nocp@10CA1000
+    compatible:
+    - samsung,exynos5420-nocp
+    interrupts: []
+  sysmmu@0x11D40000:
+    physical_start_addr: 0x11d40000
+    virtual_start_addr: 0x11d40000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x11D40000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  usb@12110000:
+    physical_start_addr: 0x12110000
+    virtual_start_addr: 0x12110000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/usb@12110000
+    compatible:
+    - samsung,exynos4210-ehci
+    interrupts:
+    - 71
+  power-domain@10044120:
+    physical_start_addr: 0x10044120
+    virtual_start_addr: 0x10044120
+    size: 0x20
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/power-domain@10044120
+    compatible:
+    - samsung,exynos4210-pd
+    interrupts: []
+  cci@10d20000:
+    physical_start_addr: 0x10d20000
+    virtual_start_addr: 0x10d20000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/cci@10d20000
+    compatible:
+    - arm,cci-400
+    interrupts: []
+  spi@12d20000:
+    physical_start_addr: 0x12d20000
+    virtual_start_addr: 0x12d20000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/spi@12d20000
+    compatible:
+    - samsung,exynos4210-spi
+    interrupts:
+    - 68
+  nocp@11A51400:
+    physical_start_addr: 0x11a51400
+    virtual_start_addr: 0x11a51400
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/nocp@11A51400
+    compatible:
+    - samsung,exynos5420-nocp
+    interrupts: []
+  mct@101c0000:
+    physical_start_addr: 0x101c0000
+    virtual_start_addr: 0x101c0000
+    size: 0xb00
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/mct@101c0000
+    compatible:
+    - samsung,exynos4210-mct
+    interrupts:
+    - 1
+  jpeg@11F50000:
+    physical_start_addr: 0x11f50000
+    virtual_start_addr: 0x11f50000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/jpeg@11F50000
+    compatible:
+    - samsung,exynos5420-jpeg
+    interrupts:
+    - 89
+  phy@12500000:
+    physical_start_addr: 0x12500000
+    virtual_start_addr: 0x12500000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/phy@12500000
+    compatible:
+    - samsung,exynos5420-usbdrd-phy
+    interrupts: []
+  spi@12d30000:
+    physical_start_addr: 0x12d30000
+    virtual_start_addr: 0x12d30000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/spi@12d30000
+    compatible:
+    - samsung,exynos4210-spi
+    interrupts:
+    - 69
+  sysmmu@0x13E80000:
+    physical_start_addr: 0x13e80000
+    virtual_start_addr: 0x13e80000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x13E80000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  phy@12130000:
+    physical_start_addr: 0x12130000
+    virtual_start_addr: 0x12130000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/phy@12130000
+    compatible:
+    - samsung,exynos5250-usb2-phy
+    interrupts: []
+  g2d@10850000:
+    physical_start_addr: 0x10850000
+    virtual_start_addr: 0x10850000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/g2d@10850000
+    compatible:
+    - samsung,exynos5250-g2d
+    interrupts:
+    - 91
+  sss@10830000:
+    physical_start_addr: 0x10830000
+    virtual_start_addr: 0x10830000
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sss@10830000
+    compatible:
+    - samsung,exynos4210-secss
+    interrupts:
+    - 112
+  cec@101B0000:
+    physical_start_addr: 0x101b0000
+    virtual_start_addr: 0x101b0000
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/cec@101B0000
+    compatible:
+    - samsung,s5p-cec
+    interrupts:
+    - 114
+  video-scaler@13e10000:
+    physical_start_addr: 0x13e10000
+    virtual_start_addr: 0x13e10000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/video-scaler@13e10000
+    compatible:
+    - samsung,exynos5-gsc
+    interrupts:
+    - 86
+  dsi@14500000:
+    physical_start_addr: 0x14500000
+    virtual_start_addr: 0x14500000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/dsi@14500000
+    compatible:
+    - samsung,exynos5410-mipi-dsi
+    interrupts:
+    - 82
+  tmu@10060000:
+    physical_start_addr: 0x10060000
+    virtual_start_addr: 0x10060000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/tmu@10060000
+    compatible:
+    - samsung,exynos5420-tmu
+    interrupts:
+    - 65
+  tmu@1006c000:
+    physical_start_addr: 0x1006c000
+    virtual_start_addr: 0x1006c000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/tmu@1006c000
+    compatible:
+    - samsung,exynos5420-tmu-ext-triminfo
+    interrupts:
+    - 185
+  tmu@1006c000.0:
+    physical_start_addr: 0x100a0000
+    virtual_start_addr: 0x100a0000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/tmu@1006c000
+    compatible:
+    - samsung,exynos5420-tmu-ext-triminfo
+    interrupts:
+    - 185
+  i2c@12C90000:
+    physical_start_addr: 0x12c90000
+    virtual_start_addr: 0x12c90000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@12C90000
+    compatible:
+    - samsung,s3c2440-i2c
+    interrupts:
+    - 59
+  pinctrl@14000000:
+    physical_start_addr: 0x14000000
+    virtual_start_addr: 0x14000000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/pinctrl@14000000
+    compatible:
+    - samsung,exynos5420-pinctrl
+    interrupts:
+    - 46
+  serial@12C20000:
+    physical_start_addr: 0x12c20000
+    virtual_start_addr: 0x12c20000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/serial@12C20000
+    compatible:
+    - samsung,exynos4210-uart
+    interrupts:
+    - 53
+  i2c@12E10000:
+    physical_start_addr: 0x12e10000
+    virtual_start_addr: 0x12e10000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@12E10000
+    compatible:
+    - samsung,exynos5250-hsi2c
+    interrupts:
+    - 88
+  i2c@12ca0000:
+    physical_start_addr: 0x12ca0000
+    virtual_start_addr: 0x12ca0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@12ca0000
+    compatible:
+    - samsung,exynos5250-hsi2c
+    interrupts:
+    - 60
+  audss-clock-controller@3810000:
+    physical_start_addr: 0x3810000
+    virtual_start_addr: 0x3810000
+    size: 0xc
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/audss-clock-controller@3810000
+    compatible:
+    - samsung,exynos5420-audss-clock
+    interrupts: []
+  phy@12100000:
+    physical_start_addr: 0x12100000
+    virtual_start_addr: 0x12100000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/phy@12100000
+    compatible:
+    - samsung,exynos5420-usbdrd-phy
+    interrupts: []
+  sysmmu@0x10A70000:
+    physical_start_addr: 0x10a70000
+    virtual_start_addr: 0x10a70000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x10A70000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  fimd@14400000:
+    physical_start_addr: 0x14400000
+    virtual_start_addr: 0x14400000
+    size: 0x40000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/fimd@14400000
+    compatible:
+    - samsung,exynos5420-fimd
+    interrupts: []
+  sysmmu@0x11F20000:
+    physical_start_addr: 0x11f20000
+    virtual_start_addr: 0x11f20000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x11F20000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts:
+    - 169
+  i2c@12cc0000:
+    physical_start_addr: 0x12cc0000
+    virtual_start_addr: 0x12cc0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@12cc0000
+    compatible:
+    - samsung,exynos5250-hsi2c
+    interrupts:
+    - 62
+  hdmiphy@145D0000:
+    physical_start_addr: 0x145d0000
+    virtual_start_addr: 0x145d0000
+    size: 0x20
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: false
+    shared: false
+    next_region:
+    path:
+    compatible: []
+    interrupts: []
+  sysmmu@0x10A60000:
+    physical_start_addr: 0x10a60000
+    virtual_start_addr: 0x10a60000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x10A60000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  usb@12120000:
+    physical_start_addr: 0x12120000
+    virtual_start_addr: 0x12120000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/usb@12120000
+    compatible:
+    - samsung,exynos4210-ohci
+    interrupts:
+    - 71
+  i2s@03830000:
+    physical_start_addr: 0x3830000
+    virtual_start_addr: 0x3830000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2s@03830000
+    compatible:
+    - samsung,exynos5420-i2s
+    interrupts: []
+  sysmmu@0x11F10000:
+    physical_start_addr: 0x11f10000
+    virtual_start_addr: 0x11f10000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x11F10000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  video-scaler@13e00000:
+    physical_start_addr: 0x13e00000
+    virtual_start_addr: 0x13e00000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/video-scaler@13e00000
+    compatible:
+    - samsung,exynos5-gsc
+    interrupts:
+    - 85
+  dp-controller@145B0000:
+    physical_start_addr: 0x145b0000
+    virtual_start_addr: 0x145b0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/dp-controller@145B0000
+    compatible:
+    - samsung,exynos5-dp
+    interrupts: []
+  tmu@100a0000:
+    physical_start_addr: 0x100a0000
+    virtual_start_addr: 0x100a0000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/tmu@100a0000
+    compatible:
+    - samsung,exynos5420-tmu-ext-triminfo
+    interrupts:
+    - 215
+  tmu@100a0000.0:
+    physical_start_addr: 0x10068000
+    virtual_start_addr: 0x10068000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/tmu@100a0000
+    compatible:
+    - samsung,exynos5420-tmu-ext-triminfo
+    interrupts:
+    - 215
+  mmc@12200000:
+    physical_start_addr: 0x12200000
+    virtual_start_addr: 0x12200000
+    size: 0x2000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/mmc@12200000
+    compatible:
+    - samsung,exynos5420-dw-mshc-smu
+    interrupts:
+    - 75
+  i2s@12D60000:
+    physical_start_addr: 0x12d60000
+    virtual_start_addr: 0x12d60000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2s@12D60000
+    compatible:
+    - samsung,exynos5420-i2s
+    interrupts: []
+  memory-controller@12250000:
+    physical_start_addr: 0x12250000
+    virtual_start_addr: 0x12250000
+    size: 0x14
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/memory-controller@12250000
+    compatible:
+    - samsung,exynos4210-srom
+    interrupts: []
+  sysmmu@0x128C0000:
+    physical_start_addr: 0x128c0000
+    virtual_start_addr: 0x128c0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x128C0000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  rtc@101E0000:
+    physical_start_addr: 0x101e0000
+    virtual_start_addr: 0x101e0000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/rtc@101E0000
+    compatible:
+    - samsung,s3c6410-rtc
+    interrupts:
+    - 43
+    - 44
+  nocp@10CA1400:
+    physical_start_addr: 0x10ca1400
+    virtual_start_addr: 0x10ca1400
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/nocp@10CA1400
+    compatible:
+    - samsung,exynos5420-nocp
+    interrupts: []
+  sysmmu@0x14650000:
+    physical_start_addr: 0x14650000
+    virtual_start_addr: 0x14650000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x14650000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  power-domain@10044000:
+    physical_start_addr: 0x10044000
+    virtual_start_addr: 0x10044000
+    size: 0x20
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/power-domain@10044000
+    compatible:
+    - samsung,exynos4210-pd
+    interrupts: []
+  pinctrl@03860000:
+    physical_start_addr: 0x3860000
+    virtual_start_addr: 0x3860000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/pinctrl@03860000
+    compatible:
+    - samsung,exynos5420-pinctrl
+    interrupts:
+    - 47
+  i2c@12cd0000:
+    physical_start_addr: 0x12cd0000
+    virtual_start_addr: 0x12cd0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@12cd0000
+    compatible:
+    - samsung,exynos5250-hsi2c
+    interrupts:
+    - 63
+  power-domain@100440C0:
+    physical_start_addr: 0x100440c0
+    virtual_start_addr: 0x100440c0
+    size: 0x20
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/power-domain@100440C0
+    compatible:
+    - samsung,exynos4210-pd
+    interrupts: []
+  i2c@12cb0000:
+    physical_start_addr: 0x12cb0000
+    virtual_start_addr: 0x12cb0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@12cb0000
+    compatible:
+    - samsung,exynos5250-hsi2c
+    interrupts:
+    - 61
+  sysmmu@0x12880000:
+    physical_start_addr: 0x12880000
+    virtual_start_addr: 0x12880000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x12880000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  sysram@02020000:
+    physical_start_addr: 0x2020000
+    virtual_start_addr: 0x2020000
+    size: 0x54000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysram@02020000
+    compatible:
+    - mmio-sram
+    interrupts: []
+  pwm@12DD0000:
+    physical_start_addr: 0x12dd0000
+    virtual_start_addr: 0x12dd0000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/pwm@12DD0000
+    compatible:
+    - samsung,exynos4210-pwm
+    interrupts: []
+  clock-controller@10010000:
+    physical_start_addr: 0x10010000
+    virtual_start_addr: 0x10010000
+    size: 0x30000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/clock-controller@10010000
+    compatible:
+    - samsung,exynos5800-clock
+    interrupts: []
+  sysmmu@0x14640000:
+    physical_start_addr: 0x14640000
+    virtual_start_addr: 0x14640000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x14640000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  adc@12D10000:
+    physical_start_addr: 0x12d10000
+    virtual_start_addr: 0x12d10000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/adc@12D10000
+    compatible:
+    - samsung,exynos-adc-v2
+    interrupts:
+    - 106
+  power-domain@10044020:
+    physical_start_addr: 0x10044020
+    virtual_start_addr: 0x10044020
+    size: 0x20
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/power-domain@10044020
+    compatible:
+    - samsung,exynos4210-pd
+    interrupts: []
+  serial@12C30000:
+    physical_start_addr: 0x12c30000
+    virtual_start_addr: 0x12c30000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/serial@12C30000
+    compatible:
+    - samsung,exynos4210-uart
+    interrupts:
+    - 54
+  serial@12C00000:
+    physical_start_addr: 0x12c00000
+    virtual_start_addr: 0x12c00000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/serial@12C00000
+    compatible:
+    - samsung,exynos4210-uart
+    interrupts:
+    - 51
+  pinctrl@13400000:
+    physical_start_addr: 0x13400000
+    virtual_start_addr: 0x13400000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/pinctrl@13400000
+    compatible:
+    - samsung,exynos5420-pinctrl
+    interrupts:
+    - 45
+  hdmi@14530000:
+    physical_start_addr: 0x14530000
+    virtual_start_addr: 0x14530000
+    size: 0x70000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/hdmi@14530000
+    compatible:
+    - samsung,exynos5420-hdmi
+    interrupts:
+    - 95
+  pinctrl@13410000:
+    physical_start_addr: 0x13410000
+    virtual_start_addr: 0x13410000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/pinctrl@13410000
+    compatible:
+    - samsung,exynos5420-pinctrl
+    interrupts:
+    - 78
+  syscon@10050000:
+    physical_start_addr: 0x10050000
+    virtual_start_addr: 0x10050000
+    size: 0x5000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/syscon@10050000
+    compatible:
+    - samsung,exynos5-sysreg
+    - syscon
+    interrupts: []
+  tmu@10068000:
+    physical_start_addr: 0x10068000
+    virtual_start_addr: 0x10068000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/tmu@10068000
+    compatible:
+    - samsung,exynos5420-tmu-ext-triminfo
+    interrupts:
+    - 184
+  tmu@10068000.0:
+    physical_start_addr: 0x1006c000
+    virtual_start_addr: 0x1006c000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/tmu@10068000
+    compatible:
+    - samsung,exynos5420-tmu-ext-triminfo
+    interrupts:
+    - 184
+  nocp@10CA1800:
+    physical_start_addr: 0x10ca1800
+    virtual_start_addr: 0x10ca1800
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/nocp@10CA1800
+    compatible:
+    - samsung,exynos5420-nocp
+    interrupts: []
+  mmc@12220000:
+    physical_start_addr: 0x12220000
+    virtual_start_addr: 0x12220000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/mmc@12220000
+    compatible:
+    - samsung,exynos5420-dw-mshc
+    interrupts:
+    - 77
+  sysmmu@0x12890000:
+    physical_start_addr: 0x12890000
+    virtual_start_addr: 0x12890000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x12890000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts:
+    - 186
+  nocp@10CA1C00:
+    physical_start_addr: 0x10ca1c00
+    virtual_start_addr: 0x10ca1c00
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/nocp@10CA1C00
+    compatible:
+    - samsung,exynos5420-nocp
+    interrupts: []
+  tmu@10064000:
+    physical_start_addr: 0x10064000
+    virtual_start_addr: 0x10064000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/tmu@10064000
+    compatible:
+    - samsung,exynos5420-tmu
+    interrupts:
+    - 183
+  sysmmu@0x11210000:
+    physical_start_addr: 0x11210000
+    virtual_start_addr: 0x11210000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/sysmmu@0x11210000
+    compatible:
+    - samsung,exynos-sysmmu
+    interrupts: []
+  pdma@121A0000:
+    physical_start_addr: 0x121a0000
+    virtual_start_addr: 0x121a0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/amba/pdma@121A0000
+    compatible:
+    - arm,pl330
+    - arm,primecell
+    interrupts:
+    - 34
+  adma@03880000:
+    physical_start_addr: 0x3880000
+    virtual_start_addr: 0x3880000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/amba/adma@03880000
+    compatible:
+    - arm,pl330
+    - arm,primecell
+    interrupts:
+    - 110
+  pdma@121B0000:
+    physical_start_addr: 0x121b0000
+    virtual_start_addr: 0x121b0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/amba/pdma@121B0000
+    compatible:
+    - arm,pl330
+    - arm,primecell
+    interrupts:
+    - 35
+  mdma@10800000:
+    physical_start_addr: 0x10800000
+    virtual_start_addr: 0x10800000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/amba/mdma@10800000
+    compatible:
+    - arm,pl330
+    - arm,primecell
+    interrupts:
+    - 33
+  mdma@11C10000:
+    physical_start_addr: 0x11c10000
+    virtual_start_addr: 0x11c10000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/amba/mdma@11C10000
+    compatible:
+    - arm,pl330
+    - arm,primecell
+    interrupts:
+    - 124
+  rotator@11C00000:
+    physical_start_addr: 0x11c00000
+    virtual_start_addr: 0x11c00000
+    size: 0x64
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/rotator@11C00000
+    compatible:
+    - samsung,exynos5250-rotator
+    interrupts:
+    - 84
+  i2c@12E20000:
+    physical_start_addr: 0x12e20000
+    virtual_start_addr: 0x12e20000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@12E20000
+    compatible:
+    - samsung,exynos5250-hsi2c
+    interrupts:
+    - 203
+  i2c@12C70000:
+    physical_start_addr: 0x12c70000
+    virtual_start_addr: 0x12c70000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2c@12C70000
+    compatible:
+    - samsung,s3c2440-i2c
+    interrupts:
+    - 57
+  mixer@14450000:
+    physical_start_addr: 0x14450000
+    virtual_start_addr: 0x14450000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/mixer@14450000
+    compatible:
+    - samsung,exynos5420-mixer
+    interrupts:
+    - 94
+  i2s@12D70000:
+    physical_start_addr: 0x12d70000
+    virtual_start_addr: 0x12d70000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/i2s@12D70000
+    compatible:
+    - samsung,exynos5420-i2s
+    interrupts: []
+  power-domain@10044060:
+    physical_start_addr: 0x10044060
+    virtual_start_addr: 0x10044060
+    size: 0x20
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/power-domain@10044060
+    compatible:
+    - samsung,exynos4210-pd
+    interrupts: []
+  spi@12d40000:
+    physical_start_addr: 0x12d40000
+    virtual_start_addr: 0x12d40000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+    next_region:
+    path: /soc/spi@12d40000
+    compatible:
+    - samsung,exynos4210-spi
+    interrupts:
+    - 70
+  memory@40000000:
+    physical_start_addr: 0x40000000
+    virtual_start_addr: 0x40000000
+    size: 0x10000000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: true
+    shared: false
+    next_region:
+    path:
+    compatible: []
+    interrupts: []
+  memory@40000000.0:
+    physical_start_addr: 0x50000000
+    virtual_start_addr: 0x50000000
+    size: 0x10000000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: true
+    shared: false
+    next_region:
+    path:
+    compatible: []
+    interrupts: []
+  memory@40000000.1:
+    physical_start_addr: 0x60000000
+    virtual_start_addr: 0x60000000
+    size: 0x10000000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: true
+    shared: false
+    next_region:
+    path:
+    compatible: []
+    interrupts: []
+  memory@40000000.2:
+    physical_start_addr: 0x70000000
+    virtual_start_addr: 0x70000000
+    size: 0x10000000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: true
+    shared: false
+    next_region:
+    path:
+    compatible: []
+    interrupts: []
+  memory@40000000.3:
+    physical_start_addr: 0x80000000
+    virtual_start_addr: 0x80000000
+    size: 0x10000000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: true
+    shared: false
+    next_region:
+    path:
+    compatible: []
+    interrupts: []
+  memory@40000000.4:
+    physical_start_addr: 0x90000000
+    virtual_start_addr: 0x90000000
+    size: 0x10000000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: true
+    shared: false
+    next_region:
+    path:
+    compatible: []
+    interrupts: []
+  memory@40000000.5:
+    physical_start_addr: 0xa0000000
+    virtual_start_addr: 0xa0000000
+    size: 0x10000000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: true
+    shared: false
+    next_region:
+    path:
+    compatible: []
+    interrupts: []
+  memory@40000000.6:
+    physical_start_addr: 0xb0000000
+    virtual_start_addr: 0xb0000000
+    size: 0xea00000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: true
+    shared: false
+    next_region:
+    path:
+    compatible: []
+    interrupts: []
+interrupt_controllers:
+- maintenance_irq: 25
+  gic_version: 2
+  gicd_base: 0x10481000
+  gicc_base: 0x10482000
+  gich_base: 0x10484000
+  gicv_base: 0x10486000
+  gicr_base: 0x0
+  interrupts:
+  - 1
+  - 33
+  - 34
+  - 35
+  - 42
+  - 43
+  - 44
+  - 45
+  - 46
+  - 47
+  - 50
+  - 51
+  - 52
+  - 53
+  - 54
+  - 56
+  - 57
+  - 59
+  - 60
+  - 61
+  - 62
+  - 63
+  - 65
+  - 68
+  - 69
+  - 70
+  - 71
+  - 74
+  - 75
+  - 76
+  - 77
+  - 78
+  - 82
+  - 84
+  - 85
+  - 86
+  - 87
+  - 88
+  - 89
+  - 91
+  - 94
+  - 95
+  - 96
+  - 106
+  - 110
+  - 112
+  - 114
+  - 117
+  - 124
+  - 168
+  - 169
+  - 183
+  - 184
+  - 185
+  - 186
+  - 188
+  - 203
+  - 215
+  - 219

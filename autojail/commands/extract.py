@@ -3,8 +3,10 @@ import subprocess
 import tempfile
 from pathlib import Path
 from shutil import rmtree
+from typing import Union
 
 import ruamel.yaml
+from fabric.connection import Connection
 
 from ..extract import BoardInfoExtractor
 from ..model import (
@@ -25,10 +27,12 @@ class ExtractCommand(BaseCommand):
         {--b|base-folder= : base folder containing relevant /proc/ and /sys/ entries of target board}
     """
 
-    def handle(self):
+    def handle(self) -> None:
         base_folder = self.option("base-folder")
         tmp_folder = False
         connection = None
+
+        assert self.autojail_config is not None
         try:
             if not base_folder or not Path(base_folder).exists():
                 self.line(
@@ -66,7 +70,9 @@ class ExtractCommand(BaseCommand):
             if tmp_folder:
                 rmtree(base_folder, ignore_errors=True)
 
-    def _sync(self, connection, base_folder):
+    def _sync(
+        self, connection: Connection, base_folder: Union[str, Path]
+    ) -> None:
         base_folder = Path(base_folder)
         if not base_folder.exists():
             base_folder.mkdir(exist_ok=True, parents=True)
