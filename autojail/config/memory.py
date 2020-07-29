@@ -312,7 +312,7 @@ class AllocateMemoryPass(BasePass):
                 AllocatorSegment(
                     "hypervisor_memory",
                     [hypervisor_memory],
-                    alignment=hypervisor_memory.size,  # FIXME: this is to much alignment
+                    alignment=hypervisor_memory.size,  # FIXME: this is too much alignment
                     sharer_names=["hypervisor"],
                 )
             )
