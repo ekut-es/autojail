@@ -13,6 +13,7 @@ class ConfigSHMemRegionsPass(BasePass):
     def __init__(self) -> None:
         self.board: Optional[Board] = None
         self.config: Optional[JailhouseConfig] = None
+        super().__init__()
 
     def __call__(
         self, board: Board, config: JailhouseConfig
@@ -86,6 +87,7 @@ class LowerSHMemPass(BasePass):
     def __init__(self) -> None:
         self.board: Optional[Board] = None
         self.config: Optional[JailhouseConfig] = None
+        super().__init__()
 
     def __call__(
         self, board: Board, config: JailhouseConfig
@@ -148,7 +150,7 @@ class LowerSHMemPass(BasePass):
             table_region = MemoryRegion(
                 size=0x1000,
                 allocatable=False,
-                flags=["MEM_READ", "MEM_ROOTSHARED"],
+                flags=["MEM_READ"],
                 next_region=f"{name}_{mem_regions_index+1}",
                 shared=True,
             )
@@ -158,7 +160,7 @@ class LowerSHMemPass(BasePass):
             common_output_region = MemoryRegion(
                 size=common_output_region_size,
                 allocatable=False,
-                flags=["MEM_READ", "MEM_WRITE", "MEM_ROOTSHARED"],
+                flags=["MEM_READ", "MEM_WRITE"],
                 next_region=f"{name}_{mem_regions_index+1}",
                 shared=True,
             )
@@ -273,6 +275,6 @@ class LowerSHMemPass(BasePass):
                         if irq not in irqchip.interrupts:
                             irqchip.interrupts.append(irq)
 
-        self.logger.info("Infered vpci config")
+        self.logger.info("Infered vpci root interupts")
         for name, cell in self.config.cells.items():
-            self.logger.info(name, cell.vpci_irq_base)
+            self.logger.info("%s: %s", name, cell.vpci_irq_base)
