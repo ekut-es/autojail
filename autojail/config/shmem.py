@@ -116,8 +116,8 @@ class LowerSHMemPass(BasePass):
             raise Exception("A configuration needs to provide a root cell")
 
         if len(self.config.shmem) > 4:
-            raise Exception(
-                "Configuring more than 4 shmem devices is not supported at the moment"
+            self.logger.warning(
+                "Configuring more than 4 will need an adoption of the default device trees"
             )
 
         current_bdf = 0

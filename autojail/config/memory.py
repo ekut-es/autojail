@@ -1,6 +1,6 @@
 import copy
 import logging
-from typing import Callable, List, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import tabulate
 
@@ -117,12 +117,16 @@ class AllocatorSegment:
         ] = None,
         alignment: int = 0,
         sharer_names: Optional[List[str]] = None,
+        shared_regions: Optional[List[MemoryRegion]] = None,
     ) -> None:
         self.name = name
         self.memory_regions: List[
             Union[MemoryRegion, HypervisorMemoryRegion]
         ] = (memory_regions if memory_regions is not None else [])
         self.sharer_names = sharer_names if sharer_names is not None else []
+        self.shared_regions = (
+            shared_regions if shared_regions is not None else []
+        )
         self.size = sum(r.size for r in self.memory_regions)
         self.alignment = alignment
 
@@ -248,7 +252,7 @@ class AllocateMemoryPass(BasePass):
 
     def _log_freelist(self, freelist: FreeList, message: str = "") -> None:
 
-        self.logger.info("")
+        self.logger.debug("")
         if message:
             self.logger.info(message)
 
@@ -260,7 +264,7 @@ class AllocateMemoryPass(BasePass):
             ]
             for b in freelist
         ]
-        self.logger.info(
+        self.logger.debug(
             tabulate.tabulate(table, headers=["Start", "End", "Size (Byte)"])
         )
 
@@ -284,6 +288,7 @@ class AllocateMemoryPass(BasePass):
         assert self.config is not None
 
         unallocated = []
+        shared_segments: Dict[str, AllocatorSegment] = {}
 
         # Add cell memories
         self.logger.debug("building allocatable regions")
@@ -298,11 +303,20 @@ class AllocateMemoryPass(BasePass):
                 if key(region) is not None:
                     continue
 
-                unallocated.append(
-                    AllocatorSegment(
-                        region_name, [region], sharer_names=[cell_name]
+                if region.shared and region_name in shared_segments:
+                    current_segment = shared_segments[region_name]
+                    current_segment.shared_regions.append(region)
+                    current_segment.sharer_names.append(cell_name)
+                else:
+                    current_segment = AllocatorSegment(
+                        region_name,
+                        [region],
+                        sharer_names=[cell_name],
+                        shared_regions=[region],
                     )
-                )
+                    unallocated.append(current_segment)
+                    if region.shared:
+                        shared_segments[region_name] = current_segment
 
         # Add hypervisor memories
         hypervisor_memory = self.root_cell.hypervisor_memory
@@ -339,8 +353,6 @@ class AllocateMemoryPass(BasePass):
             assert cell.memory_regions is not None
             for memory_region in cell.memory_regions.values():
                 if isinstance(memory_region, str):
-                    continue
-                if isinstance(memory_region, ShMemNetRegion):
                     continue
                 if memory_region.allocatable:
                     continue
@@ -421,6 +433,9 @@ class AllocateMemoryPass(BasePass):
             )
             self.freelist.reserve(start_addr, unallocated_region.size)
             unallocated_region.set_physical_start_addr(start_addr)
+
+            for shared_region in unallocated_region.shared_regions:
+                shared_region.physical_start_addr = HexInt.validate(start_addr)
 
     def _allocate_virtual(
         self, freelist: FreeList, unallocated_segments: List[AllocatorSegment]
