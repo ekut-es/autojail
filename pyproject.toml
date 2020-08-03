@@ -18,10 +18,10 @@ simpleeval = "^0.9.10"
 tabulate = "^0.8.7"
 fdt = "^0.2.0"
 pytest-cov = "^2.10.0"
-automate = {git = "git@atreus.informatik.uni-tuebingen.de:ties/timing/schrank/automate.git", optional = true}
+#automate = {git = "git@atreus.informatik.uni-tuebingen.de:ties/timing/schrank/automate.git", optional = true}
 
 [tool.poetry.extras]
-automate = ["automate"]
+#automate = ["automate"]
 
 [tool.poetry.dev-dependencies]
 invoke = "^1.4.0"
