@@ -278,7 +278,7 @@ class JailhouseConfigurator:
                 f.write("\n\t\t\t.address = " + hex(chip.address) + ",")
                 f.write("\n\t\t\t.pin_base = " + str(chip.pin_base) + ",")
 
-                print(chip.pin_bitmap)
+                # print(chip.pin_bitmap)
 
                 bitmap_temp = ", ".join(
                     ["\n\t\t\t\t%s" % b for b in chip.pin_bitmap]
