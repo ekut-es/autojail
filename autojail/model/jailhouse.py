@@ -93,6 +93,7 @@ class IRQChip(BaseModel):
         else:
 
             def update(current_item, irq, count):
+                print("update", irq, count)
                 return current_item
                 +("" if not current_item else " | ")
                 +f"1 << ({irq} - {pin_base + count})"
