@@ -7,7 +7,6 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-pre-commit = "^1.21.0"
 pydantic = "^1.4"
 pyfdt = "^0.3"
 cleo = "^0.8.0"
@@ -17,7 +16,6 @@ fabric = "^2.5.0"
 simpleeval = "^0.9.10"
 tabulate = "^0.8.7"
 fdt = "^0.2.0"
-pytest-cov = "^2.10.0"
 #automate = {git = "git@atreus.informatik.uni-tuebingen.de:ties/timing/schrank/automate.git", optional = true}
 
 [tool.poetry.extras]
@@ -40,6 +38,7 @@ pep8-naming = "^0.11.1"
 pytest-cov = "^2.10.0"
 isort = "^5.2.0"
 monkeytype = "^20.5.0"
+pre-commit = "^1.21.0"
 
 [tool.poetry.scripts]
 autojail = 'autojail.main:app.run'
