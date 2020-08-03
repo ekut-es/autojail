@@ -98,7 +98,7 @@ class IRQChip(BaseModel):
                 +f"1 << ({irq} - {pin_base + count})"
 
             def store(x):
-                return "0" if x == "" else x
+                return "0x0" if x == "" else x
 
             init = ""
 
@@ -115,7 +115,7 @@ class IRQChip(BaseModel):
             res.append(store(current_item))
 
         while len(res) < 4:
-            res.append(0)
+            res.append(store(init))
 
         return res
 
