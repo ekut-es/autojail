@@ -2,6 +2,14 @@
 
 Autojail target configurations are written in a YAML based configuration format.
 
+The configuration file format contains a bit of Syntactic Sugar:
+
+- Lists of Integers can usually contain ranges, e.g. 1,4-5 is equivalent to 1,4,5 .
+- Flags can omit the JAILHOUSE\_ prefix
+- Memory sizes can be given using ISO/IEC 8000 (KiB, MiB, ...) or JEDEC binary (KB, MB, ...) units, e.g: 10 MB
+  for a `10 * 2^20` Byte sized memory region.  
+  We never use base 10 SI-units.
+
 ## Cell Configuration
 
 The cells are configured in section `cells` of the configuration file consisting of
