@@ -46,7 +46,9 @@ class LowerDevicesPass(BasePass):
                         break
 
                 if sentinel is None:
-                    self.logger.warn("Could not infer console type")
+                    self.logger.warn(
+                        "Could not infer console type assuming: CON_TYPE_8250, CON_REGDIST_4"
+                    )
                     con_type, con_flags = (
                         "CON_TYPE_8250",
                         ["CON_ACCESS_MMIO", "CON_REGDIST_4"],
