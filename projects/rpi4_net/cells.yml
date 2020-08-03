@@ -1,0 +1,47 @@
+cells:
+  root:
+    type: root
+    name: "RPI4 net"
+    flags: [SYS_VIRTUAL_DEBUG_CONSOLE]
+
+    hypervisor_memory:
+      size: 32 MB
+
+    debug_console: serial0
+
+    cpus: 0-3
+
+    memory_regions:
+      Main Memory:
+        physical_start_addr: 0x0
+        virtual_start_addr: 0x0
+        size: 768 MB
+        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
+
+  guest1:
+    type: linux
+    name: "RPI4 net guest"
+    debug_console: serial0
+    cpus: 2,3
+
+    memory_regions:
+      Boot Memory:
+        size: 1 MB
+        virtual_start_addr: 0
+        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
+
+      Main Memory:
+        physical_start_addr: 0x40000000 # probably not needed
+        virtual_start_addr: 0x40000000 # probably not needed
+        size: 1 GB
+        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
+
+      Communication Region:
+        virtual_start_addr: 0x80000000
+        size: 4 KB
+        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
+
+shmem:
+  net1:
+    protocol: SHMEM_PROTO_VETH
+    peers: [root, guest1]
