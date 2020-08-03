@@ -43,7 +43,6 @@ tests = ["coverage", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.i
 [[package]]
 category = "main"
 description = ""
-develop = true
 name = "automate"
 optional = true
 python-versions = "^3.6"
@@ -66,10 +65,9 @@ tabulate = "^0.8.6"
 postgres = ["python-dotenv (^0.10.5)", "pydot (^1.4.1)", "psycopg2 (^2.8.4)", "jinjasql (^0.1.7)"]
 
 [package.source]
-reference = ""
-type = "directory"
-url = "external/automate"
-
+reference = "ebfced29d636227e1b692b8265651ff228c85fbd"
+type = "git"
+url = "git@atreus.informatik.uni-tuebingen.de:ties/timing/schrank/automate.git"
 [[package]]
 category = "main"
 description = "Modern password hashing for your software and your servers"
@@ -491,7 +489,7 @@ description = "Store and access your passwords safely."
 name = "keyring"
 optional = true
 python-versions = ">=3.6"
-version = "21.2.1"
+version = "21.3.0"
 
 [package.dependencies]
 SecretStorage = ">=3"
@@ -504,7 +502,7 @@ version = "*"
 
 [package.extras]
 docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
-testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pytest-black (>=0.3.7)", "pytest-cov"]
+testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pytest-black (>=0.3.7)", "pytest-cov", "pytest-mypy"]
 
 [[package]]
 category = "dev"
@@ -1254,7 +1252,7 @@ testing = ["jaraco.itertools", "func-timeout"]
 automate = ["automate"]
 
 [metadata]
-content-hash = "b1db43dd47f1c423f328c0b04371d9d261dccaaaa4af7369becfacea030ffeb3"
+content-hash = "7ed099f583229adc64a765791cff2d3934f4d8a68af4460ea7daab8cb8fdfc25"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -1508,8 +1506,8 @@ joblib = [
     {file = "joblib-0.16.0.tar.gz", hash = "sha256:8f52bf24c64b608bf0b2563e0e47d6fcf516abc8cfafe10cfd98ad66d94f92d6"},
 ]
 keyring = [
-    {file = "keyring-21.2.1-py3-none-any.whl", hash = "sha256:3401234209015144a5d75701e71cb47239e552b0882313e9f51e8976f9e27843"},
-    {file = "keyring-21.2.1.tar.gz", hash = "sha256:c53e0e5ccde3ad34284a40ce7976b5b3a3d6de70344c3f8ee44364cc340976ec"},
+    {file = "keyring-21.3.0-py3-none-any.whl", hash = "sha256:e7a17caf40c40b6bb8c4772224a487e4a63013560ed0c521065aeba7ecd42182"},
+    {file = "keyring-21.3.0.tar.gz", hash = "sha256:22df6abfed49912fc560806030051067fba9f0069cffa79da72899aeea4ccbd5"},
 ]
 libcst = [
     {file = "libcst-0.3.8-py3-none-any.whl", hash = "sha256:d514cd36e8da5e1444ec693b65a4b6751781af02496f9a2442c8590eb0d321fc"},
