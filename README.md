@@ -22,9 +22,14 @@ To start the documentation browser use:
     mkdocs serve
 
 To generate a new autojail project use:
-  
- mkdir project
+
+mkdir project
 cd project
 autojail init
 
 Example projects for Raspberry PI 4B are provided in: `projects`
+
+Further usage information is provided in:
+
+- [Commandline Usage](usage.md)
+- [Configuration File Format](config_format.md)
