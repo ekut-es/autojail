@@ -2,8 +2,9 @@ site_name: Autojail
 
 nav:
   - Index: index.md
-  - Overview: overview.md
+  # - Overview: overview.md
   - Usage: usage.md
+  - Configuration File Format: config_format.md
   - Boards:
       RPI4: rpi4.md
       Jetson TX2: jetsontx2.md
