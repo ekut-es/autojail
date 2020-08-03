@@ -92,14 +92,6 @@ d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [[package]]
 category = "main"
-description = "Python package for providing Mozilla's CA Bundle."
-name = "certifi"
-optional = false
-python-versions = "*"
-version = "2020.6.20"
-
-[[package]]
-category = "main"
 description = "Foreign Function Interface for Python calling C code."
 name = "cffi"
 optional = false
@@ -116,14 +108,6 @@ name = "cfgv"
 optional = false
 python-versions = ">=3.6"
 version = "3.0.0"
-
-[[package]]
-category = "main"
-description = "Universal encoding detector for Python 2 and 3"
-name = "chardet"
-optional = false
-python-versions = "*"
-version = "3.0.4"
 
 [[package]]
 category = "main"
@@ -332,14 +316,6 @@ version = "1.4.25"
 
 [package.extras]
 license = ["editdistance"]
-
-[[package]]
-category = "main"
-description = "Internationalized Domain Names in Applications (IDNA)"
-name = "idna"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "2.10"
 
 [[package]]
 category = "main"
@@ -907,24 +883,6 @@ version = "2020.7.14"
 
 [[package]]
 category = "main"
-description = "Python HTTP for Humans."
-name = "requests"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-version = "2.24.0"
-
-[package.dependencies]
-certifi = ">=2017.4.17"
-chardet = ">=3.0.2,<4"
-idna = ">=2.5,<3"
-urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
-
-[package.extras]
-security = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)"]
-socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7)", "win-inet-pton"]
-
-[[package]]
-category = "main"
 description = "ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order"
 name = "ruamel.yaml"
 optional = false
@@ -1042,19 +1000,6 @@ typing-extensions = ">=3.7.4"
 
 [[package]]
 category = "main"
-description = "HTTP library with thread-safe connection pooling, file post, and more."
-name = "urllib3"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
-version = "1.25.10"
-
-[package.extras]
-brotli = ["brotlipy (>=0.6.0)"]
-secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0.14)", "ipaddress"]
-socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
-
-[[package]]
-category = "main"
 description = "Virtual Python Environment builder"
 name = "virtualenv"
 optional = false
@@ -1101,7 +1046,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "b8eb82d91235bf81020129bd95e4bd299839413065dc7f4baaf599a6b7f1b777"
+content-hash = "5cafc696717eaa6b0c1f798711e0cc675262e48de61a43a154d0aced776f7819"
 python-versions = "^3.6"
 
 [metadata.files]
@@ -1150,10 +1095,6 @@ black = [
     {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
     {file = "black-19.10b0.tar.gz", hash = "sha256:c2edb73a08e9e0e6f65a0e6af18b059b8b1cdd5bef997d7a0b181df93dc81539"},
 ]
-certifi = [
-    {file = "certifi-2020.6.20-py2.py3-none-any.whl", hash = "sha256:8fc0819f1f30ba15bdb34cceffb9ef04d99f420f68eb75d901e9560b8749fc41"},
-    {file = "certifi-2020.6.20.tar.gz", hash = "sha256:5930595817496dd21bb8dc35dad090f1c2cd0adfaf21204bf6732ca5d8ee34d3"},
-]
 cffi = [
     {file = "cffi-1.14.1-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:66dd45eb9530e3dde8f7c009f84568bc7cac489b93d04ac86e3111fb46e470c2"},
     {file = "cffi-1.14.1-cp27-cp27m-manylinux1_i686.whl", hash = "sha256:4f53e4128c81ca3212ff4cf097c797ab44646a40b42ec02a891155cd7a2ba4d8"},
@@ -1187,10 +1128,6 @@ cffi = [
 cfgv = [
     {file = "cfgv-3.0.0-py2.py3-none-any.whl", hash = "sha256:f22b426ed59cd2ab2b54ff96608d846c33dfb8766a67f0b4a6ce130ce244414f"},
     {file = "cfgv-3.0.0.tar.gz", hash = "sha256:04b093b14ddf9fd4d17c53ebfd55582d27b76ed30050193c14e560770c5360eb"},
-]
-chardet = [
-    {file = "chardet-3.0.4-py2.py3-none-any.whl", hash = "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"},
-    {file = "chardet-3.0.4.tar.gz", hash = "sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae"},
 ]
 cleo = [
     {file = "cleo-0.8.1-py2.py3-none-any.whl", hash = "sha256:141cda6dc94a92343be626bb87a0b6c86ae291dfc732a57bf04310d4b4201753"},
@@ -1311,10 +1248,6 @@ future = [
 identify = [
     {file = "identify-1.4.25-py2.py3-none-any.whl", hash = "sha256:ccd88716b890ecbe10920659450a635d2d25de499b9a638525a48b48261d989b"},
     {file = "identify-1.4.25.tar.gz", hash = "sha256:110ed090fec6bce1aabe3c72d9258a9de82207adeaa5a05cd75c635880312f9a"},
-]
-idna = [
-    {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
-    {file = "idna-2.10.tar.gz", hash = "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6"},
 ]
 importlib-metadata = [
     {file = "importlib_metadata-1.7.0-py2.py3-none-any.whl", hash = "sha256:dc15b2969b4ce36305c51eebe62d418ac7791e9a157911d58bfb1f9ccd8e2070"},
@@ -1581,10 +1514,6 @@ regex = [
     {file = "regex-2020.7.14-cp38-cp38-win_amd64.whl", hash = "sha256:7a2dd66d2d4df34fa82c9dc85657c5e019b87932019947faece7983f2089a840"},
     {file = "regex-2020.7.14.tar.gz", hash = "sha256:3a3af27a8d23143c49a3420efe5b3f8cf1a48c6fc8bc6856b03f638abc1833bb"},
 ]
-requests = [
-    {file = "requests-2.24.0-py2.py3-none-any.whl", hash = "sha256:fe75cc94a9443b9246fc7049224f75604b113c36acb93f87b80ed42c44cbb898"},
-    {file = "requests-2.24.0.tar.gz", hash = "sha256:b3559a131db72c33ee969480840fff4bb6dd111de7dd27c8ee1f820f4f00231b"},
-]
 "ruamel.yaml" = [
     {file = "ruamel.yaml-0.16.10-py2.py3-none-any.whl", hash = "sha256:0962fd7999e064c4865f96fb1e23079075f4a2a14849bcdc5cdba53a24f9759b"},
     {file = "ruamel.yaml-0.16.10.tar.gz", hash = "sha256:099c644a778bf72ffa00524f78dd0b6476bca94a1da344130f4bf3381ce5b954"},
@@ -1676,10 +1605,6 @@ typing-inspect = [
     {file = "typing_inspect-0.6.0-py2-none-any.whl", hash = "sha256:de08f50a22955ddec353876df7b2545994d6df08a2f45d54ac8c05e530372ca0"},
     {file = "typing_inspect-0.6.0-py3-none-any.whl", hash = "sha256:3b98390df4d999a28cf5b35d8b333425af5da2ece8a4ea9e98f71e7591347b4f"},
     {file = "typing_inspect-0.6.0.tar.gz", hash = "sha256:8f1b1dd25908dbfd81d3bebc218011531e7ab614ba6e5bf7826d887c834afab7"},
-]
-urllib3 = [
-    {file = "urllib3-1.25.10-py2.py3-none-any.whl", hash = "sha256:e7983572181f5e1522d9c98453462384ee92a0be7fac5f1413a1e35c56cc0461"},
-    {file = "urllib3-1.25.10.tar.gz", hash = "sha256:91056c15fa70756691db97756772bb1eb9678fa585d9184f24534b100dc60f4a"},
 ]
 virtualenv = [
     {file = "virtualenv-20.0.28-py2.py3-none-any.whl", hash = "sha256:8f582a030156282a9ee9d319984b759a232b07f86048c1d6a9e394afa44e78c8"},
