@@ -12,7 +12,9 @@ kernels
 site
 elbe-build*
 initvm/
+*.swp
 .history/
 .pytest_cache/
 tmp/
-*.swp
+.mypy_cache/
+projects/broken
