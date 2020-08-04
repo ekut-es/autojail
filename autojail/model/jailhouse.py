@@ -84,6 +84,7 @@ class IRQChip(BaseModel):
         if len(self.interrupts) > 5:
 
             def update(current_item, irq, count):
+                # print("Update:", irq, pin_base, count)
                 return current_item | 1 << (irq - (pin_base + count))
 
             def store(item):

@@ -240,33 +240,32 @@ class LowerSHMemPass(BasePass):
                 for irq in irqchip.interrupts:
                     used_interrupts.add(irq)
 
+        # FIXME: currectly infer number of interrupts in the presence of manually configured devices
         num_interrupts = dict()
         for shmem_config in self.config.shmem.values():
             for cell_name in shmem_config.peers:
-                cell_name = self.config.cells[cell_name].name
-
                 if cell_name not in num_interrupts:
                     num_interrupts[cell_name] = 0
 
                 num_interrupts[cell_name] += 1
 
-        for cell in self.config.cells.values():
-            if cell.vpci_irq_base:
+        for cell_name, cell in self.config.cells.items():
+            if cell.vpci_irq_base is not None:
                 for i in range(
                     cell.vpci_irq_base,
-                    cell.vpci_irq_base + num_interrupts[cell.name],
+                    cell.vpci_irq_base + num_interrupts[cell_name],
                 ):
                     used_interrupts.add(i)
 
-        for cell in self.config.cells.values():
+        for cell_name, cell in self.config.cells.items():
             if cell.vpci_irq_base is None:
                 for i in range(32, max(used_interrupts) + 2):
-                    sentinel = set(range(i, i + num_interrupts[cell.name]))
+                    sentinel = set(range(i, i + num_interrupts[cell_name]))
 
                     if not (used_interrupts & sentinel):
                         used_interrupts |= sentinel
                         cell.vpci_irq_base = i
-                        continue
+                        break
 
         for cell in self.config.cells.values():
             if cell.type == "root":

@@ -16,8 +16,12 @@ cells:
         physical_start_addr: 0x0
         virtual_start_addr: 0x0
         size: 768 MB
-        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
-
+        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA]
+      #VPCI Memory:
+      #  physical_start_addr: 0xe0000000
+      #  virtual_start_add: 0xe0000000
+      #  size: 8 MiB
+      #  flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
   guest1:
     type: linux
     name: "RPI4 net guest"

@@ -344,7 +344,8 @@ class DeviceTreeExtractor:
                             start : start + 3
                         ]
                         if int_type == 0:
-                            extracted_interrupts.append(int_num)
+                            # FIXME: test if int num is always+32
+                            extracted_interrupts.append(int_num + 32)
             path = node.path + "/" + node.name
             for device_register in device_registers:
                 device = MemoryRegion(

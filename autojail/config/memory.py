@@ -372,7 +372,7 @@ class AllocateMemoryPass(BasePass):
                 # FIXME: preallocate pci
                 pass
             else:
-                self.root_cell.platform_info.pci_mmconfig_base = 0x800000000
+                self.root_cell.platform_info.pci_mmconfig_base = 0xE0000000
 
     def _preallocate_virtual(
         self, freelist: FreeList, cell: CellConfig

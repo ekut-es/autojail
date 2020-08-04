@@ -62,7 +62,7 @@ section of the configuration file. The shmem config consist of a Dict of `ShmemC
 entries. One ShmemConfig entry has the following fields:
 
 _protocol_ (str)
-: the type of Protocol, currently SHMEM\*PROTO_VETH is supported
+: the type of Protocol, currently only `SHMEM_PROTO_VETH` is supported
 
 _peers_ (list of str)
 : list of cell ids participating in the communication

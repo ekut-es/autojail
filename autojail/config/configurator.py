@@ -192,7 +192,12 @@ class JailhouseConfigurator:
             f.write("\n\t\t.name =" + ' "' + cell.name + '" ' + ",")
             vpci_irq_base = cell.vpci_irq_base
             if vpci_irq_base is not None:
-                f.write("\n\t\t.vpci_irq_base = " + str(vpci_irq_base) + ",")
+                f.write(
+                    "\n\t\t.vpci_irq_base = "
+                    + str(vpci_irq_base)
+                    + "- 32"
+                    + ","
+                )
 
             f.write(
                 "\n\t\t.num_memory_regions = ARRAY_SIZE(config.mem_regions)"
