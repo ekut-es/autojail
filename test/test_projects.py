@@ -1,11 +1,14 @@
+import filecmp
 import os
+import shutil
+from pathlib import Path
 
 from cleo import CommandTester
 from ruamel.yaml import YAML
 
 from autojail.main import AutojailApp
 
-project_folder = os.path.join(os.path.dirname(__file__), "..", "projects")
+project_folder = os.path.join(os.path.dirname(__file__), "test_data")
 
 
 def test_init(tmpdir):
@@ -76,3 +79,22 @@ def test_simple(tmpdir):
     command = application.find("config")
     tester = CommandTester(command)
     tester.execute(interactive=False)
+
+
+def test_config_rpi4_net(tmpdir):
+    """ Tests that rpi4_net creates the expected configuration for rpi4_net"""
+
+    os.chdir(tmpdir)
+    shutil.copytree(Path(project_folder) / "rpi4_net", "rpi4_net")
+    os.chdir("rpi4_net")
+
+    application = AutojailApp()
+    command = application.find("config")
+    tester = CommandTester(command)
+    tester.execute(interactive=False)
+
+    assert Path("rpi4-net.c").exists()
+    assert Path("rpi4-net-guest.c").exists()
+
+    assert filecmp.cmp("rpi4-net.c", "golden/rpi4-net.c")
+    assert filecmp.cmp("rpi4-net-guest.c", "golden/rpi4-net-guest.c")
