@@ -98,3 +98,20 @@ def test_config_rpi4_net(tmpdir):
 
     assert filecmp.cmp("rpi4-net.c", "golden/rpi4-net.c")
     assert filecmp.cmp("rpi4-net-guest.c", "golden/rpi4-net-guest.c")
+
+
+def test_config_rpi4_default(tmpdir):
+    """ Tests that rpi4_default creates the expected configuration"""
+
+    os.chdir(tmpdir)
+    shutil.copytree(Path(project_folder) / "rpi4_default", "rpi4_default")
+    os.chdir("rpi4_default")
+
+    application = AutojailApp()
+    command = application.find("config")
+    tester = CommandTester(command)
+    tester.execute(interactive=False)
+
+    assert Path("raspberry-pi4.c").exists()
+
+    assert filecmp.cmp("raspberry-pi4.c", "golden/raspberry-pi4.c")
