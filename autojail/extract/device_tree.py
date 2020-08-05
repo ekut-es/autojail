@@ -274,6 +274,7 @@ class DeviceTreeExtractor:
             maintenance_irq = interrupts[1] + 16
 
             gic_reg_names = ["gicd_base", "gicc_base", "gich_base", "gicv_base"]
+            gic_reg_vals = dict(gicr_base=0)
             if gic_version == 3:
                 gic_reg_names = [
                     "gicd_base",
@@ -282,7 +283,6 @@ class DeviceTreeExtractor:
                     "gich_base",
                     "gicv_base",
                 ]
-            gic_reg_vals = {}
 
             gic_reg_pos = 0
             for name in gic_reg_names:
