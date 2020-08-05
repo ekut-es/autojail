@@ -29,12 +29,15 @@ def connect(
             for _retry in range(passwd_retries):
 
                 password = getpass.getpass(
-                    prompt="Password for {}@{}: ".format(login.user, login.host)
+                    prompt="Password for {}@{}:{}: ".format(
+                        login.user, login.host, login.port
+                    )
                 )
                 try:
                     connection = Connection(
                         user=login.user,
                         host=login.host,
+                        port=login.port,
                         connect_kwargs={"password": password},
                     )
                     connection.open()
