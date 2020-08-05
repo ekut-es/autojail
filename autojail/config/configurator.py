@@ -274,7 +274,7 @@ class JailhouseConfigurator:
                 elif isinstance(v, ShMemNetRegion):
                     f.write(f"\t/* {k} */\n")
                     f.write(
-                            f"\tJAILHOUSE_SHMEM_NET_REGIONS(0x{v.start_addr:x}, {v.device_id}),\n"
+                        f"\tJAILHOUSE_SHMEM_NET_REGIONS(0x{v.start_addr:x}, {v.device_id}),\n"
                     )
 
             f.write("\t},")
