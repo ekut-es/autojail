@@ -149,7 +149,7 @@ class CellConfig(BaseModel):
     platform_info: Optional[PlatformInfo]
     cpus: Optional[IntegerList]
     memory_regions: Optional[
-        Dict[str, Union[str, MemoryRegion, ShMemNetRegion]]
+        Dict[str, Union[str, ShMemNetRegion, MemoryRegion]]
     ] = {}
     irqchips: Optional[Dict[str, IRQChip]] = {}
     pci_devices: Optional[Dict[str, PCIDevice]] = {}
