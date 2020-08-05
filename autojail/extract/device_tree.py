@@ -273,41 +273,37 @@ class DeviceTreeExtractor:
 
             maintenance_irq = interrupts[1] + 16
 
-            gicd_base, gicc_base, gich_base, gicv_base, gicr_base = (
-                0,
-                0,
-                0,
-                0,
-                0,
-            )
+            gic_reg_names = ["gicd_base", "gicc_base", "gich_base", "gicv_base"]
+            if gic_version == 3:
+                gic_reg_names = [
+                    "gicd_base",
+                    "gicr_base",
+                    "gicc_base",
+                    "gich_base",
+                    "gicv_base",
+                ]
+            gic_reg_vals = {}
 
-            if gic_version <= 2:
+            gic_reg_pos = 0
+            for name in gic_reg_names:
+                gic_reg_vals[name] = 0
                 try:
-                    gicd_base = state.translate_addr(reg[0])
-                    gicc_base = state.translate_addr(reg[2])
-                    gich_base = state.translate_addr(reg[4])
-                    gicv_base = state.translate_addr(reg[6])
-                except IndexError:
-                    self.logger.warning(
-                        "GIC %s does not have virtualization extensions",
-                        node.name,
+                    address, _size, offset = state.parse_range(
+                        reg[gic_reg_pos:]
                     )
-            else:
-                gicd_base = state.translate_addr(reg[0])
-                gicr_base = state.translate_addr(reg[2])
-                gicc_base = state.translate_addr(reg[4])
-                gich_base = state.translate_addr(reg[6])
-                gicv_base = state.translate_addr(reg[8])
+                    gic_reg_vals[name] = address
+                    gic_reg_pos += offset
+                except Exception as e:
+                    print(str(e))
+                    self.logger.warning(
+                        "Could not extract gic_register %s", name
+                    )
 
             gic = GIC(
                 gic_version=gic_version,
                 maintenance_irq=maintenance_irq,
-                gicd_base=gicd_base,
-                gicc_base=gicc_base,
-                gich_base=gich_base,
-                gicv_base=gicv_base,
-                gicr_base=gicr_base,
                 interrupts=[],
+                **gic_reg_vals,
             )
             self.interrupt_controllers.append(gic)
 
