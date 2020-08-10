@@ -1,13 +1,13 @@
 import io
 import socket
-from typing import Optional, Union
+from typing import Union
 from urllib.parse import urlparse
 
 import serial
 
 
 def open_serial(
-    url: str, encoding: Optional[str] = "utf-8"
+    url: str, encoding: str = "utf-8"
 ) -> Union[io.RawIOBase, serial.Serial]:
     parsed_url = urlparse(url)
     if parsed_url.scheme == "unix":
