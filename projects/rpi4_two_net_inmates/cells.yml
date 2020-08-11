@@ -13,7 +13,9 @@ cells:
 
     memory_regions:
       "Main Memory":
-        size: 128 MB
+        physical_start_addr: 0x0
+        virtual_start_addr: 0x0 
+        size: 768 MB
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
 
   linux1:
