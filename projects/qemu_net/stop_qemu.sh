@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo quit > nc -U qemu/monitor.sock 
+echo quit | nc -U qemu/monitor.sock 
