@@ -4,6 +4,7 @@ from .debug import debug
 from .intervall_arithmetic import get_overlap
 from .logging import ClikitLoggingHandler
 from .string import pprint_tree, remove_prefix
+from .fs import which
 
 __all__ = [
     "connect",
@@ -13,4 +14,5 @@ __all__ = [
     "debug",
     "pprint_tree",
     "get_overlap",
+    "which",
 ]
