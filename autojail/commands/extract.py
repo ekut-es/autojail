@@ -32,6 +32,12 @@ class ExtractCommand(BaseCommand):
         tmp_folder = False
         connection = None
 
+        dtc_path = which("dtc")
+        if dtc_path is None:
+            self.line("ERROR: Could not find device-tree compiler (dtc) in $PATH")
+            self.line("Please install device-tree compiler or set $PATH accordingly")
+            sys.exit(-1)
+
         assert self.autojail_config is not None
         try:
             if not base_folder or not Path(base_folder).exists():
