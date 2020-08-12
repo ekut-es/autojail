@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from shutil import rmtree
@@ -16,7 +17,7 @@ from ..model import (
     IntegerList,
     JailhouseFlagList,
 )
-from ..utils import connect
+from ..utils import connect, which
 from .base import BaseCommand
 
 
@@ -34,8 +35,12 @@ class ExtractCommand(BaseCommand):
 
         dtc_path = which("dtc")
         if dtc_path is None:
-            self.line("ERROR: Could not find device-tree compiler (dtc) in $PATH")
-            self.line("Please install device-tree compiler or set $PATH accordingly")
+            self.line(
+                "ERROR: Could not find device-tree compiler (dtc) in $PATH"
+            )
+            self.line(
+                "Please install device-tree compiler or set $PATH accordingly"
+            )
             sys.exit(-1)
 
         assert self.autojail_config is not None
