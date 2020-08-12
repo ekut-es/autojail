@@ -129,8 +129,8 @@ For jailhouse the patches mentioned [here](https://github.com/siemens/jailhouse-
 ### Setup on Rpi
 
 - `cd jailhouse`
-    * `cp hypervisor/jailhouse.bin /lib/firmware`
-    * `sudo insmod drivers/jailhouse.ko`
+    * `sudo cp hypervisor/jailhouse.bin /lib/firmware`
+    * `sudo insmod driver/jailhouse.ko`
 
 ### Setup cells and inter-cell communication
 
