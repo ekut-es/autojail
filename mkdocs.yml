@@ -13,6 +13,7 @@ nav:
       Proc Filesystem: proc.md
       Data Sheets: ml_extractor.md
   - Test Rack: schrank.md
+  - Release Notes: releases.md
 
 docs_dir: doc
 
