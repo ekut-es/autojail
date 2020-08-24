@@ -52,6 +52,7 @@ build_doc:
     - set -e
     - poetry install
     - poetry run mkdocs build
+    - mkdir -p /afs/wsi/home/gerum/public_html/autojail
     - cp -r site/* /afs/wsi/home/gerum/public_html/autojail
   stage: deploy
   tags:
