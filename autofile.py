@@ -62,7 +62,7 @@ def build(c, board_ids="all", sync_kernel=False):
 
             if not build_cache_path.exists():
                 logging.warning(
-                    f"Could not find cached kernel build directory for board {board.id}"
+                    f"Could not find cached kernel build directory for board {board.id} in {str(build_cache_path)} "
                 )
                 logging.warning("Skipping jailhouse build")
                 continue
