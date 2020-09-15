@@ -76,7 +76,7 @@ def test_simple(tmpdir):
     tester = CommandTester(command)
     tester.execute(interactive=False)
 
-    command = application.find("config")
+    command = application.find("generate")
     tester = CommandTester(command)
     tester.execute(interactive=False)
 
@@ -89,7 +89,7 @@ def test_config_rpi4_net(tmpdir):
     os.chdir("rpi4_net")
 
     application = AutojailApp()
-    command = application.find("config")
+    command = application.find("generate")
     tester = CommandTester(command)
     tester.execute(interactive=False)
 
@@ -108,7 +108,7 @@ def test_config_rpi4_default(tmpdir):
     os.chdir("rpi4_default")
 
     application = AutojailApp()
-    command = application.find("config")
+    command = application.find("generate")
     tester = CommandTester(command)
     tester.execute(interactive=False)
 
