@@ -84,6 +84,7 @@ class Board(BaseModel):
     name: str
     board: str
     pagesize: ByteSize
+    stdout_path: str = ""
     virtual_address_bits: int = 48  # FIXME: that seems correct for most ARM64 Boards
     memory_regions: Dict[str, MemoryRegion]
     interrupt_controllers: List[GIC] = []
