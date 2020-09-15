@@ -26,7 +26,11 @@ Eingaben:
 
 Ausgaben: Projektkonfiguration  (autojail.yml)
 
-### autojail extract
+### autojail config
+
+Ein configurations werkzeug zur Erzeugung einer einfachen Konfiguration (cells.yml).
+
+### autojail generate
    
 Eingaben: autojail.yml
 
