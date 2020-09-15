@@ -5,7 +5,7 @@
 ```mermaid
 graph TD
   A[autojail init] -->|autojail.yml| B["autojail extract (optional)"];
-  B --> C;
+  B -->|board.yml| C["autojail config"];
   C -->|board.yml, cells.yml| D[autojail generate];
   D -->|board.cell, board_guest1.cell, board_guest...| E["autojail test (optional)"];
   E --> F["autojail explore (optional)"];
