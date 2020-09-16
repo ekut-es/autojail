@@ -67,7 +67,6 @@ class DeviceTreeExtractor:
                     self.fdt = fdt.parse_dtb(f.read())
             finally:
                 pass
-                # Path(temp_file[1]).unlink()
         else:
             with dt_path.open("rb") as f:
                 self.fdt = fdt.parse_dtb(f.read())
@@ -81,8 +80,14 @@ class DeviceTreeExtractor:
             str, BaseMemoryRegion
         ] = OrderedDict()
         self.interrupt_controllers: List[GIC] = []
+        self.stdout_path: str = ""
 
         self.logger = getLogger()
+
+    def _extract_stdout(self) -> None:
+        if self.fdt.exist_property("stdout-path", "/chosen"):
+            stdout_property = self.fdt.get_property("stdout-path", "/chosen")
+            self.stdout_path = str(stdout_property.value)
 
     def _extract_aliases(self) -> None:
         if self.fdt.exist_node("/aliases"):
@@ -443,6 +448,7 @@ class DeviceTreeExtractor:
 
         self.logger.info("Memory Regions from Device Tree")
         self.logger.info(
+            "\n%s",
             tabulate.tabulate(
                 table,
                 headers=[
@@ -453,7 +459,7 @@ class DeviceTreeExtractor:
                     "Interrupts (SPI)",
                     "Path",
                 ],
-            )
+            ),
         )
 
         interrupt_table = []
@@ -475,6 +481,7 @@ class DeviceTreeExtractor:
         self.logger.info("")
         self.logger.info("Extracted interrupt controller:")
         self.logger.info(
+            "\n%s",
             tabulate.tabulate(
                 interrupt_table,
                 headers=[
@@ -486,10 +493,12 @@ class DeviceTreeExtractor:
                     "GICR",
                     "Interrupts",
                 ],
-            )
+            ),
         )
+        self.logger.info("stdout-path: %s", self.stdout_path)
 
     def run(self) -> None:
+        self._extract_stdout()
         self._extract_aliases()
         self._walk_tree()
         self._add_interrupts()

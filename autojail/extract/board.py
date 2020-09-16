@@ -124,36 +124,36 @@ class BoardInfoExtractor:
         cpuinfo = []
 
         with path.open() as f:
-            current_cpu: Dict[str, str] = {}
+            current_cpu: Dict[str, Any] = {}
+            started = False
             for line in f:
                 line = line.strip()
-                started = False
+
                 if line == "":
                     if current_cpu:
                         cpuinfo.append(current_cpu)
                         current_cpu = {}
                         started = False
 
-                    if line.startswith("processor"):
-                        started = True
+                if line.startswith("processor"):
+                    started = True
 
-                    if started is False:
-                        continue
+                if started is False:
+                    continue
 
-                    key, val = line.split()
+                key, val = line.split(":")
 
-                    key = key.strip()
-                    val = val.strip()
-
+                key = key.strip()
+                val = val.strip()
+                try:
+                    val = int(val)
+                except ValueError:
                     try:
-                        val = int(val)
+                        val = float(val)
                     except ValueError:
-                        try:
-                            val = float(val)
-                        except ValueError:
-                            pass
+                        pass
 
-                    current_cpu[key] = val
+                current_cpu[key] = val
 
         if current_cpu:
             cpuinfo.append(current_cpu)
@@ -168,14 +168,20 @@ class BoardInfoExtractor:
         )
         extractor.run()
 
-        return extractor.memory_regions, extractor.interrupt_controllers
+        return (
+            extractor.memory_regions,
+            extractor.interrupt_controllers,
+            extractor.stdout_path,
+        )
 
     def extract(self) -> Board:
         memory_regions = self.read_iomem(self.data_root / "proc" / "iomem")
         pagesize = self.read_getconf_out(self.data_root / "getconf.out")
-        memory_regions, interrupt_controllers = self.extract_from_devicetree(
-            memory_regions
-        )
+        (
+            memory_regions,
+            interrupt_controllers,
+            stdout_path,
+        ) = self.extract_from_devicetree(memory_regions)
 
         cpuinfo = self.extract_cpuinfo()
 
@@ -186,5 +192,6 @@ class BoardInfoExtractor:
             pagesize=pagesize,
             interrupt_controllers=interrupt_controllers,
             cpuinfo=cpuinfo,
+            stdout_path=stdout_path,
         )
         return board
