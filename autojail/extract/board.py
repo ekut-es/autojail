@@ -124,36 +124,36 @@ class BoardInfoExtractor:
         cpuinfo = []
 
         with path.open() as f:
-            current_cpu: Dict[str, str] = {}
+            current_cpu: Dict[str, Any] = {}
+            started = False
             for line in f:
                 line = line.strip()
-                started = False
+
                 if line == "":
                     if current_cpu:
                         cpuinfo.append(current_cpu)
                         current_cpu = {}
                         started = False
 
-                    if line.startswith("processor"):
-                        started = True
+                if line.startswith("processor"):
+                    started = True
 
-                    if started is False:
-                        continue
+                if started is False:
+                    continue
 
-                    key, val = line.split()
+                key, val = line.split(":")
 
-                    key = key.strip()
-                    val = val.strip()
-
+                key = key.strip()
+                val = val.strip()
+                try:
+                    val = int(val)
+                except ValueError:
                     try:
-                        val = int(val)
+                        val = float(val)
                     except ValueError:
-                        try:
-                            val = float(val)
-                        except ValueError:
-                            pass
+                        pass
 
-                    current_cpu[key] = val
+                current_cpu[key] = val
 
         if current_cpu:
             cpuinfo.append(current_cpu)

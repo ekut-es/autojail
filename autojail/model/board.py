@@ -1,5 +1,5 @@
 # FIXME:  Dicts should be replaced by OrderedDict when 3.6 support is dropped
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
@@ -88,3 +88,4 @@ class Board(BaseModel):
     virtual_address_bits: int = 48  # FIXME: that seems correct for most ARM64 Boards
     memory_regions: Dict[str, MemoryRegion]
     interrupt_controllers: List[GIC] = []
+    cpuinfo: List[Dict[str, Any]]
