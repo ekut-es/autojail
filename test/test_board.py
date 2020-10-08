@@ -12,6 +12,7 @@ def test_board():
         "name": "test_name",
         "board": "test_board",
         "pagesize": 0x1000,
+        "cpuinfo": [],
         "memory_regions": {
             "test_region": {
                 "virtual_start_addr": 0x1000,
