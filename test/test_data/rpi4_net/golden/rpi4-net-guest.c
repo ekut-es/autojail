@@ -3,7 +3,7 @@
 struct { 
 	struct jailhouse_cell_desc cell; 
 	__u64 cpus[1];
-	struct jailhouse_memory mem_regions[8];
+	struct jailhouse_memory mem_regions[5];
 	struct jailhouse_irqchip irqchips[1];
 	struct jailhouse_pci_device pci_devices[1];
 } __attribute__((packed)) config = {
@@ -56,28 +56,28 @@ struct {
 		.size = 0x40,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_IO|JAILHOUSE_MEM_IO_8|JAILHOUSE_MEM_IO_16|JAILHOUSE_MEM_IO_32|JAILHOUSE_MEM_IO_64|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*net1_0 0xfbfff000-0xfc000000*/
+	/*net1 0xfbffd000-0xfbffe000*/
 	{
-		.phys_start = 0xfbfff000,
+		.phys_start = 0xfbffd000,
 		.virt_start = 0x100000,
 		.size = 0x1000,
-		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
+		.flags = JAILHOUSE_MEM_READ,
 	},
 	/* empty optional region */
 	{ 0 },
-	/*net1_2 0xfbffe000-0xfbfff000*/
+	/*net1 0xfbffe000-0xfbfff000*/
 	{
 		.phys_start = 0xfbffe000,
 		.virt_start = 0x101000,
 		.size = 0x1000,
-		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
+		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED|JAILHOUSE_MEM_WRITE,
 	},
-	/*net1_3 0xfbffd000-0xfbffe000*/
+	/*net1 0xfbfff000-0xfc000000*/
 	{
-		.phys_start = 0xfbffd000,
+		.phys_start = 0xfbfff000,
 		.virt_start = 0x102000,
 		.size = 0x1000,
-		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED|JAILHOUSE_MEM_WRITE,
+		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
 	},
 	.irqchips = {

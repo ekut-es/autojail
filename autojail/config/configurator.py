@@ -9,6 +9,7 @@ from ..model import (
     DebugConsole,
     JailhouseConfig,
     MemoryRegion,
+    GroupedMemoryRegion,
     PlatformInfoArm,
     ShMemNetRegion,
 )
@@ -230,11 +231,12 @@ class JailhouseConfigurator:
                 assert isinstance(v, MemoryRegion) or isinstance(
                     v, ShMemNetRegion
                 )
-                if v.size == 0:
-                    f.write("\t/* empty optional region */\n\t{ 0 },\n")
-                    continue
 
-                if isinstance(v, MemoryRegion):
+                def write_mem_region(v):
+                    if v.size == 0:
+                        f.write("\t/* empty optional region */\n\t{ 0 },\n")
+                        return
+
                     assert v.virtual_start_addr is not None
                     assert v.physical_start_addr is not None
                     assert v.size is not None
@@ -271,6 +273,12 @@ class JailhouseConfigurator:
                         "\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ","
                     )
                     f.write("\n\t},\n")
+
+                if isinstance(v, GroupedMemoryRegion):
+                    for region in v.regions:
+                        write_mem_region(region)
+                elif isinstance(v, MemoryRegion):
+                    write_mem_region(v)
                 elif isinstance(v, ShMemNetRegion):
                     f.write(f"\t/* {k} */\n")
                     f.write(

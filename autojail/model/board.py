@@ -25,14 +25,36 @@ class MemoryRegion(BaseMemoryRegion):
     aliases: List[str] = []
 
 
-class GroupedMemoryRegion(BaseMemoryRegion):
+class GroupedMemoryRegion(MemoryRegion):
     "Represents a list of memory regions that are allocated at contiguous physical and virtual adresses"
+    regions: List[MemoryRegion]
 
-    def __init__(self, regions: List[MemoryRegion]):
-        self.regions = regions
-        self.size = ByteSize.validate(sum((int(r.size) for r in regions)))  # type: ignore
-        self.physical_start_addr = regions[0].physical_start_addr
-        self.virtual_start_addr = regions[0].virtual_start_addr
+    def __init__(self, regions: List[MemoryRegion]) -> None:
+        super().__init__(
+            regions=regions,
+            size=ByteSize.validate(sum((int(r.size) for r in regions))),
+            physical_start_addr=regions[0].physical_start_addr,
+            virtual_start_addr=regions[0].virtual_start_addr,
+        )
+
+    # FIXME
+    def __setattr__(self, name, value):
+        if name == "physical_start_addr":
+            addr = value
+            for region in self.regions:
+                region.physical_start_addr = addr
+                addr += region.size
+
+        elif name == "virtual_start_addr":
+            addr = value
+            for region in self.regions:
+                region.virtual_start_addr = addr
+                addr += region.size
+        elif name != "size":
+            for region in self.regions:
+                region.__setattr__(name, value)
+
+        super().__setattr__(name, value)
 
 
 class HypervisorMemoryRegion(BaseMemoryRegion):
