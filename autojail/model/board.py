@@ -30,9 +30,19 @@ class GroupedMemoryRegion(MemoryRegion):
     regions: List[MemoryRegion]
 
     def __init__(self, regions: List[MemoryRegion]) -> None:
+        # Mypy was not satisfied with a one-line lambda doing the
+        # same thing
+        def byte_option_to_int(b: Optional[ByteSize]) -> int:
+            if b:
+                return int(b.to("b"))
+            else:
+                return 0
+
+        int_region_sizes = map(lambda r: byte_option_to_int(r.size), regions)
+
         super().__init__(
             regions=regions,
-            size=ByteSize.validate(sum((int(r.size) for r in regions))),
+            size=ByteSize.validate(sum(int_region_sizes)),
             physical_start_addr=regions[0].physical_start_addr,
             virtual_start_addr=regions[0].virtual_start_addr,
         )

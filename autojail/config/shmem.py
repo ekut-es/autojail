@@ -5,10 +5,10 @@ from typing import Optional, Tuple
 
 from ..model import (
     Board,
+    GroupedMemoryRegion,
     JailhouseConfig,
     MemoryRegion,
     PCIDevice,
-    GroupedMemoryRegion,
 )
 from .passes import BasePass
 

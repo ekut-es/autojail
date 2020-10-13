@@ -7,9 +7,9 @@ from .. import utils
 from ..model import (
     Board,
     DebugConsole,
+    GroupedMemoryRegion,
     JailhouseConfig,
     MemoryRegion,
-    GroupedMemoryRegion,
     PlatformInfoArm,
     ShMemNetRegion,
 )
@@ -58,7 +58,14 @@ class JailhouseConfigurator:
 
             f = open(output_file, "w+")
             amount_pci_devices = len(cell.pci_devices)
-            amount_memory_regions = len(cell.memory_regions)
+            amount_memory_regions = sum(
+                map(
+                    lambda r: len(r.regions)
+                    if isinstance(r, GroupedMemoryRegion)
+                    else 1,
+                    cell.memory_regions.values(),
+                )
+            )
             amount_irqchips = len(cell.irqchips)
             cpu_set = cell.cpus
 
