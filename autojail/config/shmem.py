@@ -3,7 +3,13 @@
 import copy
 from typing import Optional, Tuple
 
-from ..model import Board, JailhouseConfig, MemoryRegion, PCIDevice
+from ..model import (
+    Board,
+    GroupedMemoryRegion,
+    JailhouseConfig,
+    MemoryRegion,
+    PCIDevice,
+)
 from .passes import BasePass
 
 
@@ -42,11 +48,12 @@ class ConfigSHMemRegionsPass(BasePass):
                 # start with table_region and common_output_region
                 dev_id = cell.pci_devices[name].shmem_dev_id
                 assert dev_id is not None
-
-                mem_region_name = f"{name}_{dev_id + 2}"
-
                 assert cell.memory_regions is not None
-                cell_output_region = cell.memory_regions[mem_region_name]
+
+                grouped_region_name = f"{name}"
+                grouped_region = cell.memory_regions[grouped_region_name]
+
+                cell_output_region = grouped_region.regions[2]
 
                 def get_mem_region_index(cell, name):
                     ret = -1
@@ -66,9 +73,8 @@ class ConfigSHMemRegionsPass(BasePass):
 
                     return ret
 
-                first_mem_region_name = f"{name}_0"
                 shmem_regions_start = get_mem_region_index(
-                    cell, first_mem_region_name
+                    cell, grouped_region_name
                 )
                 cell.pci_devices[name].shmem_regions_start = shmem_regions_start
 
@@ -78,7 +84,7 @@ class ConfigSHMemRegionsPass(BasePass):
                 )
                 new_cell_output_region.flags.append("MEM_WRITE")
 
-                cell.memory_regions[mem_region_name] = new_cell_output_region
+                grouped_region.regions[2] = new_cell_output_region
 
 
 class LowerSHMemPass(BasePass):
@@ -141,46 +147,34 @@ class LowerSHMemPass(BasePass):
                 per_device_region_size = 0
 
             mem_regions = list()
-            mem_regions_index = 0
 
             if shmem_config.protocol == "SHMEM_PROTO_VETH":
                 common_output_region_size = 0
                 per_device_region_size = self.board.pagesize
 
             table_region = MemoryRegion(
-                size=0x1000,
-                allocatable=False,
-                flags=["MEM_READ"],
-                next_region=f"{name}_{mem_regions_index+1}",
-                shared=True,
+                size=0x1000, allocatable=False, flags=["MEM_READ"], shared=True,
             )
-            mem_regions.append((f"{name}_{mem_regions_index}", table_region))
-            mem_regions_index += 1
+            mem_regions.append(table_region)
 
             common_output_region = MemoryRegion(
                 size=common_output_region_size,
                 allocatable=False,
                 flags=["MEM_READ", "MEM_WRITE"],
-                next_region=f"{name}_{mem_regions_index+1}",
                 shared=True,
             )
-            mem_regions.append(
-                (f"{name}_{mem_regions_index}", common_output_region)
-            )
-            mem_regions_index += 1
+            mem_regions.append(common_output_region)
 
             for _cell_name in shmem_config.peers:
                 mem_region = MemoryRegion(
                     size=per_device_region_size,
                     allocatable=False,
                     flags=["MEM_READ", "MEM_ROOTSHARED"],
-                    next_region=f"{name}_{mem_regions_index+1}",
                     shared=True,
                 )
-                mem_regions.append((f"{name}_{mem_regions_index}", mem_region))
-                mem_regions_index += 1
+                mem_regions.append(mem_region)
 
-            mem_regions[-1][1].next_region = None
+            mem_regions[-1].next_region = None
 
             # add PCI device to each affected cell
             root_added = False
@@ -202,9 +196,12 @@ class LowerSHMemPass(BasePass):
                     shmem_protocol=shmem_config.protocol,
                 )
                 pci_dev.memory_regions = mem_regions
-
                 cell.pci_devices[name] = pci_dev
-                cell.memory_regions.update(copy.deepcopy(mem_regions))
+
+                grouped_region = GroupedMemoryRegion(copy.deepcopy(mem_regions))
+                grouped_region.shared = True
+
+                cell.memory_regions[name] = grouped_region
 
                 # set interrupt pins
                 intx_pin = current_bdf & 0x3

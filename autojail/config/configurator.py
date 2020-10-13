@@ -7,6 +7,7 @@ from .. import utils
 from ..model import (
     Board,
     DebugConsole,
+    GroupedMemoryRegion,
     JailhouseConfig,
     MemoryRegion,
     PlatformInfoArm,
@@ -57,7 +58,14 @@ class JailhouseConfigurator:
 
             f = open(output_file, "w+")
             amount_pci_devices = len(cell.pci_devices)
-            amount_memory_regions = len(cell.memory_regions)
+            amount_memory_regions = sum(
+                map(
+                    lambda r: len(r.regions)
+                    if isinstance(r, GroupedMemoryRegion)
+                    else 1,
+                    cell.memory_regions.values(),
+                )
+            )
             amount_irqchips = len(cell.irqchips)
             cpu_set = cell.cpus
 
@@ -230,11 +238,12 @@ class JailhouseConfigurator:
                 assert isinstance(v, MemoryRegion) or isinstance(
                     v, ShMemNetRegion
                 )
-                if v.size == 0:
-                    f.write("\t/* empty optional region */\n\t{ 0 },\n")
-                    continue
 
-                if isinstance(v, MemoryRegion):
+                def write_mem_region(v):
+                    if v.size == 0:
+                        f.write("\t/* empty optional region */\n\t{ 0 },\n")
+                        return
+
                     assert v.virtual_start_addr is not None
                     assert v.physical_start_addr is not None
                     assert v.size is not None
@@ -271,6 +280,12 @@ class JailhouseConfigurator:
                         "\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ","
                     )
                     f.write("\n\t},\n")
+
+                if isinstance(v, GroupedMemoryRegion):
+                    for region in v.regions:
+                        write_mem_region(region)
+                elif isinstance(v, MemoryRegion):
+                    write_mem_region(v)
                 elif isinstance(v, ShMemNetRegion):
                     f.write(f"\t/* {k} */\n")
                     f.write(
