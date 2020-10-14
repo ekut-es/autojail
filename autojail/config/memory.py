@@ -282,6 +282,8 @@ class AllocateMemoryPass(BasePass):
                         if region.virtual_start_addr is None:
                             region.virtual_start_addr = HexInt(start)
 
+        self._remove_allocatable()
+
         return self.board, self.config
 
     def _lift_loadable(self):
@@ -331,6 +333,20 @@ class AllocateMemoryPass(BasePass):
                 )
 
         self.physical_domain = cp_model.Domain.FromIntervals(intervals)
+
+    def _remove_allocatable(self):
+        """Finally remove allocatable memory regions from cells"""
+        assert self.config is not None
+
+        for cell in self.config.cells.values():
+            delete_list = []
+            for name, region in cell.memory_regions.items():
+                if isinstance(region, MemoryRegion):
+                    if region.allocatable:
+                        delete_list.append(name)
+
+            for name in delete_list:
+                del cell.memory_regions[name]
 
     def _build_unallocated_segments(
         self, key: Callable = lambda x: x.physical_start_addr
