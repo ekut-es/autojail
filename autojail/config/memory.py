@@ -273,13 +273,13 @@ class AllocateMemoryPass(BasePass):
 
                     for _, regions in seg.shared_regions.items():
                         for region in regions:
-                            if not region.physical_start_addr:
+                            if region.physical_start_addr is None:
                                 region.physical_start_addr = HexInt(start)
                 else:
                     assert seg.shared_regions
 
                     for region in seg.shared_regions[cell_name]:
-                        if not region.virtual_start_addr:
+                        if region.virtual_start_addr is None:
                             region.virtual_start_addr = HexInt(start)
 
         return self.board, self.config
@@ -356,7 +356,7 @@ class AllocateMemoryPass(BasePass):
                 if key(region) is not None:
                     continue
 
-                assert shared_segments
+                assert shared_segments is not None
                 if region.shared and region_name in shared_segments:
                     current_segment = shared_segments[region_name]
 
