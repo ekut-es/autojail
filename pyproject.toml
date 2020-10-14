@@ -18,6 +18,7 @@ tabulate = "^0.8.7"
 fdt = "^0.2.0"
 #automate = {git = "git@atreus.informatik.uni-tuebingen.de:ties/timing/schrank/automate.git", optional = true}
 
+ortools = "^8.0.8283"
 [tool.poetry.extras]
 #automate = ["automate"]
 
