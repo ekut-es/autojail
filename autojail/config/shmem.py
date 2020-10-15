@@ -59,12 +59,15 @@ class ConfigSHMemRegionsPass(BasePass):
                     ret = -1
                     index = 0
 
-                    for region_name, _ in cell.memory_regions.items():
+                    for region_name, region in cell.memory_regions.items():
                         if region_name == name:
                             ret = index
                             break
 
-                        index += 1
+                        if isinstance(region, GroupedMemoryRegion):
+                            index += len(region.regions)
+                        else:
+                            index += 1
 
                     if ret == -1:
                         raise Exception(
