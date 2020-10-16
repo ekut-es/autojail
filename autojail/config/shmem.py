@@ -126,7 +126,7 @@ class LowerSHMemPass(BasePass):
                 "Configuring more than 4 will need an adoption of the default device trees"
             )
 
-        current_bdf = 0
+        current_device = 0
         pci_domain = root_cell.platform_info.pci_domain
 
         for name, shmem_config in self.config.shmem.items():
@@ -188,7 +188,7 @@ class LowerSHMemPass(BasePass):
                 pci_dev = PCIDevice(
                     type="PCI_TYPE_IVSHMEM",
                     domain=pci_domain,
-                    bdf=current_bdf,
+                    bdf=current_device << 3,
                     bar_mask="IVSHMEM_BAR_MASK_INTX",
                     shmem_regions_start=-1,
                     shmem_dev_id=current_device_id,
@@ -204,7 +204,7 @@ class LowerSHMemPass(BasePass):
                 cell.memory_regions[name] = grouped_region
 
                 # set interrupt pins
-                intx_pin = current_bdf & 0x3
+                intx_pin = current_device & 0x1F
                 intx_pin += cell.vpci_irq_base
 
                 # FIXME: what happens when irqchips are manually configured
@@ -222,7 +222,7 @@ class LowerSHMemPass(BasePass):
             if not root_added:
                 root_cell.mem_regions.update(copy.deepcopy(mem_regions))
 
-            current_bdf += 1
+            current_device += 1
 
     def _create_vpci_base(self) -> None:
         assert self.config is not None
@@ -237,7 +237,7 @@ class LowerSHMemPass(BasePass):
                 for irq in irqchip.interrupts:
                     used_interrupts.add(irq)
 
-        # FIXME: currectly infer number of interrupts in the presence of manually configured devices
+        # FIXME: correctly infer number of interrupts in the presence of manually configured devices
         num_interrupts = dict()
         for shmem_config in self.config.shmem.values():
             for cell_name in shmem_config.peers:

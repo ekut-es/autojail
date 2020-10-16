@@ -14,6 +14,7 @@ from ..model import (
     ShMemNetRegion,
 )
 from .board_info import TransferBoardInfoPass
+from .device_tree import GenerateDeviceTreePass
 from .devices import LowerDevicesPass
 from .irq import PrepareIRQChipsPass
 from .memory import AllocateMemoryPass, PrepareMemoryRegionsPass
@@ -34,6 +35,7 @@ class JailhouseConfigurator:
             AllocateMemoryPass(),
             ConfigSHMemRegionsPass(),
             InferRootSharedPass(),
+            GenerateDeviceTreePass(),
         ]
 
         self.logger = utils.logging.getLogger()
@@ -318,7 +320,9 @@ class JailhouseConfigurator:
                 f.write(f"\n\t\t\t.type = JAILHOUSE_{device.type},")
                 f.write(f"\n\t\t\t.domain = {device.domain},")
                 f.write(f"\n\t\t\t.bar_mask = JAILHOUSE_{device.bar_mask},")
-                f.write(f"\n\t\t\t.bdf = {device.bdf} << 3,")
+                f.write(
+                    f"\n\t\t\t.bdf = {device.bus} << 8 | {device.device} << 4 | {device.function},"
+                )
 
                 if device.shmem_regions_start is not None:
                     f.write(
