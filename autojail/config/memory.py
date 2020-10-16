@@ -58,6 +58,9 @@ class MemoryConstraint(object):
 
         self.allocated_range: Optional[Tuple[int, int]] = None
 
+    def __str__(self):
+        return str(self.__dict__)
+
 
 class NoOverlapConstraint(object):
     """Implements a generic no-overlap constraint"""
@@ -67,6 +70,9 @@ class NoOverlapConstraint(object):
 
     def add_memory_constraint(self, mc: MemoryConstraint) -> None:
         self.constraints.append(mc)
+
+    def __str__(self):
+        return str(self.__dict__)
 
 
 class CPMemorySolver(object):
@@ -110,7 +116,7 @@ class CPMemorySolver(object):
                 upper = None
 
                 constr_name = f"constr_{overlap_index}_{constr_index}"
-                if constr.start_addr:
+                if constr.start_addr is not None:
                     lower = self.model.NewConstant(constr.start_addr)
                 else:
                     if constr.address_range:
@@ -142,7 +148,7 @@ class CPMemorySolver(object):
                     )
 
                 ivar = self.model.NewIntervalVar(
-                    lower, upper, constr.size, f"{constr_name}_ivar"
+                    lower, constr.size, upper, f"{constr_name}_ivar"
                 )
 
                 if constr.alignment:
@@ -236,7 +242,7 @@ class AllocateMemoryPass(BasePass):
                 mc_local.alignment = seg.alignment
 
                 fst_region = regions[0]
-                if fst_region.virtual_start_addr:
+                if fst_region.virtual_start_addr is not None:
                     mc_local.start_addr = fst_region.virtual_start_addr
 
                 self.no_overlap_constraints[sharer].add_memory_constraint(
@@ -277,6 +283,7 @@ class AllocateMemoryPass(BasePass):
                                 region.physical_start_addr = HexInt(start)
                 else:
                     assert seg.shared_regions
+                    assert constr.virtual
 
                     for region in seg.shared_regions[cell_name]:
                         if region.virtual_start_addr is None:
