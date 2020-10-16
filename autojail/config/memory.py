@@ -118,6 +118,9 @@ class CPMemorySolver(object):
                 constr_name = f"constr_{overlap_index}_{constr_index}"
                 if constr.start_addr is not None:
                     lower = self.model.NewConstant(constr.start_addr)
+                    upper = self.model.NewConstant(
+                        constr.start_addr + constr.size
+                    )
                 else:
                     if constr.address_range:
                         l_addr, u_addr = constr.address_range
@@ -133,19 +136,19 @@ class CPMemorySolver(object):
                             domain, f"{constr_name}_lower"
                         )
 
-                if constr.address_range:
-                    l_addr, u_addr = constr.address_range
-                    upper = self.model.NewIntVar(
-                        l_addr, u_addr, f"{constr_name}_upper"
-                    )
-                else:
-                    domain = self.physical_domain
-                    if constr.virtual:
-                        domain = self.virtual_domain
+                    if constr.address_range:
+                        l_addr, u_addr = constr.address_range
+                        upper = self.model.NewIntVar(
+                            l_addr, u_addr, f"{constr_name}_upper"
+                        )
+                    else:
+                        domain = self.physical_domain
+                        if constr.virtual:
+                            domain = self.virtual_domain
 
-                    upper = self.model.NewIntVarFromDomain(
-                        domain, f"{constr_name}_upper"
-                    )
+                        upper = self.model.NewIntVarFromDomain(
+                            domain, f"{constr_name}_upper"
+                        )
 
                 ivar = self.model.NewIntervalVar(
                     lower, constr.size, upper, f"{constr_name}_ivar"
@@ -255,7 +258,7 @@ class AllocateMemoryPass(BasePass):
                     mc_global.virtual = False
                     mc_global.start_addr = None
 
-                    if fst_region.physical_start_addr:
+                    if fst_region.physical_start_addr is not None:
                         mc_global.start_addr = fst_region.physical_start_addr
 
                     self.global_no_overlap.add_memory_constraint(mc_global)
@@ -371,13 +374,23 @@ class AllocateMemoryPass(BasePass):
             assert cell is not None
             assert cell.memory_regions is not None
 
+            # FIXME add constraints for already allocated regions
+            # -> skipped due to line 390
+            # -> make sure IO regions that are shared are either
+            #   - marked shared
+            #   - only added once
+
             for region_name, region in cell.memory_regions.items():
                 if not isinstance(region, MemoryRegion):
                     continue
                 if region.allocatable:
                     continue
-                if key(region) is not None:
+                if key(region) is not None and (
+                    "MEM_IO" in region.flags or region_name == "memreserve"
+                ):
                     continue
+                if key(region):
+                    print(region)
 
                 assert shared_segments is not None
                 if region.shared and region_name in shared_segments:
