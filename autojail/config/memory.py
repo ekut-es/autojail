@@ -272,6 +272,10 @@ class AllocateMemoryPass(BasePass):
         solver.solve()
 
         for cell_name, no_overlap_constr in self.no_overlap_constraints.items():
+            # for root make sure, all pairs (phys,virt) are equal (to phys!)
+            if cell_name == "root":
+                continue
+
             for constr in no_overlap_constr.constraints:
                 assert constr.allocated_range
                 (start, _) = constr.allocated_range
@@ -291,6 +295,14 @@ class AllocateMemoryPass(BasePass):
                     for region in seg.shared_regions[cell_name]:
                         if region.virtual_start_addr is None:
                             region.virtual_start_addr = HexInt(start)
+
+        # handle root separately
+        for constr in self.no_overlap_constraints["root"].constraints:
+            seg = self.memory_constraints[constr]
+
+            for region in seg.shared_regions["root"]:
+                if region.virtual_start_addr is None:
+                    region.virtual_start_addr = region.physical_start_addr
 
         self._remove_allocatable()
 
