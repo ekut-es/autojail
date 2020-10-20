@@ -300,6 +300,7 @@ class AllocateMemoryPass(BasePass):
         for constr in self.no_overlap_constraints["root"].constraints:
             seg = self.memory_constraints[constr]
 
+            assert seg.shared_regions
             for region in seg.shared_regions["root"]:
                 if region.virtual_start_addr is None:
                     region.virtual_start_addr = region.physical_start_addr
