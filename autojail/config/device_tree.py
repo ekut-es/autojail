@@ -129,7 +129,9 @@ class GenerateDeviceTreePass(BasePass):
                     )
                     break
 
-        for _cell_name, cell in config.cells.items():
+        for cell_name, cell in config.cells.items():
+            if cell.type == "root":
+                continue
             pci_interrupts = []
             vpci_irq_base = cell.vpci_irq_base
             if cell.pci_devices is not None:
@@ -158,13 +160,19 @@ class GenerateDeviceTreePass(BasePass):
                     )
                     pci_interrupts.append(interrupt_data)
 
-            print(
-                _dts_template.render(
-                    pci_mmconfig_base=pci_mmconfig_base,
-                    pci_mmconfig_end_bus=pci_mmconfig_end_bus,
-                    pci_interrupts=pci_interrupts,
-                )
+            dts_data = _dts_template.render(
+                pci_mmconfig_base=pci_mmconfig_base,
+                pci_mmconfig_end_bus=pci_mmconfig_end_bus,
+                pci_interrupts=pci_interrupts,
             )
+
+            dts_name = cell_name
+            dts_name = cell_name.lower()
+            dts_name = dts_name.replace(" ", "-")
+            dts_name += ".dts"
+
+            with open(dts_name, "w") as dts_file:
+                dts_file.write(dts_data)
 
         return board, config
 
