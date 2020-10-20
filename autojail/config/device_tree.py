@@ -1,6 +1,6 @@
-from dataclasses import dataclass
 from typing import Tuple
 
+from dataclasses import dataclass
 from mako.template import Template
 
 from ..model import Board, JailhouseConfig
@@ -147,6 +147,7 @@ class GenerateDeviceTreePass(BasePass):
                     assert bus is not None
                     assert device is not None
                     assert interrupt is not None
+                    assert vpci_irq_base is not None
 
                     interrupt_data = PCIInterruptData(
                         bus=bus,

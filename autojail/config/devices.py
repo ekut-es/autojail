@@ -13,7 +13,10 @@ ConsoleSettings = namedtuple("ConsoleSettings", ["type", "flags"])
 console_sentinels = {
     "brcm,bcm2835-aux-uart": ConsoleSettings(
         "CON_TYPE_8250", ["CON_ACCESS_MMIO", "CON_REGDIST_4"]
-    )
+    ),
+    "xlnx,xuartps": ConsoleSettings(
+        "CON_TYPE_XUARTPS", ["CON_ACCESS_MMIO", "CON_REGDIST_4"]
+    ),
 }
 
 

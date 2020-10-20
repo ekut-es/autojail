@@ -1,3 +1,5 @@
+from typing import Union
+
 from ..commands.base import BaseCommand
 from ..model import (
     Board,
@@ -22,7 +24,9 @@ class ConfigWizard:
 
 class RootConfigWizard:
     """ Creates a simple root cell configuration similar to the following 
-    
+
+        The configuration corresponds to the following config:
+
         cells:
             root:
                 type: root 
@@ -50,13 +54,15 @@ class RootConfigWizard:
         flags = ["SYS_VIRTUAL_DEBUG_CONSOLE"]
         hypervisor_memory = HypervisorMemoryRegion(size="16 MB")
 
-        debug_console = (
-            self.board.stdout_path
-            if self.board.stdout_path
-            else DebugConsole(
+        debug_console: Union[str, DebugConsole] = ""
+        if self.board.stdout_path:
+            console_name = self.board.stdout_path.split(":")[0]
+            debug_console = console_name
+        else:
+            debug_console = DebugConsole(
                 type="CON_TYPE_NONE", address=0x0, size=0x0, flags=[]
             )
-        )
+
         cpus = list(range(len(self.board.cpuinfo)))
 
         main_memory = MemoryRegion(
