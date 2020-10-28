@@ -16,7 +16,7 @@ _dts_template = Template(
 	#address-cells = <2>;
 	#size-cells = <2>;
 
-	interrupt-parent = <&gic>;
+	interrupt-parent = < &gic>;
 
 	hypervisor {
 		compatible = "jailhouse,cell";
@@ -73,7 +73,7 @@ _dts_template = Template(
 		compatible = "brcm,bcm2835-aux-uart";
 		reg = <0x0 0xfe215040 0x0 0x40>;
 		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
-		clocks = <&fixed>;
+		clocks = < &fixed>;
 		status = "okay";
 	};
 

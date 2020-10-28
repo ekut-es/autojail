@@ -286,23 +286,31 @@ class DeviceTreeExtractor:
                 0,
             )
 
+            next_pos = 0
+            gic_addresses = []
+            while next_pos < len(reg):
+                start, size, offset = state.parse_range(reg[next_pos:])
+                next_pos += offset
+                start = state.translate_addr(start)
+                gic_addresses.append(start)
+
             if gic_version <= 2:
+
                 try:
-                    gicd_base = state.translate_addr(reg[0])
-                    gicc_base = state.translate_addr(reg[2])
-                    gich_base = state.translate_addr(reg[4])
-                    gicv_base = state.translate_addr(reg[6])
-                except IndexError:
+                    gicd_base, gicc_base, gich_base, gicv_base = gic_addresses
+                except Exception:
                     self.logger.warning(
                         "GIC %s does not have virtualization extensions",
                         node.name,
                     )
             else:
-                gicd_base = state.translate_addr(reg[0])
-                gicr_base = state.translate_addr(reg[2])
-                gicc_base = state.translate_addr(reg[4])
-                gich_base = state.translate_addr(reg[6])
-                gicv_base = state.translate_addr(reg[8])
+                (
+                    gicd_base,
+                    gicr_base,
+                    gicc_base,
+                    gich_base,
+                    gicv_base,
+                ) = gic_addresses
 
             gic = GIC(
                 gic_version=gic_version,
