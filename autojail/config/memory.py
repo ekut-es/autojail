@@ -1,15 +1,21 @@
 import copy
 import logging
+import sys
 from collections import defaultdict
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import tabulate
-from autojail.model.board import Board, HypervisorMemoryRegion, MemoryRegion
 from ortools.sat.python import cp_model
+
+from autojail.model.board import Board, HypervisorMemoryRegion, MemoryRegion
 
 from ..model import BaseMemoryRegion, CellConfig, JailhouseConfig
 from ..model.datatypes import HexInt
 from .passes import BasePass
+
+
+class MemoryAllocationInfeasibleException(Exception):
+    pass
 
 
 class AllocatorSegment:
@@ -105,7 +111,7 @@ class CPMemorySolver(object):
                 mc.allocated_range = solver.Value(lower), solver.Value(upper)
         else:
             print("Memory allocation infeasible")
-            raise AssertionError
+            raise MemoryAllocationInfeasibleException()
 
     def _build_cp_constraints(self):
         for overlap_index, no_overlap in enumerate(self.constraints):
@@ -190,6 +196,61 @@ class AllocateMemoryPass(BasePass):
             MemoryConstraint, AllocatorSegment
         ] = dict()
 
+    def _iter_constraints(self, f_no_overlap, f_mc):
+        for cell_name, no_overlap in self.no_overlap_constraints.items():
+            if not f_no_overlap(cell_name, no_overlap):
+                continue
+
+            for mc in no_overlap.constraints:
+                f_mc(cell_name, mc)
+
+    def _dump_constraints(self):
+        def f_no_overlap(cell_name, no_overlap):
+            self.logger.info(f"No-overlap Constraint for: {cell_name}")
+            return True
+
+        def f_mc(cell_name, mc):
+            self.logger.info(mc)
+
+        self._iter_constraints(f_no_overlap, f_mc)
+
+    def _check_constraints(self):
+        def f_no_overlap(cell_name, no_overlap):
+            full_regions = []
+
+            def insert_region(region):
+                o_start, o_end = region
+                for (start, end) in full_regions:
+                    if (
+                        (o_start <= start and start <= o_end)
+                        or (o_start <= end and end <= o_end)
+                        or (start <= o_start and o_start <= end)
+                        or (start <= o_end and o_end <= end)
+                    ):
+                        print(
+                            f"Regions overlap for {cell_name}: (0x{start:x}, 0x{end:x}) and (0x{o_start:x}, 0x{o_end:x})"
+                        )
+
+                        seg = self.memory_constraints[mc]
+                        print("Affected memory cells:")
+
+                        for sharer in seg.shared_regions.keys():
+                            print(f"\t{sharer}")
+
+                full_regions.append(region)
+
+            for mc in no_overlap.constraints:
+                if mc.start_addr is not None:
+                    region = (mc.start_addr, mc.start_addr + mc.size)
+                    insert_region(region)
+
+            return False
+
+        def f_mc(cell_name, mc):
+            pass
+
+        self._iter_constraints(f_no_overlap, f_mc)
+
     def __call__(
         self, board: Board, config: JailhouseConfig
     ) -> Tuple[Board, JailhouseConfig]:
@@ -241,7 +302,7 @@ class AllocateMemoryPass(BasePass):
 
             mc_global = None
             for sharer, regions in seg.shared_regions.items():
-                mc_local = MemoryConstraint(seg.size, True)
+                mc_local = MemoryConstraint(seg.size - 1, True)
                 mc_local.alignment = seg.alignment
 
                 fst_region = regions[0]
@@ -264,12 +325,18 @@ class AllocateMemoryPass(BasePass):
                     self.global_no_overlap.add_memory_constraint(mc_global)
                     self.memory_constraints[mc_global] = seg
 
+        self._dump_constraints()
+
         solver = CPMemorySolver(
             list(self.no_overlap_constraints.values()),
             self.physical_domain,
             self.virtual_domain,
         )
-        solver.solve()
+        try:
+            solver.solve()
+        except MemoryAllocationInfeasibleException:
+            self._check_constraints()
+            sys.exit(-1)
 
         for cell_name, no_overlap_constr in self.no_overlap_constraints.items():
             # for root make sure, all pairs (phys,virt) are equal (to phys!)
@@ -402,8 +469,6 @@ class AllocateMemoryPass(BasePass):
                     "MEM_IO" in region.flags or region_name == "memreserve"
                 ):
                     continue
-                if key(region):
-                    print(region)
 
                 assert shared_segments is not None
                 if region.shared and region_name in shared_segments:
