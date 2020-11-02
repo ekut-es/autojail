@@ -8,6 +8,8 @@ from .passes import BasePass
 
 _dts_template = Template(
     r"""
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+
 /dts-v1/;
 
 / {
