@@ -171,8 +171,8 @@ class GenerateDeviceTreePass(BasePass):
             dts_name = dts_name.replace(" ", "-")
             dts_name += ".dts"
 
-            with open(dts_name, "w") as dts_file:
-                dts_file.write(dts_data)
+            with open(dts_name, "wb") as dts_file:
+                dts_file.write(dts_data.encode("latin-1"))
 
         return board, config
 
