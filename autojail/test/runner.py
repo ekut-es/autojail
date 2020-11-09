@@ -19,7 +19,24 @@ class TestRunner:
         self.logger = getLogger()
 
     def run(self) -> None:
-        self.logger.info("Executing tests")
-        from ..utils import debug
+        try:
+            self._run_start()
+        except Exception:
+            self._run_reset()
 
-        debug(self.config)
+        try:
+            self._run_stop()
+        except Exception:
+            self._run_reset()
+
+    def _run_start(self):
+        for command in self.start_script:
+            self.run_command(command, default_target="local")
+
+    def _run_reset(self):
+        for command in self.reset_script:
+            self.run_command(command, default_target="local")
+
+    def _run_stop(self):
+        for command in self.stop_script:
+            self.run_command(command, default_target="local")
