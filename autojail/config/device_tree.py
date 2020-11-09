@@ -119,6 +119,11 @@ class GenerateDeviceTreePass(BasePass):
         self, board: Board, config: JailhouseConfig
     ) -> Tuple[Board, JailhouseConfig]:
 
+        self.logger.info("Generating inmate device trees")
+        self.logger.warning(
+            "At the moment inmate device trees are only compatible with raspberrypi4b"
+        )
+
         pci_mmconfig_base = None
         pci_mmconfig_end_bus = None
 

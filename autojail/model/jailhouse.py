@@ -143,8 +143,6 @@ class PCIDevice(BaseModel):
 
     @property
     def device(self) -> int:
-        print(self.bdf)
-        print("BDF: ", hex(int(self.bdf)))
         return (int(self.bdf) >> 3) & 0x1F  # 5 Bits
 
     @property

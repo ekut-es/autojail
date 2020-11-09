@@ -53,18 +53,21 @@ class ConfigSHMemRegionsPass(BasePass):
                 grouped_region_name = f"{name}"
                 grouped_region = cell.memory_regions[grouped_region_name]
 
-                cell_output_region = grouped_region.regions[2]
+                cell_output_region = grouped_region.regions[2 + dev_id]
 
                 def get_mem_region_index(cell, name):
                     ret = -1
                     index = 0
 
-                    for region_name, _ in cell.memory_regions.items():
+                    for region_name, region in cell.memory_regions.items():
                         if region_name == name:
                             ret = index
                             break
 
-                        index += 1
+                        if isinstance(region, GroupedMemoryRegion):
+                            index += len(region.regions)
+                        else:
+                            index += 1
 
                     if ret == -1:
                         raise Exception(
@@ -84,7 +87,7 @@ class ConfigSHMemRegionsPass(BasePass):
                 )
                 new_cell_output_region.flags.append("MEM_WRITE")
 
-                grouped_region.regions[2] = new_cell_output_region
+                grouped_region.regions[2 + dev_id] = new_cell_output_region
 
 
 class LowerSHMemPass(BasePass):
@@ -153,14 +156,17 @@ class LowerSHMemPass(BasePass):
                 per_device_region_size = self.board.pagesize
 
             table_region = MemoryRegion(
-                size=0x1000, allocatable=False, flags=["MEM_READ"], shared=True,
+                size=0x1000,
+                allocatable=False,
+                flags=["MEM_READ", "MEM_ROOTSHARED"],
+                shared=True,
             )
             mem_regions.append(table_region)
 
             common_output_region = MemoryRegion(
                 size=common_output_region_size,
                 allocatable=False,
-                flags=["MEM_READ", "MEM_WRITE"],
+                flags=["MEM_READ", "MEM_ROOTSHARED"],
                 shared=True,
             )
             mem_regions.append(common_output_region)

@@ -3,7 +3,7 @@
 struct { 
 	struct jailhouse_system header; 
 	__u64 cpus[1];
-	struct jailhouse_memory mem_regions[72];
+	struct jailhouse_memory mem_regions[73];
 	struct jailhouse_irqchip irqchips[2];
 	struct jailhouse_pci_device pci_devices[2];
 } __attribute__((packed)) config = {
@@ -13,7 +13,7 @@ struct {
 	.revision = JAILHOUSE_CONFIG_REVISION,
 	.flags = JAILHOUSE_SYS_VIRTUAL_DEBUG_CONSOLE,
 	.hypervisor_memory = {
-		.phys_start = 0xfb000000,
+		.phys_start = 0x40000000,
 		.size = 0x1000000,
 	},
 
@@ -53,11 +53,11 @@ struct {
 	.cpus = {0b1111},
 	
 	.mem_regions = {
-	/*System RAM 0x0-0x40000000*/
+	/*System RAM 0x0-0x30000000*/
 	{
 		.phys_start = 0x0,
 		.virt_start = 0x0,
-		.size = 0x40000000,
+		.size = 0x30000000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE,
 	},
 	/*ivshmem1 0x3faf0000-0x3faf1000*/
@@ -103,6 +103,13 @@ struct {
 		.virt_start = 0xfe215040,
 		.size = 0x40,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_IO|JAILHOUSE_MEM_IO_8|JAILHOUSE_MEM_IO_16|JAILHOUSE_MEM_IO_32|JAILHOUSE_MEM_IO_64,
+	},
+	/*memreserve 0x3b400000-0x40000000*/
+	{
+		.phys_start = 0x3b400000,
+		.virt_start = 0x3b400000,
+		.size = 0x4c00000,
+		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE,
 	},
 	/*pcie@7d500000 0xfd500000-0xfd509310*/
 	{
@@ -582,7 +589,7 @@ struct {
 			.type = JAILHOUSE_PCI_TYPE_IVSHMEM,
 			.domain = 1,
 			.bar_mask = JAILHOUSE_IVSHMEM_BAR_MASK_INTX,
-			.bdf = 0 << 3,
+			.bdf = 0 << 8 | 0 << 3 | 0,
 			.shmem_regions_start = 0,
 			.shmem_dev_id = 0,
 			.shmem_peers = 3,
@@ -593,7 +600,7 @@ struct {
 			.type = JAILHOUSE_PCI_TYPE_IVSHMEM,
 			.domain = 1,
 			.bar_mask = JAILHOUSE_IVSHMEM_BAR_MASK_INTX,
-			.bdf = 8 << 3,
+			.bdf = 0 << 8 | 1 << 3 | 0,
 			.shmem_regions_start = 5,
 			.shmem_dev_id = 0,
 			.shmem_peers = 2,

@@ -321,7 +321,7 @@ class JailhouseConfigurator:
                 f.write(f"\n\t\t\t.domain = {device.domain},")
                 f.write(f"\n\t\t\t.bar_mask = JAILHOUSE_{device.bar_mask},")
                 f.write(
-                    f"\n\t\t\t.bdf = {device.bus} << 8 | {device.device} << 4 | {device.function},"
+                    f"\n\t\t\t.bdf = {device.bus} << 8 | {device.device} << 3 | {device.function},"
                 )
 
                 if device.shmem_regions_start is not None:
