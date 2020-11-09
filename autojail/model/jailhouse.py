@@ -137,6 +137,18 @@ class PCIDevice(BaseModel):
     # List of corresponding memory regions
     memory_regions: List[MemoryRegion] = []
 
+    @property
+    def bus(self) -> int:
+        return (int(self.bdf) >> 8) & 0xFF  # 8 Bits
+
+    @property
+    def device(self) -> int:
+        return (int(self.bdf) >> 3) & 0x1F  # 5 Bits
+
+    @property
+    def function(self) -> int:
+        return int(self.bdf) & 0x7  # 3 Bits
+
 
 class CellConfig(BaseModel):
     type: str

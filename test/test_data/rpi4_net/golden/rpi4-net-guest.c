@@ -99,7 +99,7 @@ struct {
 			.type = JAILHOUSE_PCI_TYPE_IVSHMEM,
 			.domain = 1,
 			.bar_mask = JAILHOUSE_IVSHMEM_BAR_MASK_INTX,
-			.bdf = 0 << 3,
+			.bdf = 0 << 8 | 0 << 3 | 0,
 			.shmem_regions_start = 4,
 			.shmem_dev_id = 1,
 			.shmem_peers = 2,
