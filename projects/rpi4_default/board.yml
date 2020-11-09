@@ -2,6 +2,7 @@ name: rpi4_default
 board: raspberrypi4b-jh1
 pagesize: 0x1000
 virtual_address_bits: 48
+cpuinfo: []
 memory_regions:
   memory@0:
     physical_start_addr: 0x0
