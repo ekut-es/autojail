@@ -184,4 +184,5 @@ class GenerateDeviceTreePass(BasePass):
         return board, config
 
 
+# FIXME: make dts template external file
 # flake8: noqa
