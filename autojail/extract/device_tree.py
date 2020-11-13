@@ -9,7 +9,7 @@ import tabulate
 from dataclasses import dataclass, field
 from fdt.items import Node
 
-from ..model import GIC, BaseMemoryRegion, MemoryRegion
+from ..model import CPU, GIC, BaseMemoryRegion, MemoryRegion
 from ..model.datatypes import ByteSize, IntegerList
 from ..utils.logging import getLogger
 
@@ -27,6 +27,7 @@ class WalkerState:
     address_cells: int = 1
     size_cells: int = 1
     ranges: List[RangeEntry] = field(default_factory=list)
+    memory_mapped: bool = True
 
     def translate_addr(self, addr: int) -> int:
         """Translate address to global address"""
@@ -81,6 +82,7 @@ class DeviceTreeExtractor:
         ] = OrderedDict()
         self.interrupt_controllers: List[GIC] = []
         self.stdout_path: str = ""
+        self.cpus: List[CPU] = []
 
         self.logger = getLogger()
 
@@ -107,7 +109,11 @@ class DeviceTreeExtractor:
         return False
 
     def _is_mmapped_bus(self, node: Node) -> bool:
-        if self._is_simple_bus(node) or node.name == "/":
+        if (
+            self._is_simple_bus(node)
+            or node.name == "/"
+            or node.name == "reserved-memory"
+        ):
             return True
         return False
 
@@ -202,190 +208,207 @@ class DeviceTreeExtractor:
 
         self.memory_regions[name] = region
 
-    def _extract_device(self, node: Node, state: WalkerState) -> None:
+    def _extract_interrupt_controller(
+        self, node, state, compatible, reg, device_type, interrupts
+    ):
+        self.logger.info("Handling interrup controller %s", node.name)
+        # FIXME: some of the version two's are v1
+        gic_versions = {
+            "arm,arm11mp-gic": 2,
+            "arm,cortex-a15-gic": 2,
+            "arm,cortex-a7-gic": 2,
+            "arm,cortex-a5-gic": 2,
+            "arm,cortex-a9-gic": 2,
+            "arm,eb11mp-gic": 2,
+            "arm,gic-400": 2,
+            "arm,pl390": 2,
+            "arm,tc11mp-gic": 2,
+            "nvidia,tegra210-agic": 2,
+            "qcom,msm-8660-qgic": 2,
+            "qcom,msm-qgic2": 2,
+            "qcom,msm8996-gic-v3": 3,
+            "arm,gic-v3": 3,
+        }
+        gic_version = None
+        for compatible_item in compatible:
+            if compatible_item in gic_versions:
+                gic_version = gic_versions[compatible_item]
 
-        blacklist = ["vc_mem"]
-        if node.name in blacklist:
+        if gic_version is None:
+            self.logger.warning("Could not find GIC version for %s", node.path)
             return
 
-        compatible = node.get_property("compatible")
-        reg = node.get_property("reg")
+        if interrupts is None:
+            self.logger.warning(
+                "Could not get maintenance interrupt for %s", node.path
+            )
+            return
 
+        maintenance_irq = interrupts[1] + 16
+
+        gicd_base, gicc_base, gich_base, gicv_base, gicr_base = (
+            0,
+            0,
+            0,
+            0,
+            0,
+        )
+
+        next_pos = 0
+        gic_addresses = []
+        while next_pos < len(reg):
+            start, size, offset = state.parse_range(reg[next_pos:])
+            next_pos += offset
+            start = state.translate_addr(start)
+            gic_addresses.append(start)
+
+        if gic_version <= 2:
+
+            try:
+                gicd_base, gicc_base, gich_base, gicv_base = gic_addresses
+            except Exception:
+                self.logger.warning(
+                    "GIC %s does not have virtualization extensions", node.name,
+                )
+        else:
+            (
+                gicd_base,
+                gicr_base,
+                gicc_base,
+                gich_base,
+                gicv_base,
+            ) = gic_addresses
+
+        gic = GIC(
+            gic_version=gic_version,
+            maintenance_irq=maintenance_irq,
+            gicd_base=gicd_base,
+            gicc_base=gicc_base,
+            gich_base=gich_base,
+            gicv_base=gicv_base,
+            gicr_base=gicr_base,
+            interrupts=[],
+        )
+        self.interrupt_controllers.append(gic)
+
+    def _extract_memory(
+        self, node, state, compatible, reg, device_type, interrupts
+    ) -> None:
+        if not state.memory_mapped:
+            return None
         if reg is None:
             return None
 
+        next_pos = 0
+        while next_pos < len(reg):
+            start, size, offset = state.parse_range(reg[next_pos:])
+            next_pos += offset
+            start = state.translate_addr(start)
+            region = MemoryRegion(
+                physical_start_addr=start,
+                virtual_start_addr=start,
+                size=size,
+                flags=["MEM_READ", "MEM_WRITE", "MEM_EXECUTE"],
+            )
+
+            if device_type and device_type.value == "memory":
+                region.allocatable = True
+
+            name = node.name
+            self._insert_named_region(name, region)
+
+    def _extract_mmaped_device(
+        self, node, state, compatible, reg, device_type, interrupts
+    ) -> None:
+        if reg is None:
+            return
+
+        device_registers = []
+
+        next_pos = 0
+        while next_pos < len(reg):
+            start, size, offset = state.parse_range(reg[next_pos:])
+            next_pos += offset
+            start = state.translate_addr(start)
+            region = MemoryRegion(
+                physical_start_addr=start,
+                virtual_start_addr=start,
+                size=size,
+                flags=[
+                    "MEM_READ",
+                    "MEM_WRITE",
+                    "MEM_IO",
+                    "MEM_IO_8",
+                    "MEM_IO_16",
+                    "MEM_IO_32",
+                    "MEM_IO_64",
+                ],
+            )
+            device_registers.append(region)
+
+        extracted_interrupts = []
+        if interrupts is not None:
+            if len(interrupts) % 3 == 0:
+                for start in range(len(interrupts) // 3):
+                    start = start * 3
+                    int_type, int_num, int_meta = interrupts[start : start + 3]
+                    if int_type == 0:
+                        # FIXME: test if int num is always+32
+                        extracted_interrupts.append(int_num + 32)
+        path = node.path + "/" + node.name
+        for device_register in device_registers:
+            device = MemoryRegion(
+                physical_start_addr=device_register.physical_start_addr,
+                virtual_start_addr=device_register.virtual_start_addr,
+                size=device_registers[0].size,
+                path=path,
+                compatible=list(compatible),
+                interrupts=extracted_interrupts,
+                aliases=self.aliases_reversed[path],
+                flags=[
+                    "MEM_READ",
+                    "MEM_WRITE",
+                    "MEM_IO",
+                    "MEM_IO_8",
+                    "MEM_IO_16",
+                    "MEM_IO_32",
+                    "MEM_IO_64",
+                ],
+            )
+
+            name = node.name
+            self._insert_named_region(name, device)
+
+        if len(device_registers) != 1:
+            self.logger.warning(
+                "Standard device has more than one register %s", node.name
+            )
+
+    def _extract_device(self, node: Node, state: WalkerState) -> None:
+
+        compatible = node.get_property("compatible")
+        reg = node.get_property("reg")
         device_type = node.get_property("device_type")
         interrupts = node.get_property("interrupts")
 
         if (compatible and "memory" in compatible.data) or compatible is None:
-            next_pos = 0
-            while next_pos < len(reg):
-                start, size, offset = state.parse_range(reg[next_pos:])
-                next_pos += offset
-                start = state.translate_addr(start)
-                region = MemoryRegion(
-                    physical_start_addr=start,
-                    virtual_start_addr=start,
-                    size=size,
-                    flags=["MEM_READ", "MEM_WRITE", "MEM_EXECUTE"],
-                )
-
-                if device_type and device_type.value == "memory":
-                    region.allocatable = True
-
-                name = node.name
-                self._insert_named_region(name, region)
+            self._extract_memory(
+                node, state, compatible, reg, device_type, interrupts
+            )
 
         elif device_type and device_type.value == "cpu":
-            # FIXME: Extract CPUs also from device tree
+            self._extract_cpu(node)
             return
 
         elif node.get_property("interrupt-controller"):
-            self.logger.info("Handling interrup controller %s", node.name)
-            # FIXME: some of the version two's are v1
-            gic_versions = {
-                "arm,arm11mp-gic": 2,
-                "arm,cortex-a15-gic": 2,
-                "arm,cortex-a7-gic": 2,
-                "arm,cortex-a5-gic": 2,
-                "arm,cortex-a9-gic": 2,
-                "arm,eb11mp-gic": 2,
-                "arm,gic-400": 2,
-                "arm,pl390": 2,
-                "arm,tc11mp-gic": 2,
-                "nvidia,tegra210-agic": 2,
-                "qcom,msm-8660-qgic": 2,
-                "qcom,msm-qgic2": 2,
-                "qcom,msm8996-gic-v3": 3,
-                "arm,gic-v3": 3,
-            }
-            gic_version = None
-            for compatible_item in compatible:
-                if compatible_item in gic_versions:
-                    gic_version = gic_versions[compatible_item]
-
-            if gic_version is None:
-                self.logger.warning(
-                    "Could not find GIC version for %s", node.path
-                )
-                return
-
-            if interrupts is None:
-                self.logger.warning(
-                    "Could not get maintenance interrupt for %s", node.path
-                )
-                return
-
-            maintenance_irq = interrupts[1] + 16
-
-            gicd_base, gicc_base, gich_base, gicv_base, gicr_base = (
-                0,
-                0,
-                0,
-                0,
-                0,
+            self._extract_interrupt_controller(
+                node, state, compatible, reg, device_type, interrupts
             )
-
-            next_pos = 0
-            gic_addresses = []
-            while next_pos < len(reg):
-                start, size, offset = state.parse_range(reg[next_pos:])
-                next_pos += offset
-                start = state.translate_addr(start)
-                gic_addresses.append(start)
-
-            if gic_version <= 2:
-
-                try:
-                    gicd_base, gicc_base, gich_base, gicv_base = gic_addresses
-                except Exception:
-                    self.logger.warning(
-                        "GIC %s does not have virtualization extensions",
-                        node.name,
-                    )
-            else:
-                (
-                    gicd_base,
-                    gicr_base,
-                    gicc_base,
-                    gich_base,
-                    gicv_base,
-                ) = gic_addresses
-
-            gic = GIC(
-                gic_version=gic_version,
-                maintenance_irq=maintenance_irq,
-                gicd_base=gicd_base,
-                gicc_base=gicc_base,
-                gich_base=gich_base,
-                gicv_base=gicv_base,
-                gicr_base=gicr_base,
-                interrupts=[],
-            )
-            self.interrupt_controllers.append(gic)
 
         else:
-            device_registers = []
-
-            next_pos = 0
-            while next_pos < len(reg):
-                start, size, offset = state.parse_range(reg[next_pos:])
-                next_pos += offset
-                start = state.translate_addr(start)
-                region = MemoryRegion(
-                    physical_start_addr=start,
-                    virtual_start_addr=start,
-                    size=size,
-                    flags=[
-                        "MEM_READ",
-                        "MEM_WRITE",
-                        "MEM_IO",
-                        "MEM_IO_8",
-                        "MEM_IO_16",
-                        "MEM_IO_32",
-                        "MEM_IO_64",
-                    ],
-                )
-                device_registers.append(region)
-
-            extracted_interrupts = []
-            if interrupts is not None:
-                if len(interrupts) % 3 == 0:
-                    for start in range(len(interrupts) // 3):
-                        start = start * 3
-                        int_type, int_num, int_meta = interrupts[
-                            start : start + 3
-                        ]
-                        if int_type == 0:
-                            # FIXME: test if int num is always+32
-                            extracted_interrupts.append(int_num + 32)
-            path = node.path + "/" + node.name
-            for device_register in device_registers:
-                device = MemoryRegion(
-                    physical_start_addr=device_register.physical_start_addr,
-                    virtual_start_addr=device_register.virtual_start_addr,
-                    size=device_registers[0].size,
-                    path=path,
-                    compatible=list(compatible),
-                    interrupts=extracted_interrupts,
-                    aliases=self.aliases_reversed[path],
-                    flags=[
-                        "MEM_READ",
-                        "MEM_WRITE",
-                        "MEM_IO",
-                        "MEM_IO_8",
-                        "MEM_IO_16",
-                        "MEM_IO_32",
-                        "MEM_IO_64",
-                    ],
-                )
-
-                name = node.name
-                self._insert_named_region(name, device)
-
-            if len(device_registers) != 1:
-                self.logger.warning(
-                    "Standard device has more than one register %s", node.name
+            if state.memory_mapped:
+                self._extract_mmaped_device(
+                    node, state, compatible, reg, device_type, interrupts
                 )
 
     def _walk_tree(self) -> None:
@@ -419,6 +442,36 @@ class DeviceTreeExtractor:
                             ranges=new_ranges,
                         )
                     )
+            else:
+                # All entries that are not identifiable as memory mapped busses are handled as external
+                for child in node.nodes:
+                    worklist.append(
+                        WalkerState(
+                            child,
+                            address_cells=new_address_cells,
+                            size_cells=new_size_cells,
+                            ranges=[],
+                            memory_mapped=False,
+                        )
+                    )
+
+    def _extract_cpu(self, node):
+        name = node.name
+        num = node.get_property("reg")[0]
+        compatible = node.get_property("compatible").value
+        enable_method = node.get_property("enable-method").value
+        next_level_cache = None
+        # if node.
+        # node.get_property('next-level-cache')
+
+        cpu = CPU(
+            name=name,
+            num=num,
+            compatible=compatible,
+            enable_method=enable_method,
+            next_level_cache=next_level_cache,
+        )
+        self.cpus.append(cpu)
 
     def _add_interrupts(self) -> None:
         interrupts: Set[int] = set()
@@ -503,6 +556,36 @@ class DeviceTreeExtractor:
                 ],
             ),
         )
+
+        cpu_table = []
+        for cpu in self.cpus:
+            cpu_table.append(
+                [
+                    cpu.num,
+                    cpu.name,
+                    cpu.compatible,
+                    cpu.enable_method,
+                    cpu.next_level_cache
+                    if cpu.next_level_cache is not None
+                    else "--",
+                ]
+            )
+        self.logger.info("")
+        self.logger.info("Extracted CPUs:")
+        self.logger.info(
+            "\n%s",
+            tabulate.tabulate(
+                cpu_table,
+                headers=[
+                    "Num",
+                    "Name",
+                    "Compatible",
+                    "Enable Method",
+                    "Next Level Cache",
+                ],
+            ),
+        )
+
         self.logger.info("stdout-path: %s", self.stdout_path)
 
     def run(self) -> None:
@@ -517,5 +600,7 @@ class DeviceTreeExtractor:
                 key=lambda x: (x[1].physical_start_addr, x[0]),
             )
         )
+
+        self.cpus.sort(key=lambda x: x.num)
 
         self._summarize()

@@ -23,6 +23,9 @@ class MemoryRegion(BaseMemoryRegion):
     compatible: List[str] = []
     interrupts: List[int] = []
     aliases: List[str] = []
+    clock_names: List[str] = []
+    clocks: List[str] = []
+    clock_output_names: List[str] = []
 
 
 class GroupedMemoryRegion(MemoryRegion):
@@ -112,6 +115,38 @@ class GIC(BaseModel):
     interrupts: IntegerList
 
 
+class FixedClock(BaseModel):
+    """Clock definition from device tree"""
+
+    name: str
+    clock_cells: int
+    clock_output_names: List[str]
+    compatible: str = "fixed-clock"
+    clock_frequency: List[int]
+
+
+class CPU(BaseModel):
+    name: str
+    num: int
+    compatible: str
+    enable_method: str
+    next_level_cache: Optional[str]
+
+
+class Cache(BaseModel):
+    name: str
+    next_level_cache: Optional[str]
+    waysize: Optional[int]
+    sets: Optional[int]
+    linesize: Optional[int]
+
+
+class SimpleBus(BaseModel):
+    """Memory Mapped Bus from Device Tree"""
+
+    name: str
+
+
 class Board(BaseModel):
     name: str
     board: str
@@ -121,3 +156,4 @@ class Board(BaseModel):
     memory_regions: Dict[str, MemoryRegion]
     interrupt_controllers: List[GIC] = []
     cpuinfo: List[Dict[str, Any]]
+    # clocks: Dict[str, Any]
