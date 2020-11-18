@@ -1839,6 +1839,31 @@ memory_regions:
     clock_names: []
     clocks: []
     clock_output_names: []
+cpuinfo:
+  cpu@0:
+    name: cpu@0
+    num: 0
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
+  cpu@1:
+    name: cpu@1
+    num: 1
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
+  cpu@2:
+    name: cpu@2
+    num: 2
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
+  cpu@3:
+    name: cpu@3
+    num: 3
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
 interrupt_controllers:
 - maintenance_irq: 25
   gic_version: 2
@@ -1848,37 +1873,4 @@ interrupt_controllers:
   gicv_base: 0xff846000
   gicr_base: 0x0
   interrupts: 65,66,72,105,106,107,112,113,114,115,116,117,118,119,120,121,122,123,124,125,129,130,132,134,135,136,137,138,140,141,142,144,149,150,152,153,155,157,158,169,180,189,190,208
-cpuinfo:
-- processor: 0
-  BogoMIPS: 108.0
-  Features: fp asimd evtstrm crc32 cpuid
-  CPU implementer: '0x41'
-  CPU architecture: 8
-  CPU variant: '0x0'
-  CPU part: '0xd08'
-  CPU revision: 3
-- processor: 1
-  BogoMIPS: 108.0
-  Features: fp asimd evtstrm crc32 cpuid
-  CPU implementer: '0x41'
-  CPU architecture: 8
-  CPU variant: '0x0'
-  CPU part: '0xd08'
-  CPU revision: 3
-- processor: 2
-  BogoMIPS: 108.0
-  Features: fp asimd evtstrm crc32 cpuid
-  CPU implementer: '0x41'
-  CPU architecture: 8
-  CPU variant: '0x0'
-  CPU part: '0xd08'
-  CPU revision: 3
-- processor: 3
-  BogoMIPS: 108.0
-  Features: fp asimd evtstrm crc32 cpuid
-  CPU implementer: '0x41'
-  CPU architecture: 8
-  CPU variant: '0x0'
-  CPU part: '0xd08'
-  CPU revision: 3
-clocks: {}
+clock_tree: {}

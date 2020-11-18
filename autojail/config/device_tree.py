@@ -27,20 +27,14 @@ _dts_template = Template(
 	cpus {
 		#address-cells = <1>;
 		#size-cells = <0>;
-
-		cpu2: cpu@2 {
+% for cpu in cpus:
+		${cpu.name}: ${cpu.name} {
 			device_type = "cpu";
-			compatible = "arm,cortex-a72";
-			reg = <2>;
-			enable-method = "psci";
+			compatible = "${cpu.compatible}";
+			reg = <${cpu.num}>;
+			enable-method = "${cpu.enable_method}";
 		};
-
-		cpu3: cpu@3 {
-			device_type = "cpu";
-			compatible = "arm,cortex-a72";
-			reg = <3>;
-			enable-method = "psci";
-		};
+% endfor
 	};
 
 	psci {
@@ -167,10 +161,17 @@ class GenerateDeviceTreePass(BasePass):
                     )
                     pci_interrupts.append(interrupt_data)
 
+            cpus = []
+            assert cell.cpus is not None
+            for cpu in cell.cpus:
+                board_cpus = list(board.cpuinfo.values())
+                cpus.append(board_cpus[cpu])
+
             dts_data = _dts_template.render(
                 pci_mmconfig_base=pci_mmconfig_base,
                 pci_mmconfig_end_bus=pci_mmconfig_end_bus,
                 pci_interrupts=pci_interrupts,
+                cpus=cpus,
             )
 
             dts_name = cell_name

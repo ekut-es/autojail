@@ -1,5 +1,5 @@
 # FIXME:  Dicts should be replaced by OrderedDict when 3.6 support is dropped
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel
 
@@ -115,14 +115,25 @@ class GIC(BaseModel):
     interrupts: IntegerList
 
 
-class FixedClock(BaseModel):
-    """Clock definition from device tree"""
+class Clock(BaseModel):
+    """Clock definition from debugfs"""
 
     name: str
-    clock_cells: int
-    clock_output_names: List[str]
-    compatible: str = "fixed-clock"
-    clock_frequency: List[int]
+    enable_count: int
+    prepare_count: int
+    protect_count: int
+    rate: int
+    accuracy: int
+    phase: int
+    duty_cycle: int
+    derived_clocks: Dict[str, "Clock"] = {}
+    parent: Optional[str]
+
+    def __str__(self) -> str:
+        return f"{self.name}: {self.rate} Hz"
+
+
+Clock.update_forward_refs()
 
 
 class CPU(BaseModel):
@@ -154,6 +165,6 @@ class Board(BaseModel):
     stdout_path: str = ""
     virtual_address_bits: int = 48  # FIXME: that seems correct for most ARM64 Boards
     memory_regions: Dict[str, MemoryRegion]
+    cpuinfo: Dict[str, CPU]
     interrupt_controllers: List[GIC] = []
-    cpuinfo: List[Dict[str, Any]]
-    # clocks: Dict[str, Any]
+    clock_tree: Dict[str, Clock] = {}

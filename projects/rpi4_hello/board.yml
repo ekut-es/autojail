@@ -1,9 +1,27 @@
 name: rpi4_onlyroot
 board: raspberrypi4b-jh1
 pagesize: 0x1000
+stdout_path: serial0
 virtual_address_bits: 48
-cpuinfo: []
 memory_regions:
+  atf@0:
+    physical_start_addr: 0x0
+    virtual_start_addr: 0x0
+    size: 0x80000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: false
+    shared: false
+    next_region:
+    path:
+    compatible: []
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   memory@0:
     physical_start_addr: 0x0
     virtual_start_addr: 0x0
@@ -19,6 +37,9 @@ memory_regions:
     compatible: []
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   memreserve:
     physical_start_addr: 0x3b400000
     virtual_start_addr: 0x3b400000
@@ -34,6 +55,9 @@ memory_regions:
     compatible: []
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   memory@0.0:
     physical_start_addr: 0x40000000
     virtual_start_addr: 0x40000000
@@ -49,6 +73,9 @@ memory_regions:
     compatible: []
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   pcie@7d500000:
     physical_start_addr: 0xfd500000
     virtual_start_addr: 0xfd500000
@@ -73,6 +100,9 @@ memory_regions:
     - 180
     - 180
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   genet@7d580000:
     physical_start_addr: 0xfd580000
     virtual_start_addr: 0xfd580000
@@ -96,6 +126,9 @@ memory_regions:
     - 190
     aliases:
     - ethernet0
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   thermal@7d5d2200:
     physical_start_addr: 0xfd5d2200
     virtual_start_addr: 0xfd5d2200
@@ -118,6 +151,9 @@ memory_regions:
     - 169
     aliases:
     - thermal
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   txp@7e004000:
     physical_start_addr: 0xfe004000
     virtual_start_addr: 0xfe004000
@@ -139,6 +175,9 @@ memory_regions:
     interrupts:
     - 107
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   dma@7e007000:
     physical_start_addr: 0xfe007000
     virtual_start_addr: 0xfe007000
@@ -171,6 +210,9 @@ memory_regions:
     - 120
     aliases:
     - dma
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   dma@7e007b00:
     physical_start_addr: 0xfe007b00
     virtual_start_addr: 0xfe007b00
@@ -195,6 +237,9 @@ memory_regions:
     - 123
     - 124
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   axiperf:
     physical_start_addr: 0xfe009800
     virtual_start_addr: 0xfe009800
@@ -216,6 +261,9 @@ memory_regions:
     interrupts: []
     aliases:
     - axiperf
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   watchdog@7e100000.0:
     physical_start_addr: 0xfe00a000
     virtual_start_addr: 0xfe00a000
@@ -238,6 +286,9 @@ memory_regions:
     interrupts: []
     aliases:
     - watchdog
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   usb@7e980000.0:
     physical_start_addr: 0xfe00b200
     virtual_start_addr: 0xfe00b200
@@ -261,6 +312,9 @@ memory_regions:
     - 72
     aliases:
     - usb
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   mailbox@7e00b840:
     physical_start_addr: 0xfe00b840
     virtual_start_addr: 0xfe00b840
@@ -282,6 +336,9 @@ memory_regions:
     interrupts:
     - 66
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   mailbox@7e00b880:
     physical_start_addr: 0xfe00b880
     virtual_start_addr: 0xfe00b880
@@ -304,6 +361,9 @@ memory_regions:
     - 65
     aliases:
     - mailbox
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   pcie@7d500000.0:
     physical_start_addr: 0xfe00f300
     virtual_start_addr: 0xfe00f300
@@ -328,6 +388,9 @@ memory_regions:
     - 180
     - 180
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   watchdog@7e100000:
     physical_start_addr: 0xfe100000
     virtual_start_addr: 0xfe100000
@@ -350,6 +413,9 @@ memory_regions:
     interrupts: []
     aliases:
     - watchdog
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   cprman@7e101000:
     physical_start_addr: 0xfe101000
     virtual_start_addr: 0xfe101000
@@ -370,6 +436,9 @@ memory_regions:
     - brcm,bcm2711-cprman
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   rng@7e104000:
     physical_start_addr: 0xfe104000
     virtual_start_addr: 0xfe104000
@@ -392,6 +461,9 @@ memory_regions:
     - 157
     aliases:
     - random
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   gpiomem:
     physical_start_addr: 0xfe200000
     virtual_start_addr: 0xfe200000
@@ -412,6 +484,9 @@ memory_regions:
     - brcm,bcm2835-gpiomem
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   serial@7e201000:
     physical_start_addr: 0xfe201000
     virtual_start_addr: 0xfe201000
@@ -437,6 +512,9 @@ memory_regions:
     aliases:
     - serial1
     - uart0
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   serial@7e201400:
     physical_start_addr: 0xfe201400
     virtual_start_addr: 0xfe201400
@@ -460,6 +538,9 @@ memory_regions:
     interrupts:
     - 153
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   serial@7e201600:
     physical_start_addr: 0xfe201600
     virtual_start_addr: 0xfe201600
@@ -483,6 +564,9 @@ memory_regions:
     interrupts:
     - 153
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   serial@7e201800:
     physical_start_addr: 0xfe201800
     virtual_start_addr: 0xfe201800
@@ -506,6 +590,9 @@ memory_regions:
     interrupts:
     - 153
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   serial@7e201a00:
     physical_start_addr: 0xfe201a00
     virtual_start_addr: 0xfe201a00
@@ -529,6 +616,9 @@ memory_regions:
     interrupts:
     - 153
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   mmc@7e202000:
     physical_start_addr: 0xfe202000
     virtual_start_addr: 0xfe202000
@@ -552,6 +642,9 @@ memory_regions:
     aliases:
     - mmc2
     - sdhost
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   i2s@7e203000:
     physical_start_addr: 0xfe203000
     virtual_start_addr: 0xfe203000
@@ -573,6 +666,9 @@ memory_regions:
     interrupts: []
     aliases:
     - i2s
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   spi@7e204000:
     physical_start_addr: 0xfe204000
     virtual_start_addr: 0xfe204000
@@ -595,6 +691,9 @@ memory_regions:
     - 150
     aliases:
     - spi0
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   spi@7e204600:
     physical_start_addr: 0xfe204600
     virtual_start_addr: 0xfe204600
@@ -616,6 +715,9 @@ memory_regions:
     interrupts:
     - 150
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   spi@7e204800:
     physical_start_addr: 0xfe204800
     virtual_start_addr: 0xfe204800
@@ -637,6 +739,9 @@ memory_regions:
     interrupts:
     - 150
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   spi@7e204a00:
     physical_start_addr: 0xfe204a00
     virtual_start_addr: 0xfe204a00
@@ -658,6 +763,9 @@ memory_regions:
     interrupts:
     - 150
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   spi@7e204c00:
     physical_start_addr: 0xfe204c00
     virtual_start_addr: 0xfe204c00
@@ -679,6 +787,9 @@ memory_regions:
     interrupts:
     - 150
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   i2c@7e205000:
     physical_start_addr: 0xfe205000
     virtual_start_addr: 0xfe205000
@@ -702,6 +813,9 @@ memory_regions:
     aliases:
     - i2c0
     - i2c_vc
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   i2c@7e205600:
     physical_start_addr: 0xfe205600
     virtual_start_addr: 0xfe205600
@@ -724,6 +838,9 @@ memory_regions:
     - 149
     aliases:
     - i2c3
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   i2c@7e205800:
     physical_start_addr: 0xfe205800
     virtual_start_addr: 0xfe205800
@@ -746,6 +863,9 @@ memory_regions:
     - 149
     aliases:
     - i2c4
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   i2c@7e205a00:
     physical_start_addr: 0xfe205a00
     virtual_start_addr: 0xfe205a00
@@ -768,6 +888,9 @@ memory_regions:
     - 149
     aliases:
     - i2c5
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   i2c@7e205c00:
     physical_start_addr: 0xfe205c00
     virtual_start_addr: 0xfe205c00
@@ -790,6 +913,9 @@ memory_regions:
     - 149
     aliases:
     - i2c6
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   pixelvalve@7e206000:
     physical_start_addr: 0xfe206000
     virtual_start_addr: 0xfe206000
@@ -811,6 +937,9 @@ memory_regions:
     interrupts:
     - 141
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   pixelvalve@7e207000:
     physical_start_addr: 0xfe207000
     virtual_start_addr: 0xfe207000
@@ -832,6 +961,9 @@ memory_regions:
     interrupts:
     - 142
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   dpi@7e208000:
     physical_start_addr: 0xfe208000
     virtual_start_addr: 0xfe208000
@@ -852,6 +984,9 @@ memory_regions:
     - brcm,bcm2835-dpi
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   dsi@7e209000:
     physical_start_addr: 0xfe209000
     virtual_start_addr: 0xfe209000
@@ -873,6 +1008,9 @@ memory_regions:
     interrupts:
     - 132
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   pwm@7e20c000:
     physical_start_addr: 0xfe20c000
     virtual_start_addr: 0xfe20c000
@@ -893,6 +1031,9 @@ memory_regions:
     - brcm,bcm2835-pwm
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   pwm@7e20c800:
     physical_start_addr: 0xfe20c800
     virtual_start_addr: 0xfe20c800
@@ -913,6 +1054,9 @@ memory_regions:
     - brcm,bcm2835-pwm
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   aux@7e215000:
     physical_start_addr: 0xfe215000
     virtual_start_addr: 0xfe215000
@@ -934,6 +1078,9 @@ memory_regions:
     interrupts: []
     aliases:
     - aux
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   serial@7e215040:
     physical_start_addr: 0xfe215040
     virtual_start_addr: 0xfe215040
@@ -957,6 +1104,9 @@ memory_regions:
     aliases:
     - serial0
     - uart1
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   spi@7e215080:
     physical_start_addr: 0xfe215080
     virtual_start_addr: 0xfe215080
@@ -979,6 +1129,9 @@ memory_regions:
     - 125
     aliases:
     - spi1
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   spi@7e2150c0:
     physical_start_addr: 0xfe2150c0
     virtual_start_addr: 0xfe2150c0
@@ -1001,6 +1154,9 @@ memory_regions:
     - 125
     aliases:
     - spi2
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   mmc@7e300000:
     physical_start_addr: 0xfe300000
     virtual_start_addr: 0xfe300000
@@ -1024,6 +1180,9 @@ memory_regions:
     - 158
     aliases:
     - mmc
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   mmcnr@7e300000:
     physical_start_addr: 0xfe300000
     virtual_start_addr: 0xfe300000
@@ -1047,6 +1206,9 @@ memory_regions:
     - 158
     aliases:
     - mmc1
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   emmc2@7e340000:
     physical_start_addr: 0xfe340000
     virtual_start_addr: 0xfe340000
@@ -1069,6 +1231,9 @@ memory_regions:
     - 158
     aliases:
     - mmc0
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   hvs@7e400000:
     physical_start_addr: 0xfe400000
     virtual_start_addr: 0xfe400000
@@ -1090,6 +1255,9 @@ memory_regions:
     interrupts:
     - 129
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   firmwarekms@7e600000:
     physical_start_addr: 0xfe600000
     virtual_start_addr: 0xfe600000
@@ -1111,6 +1279,9 @@ memory_regions:
     interrupts:
     - 144
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   smi@7e600000:
     physical_start_addr: 0xfe600000
     virtual_start_addr: 0xfe600000
@@ -1132,6 +1303,9 @@ memory_regions:
     interrupts:
     - 144
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   dsi@7e700000:
     physical_start_addr: 0xfe700000
     virtual_start_addr: 0xfe700000
@@ -1153,6 +1327,9 @@ memory_regions:
     interrupts:
     - 140
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   csi@7e800000:
     physical_start_addr: 0xfe800000
     virtual_start_addr: 0xfe800000
@@ -1174,6 +1351,9 @@ memory_regions:
     interrupts:
     - 134
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   csi@7e801000:
     physical_start_addr: 0xfe801000
     virtual_start_addr: 0xfe801000
@@ -1195,6 +1375,9 @@ memory_regions:
     interrupts:
     - 135
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   csi@7e800000.0:
     physical_start_addr: 0xfe802000
     virtual_start_addr: 0xfe802000
@@ -1216,6 +1399,9 @@ memory_regions:
     interrupts:
     - 134
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   csi@7e801000.0:
     physical_start_addr: 0xfe802004
     virtual_start_addr: 0xfe802004
@@ -1237,6 +1423,9 @@ memory_regions:
     interrupts:
     - 135
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   i2c@7e804000:
     physical_start_addr: 0xfe804000
     virtual_start_addr: 0xfe804000
@@ -1261,6 +1450,9 @@ memory_regions:
     - i2c
     - i2c1
     - i2c_arm
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   i2c@7e805000:
     physical_start_addr: 0xfe805000
     virtual_start_addr: 0xfe805000
@@ -1283,6 +1475,9 @@ memory_regions:
     - 149
     aliases:
     - i2c2
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   vec@7e806000:
     physical_start_addr: 0xfe806000
     virtual_start_addr: 0xfe806000
@@ -1304,6 +1499,9 @@ memory_regions:
     interrupts:
     - 155
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   pixelvalve@7e807000:
     physical_start_addr: 0xfe807000
     virtual_start_addr: 0xfe807000
@@ -1325,6 +1523,9 @@ memory_regions:
     interrupts:
     - 138
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   hdmi@7e902000.0:
     physical_start_addr: 0xfe808000
     virtual_start_addr: 0xfe808000
@@ -1347,6 +1548,9 @@ memory_regions:
     - 136
     - 137
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   hdmi@7e902000:
     physical_start_addr: 0xfe902000
     virtual_start_addr: 0xfe902000
@@ -1369,6 +1573,9 @@ memory_regions:
     - 136
     - 137
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   usb@7e980000:
     physical_start_addr: 0xfe980000
     virtual_start_addr: 0xfe980000
@@ -1392,6 +1599,9 @@ memory_regions:
     - 72
     aliases:
     - usb
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   xhci@7e9c0000:
     physical_start_addr: 0xfe9c0000
     virtual_start_addr: 0xfe9c0000
@@ -1413,6 +1623,9 @@ memory_regions:
     interrupts:
     - 208
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   hevc-decoder@7eb00000:
     physical_start_addr: 0xfeb00000
     virtual_start_addr: 0xfeb00000
@@ -1433,6 +1646,9 @@ memory_regions:
     - raspberrypi,rpivid-hevc-decoder
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   rpivid-local-intc@7eb10000:
     physical_start_addr: 0xfeb10000
     virtual_start_addr: 0xfeb10000
@@ -1454,6 +1670,9 @@ memory_regions:
     interrupts:
     - 130
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   h264-decoder@7eb20000:
     physical_start_addr: 0xfeb20000
     virtual_start_addr: 0xfeb20000
@@ -1474,6 +1693,9 @@ memory_regions:
     - raspberrypi,rpivid-h264-decoder
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   vp9-decoder@7eb30000:
     physical_start_addr: 0xfeb30000
     virtual_start_addr: 0xfeb30000
@@ -1494,6 +1716,9 @@ memory_regions:
     - raspberrypi,rpivid-vp9-decoder
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   v3d@7ec04000:
     physical_start_addr: 0xfec00000
     virtual_start_addr: 0xfec00000
@@ -1515,6 +1740,9 @@ memory_regions:
     interrupts:
     - 106
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   v3d@7ec04000.0:
     physical_start_addr: 0xfec04000
     virtual_start_addr: 0xfec04000
@@ -1536,6 +1764,9 @@ memory_regions:
     interrupts:
     - 106
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   watchdog@7e100000.1:
     physical_start_addr: 0xfec11000
     virtual_start_addr: 0xfec11000
@@ -1558,6 +1789,9 @@ memory_regions:
     interrupts: []
     aliases:
     - watchdog
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   axiperf.0:
     physical_start_addr: 0xfee08000
     virtual_start_addr: 0xfee08000
@@ -1579,6 +1813,9 @@ memory_regions:
     interrupts: []
     aliases:
     - axiperf
+    clock_names: []
+    clocks: []
+    clock_output_names: []
   local_intc@40000000:
     physical_start_addr: 0xff800000
     virtual_start_addr: 0xff800000
@@ -1599,6 +1836,34 @@ memory_regions:
     - brcm,bcm2836-l1-intc
     interrupts: []
     aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+cpuinfo:
+  cpu@0:
+    name: cpu@0
+    num: 0
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
+  cpu@1:
+    name: cpu@1
+    num: 1
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
+  cpu@2:
+    name: cpu@2
+    num: 2
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
+  cpu@3:
+    name: cpu@3
+    num: 3
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
 interrupt_controllers:
 - maintenance_irq: 25
   gic_version: 2

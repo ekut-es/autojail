@@ -23,6 +23,7 @@ cells:
     name: "RPI4 net guest"
     debug_console: serial0
     cpus: 2,3
+    flags: [PASSIVE_COMMREG]
 
     memory_regions:
       Boot Memory:
@@ -31,8 +32,6 @@ cells:
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
 
       Main Memory:
-        #physical_start_addr: 0x40000000 # probably not needed
-        #virtual_start_addr: 0x40000000 # probably not needed
         size: 1 GB
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
