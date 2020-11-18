@@ -1,3 +1,4 @@
+# Adapted from https://rosettacode.org/wiki/Visualize_a_tree#Simple_decorated-outline_tree
 from itertools import chain, repeat, starmap
 from operator import add
 
