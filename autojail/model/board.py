@@ -129,9 +129,6 @@ class Clock(BaseModel):
     derived_clocks: Dict[str, "Clock"] = {}
     parent: Optional[str]
 
-    def __str__(self) -> str:
-        return f"{self.name}: {self.rate} Hz"
-
 
 Clock.update_forward_refs()
 

@@ -256,7 +256,9 @@ class BoardInfoExtractor:
         self.logger.info(
             "Extracted Clock Tree:\n%s",
             draw_tree(
-                clocks.values(), lambda x: list(x.derived_clocks.values())
+                clocks.values(),
+                lambda x: list(x.derived_clocks.values()),
+                lambda x: f"{x.name}: {x.rate} Hz",
             ),
         )
 
