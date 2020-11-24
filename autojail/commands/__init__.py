@@ -1,4 +1,5 @@
 from .config import ConfigCommand
+from .explore import ExploreCommand
 from .extract import ExtractCommand
 from .generate import GenerateCommand
 from .init import InitCommand
@@ -10,4 +11,5 @@ __all__ = [
     "GenerateCommand",
     "ConfigCommand",
     "TestCommand",
+    "ExploreCommand",
 ]

@@ -106,6 +106,7 @@ class ShMemNetRegion(BaseModel):
 
 class GIC(BaseModel):
     maintenance_irq: ExpressionInt
+    compatible: List[str]
     gic_version: ExpressionInt
     gicd_base: HexInt
     gicc_base: HexInt

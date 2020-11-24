@@ -6,6 +6,14 @@ from mako.template import Template
 from ..model import Board, JailhouseConfig
 from .passes import BasePass
 
+
+def format_range(val, cells):
+    chunks = [hex(val >> i * 8) for i in range(0, cells)]
+    chunks.reverse()
+
+    return " ".join(chunks)
+
+
 _dts_template = Template(
     r"""
 #include <dt-bindings/interrupt-controller/arm-gic.h>
@@ -13,10 +21,10 @@ _dts_template = Template(
 /dts-v1/;
 
 / {
-	model = "Jailhouse cell on Raspberry Pi 4";
+	model = "Jailhouse cell: ${cell.name}";
 
-	#address-cells = <2>;
-	#size-cells = <2>;
+	#address-cells = <${address_cells}>;
+	#size-cells = <${size_cells}>;
 
 	interrupt-parent = < &gic>;
 
@@ -50,10 +58,10 @@ _dts_template = Template(
 			     <GIC_PPI 10 IRQ_TYPE_LEVEL_HIGH>;
 	};
 
-	gic: interrupt-controller@ff841000 {
-		compatible = "arm,gic-400";
-		reg = <0x0 0xff841000 0x0 0x1000>,
-		      <0x0 0xff842000 0x0 0x2000>;
+	gic: interrupt-controller@${hex(gic.gicd_base)} {
+		compatible = ${",".join((f'"{c}"' for c in gic.compatible))};
+		reg = <${format_range(gic.gicd_base, address_cells)} ${format_range(0x1000, size_cells)}>,
+		      <${format_range(gic.gicc_base, address_cells)} ${format_range(0x2000, size_cells)}>;
 		interrupt-controller;
 		#interrupt-cells = <3>;
 	};
@@ -65,19 +73,23 @@ _dts_template = Template(
 		clock-output-names = "clk500mhz";
 	};
 
-	uart1: serial@fe215040 {
-		compatible = "brcm,bcm2835-aux-uart";
+% for memory_region in memory_regions.values():
+  % if memory_region.compatible:
+	${memory_region.name}: {
+		compatible = ${",".join((f'"{c}"' for c in memory_region.compatible))};
 		reg = <0x0 0xfe215040 0x0 0x40>;
-		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;
+		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;    
 		clocks = < &fixed>;
 		status = "okay";
 	};
+  % endif  
+% endfor    
 
 % if pci_interrupts:
 	pci@${hex(pci_mmconfig_base)} {
 		compatible = "pci-host-ecam-generic";
 		device_type = "pci";
-		bus-range = <0 ${pci_mmconfig_end_bus}>;
+		bus-range = <${format_range(pci_mmconfig_end_bus, address_range)}>;
 		#address-cells = <3>;
 		#size-cells = <2>;
 		#interrupt-cells = <1>;
@@ -114,9 +126,6 @@ class GenerateDeviceTreePass(BasePass):
     ) -> Tuple[Board, JailhouseConfig]:
 
         self.logger.info("Generating inmate device trees")
-        self.logger.warning(
-            "At the moment inmate device trees are only compatible with raspberrypi4b"
-        )
 
         pci_mmconfig_base = None
         pci_mmconfig_end_bus = None
@@ -130,7 +139,7 @@ class GenerateDeviceTreePass(BasePass):
                     )
                     break
 
-        for cell_name, cell in config.cells.items():
+        for _cell_name, cell in config.cells.items():
             if cell.type == "root":
                 continue
             pci_interrupts = []
@@ -168,19 +177,24 @@ class GenerateDeviceTreePass(BasePass):
                 cpus.append(board_cpus[cpu])
 
             dts_data = _dts_template.render(
+                address_cells=2,
+                size_cells=2,
+                cell=cell,
+                gic=board.interrupt_controllers[0],
                 pci_mmconfig_base=pci_mmconfig_base,
                 pci_mmconfig_end_bus=pci_mmconfig_end_bus,
                 pci_interrupts=pci_interrupts,
                 cpus=cpus,
+                format_range=format_range,
             )
 
-            dts_name = cell_name
-            dts_name = cell_name.lower()
+            dts_name = cell.name.lower()
             dts_name = dts_name.replace(" ", "-")
             dts_name += ".dts"
 
-            with open(dts_name, "wb") as dts_file:
-                dts_file.write(dts_data.encode("latin-1"))
+            self.logger.info("Writing %s", dts_name)
+            with open(dts_name, "w") as dts_file:
+                dts_file.write(dts_data)
 
         return board, config
 

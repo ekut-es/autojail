@@ -5,6 +5,7 @@ from cleo.io.console_io import ConsoleIO
 from . import __version__
 from .commands import (
     ConfigCommand,
+    ExploreCommand,
     ExtractCommand,
     GenerateCommand,
     InitCommand,
@@ -32,6 +33,7 @@ class AutojailApp(Application):
         self.add(ConfigCommand())
         self.add(GenerateCommand())
         self.add(TestCommand())
+        self.add(ExploreCommand())
 
 
 app = AutojailApp()

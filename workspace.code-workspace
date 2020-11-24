@@ -11,8 +11,10 @@
     "python.testing.unittestEnabled": true,
     "cSpell.words": [
       "AMDIOMMU",
+      "Clikit",
       "PROTO",
       "TIPVUIOMMU",
+      "archs",
       "mmconfig"
     ]
   }

@@ -281,6 +281,7 @@ class DeviceTreeExtractor:
 
         gic = GIC(
             gic_version=gic_version,
+            compatible=list(compatible),
             maintenance_irq=maintenance_irq,
             gicd_base=gicd_base,
             gicc_base=gicc_base,
@@ -320,6 +321,8 @@ class DeviceTreeExtractor:
     def _extract_mmaped_device(
         self, node, state, compatible, reg, device_type, interrupts
     ) -> None:
+        clocks = node.get_property("clocks")
+        clocks = list(clocks) if clocks else []
         if reg is None:
             return
 
@@ -343,6 +346,7 @@ class DeviceTreeExtractor:
                     "MEM_IO_32",
                     "MEM_IO_64",
                 ],
+                clocks=list(clocks),
             )
             device_registers.append(region)
 
@@ -461,7 +465,7 @@ class DeviceTreeExtractor:
         compatible = node.get_property("compatible").value
         enable_method = node.get_property("enable-method").value
         next_level_cache = None
-        # if node.
+
         # node.get_property('next-level-cache')
 
         cpu = CPU(

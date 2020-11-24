@@ -1866,6 +1866,8 @@ cpuinfo:
     next_level_cache:
 interrupt_controllers:
 - maintenance_irq: 25
+  compatible:
+  - arm,gic-400
   gic_version: 2
   gicd_base: 0xff841000
   gicc_base: 0xff842000
