@@ -6,6 +6,25 @@ from pydantic import BaseModel
 from .datatypes import ByteSize, ExpressionInt, HexInt, IntegerList
 
 
+class Interrupt(BaseModel):
+    """Class representing an interrupt for an ARM GIC"""
+
+    type: HexInt
+    num: int
+    flags: HexInt
+
+    def to_jailhouse(self):
+        """ Transfers the interrupt numbers to jailhouse linear space 
+            PPI = num + 16
+            SPI = num + 32
+        """
+        if self.type == 0:
+            return self.num + 32
+        elif self.type == 1:
+            return self.num + 16
+        return self.num
+
+
 class BaseMemoryRegion(BaseModel):
     """Base class for memory region definitions"""
 
@@ -18,10 +37,9 @@ class BaseMemoryRegion(BaseModel):
 
 
 class MemoryRegion(BaseMemoryRegion):
-    next_region: Optional[str] = None
     path: Optional[str]
     compatible: List[str] = []
-    interrupts: List[int] = []
+    interrupts: List[Interrupt] = []
     aliases: List[str] = []
     clock_names: List[str] = []
     clocks: List[str] = []
@@ -99,10 +117,6 @@ class ShMemNetRegion(BaseModel):
     def allocatable(self):
         return False
 
-    @property
-    def next_region(self):
-        return []
-
 
 class GIC(BaseModel):
     maintenance_irq: ExpressionInt
@@ -122,11 +136,11 @@ class Clock(BaseModel):
     name: str
     enable_count: int
     prepare_count: int
-    protect_count: int
+    protect_count: Optional[int]
     rate: int
     accuracy: int
     phase: int
-    duty_cycle: int
+    duty_cycle: Optional[int]
     derived_clocks: Dict[str, "Clock"] = {}
     parent: Optional[str]
 

@@ -91,7 +91,7 @@ class LowerDevicesPass(BasePass):
             for memory_region in cell.memory_regions.values():
                 if isinstance(memory_region, MemoryRegion):
                     for interrupt in memory_region.interrupts:
-                        irqchip.interrupts.append(interrupt)
+                        irqchip.interrupts.append(interrupt.to_jailhouse())
             irqchip.interrupts.sort()
 
     def __call__(

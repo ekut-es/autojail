@@ -3,6 +3,8 @@ from typing import Tuple
 from dataclasses import dataclass
 from mako.template import Template
 
+from autojail.model.board import GroupedMemoryRegion
+
 from ..model import Board, JailhouseConfig
 from .passes import BasePass
 
@@ -73,34 +75,36 @@ _dts_template = Template(
 		clock-output-names = "clk500mhz";
 	};
 
-% for memory_region in memory_regions.values():
-  % if memory_region.compatible:
-	${memory_region.name}: {
-		compatible = ${",".join((f'"{c}"' for c in memory_region.compatible))};
-		reg = <0x0 0xfe215040 0x0 0x40>;
-		interrupts = <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH>;    
-		clocks = < &fixed>;
-		status = "okay";
+% for name, memory_region in device_regions.items():
+    ${name}: {
+        compatible = ${",".join((f'"{c}"' for c in memory_region.compatible))};
+        reg = <${format_range(memory_region.virtual_start_addr, address_cells)} ${format_range(memory_region.size, size_cells)}>;
+        interrupts = <
+	  %for interrupt in memory_region.interrupts:
+                        ${interrupt.type} ${interrupt.num} ${interrupt.flags}
+      %endfor
+                      >;
+        clocks = < &fixed>;
+        status = "okay";
 	};
-  % endif  
 % endfor    
 
 % if pci_interrupts:
-	pci@${hex(pci_mmconfig_base)} {
-		compatible = "pci-host-ecam-generic";
-		device_type = "pci";
-		bus-range = <${format_range(pci_mmconfig_end_bus, address_range)}>;
-		#address-cells = <3>;
-		#size-cells = <2>;
-		#interrupt-cells = <1>;
-		interrupt-map-mask = <0 0 0 7>;
-		interrupt-map =  
+    pci@${hex(pci_mmconfig_base)} {
+        compatible = "pci-host-ecam-generic";
+        device_type = "pci";
+        bus-range = <${format_range(pci_mmconfig_end_bus, address_range)}>;
+        #address-cells = <3>;
+        #size-cells = <2>;
+        #interrupt-cells = <1>;
+        interrupt-map-mask = <0 0 0 7>;
+        interrupt-map =  
         %for interrupt in pci_interrupts:
-                 <0 0 0 ${interrupt.device + 1} &${interrupt.controller} GIC_SPI ${interrupt.interrupt} IRQ_TYPE_EDGE_RISING>${',' if loop.index < len(pci_interrupts) - 1 else ';'}
+            <0 0 0 ${interrupt.device + 1} &${interrupt.controller} GIC_SPI ${interrupt.interrupt} IRQ_TYPE_EDGE_RISING>${',' if loop.index < len(pci_interrupts) - 1 else ';'}
         %endfor
-		reg = <0x0 ${hex(pci_mmconfig_base)} 0x0 0x100000>;
-		ranges =
-			<0x02000000 0x00 0x10000000 0x0 0x10000000 0x00 0x10000>;
+        reg = <0x0 ${hex(pci_mmconfig_base)} 0x0 0x100000>;
+        ranges =
+             <0x02000000 0x00 0x10000000 0x0 0x10000000 0x00 0x10000>;
 	};
 % endif
 	
@@ -120,6 +124,20 @@ class PCIInterruptData:
 
 class GenerateDeviceTreePass(BasePass):
     """Generate a device tree for inmates"""
+
+    def _prepare_device_regions(self, memory_regions):
+        worklist = [(name, region) for name, region in memory_regions.items()]
+        device_regions = {}
+
+        while worklist:
+            name, region = worklist.pop()
+            if isinstance(region, GroupedMemoryRegion):
+                worklist.extend(region.regions)
+            else:
+                if region.compatible:
+                    device_regions[name] = region
+
+        return device_regions
 
     def __call__(
         self, board: Board, config: JailhouseConfig
@@ -176,10 +194,13 @@ class GenerateDeviceTreePass(BasePass):
                 board_cpus = list(board.cpuinfo.values())
                 cpus.append(board_cpus[cpu])
 
+            device_regions = self._prepare_device_regions(cell.memory_regions)
+
             dts_data = _dts_template.render(
                 address_cells=2,
                 size_cells=2,
                 cell=cell,
+                device_regions=device_regions,
                 gic=board.interrupt_controllers[0],
                 pci_mmconfig_base=pci_mmconfig_base,
                 pci_mmconfig_end_bus=pci_mmconfig_end_bus,

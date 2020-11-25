@@ -40,7 +40,7 @@ memory_regions:
     clock_names: []
     clocks: []
     clock_output_names: []
-  memreserve:
+  /:
     physical_start_addr: 0x3b400000
     virtual_start_addr: 0x3b400000
     size: 0x4c00000
@@ -97,8 +97,12 @@ memory_regions:
     - brcm,bcm7445-pcie
     - brcm,pci-plat-dev
     interrupts:
-    - 180
-    - 180
+    - type: 0x0
+      num: 148
+      flags: 0x4
+    - type: 0x0
+      num: 148
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -122,8 +126,12 @@ memory_regions:
     compatible:
     - brcm,genet-v5
     interrupts:
-    - 189
-    - 190
+    - type: 0x0
+      num: 157
+      flags: 0x4
+    - type: 0x0
+      num: 158
+      flags: 0x4
     aliases:
     - ethernet0
     clock_names: []
@@ -148,7 +156,9 @@ memory_regions:
     compatible:
     - brcm,avs-tmon-bcm2838
     interrupts:
-    - 169
+    - type: 0x0
+      num: 137
+      flags: 0x4
     aliases:
     - thermal
     clock_names: []
@@ -173,7 +183,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-txp
     interrupts:
-    - 107
+    - type: 0x0
+      num: 75
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -197,17 +209,39 @@ memory_regions:
     compatible:
     - brcm,bcm2835-dma
     interrupts:
-    - 112
-    - 113
-    - 114
-    - 115
-    - 116
-    - 117
-    - 118
-    - 119
-    - 119
-    - 120
-    - 120
+    - type: 0x0
+      num: 80
+      flags: 0x4
+    - type: 0x0
+      num: 81
+      flags: 0x4
+    - type: 0x0
+      num: 82
+      flags: 0x4
+    - type: 0x0
+      num: 83
+      flags: 0x4
+    - type: 0x0
+      num: 84
+      flags: 0x4
+    - type: 0x0
+      num: 85
+      flags: 0x4
+    - type: 0x0
+      num: 86
+      flags: 0x4
+    - type: 0x0
+      num: 87
+      flags: 0x4
+    - type: 0x0
+      num: 87
+      flags: 0x4
+    - type: 0x0
+      num: 88
+      flags: 0x4
+    - type: 0x0
+      num: 88
+      flags: 0x4
     aliases:
     - dma
     clock_names: []
@@ -232,10 +266,18 @@ memory_regions:
     compatible:
     - brcm,bcm2838-dma
     interrupts:
-    - 121
-    - 122
-    - 123
-    - 124
+    - type: 0x0
+      num: 89
+      flags: 0x4
+    - type: 0x0
+      num: 90
+      flags: 0x4
+    - type: 0x0
+      num: 91
+      flags: 0x4
+    - type: 0x0
+      num: 92
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -308,8 +350,12 @@ memory_regions:
     compatible:
     - brcm,bcm2708-usb
     interrupts:
-    - 105
-    - 72
+    - type: 0x0
+      num: 73
+      flags: 0x4
+    - type: 0x0
+      num: 40
+      flags: 0x4
     aliases:
     - usb
     clock_names: []
@@ -334,7 +380,9 @@ memory_regions:
     compatible:
     - brcm,bcm2838-vchiq
     interrupts:
-    - 66
+    - type: 0x0
+      num: 34
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -358,7 +406,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-mbox
     interrupts:
-    - 65
+    - type: 0x0
+      num: 33
+      flags: 0x4
     aliases:
     - mailbox
     clock_names: []
@@ -385,8 +435,12 @@ memory_regions:
     - brcm,bcm7445-pcie
     - brcm,pci-plat-dev
     interrupts:
-    - 180
-    - 180
+    - type: 0x0
+      num: 148
+      flags: 0x4
+    - type: 0x0
+      num: 148
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -458,7 +512,9 @@ memory_regions:
     compatible:
     - brcm,bcm2838-rng200
     interrupts:
-    - 157
+    - type: 0x0
+      num: 125
+      flags: 0x4
     aliases:
     - random
     clock_names: []
@@ -508,7 +564,9 @@ memory_regions:
     - arm,pl011
     - arm,primecell
     interrupts:
-    - 153
+    - type: 0x0
+      num: 121
+      flags: 0x4
     aliases:
     - serial1
     - uart0
@@ -536,7 +594,9 @@ memory_regions:
     - arm,pl011
     - arm,primecell
     interrupts:
-    - 153
+    - type: 0x0
+      num: 121
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -562,7 +622,9 @@ memory_regions:
     - arm,pl011
     - arm,primecell
     interrupts:
-    - 153
+    - type: 0x0
+      num: 121
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -588,7 +650,9 @@ memory_regions:
     - arm,pl011
     - arm,primecell
     interrupts:
-    - 153
+    - type: 0x0
+      num: 121
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -614,7 +678,9 @@ memory_regions:
     - arm,pl011
     - arm,primecell
     interrupts:
-    - 153
+    - type: 0x0
+      num: 121
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -638,7 +704,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-sdhost
     interrupts:
-    - 152
+    - type: 0x0
+      num: 120
+      flags: 0x4
     aliases:
     - mmc2
     - sdhost
@@ -688,7 +756,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-spi
     interrupts:
-    - 150
+    - type: 0x0
+      num: 118
+      flags: 0x4
     aliases:
     - spi0
     clock_names: []
@@ -713,7 +783,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-spi
     interrupts:
-    - 150
+    - type: 0x0
+      num: 118
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -737,7 +809,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-spi
     interrupts:
-    - 150
+    - type: 0x0
+      num: 118
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -761,7 +835,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-spi
     interrupts:
-    - 150
+    - type: 0x0
+      num: 118
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -785,7 +861,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-spi
     interrupts:
-    - 150
+    - type: 0x0
+      num: 118
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -809,7 +887,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
-    - 149
+    - type: 0x0
+      num: 117
+      flags: 0x4
     aliases:
     - i2c0
     - i2c_vc
@@ -835,7 +915,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
-    - 149
+    - type: 0x0
+      num: 117
+      flags: 0x4
     aliases:
     - i2c3
     clock_names: []
@@ -860,7 +942,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
-    - 149
+    - type: 0x0
+      num: 117
+      flags: 0x4
     aliases:
     - i2c4
     clock_names: []
@@ -885,7 +969,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
-    - 149
+    - type: 0x0
+      num: 117
+      flags: 0x4
     aliases:
     - i2c5
     clock_names: []
@@ -910,7 +996,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
-    - 149
+    - type: 0x0
+      num: 117
+      flags: 0x4
     aliases:
     - i2c6
     clock_names: []
@@ -935,7 +1023,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-pixelvalve0
     interrupts:
-    - 141
+    - type: 0x0
+      num: 109
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -959,7 +1049,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-pixelvalve1
     interrupts:
-    - 142
+    - type: 0x0
+      num: 110
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1006,7 +1098,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-dsi0
     interrupts:
-    - 132
+    - type: 0x0
+      num: 100
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1100,7 +1194,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-aux-uart
     interrupts:
-    - 125
+    - type: 0x0
+      num: 93
+      flags: 0x4
     aliases:
     - serial0
     - uart1
@@ -1126,7 +1222,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-aux-spi
     interrupts:
-    - 125
+    - type: 0x0
+      num: 93
+      flags: 0x4
     aliases:
     - spi1
     clock_names: []
@@ -1151,7 +1249,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-aux-spi
     interrupts:
-    - 125
+    - type: 0x0
+      num: 93
+      flags: 0x4
     aliases:
     - spi2
     clock_names: []
@@ -1177,7 +1277,9 @@ memory_regions:
     - brcm,bcm2835-mmc
     - brcm,bcm2835-sdhci
     interrupts:
-    - 158
+    - type: 0x0
+      num: 126
+      flags: 0x4
     aliases:
     - mmc
     clock_names: []
@@ -1203,7 +1305,9 @@ memory_regions:
     - brcm,bcm2835-mmc
     - brcm,bcm2835-sdhci
     interrupts:
-    - 158
+    - type: 0x0
+      num: 126
+      flags: 0x4
     aliases:
     - mmc1
     clock_names: []
@@ -1228,7 +1332,9 @@ memory_regions:
     compatible:
     - brcm,bcm2711-emmc2
     interrupts:
-    - 158
+    - type: 0x0
+      num: 126
+      flags: 0x4
     aliases:
     - mmc0
     clock_names: []
@@ -1253,7 +1359,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-hvs
     interrupts:
-    - 129
+    - type: 0x0
+      num: 97
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1277,7 +1385,9 @@ memory_regions:
     compatible:
     - raspberrypi,rpi-firmware-kms
     interrupts:
-    - 144
+    - type: 0x0
+      num: 112
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1301,7 +1411,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-smi
     interrupts:
-    - 144
+    - type: 0x0
+      num: 112
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1325,7 +1437,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-dsi1
     interrupts:
-    - 140
+    - type: 0x0
+      num: 108
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1349,7 +1463,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
-    - 134
+    - type: 0x0
+      num: 102
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1373,7 +1489,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
-    - 135
+    - type: 0x0
+      num: 103
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1397,7 +1515,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
-    - 134
+    - type: 0x0
+      num: 102
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1421,7 +1541,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
-    - 135
+    - type: 0x0
+      num: 103
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1445,7 +1567,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
-    - 149
+    - type: 0x0
+      num: 117
+      flags: 0x4
     aliases:
     - i2c
     - i2c1
@@ -1472,7 +1596,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
-    - 149
+    - type: 0x0
+      num: 117
+      flags: 0x4
     aliases:
     - i2c2
     clock_names: []
@@ -1497,7 +1623,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-vec
     interrupts:
-    - 155
+    - type: 0x0
+      num: 123
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1521,7 +1649,9 @@ memory_regions:
     compatible:
     - brcm,bcm2835-pixelvalve2
     interrupts:
-    - 138
+    - type: 0x0
+      num: 106
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1545,8 +1675,12 @@ memory_regions:
     compatible:
     - brcm,bcm2835-hdmi
     interrupts:
-    - 136
-    - 137
+    - type: 0x0
+      num: 104
+      flags: 0x4
+    - type: 0x0
+      num: 105
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1570,8 +1704,12 @@ memory_regions:
     compatible:
     - brcm,bcm2835-hdmi
     interrupts:
-    - 136
-    - 137
+    - type: 0x0
+      num: 104
+      flags: 0x4
+    - type: 0x0
+      num: 105
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1595,8 +1733,12 @@ memory_regions:
     compatible:
     - brcm,bcm2708-usb
     interrupts:
-    - 105
-    - 72
+    - type: 0x0
+      num: 73
+      flags: 0x4
+    - type: 0x0
+      num: 40
+      flags: 0x4
     aliases:
     - usb
     clock_names: []
@@ -1621,7 +1763,9 @@ memory_regions:
     compatible:
     - generic-xhci
     interrupts:
-    - 208
+    - type: 0x0
+      num: 176
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1668,7 +1812,9 @@ memory_regions:
     compatible:
     - raspberrypi,rpivid-local-intc
     interrupts:
-    - 130
+    - type: 0x0
+      num: 98
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1738,7 +1884,9 @@ memory_regions:
     compatible:
     - brcm,2711-v3d
     interrupts:
-    - 106
+    - type: 0x0
+      num: 74
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -1762,7 +1910,9 @@ memory_regions:
     compatible:
     - brcm,2711-v3d
     interrupts:
-    - 106
+    - type: 0x0
+      num: 74
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []

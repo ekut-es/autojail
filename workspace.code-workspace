@@ -12,10 +12,19 @@
     "cSpell.words": [
       "AMDIOMMU",
       "Clikit",
+      "GICR",
       "PROTO",
       "TIPVUIOMMU",
+      "agic",
       "archs",
-      "mmconfig"
+      "cpus",
+      "gicr",
+      "irqchips",
+      "mmaped",
+      "mmconfig",
+      "munge",
+      "qgic",
+      "tegra"
     ]
   }
 }

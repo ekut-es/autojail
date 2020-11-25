@@ -9,6 +9,8 @@ import tabulate
 from dataclasses import dataclass, field
 from fdt.items import Node
 
+from autojail.model.board import Interrupt
+
 from ..model import CPU, GIC, BaseMemoryRegion, MemoryRegion
 from ..model.datatypes import ByteSize, IntegerList
 from ..utils.logging import getLogger
@@ -195,7 +197,7 @@ class DeviceTreeExtractor:
                 flags=["MEM_READ", "MEM_WRITE", "MEM_EXECUTE"],
             )
 
-            self._insert_named_region("memreserve", region)
+            self._insert_named_region(node.name, region)
 
     def _insert_named_region(
         self, orig_name: str, region: MemoryRegion
@@ -211,7 +213,7 @@ class DeviceTreeExtractor:
     def _extract_interrupt_controller(
         self, node, state, compatible, reg, device_type, interrupts
     ):
-        self.logger.info("Handling interrup controller %s", node.name)
+        self.logger.info("Handling interrupt controller %s", node.name)
         # FIXME: some of the version two's are v1
         gic_versions = {
             "arm,arm11mp-gic": 2,
@@ -355,10 +357,12 @@ class DeviceTreeExtractor:
             if len(interrupts) % 3 == 0:
                 for start in range(len(interrupts) // 3):
                     start = start * 3
-                    int_type, int_num, int_meta = interrupts[start : start + 3]
-                    if int_type == 0:
-                        # FIXME: test if int num is always+32
-                        extracted_interrupts.append(int_num + 32)
+                    int_type, int_num, int_flags = interrupts[start : start + 3]
+                    interrupt = Interrupt(
+                        type=int_type, num=int_num, flags=int_flags
+                    )
+                    extracted_interrupts.append(interrupt)
+
         path = node.path + "/" + node.name
         for device_register in device_registers:
             device = MemoryRegion(
@@ -481,7 +485,12 @@ class DeviceTreeExtractor:
         interrupts: Set[int] = set()
         for region in self.memory_regions.values():
             interrupts = interrupts.union(
-                set(getattr(region, "interrupts", []))
+                set(
+                    (
+                        interrupt.to_jailhouse()
+                        for interrupt in getattr(region, "interrupts", [])
+                    )
+                )
             )
 
         interrupt_list = list(sorted(interrupts))
@@ -505,7 +514,10 @@ class DeviceTreeExtractor:
                     hex(region.physical_start_addr + region.size),
                     region.size.human_readable(),
                     ",".join(
-                        (str(x) for x in getattr(region, "interrupts", []))
+                        (
+                            str(x.to_jailhouse())
+                            for x in getattr(region, "interrupts", [])
+                        )
                     ),
                     getattr(region, "path", ""),
                 )
