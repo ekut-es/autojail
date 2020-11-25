@@ -14,7 +14,6 @@ memory_regions:
     - MEM_EXECUTE
     allocatable: false
     shared: false
-    next_region:
     path:
     compatible: []
     interrupts: []
@@ -32,7 +31,6 @@ memory_regions:
     - MEM_EXECUTE
     allocatable: true
     shared: false
-    next_region:
     path:
     compatible: []
     interrupts: []
@@ -50,7 +48,6 @@ memory_regions:
     - MEM_EXECUTE
     allocatable: false
     shared: false
-    next_region:
     path:
     compatible: []
     interrupts: []
@@ -68,7 +65,6 @@ memory_regions:
     - MEM_EXECUTE
     allocatable: true
     shared: false
-    next_region:
     path:
     compatible: []
     interrupts: []
@@ -90,7 +86,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /scb/pcie@7d500000
     compatible:
     - brcm,bcm7211-pcie
@@ -121,7 +116,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /scb/genet@7d580000
     compatible:
     - brcm,genet-v5
@@ -151,7 +145,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/thermal@7d5d2200
     compatible:
     - brcm,avs-tmon-bcm2838
@@ -162,7 +155,9 @@ memory_regions:
     aliases:
     - thermal
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '27'
     clock_output_names: []
   txp@7e004000:
     physical_start_addr: 0xfe004000
@@ -178,7 +173,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/txp@7e004000
     compatible:
     - brcm,bcm2835-txp
@@ -204,7 +198,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/dma@7e007000
     compatible:
     - brcm,bcm2835-dma
@@ -261,7 +254,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /scb/dma@7e007b00
     compatible:
     - brcm,bcm2838-dma
@@ -296,7 +288,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/axiperf
     compatible:
     - brcm,bcm2835-axiperf
@@ -320,7 +311,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/watchdog@7e100000
     compatible:
     - brcm,bcm2835-pm
@@ -329,7 +319,15 @@ memory_regions:
     aliases:
     - watchdog
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '21'
+    - '3'
+    - '29'
+    - '3'
+    - '23'
+    - '3'
+    - '22'
     clock_output_names: []
   usb@7e980000.0:
     physical_start_addr: 0xfe00b200
@@ -345,7 +343,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/usb@7e980000
     compatible:
     - brcm,bcm2708-usb
@@ -359,7 +356,8 @@ memory_regions:
     aliases:
     - usb
     clock_names: []
-    clocks: []
+    clocks:
+    - '22'
     clock_output_names: []
   mailbox@7e00b840:
     physical_start_addr: 0xfe00b840
@@ -375,7 +373,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /scb/mailbox@7e00b840
     compatible:
     - brcm,bcm2838-vchiq
@@ -401,7 +398,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/mailbox@7e00b880
     compatible:
     - brcm,bcm2835-mbox
@@ -428,7 +424,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /scb/pcie@7d500000
     compatible:
     - brcm,bcm7211-pcie
@@ -459,7 +454,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/watchdog@7e100000
     compatible:
     - brcm,bcm2835-pm
@@ -468,7 +462,15 @@ memory_regions:
     aliases:
     - watchdog
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '21'
+    - '3'
+    - '29'
+    - '3'
+    - '23'
+    - '3'
+    - '22'
     clock_output_names: []
   cprman@7e101000:
     physical_start_addr: 0xfe101000
@@ -484,14 +486,26 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/cprman@7e101000
     compatible:
     - brcm,bcm2711-cprman
     interrupts: []
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '4'
+    - '5'
+    - '0'
+    - '5'
+    - '1'
+    - '5'
+    - '2'
+    - '6'
+    - '0'
+    - '6'
+    - '1'
+    - '6'
+    - '2'
     clock_output_names: []
   rng@7e104000:
     physical_start_addr: 0xfe104000
@@ -507,7 +521,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/rng@7e104000
     compatible:
     - brcm,bcm2838-rng200
@@ -534,7 +547,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/gpiomem
     compatible:
     - brcm,bcm2835-gpiomem
@@ -557,7 +569,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/serial@7e201000
     compatible:
     - brcm,bcm2835-pl011
@@ -571,7 +582,11 @@ memory_regions:
     - serial1
     - uart0
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '19'
+    - '3'
+    - '20'
     clock_output_names: []
   serial@7e201400:
     physical_start_addr: 0xfe201400
@@ -587,7 +602,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/serial@7e201400
     compatible:
     - brcm,bcm2835-pl011
@@ -599,7 +613,11 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '19'
+    - '3'
+    - '20'
     clock_output_names: []
   serial@7e201600:
     physical_start_addr: 0xfe201600
@@ -615,7 +633,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/serial@7e201600
     compatible:
     - brcm,bcm2835-pl011
@@ -627,7 +644,11 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '19'
+    - '3'
+    - '20'
     clock_output_names: []
   serial@7e201800:
     physical_start_addr: 0xfe201800
@@ -643,7 +664,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/serial@7e201800
     compatible:
     - brcm,bcm2835-pl011
@@ -655,7 +675,11 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '19'
+    - '3'
+    - '20'
     clock_output_names: []
   serial@7e201a00:
     physical_start_addr: 0xfe201a00
@@ -671,7 +695,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/serial@7e201a00
     compatible:
     - brcm,bcm2835-pl011
@@ -683,7 +706,11 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '19'
+    - '3'
+    - '20'
     clock_output_names: []
   mmc@7e202000:
     physical_start_addr: 0xfe202000
@@ -699,7 +726,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/mmc@7e202000
     compatible:
     - brcm,bcm2835-sdhost
@@ -711,7 +737,9 @@ memory_regions:
     - mmc2
     - sdhost
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   i2s@7e203000:
     physical_start_addr: 0xfe203000
@@ -727,7 +755,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/i2s@7e203000
     compatible:
     - brcm,bcm2835-i2s
@@ -735,7 +762,9 @@ memory_regions:
     aliases:
     - i2s
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '31'
     clock_output_names: []
   spi@7e204000:
     physical_start_addr: 0xfe204000
@@ -751,7 +780,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/spi@7e204000
     compatible:
     - brcm,bcm2835-spi
@@ -762,7 +790,9 @@ memory_regions:
     aliases:
     - spi0
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   spi@7e204600:
     physical_start_addr: 0xfe204600
@@ -778,7 +808,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/spi@7e204600
     compatible:
     - brcm,bcm2835-spi
@@ -788,7 +817,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   spi@7e204800:
     physical_start_addr: 0xfe204800
@@ -804,7 +835,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/spi@7e204800
     compatible:
     - brcm,bcm2835-spi
@@ -814,7 +844,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   spi@7e204a00:
     physical_start_addr: 0xfe204a00
@@ -830,7 +862,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/spi@7e204a00
     compatible:
     - brcm,bcm2835-spi
@@ -840,7 +871,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   spi@7e204c00:
     physical_start_addr: 0xfe204c00
@@ -856,7 +889,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/spi@7e204c00
     compatible:
     - brcm,bcm2835-spi
@@ -866,7 +898,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   i2c@7e205000:
     physical_start_addr: 0xfe205000
@@ -882,7 +916,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/i2c@7e205000
     compatible:
     - brcm,bcm2835-i2c
@@ -894,7 +927,9 @@ memory_regions:
     - i2c0
     - i2c_vc
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   i2c@7e205600:
     physical_start_addr: 0xfe205600
@@ -910,7 +945,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/i2c@7e205600
     compatible:
     - brcm,bcm2835-i2c
@@ -921,7 +955,9 @@ memory_regions:
     aliases:
     - i2c3
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   i2c@7e205800:
     physical_start_addr: 0xfe205800
@@ -937,7 +973,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/i2c@7e205800
     compatible:
     - brcm,bcm2835-i2c
@@ -948,7 +983,9 @@ memory_regions:
     aliases:
     - i2c4
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   i2c@7e205a00:
     physical_start_addr: 0xfe205a00
@@ -964,7 +1001,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/i2c@7e205a00
     compatible:
     - brcm,bcm2835-i2c
@@ -975,7 +1011,9 @@ memory_regions:
     aliases:
     - i2c5
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   i2c@7e205c00:
     physical_start_addr: 0xfe205c00
@@ -991,7 +1029,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/i2c@7e205c00
     compatible:
     - brcm,bcm2835-i2c
@@ -1002,7 +1039,9 @@ memory_regions:
     aliases:
     - i2c6
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   pixelvalve@7e206000:
     physical_start_addr: 0xfe206000
@@ -1018,7 +1057,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/pixelvalve@7e206000
     compatible:
     - brcm,bcm2835-pixelvalve0
@@ -1044,7 +1082,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/pixelvalve@7e207000
     compatible:
     - brcm,bcm2835-pixelvalve1
@@ -1070,14 +1107,17 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/dpi@7e208000
     compatible:
     - brcm,bcm2835-dpi
     interrupts: []
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
+    - '3'
+    - '44'
     clock_output_names: []
   dsi@7e209000:
     physical_start_addr: 0xfe209000
@@ -1093,7 +1133,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/dsi@7e209000
     compatible:
     - brcm,bcm2835-dsi0
@@ -1103,7 +1142,13 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '32'
+    - '3'
+    - '47'
+    - '3'
+    - '49'
     clock_output_names: []
   pwm@7e20c000:
     physical_start_addr: 0xfe20c000
@@ -1119,14 +1164,15 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/pwm@7e20c000
     compatible:
     - brcm,bcm2835-pwm
     interrupts: []
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '30'
     clock_output_names: []
   pwm@7e20c800:
     physical_start_addr: 0xfe20c800
@@ -1142,14 +1188,15 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/pwm@7e20c800
     compatible:
     - brcm,bcm2835-pwm
     interrupts: []
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '30'
     clock_output_names: []
   aux@7e215000:
     physical_start_addr: 0xfe215000
@@ -1165,7 +1212,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/aux@7e215000
     compatible:
     - brcm,bcm2835-aux
@@ -1173,7 +1219,9 @@ memory_regions:
     aliases:
     - aux
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   serial@7e215040:
     physical_start_addr: 0xfe215040
@@ -1189,7 +1237,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/serial@7e215040
     compatible:
     - brcm,bcm2835-aux-uart
@@ -1201,7 +1248,9 @@ memory_regions:
     - serial0
     - uart1
     clock_names: []
-    clocks: []
+    clocks:
+    - '18'
+    - '0'
     clock_output_names: []
   spi@7e215080:
     physical_start_addr: 0xfe215080
@@ -1217,7 +1266,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/spi@7e215080
     compatible:
     - brcm,bcm2835-aux-spi
@@ -1228,7 +1276,9 @@ memory_regions:
     aliases:
     - spi1
     clock_names: []
-    clocks: []
+    clocks:
+    - '18'
+    - '1'
     clock_output_names: []
   spi@7e2150c0:
     physical_start_addr: 0xfe2150c0
@@ -1244,7 +1294,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/spi@7e2150c0
     compatible:
     - brcm,bcm2835-aux-spi
@@ -1255,7 +1304,9 @@ memory_regions:
     aliases:
     - spi2
     clock_names: []
-    clocks: []
+    clocks:
+    - '18'
+    - '2'
     clock_output_names: []
   mmc@7e300000:
     physical_start_addr: 0xfe300000
@@ -1271,7 +1322,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/mmc@7e300000
     compatible:
     - brcm,bcm2835-mmc
@@ -1283,7 +1333,9 @@ memory_regions:
     aliases:
     - mmc
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '28'
     clock_output_names: []
   mmcnr@7e300000:
     physical_start_addr: 0xfe300000
@@ -1299,7 +1351,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/mmcnr@7e300000
     compatible:
     - brcm,bcm2835-mmc
@@ -1311,7 +1362,9 @@ memory_regions:
     aliases:
     - mmc1
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '28'
     clock_output_names: []
   emmc2@7e340000:
     physical_start_addr: 0xfe340000
@@ -1327,7 +1380,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/emmc2@7e340000
     compatible:
     - brcm,bcm2711-emmc2
@@ -1338,7 +1390,9 @@ memory_regions:
     aliases:
     - mmc0
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '51'
     clock_output_names: []
   hvs@7e400000:
     physical_start_addr: 0xfe400000
@@ -1354,7 +1408,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/hvs@7e400000
     compatible:
     - brcm,bcm2835-hvs
@@ -1380,7 +1433,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/firmwarekms@7e600000
     compatible:
     - raspberrypi,rpi-firmware-kms
@@ -1406,7 +1458,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/smi@7e600000
     compatible:
     - brcm,bcm2835-smi
@@ -1416,7 +1467,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '42'
     clock_output_names: []
   dsi@7e700000:
     physical_start_addr: 0xfe700000
@@ -1432,7 +1485,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/dsi@7e700000
     compatible:
     - brcm,bcm2835-dsi1
@@ -1442,7 +1494,13 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '35'
+    - '3'
+    - '48'
+    - '3'
+    - '50'
     clock_output_names: []
   csi@7e800000:
     physical_start_addr: 0xfe800000
@@ -1458,7 +1516,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/csi@7e800000
     compatible:
     - brcm,bcm2835-unicam
@@ -1468,7 +1525,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '45'
     clock_output_names: []
   csi@7e801000:
     physical_start_addr: 0xfe801000
@@ -1484,7 +1543,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/csi@7e801000
     compatible:
     - brcm,bcm2835-unicam
@@ -1494,7 +1552,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '46'
     clock_output_names: []
   csi@7e800000.0:
     physical_start_addr: 0xfe802000
@@ -1510,7 +1570,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/csi@7e800000
     compatible:
     - brcm,bcm2835-unicam
@@ -1520,7 +1579,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '45'
     clock_output_names: []
   csi@7e801000.0:
     physical_start_addr: 0xfe802004
@@ -1536,7 +1597,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/csi@7e801000
     compatible:
     - brcm,bcm2835-unicam
@@ -1546,7 +1606,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '46'
     clock_output_names: []
   i2c@7e804000:
     physical_start_addr: 0xfe804000
@@ -1562,7 +1624,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/i2c@7e804000
     compatible:
     - brcm,bcm2835-i2c
@@ -1575,7 +1636,9 @@ memory_regions:
     - i2c1
     - i2c_arm
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   i2c@7e805000:
     physical_start_addr: 0xfe805000
@@ -1591,7 +1654,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/i2c@7e805000
     compatible:
     - brcm,bcm2835-i2c
@@ -1602,7 +1664,9 @@ memory_regions:
     aliases:
     - i2c2
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '20'
     clock_output_names: []
   vec@7e806000:
     physical_start_addr: 0xfe806000
@@ -1618,7 +1682,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/vec@7e806000
     compatible:
     - brcm,bcm2835-vec
@@ -1628,7 +1691,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '24'
     clock_output_names: []
   pixelvalve@7e807000:
     physical_start_addr: 0xfe807000
@@ -1644,7 +1709,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/pixelvalve@7e807000
     compatible:
     - brcm,bcm2835-pixelvalve2
@@ -1670,7 +1734,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/hdmi@7e902000
     compatible:
     - brcm,bcm2835-hdmi
@@ -1683,7 +1746,11 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '16'
+    - '3'
+    - '25'
     clock_output_names: []
   hdmi@7e902000:
     physical_start_addr: 0xfe902000
@@ -1699,7 +1766,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/hdmi@7e902000
     compatible:
     - brcm,bcm2835-hdmi
@@ -1712,7 +1778,11 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '16'
+    - '3'
+    - '25'
     clock_output_names: []
   usb@7e980000:
     physical_start_addr: 0xfe980000
@@ -1728,7 +1798,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/usb@7e980000
     compatible:
     - brcm,bcm2708-usb
@@ -1742,7 +1811,8 @@ memory_regions:
     aliases:
     - usb
     clock_names: []
-    clocks: []
+    clocks:
+    - '22'
     clock_output_names: []
   xhci@7e9c0000:
     physical_start_addr: 0xfe9c0000
@@ -1758,7 +1828,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /scb/xhci@7e9c0000
     compatible:
     - generic-xhci
@@ -1784,7 +1853,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /scb/hevc-decoder@7eb00000
     compatible:
     - raspberrypi,rpivid-hevc-decoder
@@ -1807,7 +1875,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /scb/rpivid-local-intc@7eb10000
     compatible:
     - raspberrypi,rpivid-local-intc
@@ -1833,7 +1900,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /scb/h264-decoder@7eb20000
     compatible:
     - raspberrypi,rpivid-h264-decoder
@@ -1856,7 +1922,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /scb/vp9-decoder@7eb30000
     compatible:
     - raspberrypi,rpivid-vp9-decoder
@@ -1879,7 +1944,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /v3dbus/v3d@7ec04000
     compatible:
     - brcm,2711-v3d
@@ -1889,7 +1953,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '21'
     clock_output_names: []
   v3d@7ec04000.0:
     physical_start_addr: 0xfec04000
@@ -1905,7 +1971,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /v3dbus/v3d@7ec04000
     compatible:
     - brcm,2711-v3d
@@ -1915,7 +1980,9 @@ memory_regions:
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '21'
     clock_output_names: []
   watchdog@7e100000.1:
     physical_start_addr: 0xfec11000
@@ -1931,7 +1998,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/watchdog@7e100000
     compatible:
     - brcm,bcm2835-pm
@@ -1940,7 +2006,15 @@ memory_regions:
     aliases:
     - watchdog
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '21'
+    - '3'
+    - '29'
+    - '3'
+    - '23'
+    - '3'
+    - '22'
     clock_output_names: []
   axiperf.0:
     physical_start_addr: 0xfee08000
@@ -1956,7 +2030,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/axiperf
     compatible:
     - brcm,bcm2835-axiperf
@@ -1980,7 +2053,6 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
-    next_region:
     path: /soc/local_intc@40000000
     compatible:
     - brcm,bcm2836-l1-intc

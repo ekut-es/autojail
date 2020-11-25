@@ -325,6 +325,8 @@ class DeviceTreeExtractor:
     ) -> None:
         clocks = node.get_property("clocks")
         clocks = list(clocks) if clocks else []
+        clock_names = node.get_property("clock_names")
+        clock_names = list(clock_names) if clock_names else []
         if reg is None:
             return
 
@@ -373,6 +375,8 @@ class DeviceTreeExtractor:
                 compatible=list(compatible),
                 interrupts=extracted_interrupts,
                 aliases=self.aliases_reversed[path],
+                clock_names=clock_names,
+                clocks=clocks,
                 flags=[
                     "MEM_READ",
                     "MEM_WRITE",

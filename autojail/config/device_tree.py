@@ -10,6 +10,7 @@ from .passes import BasePass
 
 
 def format_range(val, cells):
+    print(hex(val), cells)
     chunks = [hex(val >> i * 8) for i in range(0, cells)]
     chunks.reverse()
 
@@ -93,7 +94,7 @@ _dts_template = Template(
     pci@${hex(pci_mmconfig_base)} {
         compatible = "pci-host-ecam-generic";
         device_type = "pci";
-        bus-range = <${format_range(pci_mmconfig_end_bus, address_range)}>;
+        bus-range = <${format_range(pci_mmconfig_end_bus, address_cells)}>;
         #address-cells = <3>;
         #size-cells = <2>;
         #interrupt-cells = <1>;
@@ -132,7 +133,8 @@ class GenerateDeviceTreePass(BasePass):
         while worklist:
             name, region = worklist.pop()
             if isinstance(region, GroupedMemoryRegion):
-                worklist.extend(region.regions)
+                for num, sub_region in enumerate(region.regions):
+                    worklist.append((name + "." + str(num), sub_region))
             else:
                 if region.compatible:
                     device_regions[name] = region
@@ -195,6 +197,7 @@ class GenerateDeviceTreePass(BasePass):
                 cpus.append(board_cpus[cpu])
 
             device_regions = self._prepare_device_regions(cell.memory_regions)
+            from devtools import debug
 
             dts_data = _dts_template.render(
                 address_cells=2,
