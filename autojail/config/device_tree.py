@@ -1,9 +1,9 @@
-from typing import Tuple
+from typing import Dict, Tuple
 
 from dataclasses import dataclass
 from mako.template import Template
 
-from autojail.model.board import GroupedMemoryRegion
+from autojail.model.board import DeviceMemoryRegion, GroupedMemoryRegion
 
 from ..model import Board, JailhouseConfig
 from .passes import BasePass
@@ -149,11 +149,20 @@ class GenerateDeviceTreePass(BasePass):
 
         return device_regions
 
+    def _find_clocks(self, device_regions: Dict[str, DeviceMemoryRegion]):
+        for name, device in device_regions:
+            if isinstance(device, DeviceMemoryRegion):
+                if device.clocks:
+                    self.logger.info("Searching clock input for %s", name)
+                    # sys.exit(-1)
+
     def __call__(
         self, board: Board, config: JailhouseConfig
     ) -> Tuple[Board, JailhouseConfig]:
 
         self.logger.info("Generating inmate device trees")
+
+        self.board = board
 
         pci_mmconfig_base = None
         pci_mmconfig_end_bus = None

@@ -1,77 +1,17 @@
 cells:
   root:
     type: root
-    name: "root"
-    flags: [SYS_VIRTUAL_DEBUG_CONSOLE]
-
-    hypervisor_memory:
-      size: 16 MB
-
+    name: Root Cell
+    flags:
+    - SYS_VIRTUAL_DEBUG_CONSOLE
+    hypervisor_memory: {}
     debug_console: serial0
-
-    cpus: 0-3
-
+    cpus: 0,1,2,3
     memory_regions:
-      "Main Memory":
-        size: 768 MB
-        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
-
-  linux1:
-    type: "linux"
-    name: "Linux demo 1"
-    flags: [PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
-    cpus: 2
-
-    debug_console: serial0
-
-    memory_regions:
-      RAM 1:
-        virtual_start_addr: 0
-        size: 0x10000
-        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
-
-      RAM 2:
-        size: 0x8000000
-        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
-
-      communication_region:
-        virtual_start_addr: 0x80000000
-        size: 0x00001000
-        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
-
-
-      gpio: /soc/gpiomem
-
-  linux2:
-    type: "linux"
-    name: "Linux demo 2"
-    flags: [PASSIVE_COMMREG, VIRTUAL_CONSOLE_PERMITTED]
-    cpus: 3
-
-    debug_console: serial0
-
-    memory_regions:
-      RAM 1:
-        virtual_start_addr: 0
-        size: 0x10000
-        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_LOADABLE]
-
-      RAM 2:
-        size: 0x8000000
-        flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
-
-      communication_region:
-        virtual_start_addr: 0x80000000
-        size: 0x00001000
-        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
-
-      gpio: /soc/gpiomem
-
-shmem:
-  net1:
-    protocol: SHMEM_PROTO_VETH
-    peers: [root, linux1]
-
-  net2:
-    protocol: SHMEM_PROTO_VETH
-    peers: [root, linux2]
+      Main Memory:
+        size: 0x30000000
+        flags:
+        - MEM_READ
+        - MEM_WRITE
+        - MEM_EXECUTE
+        - MEM_DMA
