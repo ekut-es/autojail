@@ -275,7 +275,7 @@ class BoardInfoExtractor:
             interrupt_controllers=interrupt_controllers,
             cpuinfo=cpuinfo,
             stdout_path=stdout_path,
-            clocks=clocks,
+            clock_tree=clocks,
         )
 
         return board

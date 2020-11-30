@@ -11,7 +11,7 @@ from fdt.items import Node
 
 from autojail.model.board import Interrupt
 
-from ..model import CPU, GIC, BaseMemoryRegion, MemoryRegion
+from ..model import CPU, GIC, Device, DeviceMemoryRegion, MemoryRegion
 from ..model.datatypes import ByteSize, IntegerList
 from ..utils.logging import getLogger
 
@@ -79,9 +79,8 @@ class DeviceTreeExtractor:
             list
         )  # type: ignore
         self.handles: MutableMapping[str, str] = OrderedDict()
-        self.memory_regions: MutableMapping[
-            str, BaseMemoryRegion
-        ] = OrderedDict()
+        self.memory_regions: MutableMapping[str, MemoryRegion] = OrderedDict()
+        self.external_devices: MutableMapping[str, Device] = OrderedDict()
         self.interrupt_controllers: List[GIC] = []
         self.stdout_path: str = ""
         self.cpus: List[CPU] = []
@@ -323,12 +322,15 @@ class DeviceTreeExtractor:
     def _extract_mmaped_device(
         self, node, state, compatible, reg, device_type, interrupts
     ) -> None:
+        if reg is None:
+            return
+
         clocks = node.get_property("clocks")
         clocks = list(clocks) if clocks else []
         clock_names = node.get_property("clock_names")
         clock_names = list(clock_names) if clock_names else []
-        if reg is None:
-            return
+
+        phandle = node.get_property("phandle")
 
         device_registers = []
 
@@ -367,7 +369,8 @@ class DeviceTreeExtractor:
 
         path = node.path + "/" + node.name
         for device_register in device_registers:
-            device = MemoryRegion(
+            device = DeviceMemoryRegion(
+                phandle=phandle[0] if phandle else None,
                 physical_start_addr=device_register.physical_start_addr,
                 virtual_start_addr=device_register.virtual_start_addr,
                 size=device_registers[0].size,
@@ -396,6 +399,9 @@ class DeviceTreeExtractor:
                 "Standard device has more than one register %s", node.name
             )
 
+    def _extract_unmapped_device(self, node: Node, state: WalkerState):
+        print("Extracting unmapped device", node.name)
+
     def _extract_device(self, node: Node, state: WalkerState) -> None:
 
         compatible = node.get_property("compatible")
@@ -422,6 +428,8 @@ class DeviceTreeExtractor:
                 self._extract_mmaped_device(
                     node, state, compatible, reg, device_type, interrupts
                 )
+            else:
+                self._extract_unmapped_device(node, state)
 
     def _walk_tree(self) -> None:
         worklist = []
@@ -440,7 +448,7 @@ class DeviceTreeExtractor:
                 current_state, node
             )
 
-            if self._is_mmapped_bus(node):
+            if self._is_mmapped_bus(node) and current_state.memory_mapped:
                 new_ranges = self._calc_ranges(
                     current_state, node, new_address_cells, new_size_cells
                 )

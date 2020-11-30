@@ -25,8 +25,11 @@ class Interrupt(BaseModel):
         return self.num
 
 
-class BaseMemoryRegion(BaseModel):
-    """Base class for memory region definitions"""
+class MemoryRegion(BaseModel):
+    """
+    A Memory Region describes a continous chunk of memory
+
+    Memory mapped devices and grouped memory regions are subclasses"""
 
     physical_start_addr: Optional[HexInt] = None
     virtual_start_addr: Optional[HexInt] = None
@@ -36,14 +39,21 @@ class BaseMemoryRegion(BaseModel):
     shared: bool = False
 
 
-class MemoryRegion(BaseMemoryRegion):
-    path: Optional[str]
+class Device(BaseModel):
+    phandle: Optional[int]
+    path: str
     compatible: List[str] = []
     interrupts: List[Interrupt] = []
     aliases: List[str] = []
     clock_names: List[str] = []
     clocks: List[str] = []
     clock_output_names: List[str] = []
+
+
+class DeviceMemoryRegion(MemoryRegion, Device):
+    """Memory Region representing a MemoryMappedDevice"""
+
+    pass
 
 
 class GroupedMemoryRegion(MemoryRegion):
@@ -88,7 +98,7 @@ class GroupedMemoryRegion(MemoryRegion):
         super().__setattr__(name, value)
 
 
-class HypervisorMemoryRegion(BaseMemoryRegion):
+class HypervisorMemoryRegion(MemoryRegion):
     physical_start_addr: Optional[HexInt] = None
     size: ByteSize = ByteSize.validate("16 MB")
 

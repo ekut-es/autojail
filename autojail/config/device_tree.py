@@ -11,7 +11,7 @@ from .passes import BasePass
 
 def format_range(val, cells):
     print(hex(val), cells)
-    chunks = [hex(val >> i * 8) for i in range(0, cells)]
+    chunks = [hex((val >> i * 32) & 0xFFFFFFFF) for i in range(0, cells)]
     chunks.reverse()
 
     return " ".join(chunks)
@@ -80,14 +80,22 @@ _dts_template = Template(
     ${name}: {
         compatible = ${",".join((f'"{c}"' for c in memory_region.compatible))};
         reg = <${format_range(memory_region.virtual_start_addr, address_cells)} ${format_range(memory_region.size, size_cells)}>;
+    % if memory_region.interrupts:
         interrupts = <
 	  %for interrupt in memory_region.interrupts:
                         ${interrupt.type} ${interrupt.num} ${interrupt.flags}
       %endfor
                       >;
+    % endif
+    % if memory_region.clocks:             
         clocks = < &fixed>;
+    %endif
+    %if memory_region.clock_names:
+        clock-names = <${" ".join('"' + cn + '"' for cn in memory_region.clock_names)}>
+    %endif     
         status = "okay";
 	};
+
 % endfor    
 
 % if pci_interrupts:

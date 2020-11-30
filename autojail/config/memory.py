@@ -7,9 +7,13 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 import tabulate
 from ortools.sat.python import cp_model
 
-from autojail.model.board import Board, HypervisorMemoryRegion, MemoryRegion
-
-from ..model import BaseMemoryRegion, CellConfig, JailhouseConfig
+from ..model import (
+    Board,
+    CellConfig,
+    HypervisorMemoryRegion,
+    JailhouseConfig,
+    MemoryRegion,
+)
 from ..model.datatypes import HexInt
 from .passes import BasePass
 
@@ -532,7 +536,7 @@ class PrepareMemoryRegionsPass(BasePass):
         for cell in self.config.cells.values():
             assert cell.memory_regions is not None
             for region in cell.memory_regions.values():
-                if isinstance(region, BaseMemoryRegion) and region.size is None:
+                if isinstance(region, MemoryRegion) and region.size is None:
                     region.size = self.board.pagesize
 
             if cell.type == "root":
@@ -566,7 +570,7 @@ class PrepareMemoryRegionsPass(BasePass):
             skip = False
             for cell_region in cell.memory_regions.values():
 
-                if not isinstance(cell_region, BaseMemoryRegion):
+                if not isinstance(cell_region, MemoryRegion):
                     continue
 
                 assert cell_region.size is not None
