@@ -52,14 +52,17 @@ _dts_template = Template(
 		compatible = "arm,psci-0.2";
 		method = "smc";
 	};
-
+    
+    %if timer:
 	timer {
-		compatible = "arm,armv8-timer";
-		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_HIGH>,
-			     <GIC_PPI 14 IRQ_TYPE_LEVEL_HIGH>,
-			     <GIC_PPI 11 IRQ_TYPE_LEVEL_HIGH>,
-			     <GIC_PPI 10 IRQ_TYPE_LEVEL_HIGH>;
+		compatible = "${timer.compatible[0]}";
+		interrupts = 
+          %for interrupt in timer.interrupts:
+              <${interrupt.type} ${interrupt.num} ${interrupt.flags}>${";" if loop.last else ","}
+          %endfor
+              
 	};
+    %endif
 
 	gic: interrupt-controller@${hex(gic.gicd_base)} {
 		compatible = ${",".join((f'"{c}"' for c in gic.compatible))};
@@ -199,6 +202,15 @@ class GenerateDeviceTreePass(BasePass):
 
         return list(reversed(paths))
 
+    def _find_timer(self):
+        timer_compatibles = ["arm,armv8-timer", "arm,armv7-timer"]
+        for device in self.board.devices.values():
+            for compatible in timer_compatibles:
+                if compatible in device.compatible:
+                    return device
+
+        return None
+
     def _find_clocks(self, device_regions: Dict[str, DeviceMemoryRegion]):
         clock_dict = self._build_clock_dict()
 
@@ -268,6 +280,7 @@ class GenerateDeviceTreePass(BasePass):
 
             device_regions = self._prepare_device_regions(cell.memory_regions)
             clocks = self._find_clocks(device_regions)
+            timer = self._find_timer()
 
             dts_data = _dts_template.render(
                 address_cells=2,
@@ -280,6 +293,7 @@ class GenerateDeviceTreePass(BasePass):
                 pci_interrupts=pci_interrupts,
                 cpus=cpus,
                 format_range=format_range,
+                timer=timer,
             )
 
             dts_name = cell.name.lower()

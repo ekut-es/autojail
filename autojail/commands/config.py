@@ -18,15 +18,13 @@ class ConfigCommand(BaseCommand):
     """Create the Jailhouse configurations
 
     config
-    --f|force: if set overwrites existing cells.yml
+        {--f|force : if set overwrites existing cells.yml}
     """  # noqa
 
     def handle(self) -> None:
         cells_yml_path = Path.cwd() / self.CELLS_CONFIG_NAME
         if cells_yml_path.exists() and not self.option("force"):
-            self.logger.error(
-                "%s already exists use -f to overwrite", str(cells_yml_path)
-            )
+            self.line(f"{cells_yml_path} already exists use -f to overwrite")
 
         board_yml_path = Path.cwd() / self.BOARD_CONFIG_NAME
         if not board_yml_path.exists():
