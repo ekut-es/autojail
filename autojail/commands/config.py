@@ -18,9 +18,16 @@ class ConfigCommand(BaseCommand):
     """Create the Jailhouse configurations
 
     config
+    --f|force: if set overwrites existing cells.yml
     """  # noqa
 
     def handle(self) -> None:
+        cells_yml_path = Path.cwd() / self.CELLS_CONFIG_NAME
+        if cells_yml_path.exists() and not self.option("force"):
+            self.logger.error(
+                "%s already exists use -f to overwrite", str(cells_yml_path)
+            )
+
         board_yml_path = Path.cwd() / self.BOARD_CONFIG_NAME
         if not board_yml_path.exists():
             self.line(f"<error>{board_yml_path} could not be found</error>")
@@ -36,7 +43,6 @@ class ConfigCommand(BaseCommand):
         wizard.run()
 
         if wizard.config is not None:
-            cells_yml_path = Path.cwd() / self.CELLS_CONFIG_NAME
             with cells_yml_path.open("w") as f:
                 yaml = ruamel.yaml.YAML()
                 yaml.register_class(HexInt)

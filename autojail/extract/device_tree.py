@@ -80,7 +80,7 @@ class DeviceTreeExtractor:
         )  # type: ignore
         self.handles: MutableMapping[str, str] = OrderedDict()
         self.memory_regions: MutableMapping[str, MemoryRegion] = OrderedDict()
-        self.external_devices: MutableMapping[str, Device] = OrderedDict()
+        self.devices: MutableMapping[str, Device] = OrderedDict()
         self.interrupt_controllers: List[GIC] = []
         self.stdout_path: str = ""
         self.cpus: List[CPU] = []
@@ -186,6 +186,26 @@ class DeviceTreeExtractor:
 
         return list(current_state.ranges)
 
+    def _insert_named_region(
+        self, orig_name: str, region: MemoryRegion
+    ) -> None:
+        count = 0
+        name = orig_name
+        while name in self.memory_regions:
+            name = orig_name + "." + str(count)
+            count += 1
+
+        self.memory_regions[name] = region
+
+    def _insert_named_device(self, orig_name: str, device: Device):
+        count = 0
+        name = orig_name
+        while name in self.devices:
+            name = orig_name + "." + str(count)
+            count += 1
+
+        self.devices[name] = device
+
     def _add_memreserve(self, node: Node) -> None:
         memreserve = node.get_property("memreserve")
         if memreserve is not None:
@@ -197,17 +217,6 @@ class DeviceTreeExtractor:
             )
 
             self._insert_named_region(node.name, region)
-
-    def _insert_named_region(
-        self, orig_name: str, region: MemoryRegion
-    ) -> None:
-        count = 0
-        name = orig_name
-        while name in self.memory_regions:
-            name = orig_name + "." + str(count)
-            count += 1
-
-        self.memory_regions[name] = region
 
     def _extract_interrupt_controller(
         self, node, state, compatible, reg, device_type, interrupts
@@ -293,6 +302,20 @@ class DeviceTreeExtractor:
         )
         self.interrupt_controllers.append(gic)
 
+    def _extract_interrupts(self, interrupts):
+        extracted_interrupts = []
+        if interrupts is not None:
+            if len(interrupts) % 3 == 0:
+                for start in range(len(interrupts) // 3):
+                    start = start * 3
+                    int_type, int_num, int_flags = interrupts[start : start + 3]
+                    interrupt = Interrupt(
+                        type=int_type, num=int_num, flags=int_flags
+                    )
+                    extracted_interrupts.append(interrupt)
+
+        return extracted_interrupts
+
     def _extract_memory(
         self, node, state, compatible, reg, device_type, interrupts
     ) -> None:
@@ -322,13 +345,24 @@ class DeviceTreeExtractor:
     def _extract_mmaped_device(
         self, node, state, compatible, reg, device_type, interrupts
     ) -> None:
+        self.logger.info("Extracting mmaped device %s", node.name)
         if reg is None:
+            self._extract_unmapped_device(node, state)
             return
 
         clocks = node.get_property("clocks")
         clocks = list(clocks) if clocks else []
-        clock_names = node.get_property("clock_names")
+
+        clock_names = node.get_property("clock-names")
         clock_names = list(clock_names) if clock_names else []
+
+        clock_output_names = node.get_property("clock-output-names")
+        clock_output_names = (
+            list(clock_output_names) if clock_output_names else []
+        )
+
+        clock_cells = node.get_property("#clock-cells")
+        clock_cells = int(clock_cells[0]) if clock_cells else 0
 
         phandle = node.get_property("phandle")
 
@@ -352,20 +386,10 @@ class DeviceTreeExtractor:
                     "MEM_IO_32",
                     "MEM_IO_64",
                 ],
-                clocks=list(clocks),
             )
             device_registers.append(region)
 
-        extracted_interrupts = []
-        if interrupts is not None:
-            if len(interrupts) % 3 == 0:
-                for start in range(len(interrupts) // 3):
-                    start = start * 3
-                    int_type, int_num, int_flags = interrupts[start : start + 3]
-                    interrupt = Interrupt(
-                        type=int_type, num=int_num, flags=int_flags
-                    )
-                    extracted_interrupts.append(interrupt)
+        extracted_interrupts = self._extract_interrupts(interrupts)
 
         path = node.path + "/" + node.name
         for device_register in device_registers:
@@ -379,6 +403,8 @@ class DeviceTreeExtractor:
                 interrupts=extracted_interrupts,
                 aliases=self.aliases_reversed[path],
                 clock_names=clock_names,
+                clock_cells=clock_cells,
+                clock_output_names=clock_output_names,
                 clocks=clocks,
                 flags=[
                     "MEM_READ",
@@ -393,6 +419,7 @@ class DeviceTreeExtractor:
 
             name = node.name
             self._insert_named_region(name, device)
+            self._insert_named_device(name, device)
 
         if len(device_registers) != 1:
             self.logger.warning(
@@ -400,7 +427,43 @@ class DeviceTreeExtractor:
             )
 
     def _extract_unmapped_device(self, node: Node, state: WalkerState):
-        print("Extracting unmapped device", node.name)
+
+        self.logger.info("Extracting unmapped device %s", node.name)
+
+        clocks = node.get_property("clocks")
+        clocks = list(clocks) if clocks else []
+
+        clock_names = node.get_property("clock-names")
+        clock_names = list(clock_names) if clock_names else []
+
+        clock_output_names = node.get_property("clock-output-names")
+        clock_output_names = (
+            list(clock_output_names) if clock_output_names else []
+        )
+
+        clock_cells = node.get_property("#clock-cells")
+        clock_cells = int(clock_cells[0]) if clock_cells else 0
+
+        phandle = node.get_property("phandle")
+
+        compatible = node.get_property("compatible")
+        compatible = list(compatible) if compatible else []
+
+        extracted_interrupts = self._extract_interrupts(
+            node.get_property("interrupts")
+        )
+
+        device = Device(
+            clocks=clocks,
+            clock_names=clock_names,
+            clock_output_names=clock_output_names,
+            clock_cells=clock_cells,
+            phandle=phandle[0] if phandle else None,
+            path=node.path + "/" + node.name,
+            compatible=compatible,
+            interrupts=extracted_interrupts,
+        )
+        self._insert_named_device(node.name, device)
 
     def _extract_device(self, node: Node, state: WalkerState) -> None:
 
@@ -495,12 +558,12 @@ class DeviceTreeExtractor:
 
     def _add_interrupts(self) -> None:
         interrupts: Set[int] = set()
-        for region in self.memory_regions.values():
+        for device in self.devices.values():
             interrupts = interrupts.union(
                 set(
                     (
                         interrupt.to_jailhouse()
-                        for interrupt in getattr(region, "interrupts", [])
+                        for interrupt in getattr(device, "interrupts", [])
                     )
                 )
             )

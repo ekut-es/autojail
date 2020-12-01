@@ -48,6 +48,7 @@ class Device(BaseModel):
     clock_names: List[str] = []
     clocks: List[str] = []
     clock_output_names: List[str] = []
+    clock_cells: int
 
 
 class DeviceMemoryRegion(MemoryRegion, Device):
@@ -190,3 +191,6 @@ class Board(BaseModel):
     cpuinfo: Dict[str, CPU]
     interrupt_controllers: List[GIC] = []
     clock_tree: Dict[str, Clock] = {}
+
+    # This dict contains all devices (MemoryMapped Devices are represented by DeviceMemoryRegion, Devices without memory mapping or represnted by Device)
+    devices: Dict[str, Union[Device, DeviceMemoryRegion]] = {}

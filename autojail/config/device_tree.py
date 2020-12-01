@@ -144,17 +144,70 @@ class GenerateDeviceTreePass(BasePass):
                 for num, sub_region in enumerate(region.regions):
                     worklist.append((name + "." + str(num), sub_region))
             else:
-                if region.compatible:
+                if isinstance(region, DeviceMemoryRegion):
                     device_regions[name] = region
 
         return device_regions
 
+    def _build_clock_dict(self):
+        clocks = {}
+        worklist = list(self.board.clock_tree.values())
+        while worklist:
+            clock = worklist.pop()
+            clocks[clock.name] = clock
+
+            worklist.extend(clock.derived_clocks.values())
+
+        return clocks
+
+    def _find_clock_parent(self, handle):
+        print("Searching for parent", handle)
+        for name, device in self.board.devices.items():
+            if device.phandle == handle:
+                print("Found parent", name, "handle is", handle)
+                return device
+
+    def _extract_clock_paths(self, device):
+        device_clocks = list(reversed(device.clocks))
+        print(device_clocks)
+        paths = []
+
+        print("Device clocks: ", ",".join(device_clocks))
+        while device_clocks:
+            clock_parent_handle = int(device_clocks.pop())
+            parent = self._find_clock_parent(clock_parent_handle)
+
+            if parent.clock_cells == 0:
+                clock_num = 0
+            elif parent.clock_cells == 1:
+                clock_num = int(device_clocks.pop())
+            else:
+                raise Exception(
+                    "Unhandled number of clock_cells: %d", parent.clock_cells
+                )
+
+            if parent.clock_output_names:
+                parent_path = (parent.clock_output_names[clock_num],)
+                paths = [(clock_num,) + parent_path]
+            else:
+                parent_paths = self._extract_clock_paths(parent)
+                print(parent_paths)
+                print("Searching for clock", clock_num)
+                paths = [
+                    (clock_num,) + parent_path for parent_path in parent_paths
+                ]
+
+        return list(reversed(paths))
+
     def _find_clocks(self, device_regions: Dict[str, DeviceMemoryRegion]):
-        for name, device in device_regions:
+        clock_dict = self._build_clock_dict()
+
+        for name, device in device_regions.items():
             if isinstance(device, DeviceMemoryRegion):
-                if device.clocks:
-                    self.logger.info("Searching clock input for %s", name)
-                    # sys.exit(-1)
+                self.logger.info("Searching clock input for %s", name)
+
+                clock_paths = self._extract_clock_paths(device)
+                print(clock_paths)
 
     def __call__(
         self, board: Board, config: JailhouseConfig
@@ -214,7 +267,7 @@ class GenerateDeviceTreePass(BasePass):
                 cpus.append(board_cpus[cpu])
 
             device_regions = self._prepare_device_regions(cell.memory_regions)
-            from devtools import debug
+            clocks = self._find_clocks(device_regions)
 
             dts_data = _dts_template.render(
                 address_cells=2,

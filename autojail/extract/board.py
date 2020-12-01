@@ -222,6 +222,7 @@ class BoardInfoExtractor:
             extractor.interrupt_controllers,
             extractor.stdout_path,
             {x.name: x for x in extractor.cpus},
+            extractor.devices,
         )
 
     def _merge_memory_regions(self, regions):
@@ -250,6 +251,7 @@ class BoardInfoExtractor:
             interrupt_controllers,
             stdout_path,
             cpuinfo_dt,
+            devices,
         ) = self.extract_from_devicetree(memory_regions)
 
         clocks = self.extract_clocks()
@@ -276,6 +278,7 @@ class BoardInfoExtractor:
             cpuinfo=cpuinfo,
             stdout_path=stdout_path,
             clock_tree=clocks,
+            devices=devices,
         )
 
         return board
