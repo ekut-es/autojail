@@ -182,7 +182,7 @@ class GenerateDeviceTreePass(BasePass):
             clocks[path] = clock
 
             for name, derived_clock in clock.derived_clocks.items():
-                worklist.append((path + "/" + name, derived_clock))
+                worklist.append((name, derived_clock))
 
         return clocks
 
@@ -232,19 +232,18 @@ class GenerateDeviceTreePass(BasePass):
             if isinstance(device, DeviceMemoryRegion):
                 self.logger.info("Searching clock input for %s", name)
 
-                clock_paths_dt = self._extract_clock_paths(device)
-                clock_path_strings = []
+                # clock_paths_dt = self._extract_clock_paths(device)
+                # clock_path_strings = []
+                # for clock_path in clock_paths_dt:
+                #     clock_path = "/".join(reversed(clock_path))
+                #     clock_path_strings.append(clock_path)
 
-                for clock_path in clock_paths_dt:
-                    clock_path = "/".join(reversed(clock_path))
-                    clock_path_strings.append(clock_path)
-
-                print(clock_path_strings)
+                # print(clock_path_strings)
 
                 matches: List[str] = []
-                for clock_path in clock_path_strings:
+                for compatible in device.compatible:
                     fuzzy_result = fuzzywuzzy.process.extract(
-                        clock_path, list(clock_paths_dict.keys()), limit=10
+                        compatible, list(clock_paths_dict.keys()), limit=10,
                     )
                     matches.extend(fuzzy_result)
 
