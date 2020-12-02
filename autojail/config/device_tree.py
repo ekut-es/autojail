@@ -1,11 +1,15 @@
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
+import fuzzywuzzy.process
 from dataclasses import dataclass
 from mako.template import Template
 
-from autojail.model.board import DeviceMemoryRegion, GroupedMemoryRegion
-
-from ..model import Board, JailhouseConfig
+from ..model import (
+    Board,
+    DeviceMemoryRegion,
+    GroupedMemoryRegion,
+    JailhouseConfig,
+)
 from .passes import BasePass
 
 
@@ -54,14 +58,14 @@ _dts_template = Template(
 	};
     
     %if timer:
-	timer {
-		compatible = "${timer.compatible[0]}";
-		interrupts = 
+    timer {
+        compatible = "${timer.compatible[0]}";
+        interrupts = 
           %for interrupt in timer.interrupts:
               <${interrupt.type} ${interrupt.num} ${interrupt.flags}>${";" if loop.last else ","}
           %endfor
-              
-	};
+
+    };
     %endif
 
 	gic: interrupt-controller@${hex(gic.gicd_base)} {
@@ -72,12 +76,14 @@ _dts_template = Template(
 		#interrupt-cells = <3>;
 	};
 
-	fixed: clk500mhz {
+% for clock in clocks:
+	${clock.name}: {
 		compatible = "fixed-clock";
 		#clock-cells = <0>;
-		clock-frequency = <500000000>;
-		clock-output-names = "clk500mhz";
+		clock-frequency = <${clock.frequency}>;
+		clock-output-names = "${",".join(clock.clock_output_names)}";
 	};
+% endfor
 
 % for name, memory_region in device_regions.items():
     ${name}: {
@@ -134,6 +140,13 @@ class PCIInterruptData:
     interrupt: int
 
 
+@dataclass
+class DTClock:
+    name: str
+    frequency: int
+    clock_output_names: List[str]
+
+
 class GenerateDeviceTreePass(BasePass):
     """Generate a device tree for inmates"""
 
@@ -152,14 +165,24 @@ class GenerateDeviceTreePass(BasePass):
 
         return device_regions
 
+    def _find_timer(self):
+        timer_compatibles = ["arm,armv8-timer", "arm,armv7-timer"]
+        for device in self.board.devices.values():
+            for compatible in timer_compatibles:
+                if compatible in device.compatible:
+                    return device
+
+        return None
+
     def _build_clock_dict(self):
         clocks = {}
-        worklist = list(self.board.clock_tree.values())
+        worklist = list(self.board.clock_tree.items())
         while worklist:
-            clock = worklist.pop()
-            clocks[clock.name] = clock
+            path, clock = worklist.pop()
+            clocks[path] = clock
 
-            worklist.extend(clock.derived_clocks.values())
+            for name, derived_clock in clock.derived_clocks.items():
+                worklist.append((path + "/" + name, derived_clock))
 
         return clocks
 
@@ -168,17 +191,16 @@ class GenerateDeviceTreePass(BasePass):
         for name, device in self.board.devices.items():
             if device.phandle == handle:
                 print("Found parent", name, "handle is", handle)
-                return device
+                return name, device
 
     def _extract_clock_paths(self, device):
         device_clocks = list(reversed(device.clocks))
-        print(device_clocks)
         paths = []
 
         print("Device clocks: ", ",".join(device_clocks))
         while device_clocks:
             clock_parent_handle = int(device_clocks.pop())
-            parent = self._find_clock_parent(clock_parent_handle)
+            parent_name, parent = self._find_clock_parent(clock_parent_handle)
 
             if parent.clock_cells == 0:
                 clock_num = 0
@@ -189,37 +211,46 @@ class GenerateDeviceTreePass(BasePass):
                     "Unhandled number of clock_cells: %d", parent.clock_cells
                 )
 
-            if parent.clock_output_names:
-                parent_path = (parent.clock_output_names[clock_num],)
-                paths = [(clock_num,) + parent_path]
-            else:
-                parent_paths = self._extract_clock_paths(parent)
-                print(parent_paths)
-                print("Searching for clock", clock_num)
-                paths = [
-                    (clock_num,) + parent_path for parent_path in parent_paths
-                ]
+            for compatible in device.compatible:
+                if parent.clock_output_names:
+                    parent_path = (parent.clock_output_names[clock_num],)
+                    paths.append((compatible,) + parent_path)
+                else:
+                    parent_paths = self._extract_clock_paths(parent)
+                    print("Searching for clock", clock_num)
+                    for parent_path in parent_paths:
+                        paths.append((compatible,) + parent_path)
 
-        return list(reversed(paths))
-
-    def _find_timer(self):
-        timer_compatibles = ["arm,armv8-timer", "arm,armv7-timer"]
-        for device in self.board.devices.values():
-            for compatible in timer_compatibles:
-                if compatible in device.compatible:
-                    return device
-
-        return None
+        return paths
 
     def _find_clocks(self, device_regions: Dict[str, DeviceMemoryRegion]):
-        clock_dict = self._build_clock_dict()
+        clock_paths_dict = self._build_clock_dict()
 
         for name, device in device_regions.items():
+            print("clock device:", name)
+
             if isinstance(device, DeviceMemoryRegion):
                 self.logger.info("Searching clock input for %s", name)
 
-                clock_paths = self._extract_clock_paths(device)
-                print(clock_paths)
+                clock_paths_dt = self._extract_clock_paths(device)
+                clock_path_strings = []
+
+                for clock_path in clock_paths_dt:
+                    clock_path = "/".join(reversed(clock_path))
+                    clock_path_strings.append(clock_path)
+
+                print(clock_path_strings)
+
+                matches: List[str] = []
+                for clock_path in clock_path_strings:
+                    fuzzy_result = fuzzywuzzy.process.extract(
+                        clock_path, list(clock_paths_dict.keys()), limit=10
+                    )
+                    matches.extend(fuzzy_result)
+
+                matches.sort(key=lambda x: x[1])
+
+                print(matches)
 
     def __call__(
         self, board: Board, config: JailhouseConfig
