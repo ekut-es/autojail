@@ -43,7 +43,7 @@ _dts_template = Template(
 		#address-cells = <1>;
 		#size-cells = <0>;
 % for cpu in cpus:
-		${cpu.name}: ${cpu.name} {
+		${cpu.name} {
 			device_type = "cpu";
 			compatible = "${cpu.compatible}";
 			reg = <${cpu.num}>;
@@ -77,7 +77,7 @@ _dts_template = Template(
 	};
 
 % for clock in clocks:
-	${clock.name}: {
+	${"fixed_" + str(loop.index)}: ${clock.name}{
 		compatible = "fixed-clock";
 		#clock-cells = <0>;
 		clock-frequency = <${clock.frequency}>;
@@ -86,7 +86,7 @@ _dts_template = Template(
 % endfor
 
 % for name, memory_region in device_regions.items():
-    ${name}: {
+    ${name} {
         compatible = ${",".join((f'"{c}"' for c in memory_region.compatible))};
         reg = <${format_range(memory_region.virtual_start_addr, address_cells)} ${format_range(memory_region.size, size_cells)}>;
     % if memory_region.interrupts:
@@ -225,11 +225,12 @@ class GenerateDeviceTreePass(BasePass):
 
     def _find_clocks(self, device_regions: Dict[str, DeviceMemoryRegion]):
         clock_paths_dict = self._build_clock_dict()
-
+        clocks = []
         for name, device in device_regions.items():
-            print("clock device:", name)
-
             if isinstance(device, DeviceMemoryRegion):
+                if not device.clocks:
+                    continue
+
                 self.logger.info("Searching clock input for %s", name)
 
                 # clock_paths_dt = self._extract_clock_paths(device)
@@ -249,7 +250,19 @@ class GenerateDeviceTreePass(BasePass):
 
                 matches.sort(key=lambda x: x[1])
 
-                print(matches)
+                self.logger.info(
+                    "Selected clock %s for device %s", matches[-1], name
+                )
+
+                clock = clock_paths_dict[matches[-1][0]]
+                dt_clock = DTClock(
+                    name=name + "_clock",
+                    frequency=clock.rate,
+                    clock_output_names=[matches[-1][0]],
+                )
+                clocks.append(dt_clock)
+
+        return clocks
 
     def __call__(
         self, board: Board, config: JailhouseConfig
@@ -324,6 +337,7 @@ class GenerateDeviceTreePass(BasePass):
                 cpus=cpus,
                 format_range=format_range,
                 timer=timer,
+                clocks=clocks,
             )
 
             dts_name = cell.name.lower()
