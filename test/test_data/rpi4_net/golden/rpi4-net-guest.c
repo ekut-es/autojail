@@ -28,9 +28,15 @@ struct {
 	.cpus = {0b1100},
 	
 	.mem_regions = {
+<<<<<<< HEAD
 	/*Boot Memory 0xfbefd000-0xfbffd000*/
 	{
 		.phys_start = 0xfbefd000,
+=======
+	/*Boot Memory 0x80103000-0x80203000*/
+	{
+		.phys_start = 0x80103000,
+>>>>>>> origin/master
 		.virt_start = 0x0,
 		.size = 0x100000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE|JAILHOUSE_MEM_LOADABLE,
@@ -42,9 +48,15 @@ struct {
 		.size = 0x40000000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE|JAILHOUSE_MEM_DMA|JAILHOUSE_MEM_LOADABLE,
 	},
+<<<<<<< HEAD
 	/*Communication Region 0xfbefc000-0xfbefd000*/
 	{
 		.phys_start = 0xfbefc000,
+=======
+	/*Communication Region 0x80203000-0x80204000*/
+	{
+		.phys_start = 0x80203000,
+>>>>>>> origin/master
 		.virt_start = 0x80000000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_COMM_REGION,

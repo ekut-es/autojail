@@ -17,7 +17,11 @@ from .board_info import TransferBoardInfoPass
 from .device_tree import GenerateDeviceTreePass
 from .devices import LowerDevicesPass
 from .irq import PrepareIRQChipsPass
-from .memory import AllocateMemoryPass, PrepareMemoryRegionsPass
+from .memory import (
+    AllocateMemoryPass,
+    MergeIoRegionsPass,
+    PrepareMemoryRegionsPass,
+)
 from .root_shared import InferRootSharedPass
 from .shmem import ConfigSHMemRegionsPass, LowerSHMemPass  # type: ignore
 
@@ -32,6 +36,7 @@ class JailhouseConfigurator:
             LowerSHMemPass(),
             PrepareIRQChipsPass(),
             PrepareMemoryRegionsPass(),
+            MergeIoRegionsPass(),
             AllocateMemoryPass(),
             ConfigSHMemRegionsPass(),
             InferRootSharedPass(),

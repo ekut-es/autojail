@@ -1,8 +1,10 @@
 import copy
 import logging
+import math
 import sys
 from collections import defaultdict
-from typing import Callable, Dict, List, Optional, Tuple, Union
+from functools import reduce
+from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import tabulate
 from ortools.sat.python import cp_model
@@ -13,6 +15,7 @@ from ..model import (
     HypervisorMemoryRegion,
     JailhouseConfig,
     MemoryRegion,
+    ShMemNetRegion,
 )
 from ..model.datatypes import HexInt
 from .passes import BasePass
@@ -26,7 +29,7 @@ class AllocatorSegment:
     def __init__(
         self,
         name: str = "unnamed",
-        alignment: int = 0,
+        alignment: int = 2 ** 12,
         shared_regions: Optional[
             Dict[str, List[Union[MemoryRegion, HypervisorMemoryRegion]]]
         ] = None,
@@ -40,6 +43,7 @@ class AllocatorSegment:
             self.shared_regions.update(shared_regions)
 
         self.alignment = alignment
+        self.constraint: Optional[MemoryConstraint] = None
 
     @property
     def physical_start_addr(self):
@@ -68,8 +72,66 @@ class MemoryConstraint(object):
 
         self.allocated_range: Optional[Tuple[int, int]] = None
 
+        # allow arbitrary actions upon resolving a constraint
+        # this method is called iff, the solver found a valid
+        # solution and assigned start_addr
+        # Parameters:
+        # - self: MemoryConstraint
+        self.resolved: Optional[Callable[[MemoryConstraint], None]] = None
+
     def __str__(self):
         return str(self.__dict__)
+
+    # Returns a constraint that satisfies both
+    # <self> and <other>, if possible
+    # Fails otherwise
+    def merge(self, other):
+        assert (
+            self.virtual == other.virtual
+            and "Unable to merge constraints for pyhsical and virtual addresses"
+        )
+
+        assert (
+            self.size == other.size
+            and "Unable to merge constraints with different size"
+        )
+
+        assert (
+            self.start_addr == other.start_addr
+            and "Unbable to merge constraints with different start addresses"
+        )
+
+        alignment = self.alignment
+        if other.alignment:
+            if alignment:
+                alignment = (self.alignment * other.alignment) / math.gcd(
+                    self.alignment, other.alignment
+                )
+            else:
+                alignment = other.alignment
+
+        resolved = self.resolved
+        if other.resolved:
+            if resolved:
+
+                def callback(mc: MemoryConstraint):
+                    assert self.resolved
+                    assert other.resolved
+
+                    self.resolved(mc)
+                    other.resolved(mc)
+
+                resolved = callback
+            else:
+                resolved = other.resolved
+
+        mc = MemoryConstraint(self.size, self.virtual)
+        mc.virtual = self.virtual
+
+        mc.start_addr = self.start_addr
+        mc.alignment = alignment
+
+        mc.resolved = resolved
 
 
 class NoOverlapConstraint(object):
@@ -186,6 +248,7 @@ class AllocateMemoryPass(BasePass):
 
         self.unallocated_segments: List[AllocatorSegment] = []
         self.allocated_regions: List[MemoryRegion] = []
+        self.per_region_constraints: Dict[str, MemoryConstraint] = dict()
 
         # data structure for creating and handling generic
         # constraints
@@ -276,6 +339,8 @@ class AllocateMemoryPass(BasePass):
         self.virtual_domain = cp_model.Domain(0, vmem_size)
         self._build_allocation_domain()
 
+        self._preallocate_vpci()
+
         self.no_overlap_constraints["__global"] = self.global_no_overlap
         self.unallocated_segments = self._build_unallocated_segments()
 
@@ -298,7 +363,6 @@ class AllocateMemoryPass(BasePass):
         )
 
         self._lift_loadable()
-        self._preallocate_vpci()
 
         for seg in self.unallocated_segments:
             assert seg.size > 0
@@ -306,16 +370,33 @@ class AllocateMemoryPass(BasePass):
 
             mc_global = None
             for sharer, regions in seg.shared_regions.items():
+                mc_seg = seg.constraint
                 mc_local = MemoryConstraint(seg.size - 1, True)
-                mc_local.alignment = seg.alignment
+
+                if mc_seg and mc_seg.alignment:
+                    mc_local.alignment = mc_seg.alignment
+                else:
+                    mc_local.alignment = seg.alignment
 
                 fst_region = regions[0]
                 if fst_region.virtual_start_addr is not None:
+                    if mc_seg and mc_seg.start_addr and mc_seg.virtual:
+                        assert (
+                            mc_seg.start_addr == fst_region.virtual_start_addr
+                            and "Invalid state detected: start addresses must be equal"
+                        )
+
                     mc_local.start_addr = fst_region.virtual_start_addr
+                elif mc_seg and mc_seg.start_addr and mc_seg.virtual:
+                    mc_local.start_addr = mc_seg.start_addr
 
                 self.no_overlap_constraints[sharer].add_memory_constraint(
                     mc_local
                 )
+
+                if mc_seg and mc_seg.virtual:
+                    mc_local.resolved = mc_seg.resolved
+
                 self.memory_constraints[mc_local] = seg
 
                 if not mc_global:
@@ -324,7 +405,19 @@ class AllocateMemoryPass(BasePass):
                     mc_global.start_addr = None
 
                     if fst_region.physical_start_addr is not None:
+                        if mc_seg and mc_seg.start_addr and not mc_seg.virtual:
+                            assert (
+                                mc_seg.start_addr
+                                == fst_region.virtual_start_addr
+                                and "Invalid state detected: start addresses must be equal"
+                            )
+
                         mc_global.start_addr = fst_region.physical_start_addr
+                    elif mc_seg and mc_seg.start_addr and not mc_seg.virtual:
+                        mc_global.start_addr = mc_seg.start_addr
+
+                    if mc_seg and not mc_seg.virtual:
+                        mc_global.resolved = mc_seg.resolved
 
                     self.global_no_overlap.add_memory_constraint(mc_global)
                     self.memory_constraints[mc_global] = seg
@@ -367,6 +460,9 @@ class AllocateMemoryPass(BasePass):
                         if region.virtual_start_addr is None:
                             region.virtual_start_addr = HexInt(start)
 
+                if constr.resolved:
+                    constr.resolved(constr)
+
         # handle root separately
         for constr in self.no_overlap_constraints["root"].constraints:
             seg = self.memory_constraints[constr]
@@ -375,6 +471,9 @@ class AllocateMemoryPass(BasePass):
             for region in seg.shared_regions["root"]:
                 if region.virtual_start_addr is None:
                     region.virtual_start_addr = region.physical_start_addr
+
+            if constr.resolved:
+                constr.resolved(constr)
 
         self._remove_allocatable()
 
@@ -445,64 +544,22 @@ class AllocateMemoryPass(BasePass):
     def _build_unallocated_segments(
         self, key: Callable = lambda x: x.physical_start_addr
     ) -> List[AllocatorSegment]:
-        """Group Memory Regions into Segments that are allocated continuously"""
-        assert self.root_cell is not None
-        assert self.config is not None
+        assert self.config
+        assert self.config.cells
 
-        unallocated = []
-        shared_segments: Dict[str, AllocatorSegment] = {}
+        ana = UnallocatedOrSharedSegmentsAnalysis(
+            self.root_cell,
+            self.config.cells,
+            self.logger,
+            self.per_region_constraints,
+            self.physical_domain,
+            key,
+        )
 
-        # Add cell memories
-        self.logger.debug("building allocatable regions")
-        for cell_name, cell in self.config.cells.items():
-            assert cell is not None
-            assert cell.memory_regions is not None
+        ana.run()
+        unallocated = ana.unallocated
 
-            # FIXME add constraints for already allocated regions
-            # -> skipped due to line 390
-            # -> make sure IO regions that are shared are either
-            #   - marked shared
-            #   - only added once
-
-            for region_name, region in cell.memory_regions.items():
-                if not isinstance(region, MemoryRegion):
-                    continue
-                if region.allocatable:
-                    continue
-                if key(region) is not None and (
-                    "MEM_IO" in region.flags or region_name == "memreserve"
-                ):
-                    continue
-
-                assert shared_segments is not None
-                if region.shared and region_name in shared_segments:
-                    current_segment = shared_segments[region_name]
-
-                    assert current_segment.shared_regions
-                    current_segment.shared_regions[cell_name].append(region)
-                else:
-                    current_segment = AllocatorSegment(
-                        region_name,
-                        alignment=8,
-                        shared_regions={cell_name: [region]},
-                    )
-                    unallocated.append(current_segment)
-                    if region.shared:
-                        shared_segments[region_name] = current_segment
-
-        # Add hypervisor memories
-        hypervisor_memory = self.root_cell.hypervisor_memory
-        assert isinstance(hypervisor_memory, HypervisorMemoryRegion)
-
-        if hypervisor_memory.physical_start_addr is None:
-            unallocated.append(
-                AllocatorSegment(
-                    "hypervisor_memory",
-                    alignment=hypervisor_memory.size,  # FIXME: this is too much alignment
-                    shared_regions={"hypervisor": [hypervisor_memory]},
-                )
-            )
-
+        assert unallocated
         return unallocated
 
     def _preallocate_vpci(self):
@@ -510,11 +567,336 @@ class AllocateMemoryPass(BasePass):
         assert self.config is not None
 
         if self.root_cell and self.root_cell.platform_info:
+            region = MemoryRegion()
+            region_name = "pci_mmconfig_generated"
+
+            region.flags = ["MEM_IO"]
+
+            # see hypvervisor/pci.c:850
+            end_bus = self.root_cell.platform_info.pci_mmconfig_end_bus
+            region.size = (end_bus + 1) * 256 * 4096
+
             if self.root_cell.platform_info.pci_mmconfig_base:
-                # FIXME: preallocate pci
-                pass
+                region.physical_start_addr = (
+                    self.root_cell.platform_info.pci_mmconfig_base
+                )
+                region.virtual_start_addr = region.physical_start_addr
+
+                assert (region.physical_start_addr + region.size) < 2 ** 32
+
+                def callback(mc: MemoryConstraint):
+                    assert self.root_cell
+                    assert self.root_cell.memory_regions
+
+                    del self.root_cell.memory_regions[region_name]
+
+                mc = MemoryConstraint(region.size, False)
+                mc.start_addr = region.physical_start_addr
+                mc.resolved = callback
+
+                self.root_cell.memory_regions[region_name] = region
+                self.per_region_constraints[region_name] = mc
             else:
-                self.root_cell.platform_info.pci_mmconfig_base = 0xE0000000
+
+                def callback(mc: MemoryConstraint):
+                    assert mc.allocated_range
+                    assert self.root_cell
+                    assert self.root_cell.platform_info
+                    assert self.root_cell.memory_regions
+
+                    physical_start_addr, _ = mc.allocated_range
+                    self.root_cell.platform_info.pci_mmconfig_base = HexInt(
+                        physical_start_addr
+                    )
+
+                    region = self.root_cell.memory_regions[region_name]
+                    assert isinstance(region, MemoryRegion)
+
+                    region.physical_start_addr = HexInt(physical_start_addr)
+                    region.virtual_start_addr = HexInt(physical_start_addr)
+
+                    del self.root_cell.memory_regions[region_name]
+
+                mc = MemoryConstraint(region.size, False)
+                mc.resolved = callback
+
+                # this is MEM_IO but should still be allocated
+                region.flags = []
+
+                self.per_region_constraints[region_name] = mc
+                self.root_cell.memory_regions[region_name] = region
+
+
+class UnallocatedOrSharedSegmentsAnalysis(object):
+    """ Group unallocated memory regions into segments
+        that are allocated continuously.
+        Detect (un-)allocated regions that are shared
+        between cells
+    """
+
+    def __init__(
+        self,
+        root_cell,
+        cells,
+        logger,
+        per_region_constraints,
+        physical_domain,
+        key=lambda x: x.physical_start_addr,
+    ) -> None:
+        self.root_cell: CellConfig = root_cell
+        self.cells: Dict[str, CellConfig] = cells
+        self.logger = logger
+        self.key = key
+        self.per_region_constraints = per_region_constraints
+        self.physical_domain: Optional[cp_model.Domain] = physical_domain
+
+        # result store
+        self.unallocated: List[AllocatorSegment] = []
+        self.shared: Dict[str, AllocatorSegment] = {}
+
+    def _detect_shared_memio(self):
+        shared: Dict[
+            Tuple[int, int], Tuple[int, List[MemoryRegion]]
+        ] = defaultdict(lambda: (0, []))
+
+        for cell in self.cells.values():
+            for region in cell.memory_regions.values():
+                if not isinstance(region, MemoryRegion):
+                    continue
+
+                if not self.key(region) or "MEM_IO" not in region.flags:
+                    continue
+
+                start = region.physical_start_addr
+                key = (start, region.size)
+
+                count, regions = shared[key]
+                regions.append(region)
+
+                shared[key] = (count + 1, regions)
+
+        for count, regions in shared.values():
+            if count > 1:
+                for region in regions:
+                    region.shared = True
+
+    def _log_shared_segments(self):
+        self.logger.info("Shared segments:")
+        for name, seg in self.shared.items():
+            self.logger.info(f"Region: '{name}' shared by")
+
+            for cell_name in seg.shared_regions:
+                self.logger.info(f"\t{cell_name}")
+
+            self.logger.info("\n")
+
+    def run(self) -> None:
+        assert self.root_cell is not None
+        assert self.cells is not None
+
+        self._detect_shared_memio()
+
+        # Add cell memories
+        self.logger.debug("building allocatable regions")
+        for cell_name, cell in self.cells.items():
+            assert cell is not None
+            assert cell.memory_regions is not None
+
+            for region_name, region in cell.memory_regions.items():
+                if not isinstance(region, MemoryRegion):
+                    continue
+                if region.allocatable:
+                    continue
+                if self.key(region) is not None and region_name == "memreserve":
+                    continue
+
+                assert self.shared is not None
+                if region.shared and region_name in self.shared:
+                    current_segment = self.shared[region_name]
+
+                    assert current_segment.shared_regions
+                    current_segment.shared_regions[cell_name].append(region)
+
+                    if region_name in self.per_region_constraints:
+                        constraint = self.per_region_constraints[region_name]
+
+                        if current_segment.constraint:
+                            constraint = constraint.merge(
+                                current_segment.constraint
+                            )
+
+                        current_segment.constraint = constraint
+                else:
+                    current_segment = AllocatorSegment(
+                        region_name, shared_regions={cell_name: [region]},
+                    )
+
+                    if region_name in self.per_region_constraints:
+                        current_segment.constraint = self.per_region_constraints[
+                            region_name
+                        ]
+
+                    if region.physical_start_addr is not None:
+                        if (
+                            self.physical_domain
+                            and self.physical_domain.Contains(
+                                int(region.physical_start_addr)
+                            )
+                            or "MEM_IO" not in region.flags
+                        ):
+                            self.unallocated.append(current_segment)
+                    else:
+                        self.unallocated.append(current_segment)
+
+                    # TODO are shared regions required to have
+                    # the same name accross cells?
+                    if region.shared:
+                        self.shared[region_name] = current_segment
+
+        # Add hypervisor memories
+        hypervisor_memory = self.root_cell.hypervisor_memory
+        assert isinstance(hypervisor_memory, HypervisorMemoryRegion)
+
+        if hypervisor_memory.physical_start_addr is None:
+            self.unallocated.append(
+                AllocatorSegment(
+                    "hypervisor_memory",
+                    alignment=hypervisor_memory.size,  # FIXME: this is too much alignment
+                    shared_regions={"hypervisor": [hypervisor_memory]},
+                )
+            )
+
+        self._log_shared_segments()
+
+
+class MergeIoRegionsPass(BasePass):
+    """ Merge IO regions in root cell that are at most 64 kB apart """
+
+    def __init__(self) -> None:
+        self.config: Optional[JailhouseConfig] = None
+        self.board: Optional[Board] = None
+        self.root_cell: Optional[CellConfig] = None
+        self.logger = logging.getLogger("autojail")
+
+    def __call__(
+        self, board: Board, config: JailhouseConfig
+    ) -> Tuple[Board, JailhouseConfig]:
+        self.logger.info("Merge IO Regions")
+
+        self.board = board
+        self.config = config
+
+        for cell in self.config.cells.values():
+            if cell.type == "root":
+                self.root_cell = cell
+
+        assert self.root_cell
+        assert self.root_cell.memory_regions
+
+        shared_regions_ana = UnallocatedOrSharedSegmentsAnalysis(
+            self.root_cell,
+            self.config.cells,
+            self.logger,
+            dict(),
+            None,
+            key=lambda region: region.physical_start_addr,
+        )
+        shared_regions_ana.run()
+
+        def get_io_regions(
+            regions: Dict[str, Union[str, ShMemNetRegion, MemoryRegion]]
+        ) -> List[Tuple[str, MemoryRegion]]:
+            return list(
+                [
+                    (name, r)
+                    for name, r in regions.items()
+                    if isinstance(r, MemoryRegion) and "MEM_IO" in r.flags
+                ]
+            )
+
+        regions: List[Tuple[str, MemoryRegion]] = get_io_regions(
+            self.root_cell.memory_regions
+        )
+        regions = sorted(regions, key=lambda t: t[1].physical_start_addr,)
+
+        grouped_regions: List[List[Tuple[str, MemoryRegion]]] = []
+        current_group: List[Tuple[str, MemoryRegion]] = []
+
+        max_dist = 65536
+        for name, r in regions:
+            assert r.physical_start_addr
+            assert r.size
+
+            if current_group:
+                r1_end = r.physical_start_addr + r.size
+
+                assert current_group[-1][1].physical_start_addr
+                if (
+                    current_group[-1][1].physical_start_addr - r1_end > max_dist
+                    or r.shared
+                ):
+                    grouped_regions.append(current_group)
+
+                    if not r.shared:
+                        current_group = [(name, r)]
+                    else:
+                        current_group = []
+                else:
+                    current_group.append((name, r))
+            else:
+                current_group.append((name, r))
+
+        if current_group:
+            grouped_regions.append(current_group)
+
+        self.logger.info(f"Got {len(grouped_regions)} grouped region(s):")
+        for group in grouped_regions:
+            self.logger.info("Group-Begin:")
+            for region in group:
+                self.logger.info(f"\t{region}")
+
+            self.logger.info("Group-End\n")
+
+        for index, regions in enumerate(grouped_regions):
+            r_start = regions[0][1]
+            r_end = regions[-1][1]
+
+            assert r_start.physical_start_addr
+            assert r_end.size
+            assert r_end.physical_start_addr
+            new_size = (
+                r_end.physical_start_addr + r_end.size
+            ) - r_start.physical_start_addr
+
+            def aux(
+                acc: Iterable[str], t: Tuple[str, MemoryRegion]
+            ) -> Iterable[str]:
+                _, r = t
+
+                return set(acc) | set(r.flags)
+
+            init: Iterable[str] = set()
+            flags: List[str] = sorted(list(reduce(aux, regions, init)))
+
+            physical_start_addr = r_start.physical_start_addr
+            virtual_start_addr = r_start.virtual_start_addr
+
+            new_region = MemoryRegion(
+                size=new_size,
+                physical_start_addr=physical_start_addr,
+                virtual_start_addr=virtual_start_addr,
+                flags=flags,
+                allocatable=False,
+                shared=False,
+            )
+
+            assert self.root_cell.memory_regions
+            for name, _ in regions:
+                del self.root_cell.memory_regions[name]
+
+            self.root_cell.memory_regions[f"mmio_{index}"] = new_region
+
+        return (self.board, self.config)
 
 
 class PrepareMemoryRegionsPass(BasePass):
