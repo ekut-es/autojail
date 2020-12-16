@@ -544,6 +544,38 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
+  gpio@7e200000:
+    phandle: 15
+    path: /soc/gpio@7e200000
+    compatible:
+    - brcm,bcm2711-gpio
+    - brcm,bcm2835-gpio
+    interrupts:
+    - type: 0x0
+      num: 113
+      flags: 0x4
+    - type: 0x0
+      num: 114
+      flags: 0x4
+    aliases:
+    - gpio
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe200000
+    virtual_start_addr: 0xfe200000
+    size: 0xb4
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
   gpiomem:
     phandle:
     path: /soc/gpiomem
@@ -2256,7 +2288,7 @@ interrupt_controllers:
   gich_base: 0xff844000
   gicv_base: 0xff846000
   gicr_base: 0x0
-  interrupts: 26,27,29,30,48,49,50,51,65,66,72,105,106,107,112,113,114,115,116,117,118,119,120,121,122,123,124,125,129,130,132,134,135,136,137,138,140,141,142,144,149,150,152,153,155,157,158,169,180,189,190,208
+  interrupts: 26,27,29,30,48,49,50,51,65,66,72,105,106,107,112,113,114,115,116,117,118,119,120,121,122,123,124,125,129,130,132,134,135,136,137,138,140,141,142,144,145,146,149,150,152,153,155,157,158,169,180,189,190,208
 clock_tree:
   vec:
     name: vec
@@ -4672,6 +4704,38 @@ devices:
     physical_start_addr: 0xfe700000
     virtual_start_addr: 0xfe700000
     size: 0x8c
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  gpio@7e200000:
+    phandle: 15
+    path: /soc/gpio@7e200000
+    compatible:
+    - brcm,bcm2711-gpio
+    - brcm,bcm2835-gpio
+    interrupts:
+    - type: 0x0
+      num: 113
+      flags: 0x4
+    - type: 0x0
+      num: 114
+      flags: 0x4
+    aliases:
+    - gpio
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe200000
+    virtual_start_addr: 0xfe200000
+    size: 0xb4
     flags:
     - MEM_READ
     - MEM_WRITE

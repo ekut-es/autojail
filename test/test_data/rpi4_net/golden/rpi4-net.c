@@ -13,7 +13,7 @@ struct {
 	.revision = JAILHOUSE_CONFIG_REVISION,
 	.flags = JAILHOUSE_SYS_VIRTUAL_DEBUG_CONSOLE,
 	.hypervisor_memory = {
-		.phys_start = 0x82000000,
+		.phys_start = 0xf8000000,
 		.size = 0x2000000,
 	},
 
@@ -67,26 +67,26 @@ struct {
 		.size = 0x40,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_IO|JAILHOUSE_MEM_IO_8|JAILHOUSE_MEM_IO_16|JAILHOUSE_MEM_IO_32|JAILHOUSE_MEM_IO_64,
 	},
-	/*net1 0x80000000-0x80001000*/
+	/*net1_0 0xfbfff000-0xfc000000*/
 	{
-		.phys_start = 0x80000000,
-		.virt_start = 0x80000000,
+		.phys_start = 0xfbfff000,
+		.virt_start = 0x30000000,
 		.size = 0x1000,
-		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
+		.flags = JAILHOUSE_MEM_READ,
 	},
 	/* empty optional region */
 	{ 0 },
-	/*net1 0x80001000-0x80002000*/
+	/*net1_2 0xfbffe000-0xfbfff000*/
 	{
-		.phys_start = 0x80001000,
-		.virt_start = 0x80001000,
+		.phys_start = 0xfbffe000,
+		.virt_start = 0x30001000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED|JAILHOUSE_MEM_WRITE,
 	},
-	/*net1 0x80002000-0x80003000*/
+	/*net1_3 0xfbffd000-0xfbffe000*/
 	{
-		.phys_start = 0x80002000,
-		.virt_start = 0x80002000,
+		.phys_start = 0xfbffd000,
+		.virt_start = 0x30002000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
@@ -545,10 +545,10 @@ struct {
 		.size = 0x100,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_IO|JAILHOUSE_MEM_IO_8|JAILHOUSE_MEM_IO_16|JAILHOUSE_MEM_IO_32|JAILHOUSE_MEM_IO_64,
 	},
-	/*Boot Memory@guest1 0x80003000-0x80103000*/
+	/*Boot Memory@guest1 0xfbefd000-0xfbffd000*/
 	{
-		.phys_start = 0x80003000,
-		.virt_start = 0x80003000,
+		.phys_start = 0xfbefd000,
+		.virt_start = 0xfbefd000,
 		.size = 0x100000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE,
 	},
@@ -589,7 +589,7 @@ struct {
 			.type = JAILHOUSE_PCI_TYPE_IVSHMEM,
 			.domain = 1,
 			.bar_mask = JAILHOUSE_IVSHMEM_BAR_MASK_INTX,
-			.bdf = 0 << 8 | 0 << 3 | 0,
+			.bdf = 0 << 3,
 			.shmem_regions_start = 2,
 			.shmem_dev_id = 0,
 			.shmem_peers = 2,

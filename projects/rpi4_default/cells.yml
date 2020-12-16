@@ -16,7 +16,7 @@ cells:
       "System RAM":
         physical_start_addr: 0x0
         virtual_start_addr: 0x0
-        size: 768 MB
+        size: 512 MB
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
 
       ivshmem1:
