@@ -1229,6 +1229,72 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
+  dwc3@fe200000:
+    phandle:
+    path: /amba/usb0@ff9d0000/dwc3@fe200000
+    compatible:
+    - snps,dwc3
+    interrupts:
+    - type: 0x0
+      num: 65
+      flags: 0x4
+    - type: 0x0
+      num: 69
+      flags: 0x4
+    - type: 0x0
+      num: 75
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe200000
+    virtual_start_addr: 0xfe200000
+    size: 0x40000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dwc3@fe300000:
+    phandle:
+    path: /amba/usb1@ff9e0000/dwc3@fe300000
+    compatible:
+    - snps,dwc3
+    interrupts:
+    - type: 0x0
+      num: 70
+      flags: 0x4
+    - type: 0x0
+      num: 74
+      flags: 0x4
+    - type: 0x0
+      num: 76
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe300000
+    virtual_start_addr: 0xfe300000
+    size: 0x40000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
   serial@ff000000:
     phandle:
     path: /amba/serial@ff000000
@@ -2681,7 +2747,7 @@ interrupt_controllers:
   gic_version: 2
   gicd_base: 0xf9010000
   gicc_base: 0xf902f000
-  gich_base: 0xf904f000
+  gich_base: 0xf9040000
   gicv_base: 0xf906f000
   gicr_base: 0x0
   interrupts: 26,27,29,30,42,46,47,48,49,50,51,52,53,54,55,56,57,58,59,61,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,84,88,89,91,93,95,97,101,102,106,107,108,109,110,111,112,113,114,115,116,121,122,123,124,144,145,146,147,148,149,150,151,154,155,156,157,158,159,160,161,162,163,164,165,175,176,177,178,187
@@ -6778,6 +6844,19 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
+    physical_start_addr: 0xfe200000
+    virtual_start_addr: 0xfe200000
+    size: 0x40000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
   rtc@ffa60000:
     phandle:
     path: /amba/rtc@ffa60000
@@ -7252,6 +7331,19 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
+    physical_start_addr: 0xfe300000
+    virtual_start_addr: 0xfe300000
+    size: 0x40000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
   timer@ff120000:
     phandle:
     path: /amba/timer@ff120000

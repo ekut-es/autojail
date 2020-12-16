@@ -109,11 +109,19 @@ class DeviceTreeExtractor:
                 return True
         return False
 
+    def _is_dwc_usb(self, node: Node) -> bool:
+        compatible = node.get_property("compatible")
+        if compatible is not None and "xlnx,zynqmp-dwc3" in compatible.value:
+            return True
+
+        return False
+
     def _is_mmapped_bus(self, node: Node) -> bool:
         if (
             self._is_simple_bus(node)
             or node.name == "/"
             or node.name == "reserved-memory"
+            or self._is_dwc_usb(node)
         ):
             return True
         return False
