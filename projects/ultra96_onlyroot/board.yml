@@ -371,6 +371,30 @@ memory_regions:
     - MEM_IO_64
     allocatable: false
     shared: false
+  pci@0:
+    phandle:
+    path: //pci@0
+    compatible:
+    - pci-host-ecam-generic
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xe0000000
+    virtual_start_addr: 0xe0000000
+    size: 0x100000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
   memory-controller@fd070000:
     phandle:
     path: /amba/memory-controller@fd070000
@@ -8355,3 +8379,27 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
+  pci@0:
+    phandle:
+    path: //pci@0
+    compatible:
+    - pci-host-ecam-generic
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xe0000000
+    virtual_start_addr: 0xe0000000
+    size: 0x100000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false

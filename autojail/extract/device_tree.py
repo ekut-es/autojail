@@ -15,6 +15,8 @@ from ..model import CPU, GIC, Device, DeviceMemoryRegion, MemoryRegion
 from ..model.datatypes import ByteSize, IntegerList
 from ..utils.logging import getLogger
 
+SIZE_128K = 128 * 2 ** 10
+
 
 @dataclass
 class RangeEntry:
@@ -277,16 +279,26 @@ class DeviceTreeExtractor:
 
         next_pos = 0
         gic_addresses = []
+        gic_sizes = []
         while next_pos < len(reg):
             start, size, offset = state.parse_range(reg[next_pos:])
             next_pos += offset
             start = state.translate_addr(start)
             gic_addresses.append(start)
+            gic_sizes.append(size)
 
         if gic_version <= 2:
 
             try:
                 gicd_base, gicc_base, gich_base, gicv_base = gic_addresses
+                gicd_size, gicc_size, gich_size, gicv_size = gic_sizes
+
+                # Have a look at drivers/irqchip/irq-gic.o:1359
+                # This actually seems to be the logic
+                if gicc_size == SIZE_128K:
+                    gicc_base = gicc_base + 0xF000
+                    gicv_base = gicv_base + 0xF000
+
             except Exception:
                 self.logger.warning(
                     "GIC %s does not have virtualization extensions", node.name,
