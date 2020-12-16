@@ -1,5 +1,5 @@
 name: ultra96_onlyroot
-board: ultra96
+board: ultra96_onlyroot
 pagesize: 0x1000
 stdout_path: serial0:115200n8
 virtual_address_bits: 48
@@ -299,6 +299,34 @@ memory_regions:
     clock_cells: 0
     physical_start_addr: 0xa0080000
     virtual_start_addr: 0xa0080000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  interrupt-controller@a0090000:
+    phandle:
+    path: /amba_pl@0/interrupt-controller@a0090000
+    compatible:
+    - xlnx,axi-intc-4.1
+    - xlnx,xps-intc-1.00.a
+    interrupts: []
+    aliases: []
+    clock_names:
+    - s_axi_aclk
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xa0090000
+    virtual_start_addr: 0xa0090000
     size: 0x10000
     flags:
     - MEM_READ
@@ -1455,6 +1483,35 @@ memory_regions:
     clock_cells: 0
     physical_start_addr: 0xff070000
     virtual_start_addr: 0xff070000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  gpio@ff0a0000:
+    phandle: 16
+    path: /amba/gpio@ff0a0000
+    compatible:
+    - xlnx,zynqmp-gpio-1.0
+    interrupts:
+    - type: 0x0
+      num: 16
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff0a0000
+    virtual_start_addr: 0xff0a0000
     size: 0x1000
     flags:
     - MEM_READ
@@ -2623,11 +2680,11 @@ interrupt_controllers:
   - arm,cortex-a15-gic
   gic_version: 2
   gicd_base: 0xf9010000
-  gicc_base: 0xf9020000
-  gich_base: 0xf9040000
-  gicv_base: 0xf9060000
+  gicc_base: 0xf902f000
+  gich_base: 0xf904f000
+  gicv_base: 0xf906f000
   gicr_base: 0x0
-  interrupts: 26,27,29,30,42,46,47,49,50,51,52,53,54,55,56,57,58,59,61,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,84,88,89,91,93,95,97,101,102,106,107,108,109,110,111,112,113,114,115,116,121,122,123,124,144,145,146,147,148,149,150,151,154,155,156,157,158,159,160,161,162,163,164,165,175,176,177,178,187
+  interrupts: 26,27,29,30,42,46,47,48,49,50,51,52,53,54,55,56,57,58,59,61,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,84,88,89,91,93,95,97,101,102,106,107,108,109,110,111,112,113,114,115,116,121,122,123,124,144,145,146,147,148,149,150,151,154,155,156,157,158,159,160,161,162,163,164,165,175,176,177,178,187
 clock_tree:
   gem0_rx:
     name: gem0_rx
@@ -2748,9 +2805,9 @@ clock_tree:
                 derived_clocks:
                   iopll:
                     name: iopll
-                    enable_count: 13
-                    prepare_count: 15
-                    protect_count: 9
+                    enable_count: 14
+                    prepare_count: 14
+                    protect_count: 8
                     rate: 1499999985
                     accuracy: 0
                     phase: 0
@@ -2888,7 +2945,7 @@ clock_tree:
                             derived_clocks:
                               lpd_lsbus:
                                 name: lpd_lsbus
-                                enable_count: 7
+                                enable_count: 8
                                 prepare_count: 8
                                 protect_count: 0
                                 rate: 99999999
@@ -3231,7 +3288,7 @@ clock_tree:
                         parent: iopll
                       uart0_ref_mux:
                         name: uart0_ref_mux
-                        enable_count: 0
+                        enable_count: 1
                         prepare_count: 1
                         protect_count: 1
                         rate: 1499999985
@@ -3241,7 +3298,7 @@ clock_tree:
                         derived_clocks:
                           uart0_ref_div1:
                             name: uart0_ref_div1
-                            enable_count: 0
+                            enable_count: 1
                             prepare_count: 1
                             protect_count: 1
                             rate: 99999999
@@ -3251,7 +3308,7 @@ clock_tree:
                             derived_clocks:
                               uart0_ref_div2:
                                 name: uart0_ref_div2
-                                enable_count: 0
+                                enable_count: 1
                                 prepare_count: 1
                                 protect_count: 1
                                 rate: 99999999
@@ -3261,7 +3318,7 @@ clock_tree:
                                 derived_clocks:
                                   uart0_ref:
                                     name: uart0_ref
-                                    enable_count: 0
+                                    enable_count: 1
                                     prepare_count: 1
                                     protect_count: 1
                                     rate: 99999999
@@ -3496,8 +3553,8 @@ clock_tree:
                       i2c1_ref_mux:
                         name: i2c1_ref_mux
                         enable_count: 0
-                        prepare_count: 1
-                        protect_count: 1
+                        prepare_count: 0
+                        protect_count: 0
                         rate: 1499999985
                         accuracy: 0
                         phase: 0
@@ -3506,8 +3563,8 @@ clock_tree:
                           i2c1_ref_div1:
                             name: i2c1_ref_div1
                             enable_count: 0
-                            prepare_count: 1
-                            protect_count: 1
+                            prepare_count: 0
+                            protect_count: 0
                             rate: 99999999
                             accuracy: 0
                             phase: 0
@@ -3516,8 +3573,8 @@ clock_tree:
                               i2c1_ref_div2:
                                 name: i2c1_ref_div2
                                 enable_count: 0
-                                prepare_count: 1
-                                protect_count: 1
+                                prepare_count: 0
+                                protect_count: 0
                                 rate: 99999999
                                 accuracy: 0
                                 phase: 0
@@ -3526,8 +3583,8 @@ clock_tree:
                                   i2c1_ref:
                                     name: i2c1_ref
                                     enable_count: 0
-                                    prepare_count: 1
-                                    protect_count: 1
+                                    prepare_count: 0
+                                    protect_count: 0
                                     rate: 99999999
                                     accuracy: 0
                                     phase: 0
@@ -4790,53 +4847,318 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  cpu-sleep-0:
-    phandle: 2
-    path: /cpus/idle-states/cpu-sleep-0
-    compatible:
-    - arm,idle-state
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  cpu_opp_table:
-    phandle: 1
-    path: //cpu_opp_table
-    compatible:
-    - operating-points-v2
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  dcc:
+  amba_pl@0:
     phandle:
-    path: //dcc
+    path: //amba_pl@0
     compatible:
-    - arm,dcc
+    - simple-bus
     interrupts: []
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  zynqmp_ipi:
+  PWM_w_Int@a0070000:
     phandle:
-    path: //zynqmp_ipi
+    path: /amba_pl@0/PWM_w_Int@a0070000
     compatible:
-    - xlnx,zynqmp-ipi-mailbox
+    - xlnx,PWM-w-Int-1.0
     interrupts:
     - type: 0x0
-      num: 35
+      num: 92
       flags: 0x4
+    aliases: []
+    clock_names:
+    - s00_axi_aclk
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xa0070000
+    virtual_start_addr: 0xa0070000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  system_management_wiz@a0080000:
+    phandle:
+    path: /amba_pl@0/system_management_wiz@a0080000
+    compatible:
+    - xlnx,system-management-wiz-1.3
+    interrupts: []
+    aliases: []
+    clock_names:
+    - s_axi_aclk
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xa0080000
+    virtual_start_addr: 0xa0080000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  gpio@a0040000:
+    phandle:
+    path: /amba_pl@0/gpio@a0040000
+    compatible:
+    - xlnx,axi-gpio-2.0
+    - xlnx,xps-gpio-1.00.a
+    interrupts: []
+    aliases: []
+    clock_names:
+    - s_axi_aclk
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xa0040000
+    virtual_start_addr: 0xa0040000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  interrupt-controller@a0090000:
+    phandle:
+    path: /amba_pl@0/interrupt-controller@a0090000
+    compatible:
+    - xlnx,axi-intc-4.1
+    - xlnx,xps-intc-1.00.a
+    interrupts: []
+    aliases: []
+    clock_names:
+    - s_axi_aclk
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xa0090000
+    virtual_start_addr: 0xa0090000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  PWM_w_Int@a0060000:
+    phandle:
+    path: /amba_pl@0/PWM_w_Int@a0060000
+    compatible:
+    - xlnx,PWM-w-Int-1.0
+    interrupts:
+    - type: 0x0
+      num: 91
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - s00_axi_aclk
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xa0060000
+    virtual_start_addr: 0xa0060000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  zyxclmm_drm:
+    phandle:
+    path: /amba_pl@0/zyxclmm_drm
+    compatible:
+    - xlnx,zocl
+    interrupts: []
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
+  gpio@a0050000:
+    phandle:
+    path: /amba_pl@0/gpio@a0050000
+    compatible:
+    - xlnx,axi-gpio-2.0
+    - xlnx,xps-gpio-1.00.a
+    interrupts: []
+    aliases: []
+    clock_names:
+    - s_axi_aclk
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xa0050000
+    virtual_start_addr: 0xa0050000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  axi_bram_ctrl@a0000000:
+    phandle:
+    path: /amba_pl@0/axi_bram_ctrl@a0000000
+    compatible:
+    - xlnx,axi-bram-ctrl-4.1
+    interrupts: []
+    aliases: []
+    clock_names:
+    - s_axi_aclk
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xa0000000
+    virtual_start_addr: 0xa0000000
+    size: 0x2000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  gpio@a0030000:
+    phandle:
+    path: /amba_pl@0/gpio@a0030000
+    compatible:
+    - xlnx,axi-gpio-2.0
+    - xlnx,xps-gpio-1.00.a
+    interrupts: []
+    aliases: []
+    clock_names:
+    - s_axi_aclk
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xa0030000
+    virtual_start_addr: 0xa0030000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  serial@a0020000:
+    phandle:
+    path: /amba_pl@0/serial@a0020000
+    compatible:
+    - xlnx,xps-uart16550-2.00.a
+    - ns16550a
+    interrupts:
+    - type: 0x0
+      num: 90
+      flags: 0x4
+    aliases:
+    - serial1
+    clock_names:
+    - s_axi_aclk
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xa0020000
+    virtual_start_addr: 0xa0020000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  serial@a0010000:
+    phandle:
+    path: /amba_pl@0/serial@a0010000
+    compatible:
+    - xlnx,xps-uart16550-2.00.a
+    - ns16550a
+    interrupts:
+    - type: 0x0
+      num: 89
+      flags: 0x4
+    aliases:
+    - serial3
+    clock_names:
+    - s_axi_aclk
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xa0010000
+    virtual_start_addr: 0xa0010000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
   pmu:
     phandle:
     path: //pmu
@@ -4860,12 +5182,60 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  psci:
-    phandle:
-    path: //psci
+  pss_alt_ref_clk:
+    phandle: 8
+    path: //pss_alt_ref_clk
     compatible:
-    - arm,psci-0.2
+    - fixed-clock
     interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  amba_apu@0:
+    phandle:
+    path: //amba_apu@0
+    compatible:
+    - simple-bus
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  pcap:
+    phandle: 11
+    path: //pcap
+    compatible:
+    - xlnx,zynqmp-pcap-fpga
+    interrupts: []
+    aliases: []
+    clock_names:
+    - ref_clk
+    clocks:
+    - '3'
+    - '41'
+    clock_output_names: []
+    clock_cells: 0
+  timer:
+    phandle:
+    path: //timer
+    compatible:
+    - arm,armv8-timer
+    interrupts:
+    - type: 0x1
+      num: 13
+      flags: 0xf08
+    - type: 0x1
+      num: 14
+      flags: 0xf08
+    - type: 0x1
+      num: 11
+      flags: 0xf08
+    - type: 0x1
+      num: 10
+      flags: 0xf08
     aliases: []
     clock_names: []
     clocks: []
@@ -4877,20 +5247,6 @@ devices:
     compatible:
     - xlnx,zynqmp-firmware
     interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  zynqmp-power:
-    phandle:
-    path: /firmware/zynqmp-firmware/zynqmp-power
-    compatible:
-    - xlnx,zynqmp-power
-    interrupts:
-    - type: 0x0
-      num: 35
-      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
@@ -4939,85 +5295,89 @@ devices:
     - '10'
     clock_output_names: []
     clock_cells: 1
-  timer:
+  zynqmp-power:
     phandle:
-    path: //timer
+    path: /firmware/zynqmp-firmware/zynqmp-power
     compatible:
-    - arm,armv8-timer
+    - xlnx,zynqmp-power
     interrupts:
-    - type: 0x1
-      num: 13
-      flags: 0xf08
-    - type: 0x1
-      num: 14
-      flags: 0xf08
-    - type: 0x1
-      num: 11
-      flags: 0xf08
-    - type: 0x1
-      num: 10
-      flags: 0xf08
+    - type: 0x0
+      num: 35
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  edac:
+  cpu_opp_table:
+    phandle: 1
+    path: //cpu_opp_table
+    compatible:
+    - operating-points-v2
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  iio-hwmon:
     phandle:
-    path: //edac
+    path: //iio-hwmon
     compatible:
-    - arm,cortex-a53-edac
+    - iio-hwmon
     interrupts: []
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  fpga-full:
+  fixedregulator-mmcsdio:
+    phandle: 22
+    path: //fixedregulator-mmcsdio
+    compatible:
+    - regulator-fixed
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  zynqmp_ipi:
     phandle:
-    path: //fpga-full
+    path: //zynqmp_ipi
     compatible:
-    - fpga-region
-    interrupts: []
+    - xlnx,zynqmp-ipi-mailbox
+    interrupts:
+    - type: 0x0
+      num: 35
+      flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  nvmem_firmware:
+  xlnk:
     phandle:
-    path: //nvmem_firmware
+    path: //xlnk
     compatible:
-    - xlnx,zynqmp-nvmem-fw
+    - xlnx,xlnk-1.0
     interrupts: []
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  pcap:
-    phandle: 11
-    path: //pcap
+  fclk2:
+    phandle:
+    path: //fclk2
     compatible:
-    - xlnx,zynqmp-pcap-fpga
+    - xlnx,fclk
     interrupts: []
     aliases: []
-    clock_names:
-    - ref_clk
+    clock_names: []
     clocks:
     - '3'
-    - '41'
-    clock_output_names: []
-    clock_cells: 0
-  zynqmp_rsa:
-    phandle:
-    path: //zynqmp_rsa
-    compatible:
-    - xlnx,zynqmp-rsa
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
+    - '73'
     clock_output_names: []
     clock_cells: 0
   sha384:
@@ -5031,103 +5391,39 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  zynqmp_aes:
-    phandle:
-    path: //zynqmp_aes
+  aux_ref_clk:
+    phandle: 9
+    path: //aux_ref_clk
     compatible:
-    - xlnx,zynqmp-aes
+    - fixed-clock
     interrupts: []
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  amba_apu@0:
-    phandle:
-    path: //amba_apu@0
+  sdio_pwrseq:
+    phandle: 21
+    path: //sdio_pwrseq
     compatible:
-    - simple-bus
+    - mmc-pwrseq-simple
     interrupts: []
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  smmu@fd800000:
-    phandle: 13
-    path: //smmu@fd800000
+  gt_crx_ref_clk:
+    phandle: 10
+    path: //gt_crx_ref_clk
     compatible:
-    - arm,mmu-500
-    interrupts:
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
-    - type: 0x0
-      num: 155
-      flags: 0x4
+    - fixed-clock
+    interrupts: []
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd800000
-    virtual_start_addr: 0xfd800000
-    size: 0x20000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   amba:
     phandle:
     path: //amba
@@ -5139,28 +5435,30 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  can@ff060000:
+  serial@ff000000:
     phandle:
-    path: /amba/can@ff060000
+    path: /amba/serial@ff000000
     compatible:
-    - xlnx,zynq-can-1.0
+    - cdns,uart-r1p12
+    - xlnx,xuartps
     interrupts:
     - type: 0x0
-      num: 23
+      num: 21
       flags: 0x4
-    aliases: []
+    aliases:
+    - serial2
     clock_names:
-    - can_clk
+    - uart_clk
     - pclk
     clocks:
     - '3'
-    - '63'
+    - '56'
     - '3'
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff060000
-    virtual_start_addr: 0xff060000
+    physical_start_addr: 0xff000000
+    virtual_start_addr: 0xff000000
     size: 0x1000
     flags:
     - MEM_READ
@@ -5205,20 +5503,25 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  cci@fd6e0000:
-    phandle:
-    path: /amba/cci@fd6e0000
+  ams@ffa50000:
+    phandle: 38
+    path: /amba/ams@ffa50000
     compatible:
-    - arm,cci-400
-    interrupts: []
+    - xlnx,zynqmp-ams
+    interrupts:
+    - type: 0x0
+      num: 56
+      flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '70'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd6e0000
-    virtual_start_addr: 0xfd6e0000
-    size: 0x9000
+    physical_start_addr: 0xffa50000
+    virtual_start_addr: 0xffa50000
+    size: 0x800
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -5229,32 +5532,756 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  pmu@9000:
+  ams_ps@ffa50800:
     phandle:
-    path: /amba/cci@fd6e0000/pmu@9000
+    path: /amba/ams@ffa50000/ams_ps@ffa50800
     compatible:
-    - arm,cci-400-pmu,r1
+    - xlnx,zynqmp-ams-ps
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  ams_pl@ffa50c00:
+    phandle:
+    path: /amba/ams@ffa50000/ams_pl@ffa50c00
+    compatible:
+    - xlnx,zynqmp-ams-pl
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  watchdog@fd4d0000:
+    phandle:
+    path: /amba/watchdog@fd4d0000
+    compatible:
+    - cdns,wdt-r1p2
     interrupts:
     - type: 0x0
-      num: 123
+      num: 113
+      flags: 0x1
+    aliases: []
+    clock_names: []
+    clocks:
+    - '3'
+    - '75'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd4d0000
+    virtual_start_addr: 0xfd4d0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dma@fd560000:
+    phandle:
+    path: /amba/dma@fd560000
+    compatible:
+    - xlnx,zynqmp-dma-1.0
+    interrupts:
+    - type: 0x0
+      num: 130
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - clk_main
+    - clk_apb
+    clocks:
+    - '3'
+    - '19'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd560000
+    virtual_start_addr: 0xfd560000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  watchdog@ff150000:
+    phandle:
+    path: /amba/watchdog@ff150000
+    compatible:
+    - cdns,wdt-r1p2
+    interrupts:
+    - type: 0x0
+      num: 52
+      flags: 0x1
+    aliases: []
+    clock_names: []
+    clocks:
+    - '3'
+    - '112'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff150000
+    virtual_start_addr: 0xff150000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  timer@ff140000:
+    phandle:
+    path: /amba/timer@ff140000
+    compatible:
+    - cdns,ttc
+    interrupts:
+    - type: 0x0
+      num: 45
       flags: 0x4
     - type: 0x0
-      num: 123
+      num: 46
       flags: 0x4
     - type: 0x0
-      num: 123
+      num: 47
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff140000
+    virtual_start_addr: 0xff140000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  gpu@fd4b0000:
+    phandle:
+    path: /amba/gpu@fd4b0000
+    compatible:
+    - arm,mali-400
+    - arm,mali-utgard
+    interrupts:
+    - type: 0x0
+      num: 132
       flags: 0x4
     - type: 0x0
-      num: 123
+      num: 132
       flags: 0x4
     - type: 0x0
-      num: 123
+      num: 132
+      flags: 0x4
+    - type: 0x0
+      num: 132
+      flags: 0x4
+    - type: 0x0
+      num: 132
+      flags: 0x4
+    - type: 0x0
+      num: 132
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - gpu
+    - gpu_pp0
+    - gpu_pp1
+    clocks:
+    - '3'
+    - '24'
+    - '3'
+    - '25'
+    - '3'
+    - '26'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd4b0000
+    virtual_start_addr: 0xfd4b0000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dma@ffae0000:
+    phandle:
+    path: /amba/dma@ffae0000
+    compatible:
+    - xlnx,zynqmp-dma-1.0
+    interrupts:
+    - type: 0x0
+      num: 83
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - clk_main
+    - clk_apb
+    clocks:
+    - '3'
+    - '68'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xffae0000
+    virtual_start_addr: 0xffae0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  zynqmp_r5_rproc@0:
+    phandle:
+    path: /amba/zynqmp_r5_rproc@0
+    compatible:
+    - xlnx,zynqmp-r5-remoteproc-1.0
+    interrupts:
+    - type: 0x0
+      num: 29
       flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
+    physical_start_addr: 0xff9a0100
+    virtual_start_addr: 0xff9a0100
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  zynqmp_r5_rproc@0.0:
+    phandle:
+    path: /amba/zynqmp_r5_rproc@0
+    compatible:
+    - xlnx,zynqmp-r5-remoteproc-1.0
+    interrupts:
+    - type: 0x0
+      num: 29
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff340000
+    virtual_start_addr: 0xff340000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  zynqmp_r5_rproc@0.1:
+    phandle:
+    path: /amba/zynqmp_r5_rproc@0
+    compatible:
+    - xlnx,zynqmp-r5-remoteproc-1.0
+    interrupts:
+    - type: 0x0
+      num: 29
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff9a0000
+    virtual_start_addr: 0xff9a0000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  ahci@fd0c0000:
+    phandle:
+    path: /amba/ahci@fd0c0000
+    compatible:
+    - ceva,ahci-1v84
+    interrupts:
+    - type: 0x0
+      num: 133
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '3'
+    - '22'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd0c0000
+    virtual_start_addr: 0xfd0c0000
+    size: 0x2000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  ethernet@ff0c0000:
+    phandle:
+    path: /amba/ethernet@ff0c0000
+    compatible:
+    - cdns,zynqmp-gem
+    - cdns,gem
+    interrupts:
+    - type: 0x0
+      num: 59
+      flags: 0x4
+    - type: 0x0
+      num: 59
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - pclk
+    - hclk
+    - tx_clk
+    - rx_clk
+    - tsu_clk
+    clocks:
+    - '3'
+    - '31'
+    - '3'
+    - '105'
+    - '3'
+    - '46'
+    - '3'
+    - '50'
+    - '3'
+    - '44'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff0c0000
+    virtual_start_addr: 0xff0c0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spi@ff050000:
+    phandle:
+    path: /amba/spi@ff050000
+    compatible:
+    - cdns,spi-r1p6
+    interrupts:
+    - type: 0x0
+      num: 20
+      flags: 0x4
+    aliases:
+    - spi1
+    clock_names:
+    - ref_clk
+    - pclk
+    clocks:
+    - '3'
+    - '59'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff050000
+    virtual_start_addr: 0xff050000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spidev@0x00:
+    phandle:
+    path: /amba/spi@ff050000/spidev@0x00
+    compatible:
+    - rohm,dh2228fv
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  timer@ff130000:
+    phandle:
+    path: /amba/timer@ff130000
+    compatible:
+    - cdns,ttc
+    interrupts:
+    - type: 0x0
+      num: 42
+      flags: 0x4
+    - type: 0x0
+      num: 43
+      flags: 0x4
+    - type: 0x0
+      num: 44
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff130000
+    virtual_start_addr: 0xff130000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  memory-controller@ff960000:
+    phandle:
+    path: /amba/memory-controller@ff960000
+    compatible:
+    - xlnx,zynqmp-ocmc-1.0
+    interrupts:
+    - type: 0x0
+      num: 10
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff960000
+    virtual_start_addr: 0xff960000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dma@fd4c0000:
+    phandle: 28
+    path: /amba/dma@fd4c0000
+    compatible:
+    - xlnx,dpdma
+    interrupts:
+    - type: 0x0
+      num: 122
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - axi_clk
+    clocks:
+    - '3'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd4c0000
+    virtual_start_addr: 0xfd4c0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dma-audio1channel:
+    phandle:
+    path: /amba/dma@fd4c0000/dma-audio1channel
+    compatible:
+    - xlnx,audio1
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  dma-video2channel:
+    phandle:
+    path: /amba/dma@fd4c0000/dma-video2channel
+    compatible:
+    - xlnx,video2
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  dma-video0channel:
+    phandle:
+    path: /amba/dma@fd4c0000/dma-video0channel
+    compatible:
+    - xlnx,video0
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  dma-graphicschannel:
+    phandle:
+    path: /amba/dma@fd4c0000/dma-graphicschannel
+    compatible:
+    - xlnx,graphics
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  dma-audio0channel:
+    phandle:
+    path: /amba/dma@fd4c0000/dma-audio0channel
+    compatible:
+    - xlnx,audio0
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  dma-video1channel:
+    phandle:
+    path: /amba/dma@fd4c0000/dma-video1channel
+    compatible:
+    - xlnx,video1
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  tcm@ffe00000:
+    phandle: 34
+    path: /amba/tcm@ffe00000
+    compatible:
+    - mmio-sram
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xffe00000
+    virtual_start_addr: 0xffe00000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dma@ffaf0000:
+    phandle:
+    path: /amba/dma@ffaf0000
+    compatible:
+    - xlnx,zynqmp-dma-1.0
+    interrupts:
+    - type: 0x0
+      num: 84
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - clk_main
+    - clk_apb
+    clocks:
+    - '3'
+    - '68'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xffaf0000
+    virtual_start_addr: 0xffaf0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dma@ffa80000:
+    phandle:
+    path: /amba/dma@ffa80000
+    compatible:
+    - xlnx,zynqmp-dma-1.0
+    interrupts:
+    - type: 0x0
+      num: 77
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - clk_main
+    - clk_apb
+    clocks:
+    - '3'
+    - '68'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xffa80000
+    virtual_start_addr: 0xffa80000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  serial@ff010000:
+    phandle:
+    path: /amba/serial@ff010000
+    compatible:
+    - cdns,uart-r1p12
+    - xlnx,xuartps
+    interrupts:
+    - type: 0x0
+      num: 22
+      flags: 0x4
+    aliases:
+    - serial0
+    clock_names:
+    - uart_clk
+    - pclk
+    clocks:
+    - '3'
+    - '57'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff010000
+    virtual_start_addr: 0xff010000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dma@fd530000:
+    phandle:
+    path: /amba/dma@fd530000
+    compatible:
+    - xlnx,zynqmp-dma-1.0
+    interrupts:
+    - type: 0x0
+      num: 127
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - clk_main
+    - clk_apb
+    clocks:
+    - '3'
+    - '19'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd530000
+    virtual_start_addr: 0xfd530000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
   dma@fd500000:
     phandle:
     path: /amba/dma@fd500000
@@ -5277,6 +6304,98 @@ devices:
     clock_cells: 0
     physical_start_addr: 0xfd500000
     virtual_start_addr: 0xfd500000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  ethernet@ff0e0000:
+    phandle:
+    path: /amba/ethernet@ff0e0000
+    compatible:
+    - cdns,zynqmp-gem
+    - cdns,gem
+    interrupts:
+    - type: 0x0
+      num: 63
+      flags: 0x4
+    - type: 0x0
+      num: 63
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - pclk
+    - hclk
+    - tx_clk
+    - rx_clk
+    - tsu_clk
+    clocks:
+    - '3'
+    - '31'
+    - '3'
+    - '107'
+    - '3'
+    - '48'
+    - '3'
+    - '52'
+    - '3'
+    - '44'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff0e0000
+    virtual_start_addr: 0xff0e0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  ethernet@ff0b0000:
+    phandle:
+    path: /amba/ethernet@ff0b0000
+    compatible:
+    - cdns,zynqmp-gem
+    - cdns,gem
+    interrupts:
+    - type: 0x0
+      num: 57
+      flags: 0x4
+    - type: 0x0
+      num: 57
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - pclk
+    - hclk
+    - tx_clk
+    - rx_clk
+    - tsu_clk
+    clocks:
+    - '3'
+    - '31'
+    - '3'
+    - '104'
+    - '3'
+    - '45'
+    - '3'
+    - '49'
+    - '3'
+    - '44'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff0b0000
+    virtual_start_addr: 0xff0b0000
     size: 0x1000
     flags:
     - MEM_READ
@@ -5354,14 +6473,14 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  dma@fd530000:
+  dma@ffac0000:
     phandle:
-    path: /amba/dma@fd530000
+    path: /amba/dma@ffac0000
     compatible:
     - xlnx,zynqmp-dma-1.0
     interrupts:
     - type: 0x0
-      num: 127
+      num: 81
       flags: 0x4
     aliases: []
     clock_names:
@@ -5369,13 +6488,13 @@ devices:
     - clk_apb
     clocks:
     - '3'
-    - '19'
+    - '68'
     - '3'
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd530000
-    virtual_start_addr: 0xfd530000
+    physical_start_addr: 0xffac0000
+    virtual_start_addr: 0xffac0000
     size: 0x1000
     flags:
     - MEM_READ
@@ -5420,146 +6539,19 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  dma@fd550000:
-    phandle:
-    path: /amba/dma@fd550000
+  tcm@ffe20000:
+    phandle: 35
+    path: /amba/tcm@ffe20000
     compatible:
-    - xlnx,zynqmp-dma-1.0
-    interrupts:
-    - type: 0x0
-      num: 129
-      flags: 0x4
+    - mmio-sram
+    interrupts: []
     aliases: []
-    clock_names:
-    - clk_main
-    - clk_apb
-    clocks:
-    - '3'
-    - '19'
-    - '3'
-    - '31'
+    clock_names: []
+    clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd550000
-    virtual_start_addr: 0xfd550000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  dma@fd560000:
-    phandle:
-    path: /amba/dma@fd560000
-    compatible:
-    - xlnx,zynqmp-dma-1.0
-    interrupts:
-    - type: 0x0
-      num: 130
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - clk_main
-    - clk_apb
-    clocks:
-    - '3'
-    - '19'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xfd560000
-    virtual_start_addr: 0xfd560000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  dma@fd570000:
-    phandle:
-    path: /amba/dma@fd570000
-    compatible:
-    - xlnx,zynqmp-dma-1.0
-    interrupts:
-    - type: 0x0
-      num: 131
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - clk_main
-    - clk_apb
-    clocks:
-    - '3'
-    - '19'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xfd570000
-    virtual_start_addr: 0xfd570000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  gpu@fd4b0000:
-    phandle:
-    path: /amba/gpu@fd4b0000
-    compatible:
-    - arm,mali-400
-    - arm,mali-utgard
-    interrupts:
-    - type: 0x0
-      num: 132
-      flags: 0x4
-    - type: 0x0
-      num: 132
-      flags: 0x4
-    - type: 0x0
-      num: 132
-      flags: 0x4
-    - type: 0x0
-      num: 132
-      flags: 0x4
-    - type: 0x0
-      num: 132
-      flags: 0x4
-    - type: 0x0
-      num: 132
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - gpu
-    - gpu_pp0
-    - gpu_pp1
-    clocks:
-    - '3'
-    - '24'
-    - '3'
-    - '25'
-    - '3'
-    - '26'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xfd4b0000
-    virtual_start_addr: 0xfd4b0000
+    physical_start_addr: 0xffe20000
+    virtual_start_addr: 0xffe20000
     size: 0x10000
     flags:
     - MEM_READ
@@ -5571,62 +6563,20 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  dma@ffa80000:
-    phandle:
-    path: /amba/dma@ffa80000
+  ddr@3ed00000:
+    phandle: 36
+    path: /amba/ddr@3ed00000
     compatible:
-    - xlnx,zynqmp-dma-1.0
-    interrupts:
-    - type: 0x0
-      num: 77
-      flags: 0x4
+    - mmio-sram
+    interrupts: []
     aliases: []
-    clock_names:
-    - clk_main
-    - clk_apb
-    clocks:
-    - '3'
-    - '68'
-    - '3'
-    - '31'
+    clock_names: []
+    clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffa80000
-    virtual_start_addr: 0xffa80000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  dma@ffa90000:
-    phandle:
-    path: /amba/dma@ffa90000
-    compatible:
-    - xlnx,zynqmp-dma-1.0
-    interrupts:
-    - type: 0x0
-      num: 78
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - clk_main
-    - clk_apb
-    clocks:
-    - '3'
-    - '68'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xffa90000
-    virtual_start_addr: 0xffa90000
-    size: 0x1000
+    physical_start_addr: 0x3ed00000
+    virtual_start_addr: 0x3ed00000
+    size: 0x40000
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -5659,445 +6609,6 @@ devices:
     clock_cells: 0
     physical_start_addr: 0xffaa0000
     virtual_start_addr: 0xffaa0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  dma@ffab0000:
-    phandle:
-    path: /amba/dma@ffab0000
-    compatible:
-    - xlnx,zynqmp-dma-1.0
-    interrupts:
-    - type: 0x0
-      num: 80
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - clk_main
-    - clk_apb
-    clocks:
-    - '3'
-    - '68'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xffab0000
-    virtual_start_addr: 0xffab0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  dma@ffac0000:
-    phandle:
-    path: /amba/dma@ffac0000
-    compatible:
-    - xlnx,zynqmp-dma-1.0
-    interrupts:
-    - type: 0x0
-      num: 81
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - clk_main
-    - clk_apb
-    clocks:
-    - '3'
-    - '68'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xffac0000
-    virtual_start_addr: 0xffac0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  dma@ffad0000:
-    phandle:
-    path: /amba/dma@ffad0000
-    compatible:
-    - xlnx,zynqmp-dma-1.0
-    interrupts:
-    - type: 0x0
-      num: 82
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - clk_main
-    - clk_apb
-    clocks:
-    - '3'
-    - '68'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xffad0000
-    virtual_start_addr: 0xffad0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  dma@ffae0000:
-    phandle:
-    path: /amba/dma@ffae0000
-    compatible:
-    - xlnx,zynqmp-dma-1.0
-    interrupts:
-    - type: 0x0
-      num: 83
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - clk_main
-    - clk_apb
-    clocks:
-    - '3'
-    - '68'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xffae0000
-    virtual_start_addr: 0xffae0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  dma@ffaf0000:
-    phandle:
-    path: /amba/dma@ffaf0000
-    compatible:
-    - xlnx,zynqmp-dma-1.0
-    interrupts:
-    - type: 0x0
-      num: 84
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - clk_main
-    - clk_apb
-    clocks:
-    - '3'
-    - '68'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xffaf0000
-    virtual_start_addr: 0xffaf0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  memory-controller@fd070000:
-    phandle:
-    path: /amba/memory-controller@fd070000
-    compatible:
-    - xlnx,zynqmp-ddrc-2.40a
-    interrupts:
-    - type: 0x0
-      num: 112
-      flags: 0x4
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xfd070000
-    virtual_start_addr: 0xfd070000
-    size: 0x30000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  nand@ff100000:
-    phandle:
-    path: /amba/nand@ff100000
-    compatible:
-    - arasan,nfc-v3p10
-    interrupts:
-    - type: 0x0
-      num: 14
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - clk_sys
-    - clk_flash
-    clocks:
-    - '3'
-    - '60'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff100000
-    virtual_start_addr: 0xff100000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  ethernet@ff0b0000:
-    phandle:
-    path: /amba/ethernet@ff0b0000
-    compatible:
-    - cdns,zynqmp-gem
-    - cdns,gem
-    interrupts:
-    - type: 0x0
-      num: 57
-      flags: 0x4
-    - type: 0x0
-      num: 57
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - pclk
-    - hclk
-    - tx_clk
-    - rx_clk
-    - tsu_clk
-    clocks:
-    - '3'
-    - '31'
-    - '3'
-    - '104'
-    - '3'
-    - '45'
-    - '3'
-    - '49'
-    - '3'
-    - '44'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff0b0000
-    virtual_start_addr: 0xff0b0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  ethernet@ff0c0000:
-    phandle:
-    path: /amba/ethernet@ff0c0000
-    compatible:
-    - cdns,zynqmp-gem
-    - cdns,gem
-    interrupts:
-    - type: 0x0
-      num: 59
-      flags: 0x4
-    - type: 0x0
-      num: 59
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - pclk
-    - hclk
-    - tx_clk
-    - rx_clk
-    - tsu_clk
-    clocks:
-    - '3'
-    - '31'
-    - '3'
-    - '105'
-    - '3'
-    - '46'
-    - '3'
-    - '50'
-    - '3'
-    - '44'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff0c0000
-    virtual_start_addr: 0xff0c0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  ethernet@ff0d0000:
-    phandle:
-    path: /amba/ethernet@ff0d0000
-    compatible:
-    - cdns,zynqmp-gem
-    - cdns,gem
-    interrupts:
-    - type: 0x0
-      num: 61
-      flags: 0x4
-    - type: 0x0
-      num: 61
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - pclk
-    - hclk
-    - tx_clk
-    - rx_clk
-    - tsu_clk
-    clocks:
-    - '3'
-    - '31'
-    - '3'
-    - '106'
-    - '3'
-    - '47'
-    - '3'
-    - '51'
-    - '3'
-    - '44'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff0d0000
-    virtual_start_addr: 0xff0d0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  ethernet@ff0e0000:
-    phandle:
-    path: /amba/ethernet@ff0e0000
-    compatible:
-    - cdns,zynqmp-gem
-    - cdns,gem
-    interrupts:
-    - type: 0x0
-      num: 63
-      flags: 0x4
-    - type: 0x0
-      num: 63
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - pclk
-    - hclk
-    - tx_clk
-    - rx_clk
-    - tsu_clk
-    clocks:
-    - '3'
-    - '31'
-    - '3'
-    - '107'
-    - '3'
-    - '48'
-    - '3'
-    - '52'
-    - '3'
-    - '44'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff0e0000
-    virtual_start_addr: 0xff0e0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  i2c@ff020000:
-    phandle:
-    path: /amba/i2c@ff020000
-    compatible:
-    - cdns,i2c-r1p14
-    - cdns,i2c-r1p10
-    interrupts:
-    - type: 0x0
-      num: 17
-      flags: 0x4
-    aliases: []
-    clock_names: []
-    clocks:
-    - '3'
-    - '61'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff020000
-    virtual_start_addr: 0xff020000
     size: 0x1000
     flags:
     - MEM_READ
@@ -6184,17 +6695,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  irps5401@13:
-    phandle:
-    path: /amba/i2c@ff030000/i2cswitch@75/i2c@4/irps5401@13
-    compatible:
-    - infineon,irps5401
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
   irps5401@14:
     phandle:
     path: /amba/i2c@ff030000/i2cswitch@75/i2c@4/irps5401@14
@@ -6217,22 +6717,119 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  memory-controller@ff960000:
+  irps5401@13:
     phandle:
-    path: /amba/memory-controller@ff960000
+    path: /amba/i2c@ff030000/i2cswitch@75/i2c@4/irps5401@13
     compatible:
-    - xlnx,zynqmp-ocmc-1.0
+    - infineon,irps5401
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  usb0@ff9d0000:
+    phandle:
+    path: /amba/usb0@ff9d0000
+    compatible:
+    - xlnx,zynqmp-dwc3
+    interrupts: []
+    aliases: []
+    clock_names:
+    - bus_clk
+    - ref_clk
+    clocks:
+    - '3'
+    - '32'
+    - '3'
+    - '34'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff9d0000
+    virtual_start_addr: 0xff9d0000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dwc3@fe200000:
+    phandle:
+    path: /amba/usb0@ff9d0000/dwc3@fe200000
+    compatible:
+    - snps,dwc3
     interrupts:
     - type: 0x0
-      num: 10
+      num: 65
+      flags: 0x4
+    - type: 0x0
+      num: 69
+      flags: 0x4
+    - type: 0x0
+      num: 75
       flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff960000
-    virtual_start_addr: 0xff960000
+  rtc@ffa60000:
+    phandle:
+    path: /amba/rtc@ffa60000
+    compatible:
+    - xlnx,zynqmp-rtc
+    interrupts:
+    - type: 0x0
+      num: 26
+      flags: 0x4
+    - type: 0x0
+      num: 27
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xffa60000
+    virtual_start_addr: 0xffa60000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dma@fd550000:
+    phandle:
+    path: /amba/dma@fd550000
+    compatible:
+    - xlnx,zynqmp-dma-1.0
+    interrupts:
+    - type: 0x0
+      num: 129
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - clk_main
+    - clk_apb
+    clocks:
+    - '3'
+    - '19'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd550000
+    virtual_start_addr: 0xfd550000
     size: 0x1000
     flags:
     - MEM_READ
@@ -6244,25 +6841,29 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  perf-monitor@ffa00000:
+  dma@ffa90000:
     phandle:
-    path: /amba/perf-monitor@ffa00000
+    path: /amba/dma@ffa90000
     compatible:
-    - xlnx,axi-perf-monitor
+    - xlnx,zynqmp-dma-1.0
     interrupts:
     - type: 0x0
-      num: 25
+      num: 78
       flags: 0x4
     aliases: []
-    clock_names: []
+    clock_names:
+    - clk_main
+    - clk_apb
     clocks:
+    - '3'
+    - '68'
     - '3'
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffa00000
-    virtual_start_addr: 0xffa00000
-    size: 0x10000
+    physical_start_addr: 0xffa90000
+    virtual_start_addr: 0xffa90000
+    size: 0x1000
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -6302,25 +6903,598 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  perf-monitor@fd490000:
+  mmc@ff160000:
     phandle:
-    path: /amba/perf-monitor@fd490000
+    path: /amba/mmc@ff160000
     compatible:
-    - xlnx,axi-perf-monitor
+    - xlnx,zynqmp-8.9a
+    - arasan,sdhci-8.9a
     interrupts:
     - type: 0x0
-      num: 123
+      num: 48
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - clk_xin
+    - clk_ahb
+    clocks:
+    - '3'
+    - '54'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff160000
+    virtual_start_addr: 0xff160000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spi@ff040000:
+    phandle:
+    path: /amba/spi@ff040000
+    compatible:
+    - cdns,spi-r1p6
+    interrupts:
+    - type: 0x0
+      num: 19
+      flags: 0x4
+    aliases:
+    - spi0
+    clock_names:
+    - ref_clk
+    - pclk
+    clocks:
+    - '3'
+    - '58'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff040000
+    virtual_start_addr: 0xff040000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spidev@0x00.0:
+    phandle:
+    path: /amba/spi@ff040000/spidev@0x00
+    compatible:
+    - rohm,dh2228fv
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  dma@fd570000:
+    phandle:
+    path: /amba/dma@fd570000
+    compatible:
+    - xlnx,zynqmp-dma-1.0
+    interrupts:
+    - type: 0x0
+      num: 131
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - clk_main
+    - clk_apb
+    clocks:
+    - '3'
+    - '19'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd570000
+    virtual_start_addr: 0xfd570000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  zynqmp-display@fd4a0000:
+    phandle:
+    path: /amba/zynqmp-display@fd4a0000
+    compatible:
+    - xlnx,zynqmp-dpsub-1.7
+    interrupts:
+    - type: 0x0
+      num: 119
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - dp_apb_clk
+    - dp_aud_clk
+    - dp_vtc_pixel_clk_in
+    clocks:
+    - '25'
+    - '3'
+    - '17'
+    - '3'
+    - '16'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd4a0000
+    virtual_start_addr: 0xfd4a0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  zynqmp-display@fd4a0000.0:
+    phandle:
+    path: /amba/zynqmp-display@fd4a0000
+    compatible:
+    - xlnx,zynqmp-dpsub-1.7
+    interrupts:
+    - type: 0x0
+      num: 119
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - dp_apb_clk
+    - dp_aud_clk
+    - dp_vtc_pixel_clk_in
+    clocks:
+    - '25'
+    - '3'
+    - '17'
+    - '3'
+    - '16'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd4aa000
+    virtual_start_addr: 0xfd4aa000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  zynqmp-display@fd4a0000.1:
+    phandle:
+    path: /amba/zynqmp-display@fd4a0000
+    compatible:
+    - xlnx,zynqmp-dpsub-1.7
+    interrupts:
+    - type: 0x0
+      num: 119
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - dp_apb_clk
+    - dp_aud_clk
+    - dp_vtc_pixel_clk_in
+    clocks:
+    - '25'
+    - '3'
+    - '17'
+    - '3'
+    - '16'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd4ab000
+    virtual_start_addr: 0xfd4ab000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  zynqmp-display@fd4a0000.2:
+    phandle:
+    path: /amba/zynqmp-display@fd4a0000
+    compatible:
+    - xlnx,zynqmp-dpsub-1.7
+    interrupts:
+    - type: 0x0
+      num: 119
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - dp_apb_clk
+    - dp_aud_clk
+    - dp_vtc_pixel_clk_in
+    clocks:
+    - '25'
+    - '3'
+    - '17'
+    - '3'
+    - '16'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd4ac000
+    virtual_start_addr: 0xfd4ac000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  zynqmp_dp_snd_pcm1:
+    phandle: 30
+    path: /amba/zynqmp-display@fd4a0000/zynqmp_dp_snd_pcm1
+    compatible:
+    - xlnx,dp-snd-pcm
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  zynqmp_dp_snd_pcm0:
+    phandle: 29
+    path: /amba/zynqmp-display@fd4a0000/zynqmp_dp_snd_pcm0
+    compatible:
+    - xlnx,dp-snd-pcm
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  zynqmp_dp_snd_codec0:
+    phandle: 31
+    path: /amba/zynqmp-display@fd4a0000/zynqmp_dp_snd_codec0
+    compatible:
+    - xlnx,dp-snd-codec
+    interrupts: []
+    aliases: []
+    clock_names:
+    - aud_clk
+    clocks:
+    - '3'
+    - '17'
+    clock_output_names: []
+    clock_cells: 0
+  zynqmp_dp_snd_card:
+    phandle:
+    path: /amba/zynqmp-display@fd4a0000/zynqmp_dp_snd_card
+    compatible:
+    - xlnx,dp-snd-card
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  usb1@ff9e0000:
+    phandle:
+    path: /amba/usb1@ff9e0000
+    compatible:
+    - xlnx,zynqmp-dwc3
+    interrupts: []
+    aliases: []
+    clock_names:
+    - bus_clk
+    - ref_clk
+    clocks:
+    - '3'
+    - '33'
+    - '3'
+    - '34'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff9e0000
+    virtual_start_addr: 0xff9e0000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dwc3@fe300000:
+    phandle:
+    path: /amba/usb1@ff9e0000/dwc3@fe300000
+    compatible:
+    - snps,dwc3
+    interrupts:
+    - type: 0x0
+      num: 70
+      flags: 0x4
+    - type: 0x0
+      num: 74
+      flags: 0x4
+    - type: 0x0
+      num: 76
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  timer@ff120000:
+    phandle:
+    path: /amba/timer@ff120000
+    compatible:
+    - cdns,ttc
+    interrupts:
+    - type: 0x0
+      num: 39
+      flags: 0x4
+    - type: 0x0
+      num: 40
+      flags: 0x4
+    - type: 0x0
+      num: 41
       flags: 0x4
     aliases: []
     clock_names: []
     clocks:
     - '3'
-    - '28'
+    - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd490000
-    virtual_start_addr: 0xfd490000
-    size: 0x10000
+    physical_start_addr: 0xff120000
+    virtual_start_addr: 0xff120000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  memory-controller@fd070000:
+    phandle:
+    path: /amba/memory-controller@fd070000
+    compatible:
+    - xlnx,zynqmp-ddrc-2.40a
+    interrupts:
+    - type: 0x0
+      num: 112
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd070000
+    virtual_start_addr: 0xfd070000
+    size: 0x30000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  mmc@ff170000:
+    phandle:
+    path: /amba/mmc@ff170000
+    compatible:
+    - xlnx,zynqmp-8.9a
+    - arasan,sdhci-8.9a
+    interrupts:
+    - type: 0x0
+      num: 49
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - clk_xin
+    - clk_ahb
+    clocks:
+    - '3'
+    - '55'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff170000
+    virtual_start_addr: 0xff170000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  wilc_sdio@1:
+    phandle:
+    path: /amba/mmc@ff170000/wilc_sdio@1
+    compatible:
+    - microchip,wilc3000
+    - microchip,wilc3000
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  gpio@ff0a0000:
+    phandle: 16
+    path: /amba/gpio@ff0a0000
+    compatible:
+    - xlnx,zynqmp-gpio-1.0
+    interrupts:
+    - type: 0x0
+      num: 16
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff0a0000
+    virtual_start_addr: 0xff0a0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  cci@fd6e0000:
+    phandle:
+    path: /amba/cci@fd6e0000
+    compatible:
+    - arm,cci-400
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd6e0000
+    virtual_start_addr: 0xfd6e0000
+    size: 0x9000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  pmu@9000:
+    phandle:
+    path: /amba/cci@fd6e0000/pmu@9000
+    compatible:
+    - arm,cci-400-pmu,r1
+    interrupts:
+    - type: 0x0
+      num: 123
+      flags: 0x4
+    - type: 0x0
+      num: 123
+      flags: 0x4
+    - type: 0x0
+      num: 123
+      flags: 0x4
+    - type: 0x0
+      num: 123
+      flags: 0x4
+    - type: 0x0
+      num: 123
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  spi@ff0f0000:
+    phandle:
+    path: /amba/spi@ff0f0000
+    compatible:
+    - xlnx,zynqmp-qspi-1.0
+    interrupts:
+    - type: 0x0
+      num: 15
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - ref_clk
+    - pclk
+    clocks:
+    - '3'
+    - '53'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff0f0000
+    virtual_start_addr: 0xff0f0000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spi@ff0f0000.0:
+    phandle:
+    path: /amba/spi@ff0f0000
+    compatible:
+    - xlnx,zynqmp-qspi-1.0
+    interrupts:
+    - type: 0x0
+      num: 15
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - ref_clk
+    - pclk
+    clocks:
+    - '3'
+    - '53'
+    - '3'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xc0000000
+    virtual_start_addr: 0xc0000000
+    size: 0x1000
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -6483,92 +7657,71 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  spi@ff0f0000:
+  perf-monitor@ffa00000:
     phandle:
-    path: /amba/spi@ff0f0000
+    path: /amba/perf-monitor@ffa00000
     compatible:
-    - xlnx,zynqmp-qspi-1.0
+    - xlnx,axi-perf-monitor
     interrupts:
     - type: 0x0
-      num: 15
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - ref_clk
-    - pclk
-    clocks:
-    - '3'
-    - '53'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff0f0000
-    virtual_start_addr: 0xff0f0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  spi@ff0f0000.0:
-    phandle:
-    path: /amba/spi@ff0f0000
-    compatible:
-    - xlnx,zynqmp-qspi-1.0
-    interrupts:
-    - type: 0x0
-      num: 15
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - ref_clk
-    - pclk
-    clocks:
-    - '3'
-    - '53'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xc0000000
-    virtual_start_addr: 0xc0000000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  rtc@ffa60000:
-    phandle:
-    path: /amba/rtc@ffa60000
-    compatible:
-    - xlnx,zynqmp-rtc
-    interrupts:
-    - type: 0x0
-      num: 26
-      flags: 0x4
-    - type: 0x0
-      num: 27
+      num: 25
       flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffa60000
-    virtual_start_addr: 0xffa60000
-    size: 0x100
+    physical_start_addr: 0xffa00000
+    virtual_start_addr: 0xffa00000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  ethernet@ff0d0000:
+    phandle:
+    path: /amba/ethernet@ff0d0000
+    compatible:
+    - cdns,zynqmp-gem
+    - cdns,gem
+    interrupts:
+    - type: 0x0
+      num: 61
+      flags: 0x4
+    - type: 0x0
+      num: 61
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - pclk
+    - hclk
+    - tx_clk
+    - rx_clk
+    - tsu_clk
+    clocks:
+    - '3'
+    - '31'
+    - '3'
+    - '106'
+    - '3'
+    - '47'
+    - '3'
+    - '51'
+    - '3'
+    - '44'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff0d0000
+    virtual_start_addr: 0xff0d0000
+    size: 0x1000
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -6627,58 +7780,28 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  ahci@fd0c0000:
+  dma@ffad0000:
     phandle:
-    path: /amba/ahci@fd0c0000
+    path: /amba/dma@ffad0000
     compatible:
-    - ceva,ahci-1v84
+    - xlnx,zynqmp-dma-1.0
     interrupts:
     - type: 0x0
-      num: 133
-      flags: 0x4
-    aliases: []
-    clock_names: []
-    clocks:
-    - '3'
-    - '22'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xfd0c0000
-    virtual_start_addr: 0xfd0c0000
-    size: 0x2000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  mmc@ff160000:
-    phandle:
-    path: /amba/mmc@ff160000
-    compatible:
-    - xlnx,zynqmp-8.9a
-    - arasan,sdhci-8.9a
-    interrupts:
-    - type: 0x0
-      num: 48
+      num: 82
       flags: 0x4
     aliases: []
     clock_names:
-    - clk_xin
-    - clk_ahb
+    - clk_main
+    - clk_apb
     clocks:
     - '3'
-    - '54'
+    - '68'
     - '3'
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff160000
-    virtual_start_addr: 0xff160000
+    physical_start_addr: 0xffad0000
+    virtual_start_addr: 0xffad0000
     size: 0x1000
     flags:
     - MEM_READ
@@ -6690,29 +7813,28 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  mmc@ff170000:
+  nand@ff100000:
     phandle:
-    path: /amba/mmc@ff170000
+    path: /amba/nand@ff100000
     compatible:
-    - xlnx,zynqmp-8.9a
-    - arasan,sdhci-8.9a
+    - arasan,nfc-v3p10
     interrupts:
     - type: 0x0
-      num: 49
+      num: 14
       flags: 0x4
     aliases: []
     clock_names:
-    - clk_xin
-    - clk_ahb
+    - clk_sys
+    - clk_flash
     clocks:
     - '3'
-    - '55'
+    - '60'
     - '3'
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff170000
-    virtual_start_addr: 0xff170000
+    physical_start_addr: 0xff100000
+    virtual_start_addr: 0xff100000
     size: 0x1000
     flags:
     - MEM_READ
@@ -6724,41 +7846,28 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  wilc_sdio@1:
+  can@ff060000:
     phandle:
-    path: /amba/mmc@ff170000/wilc_sdio@1
+    path: /amba/can@ff060000
     compatible:
-    - microchip,wilc3000
-    - microchip,wilc3000
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  spi@ff040000:
-    phandle:
-    path: /amba/spi@ff040000
-    compatible:
-    - cdns,spi-r1p6
+    - xlnx,zynq-can-1.0
     interrupts:
     - type: 0x0
-      num: 19
+      num: 23
       flags: 0x4
-    aliases:
-    - spi0
+    aliases: []
     clock_names:
-    - ref_clk
+    - can_clk
     - pclk
     clocks:
     - '3'
-    - '58'
+    - '63'
     - '3'
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff040000
-    virtual_start_addr: 0xff040000
+    physical_start_addr: 0xff060000
+    virtual_start_addr: 0xff060000
     size: 0x1000
     flags:
     - MEM_READ
@@ -6770,40 +7879,28 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  spidev@0x00:
+  dma@ffab0000:
     phandle:
-    path: /amba/spi@ff040000/spidev@0x00
+    path: /amba/dma@ffab0000
     compatible:
-    - rohm,dh2228fv
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  spi@ff050000:
-    phandle:
-    path: /amba/spi@ff050000
-    compatible:
-    - cdns,spi-r1p6
+    - xlnx,zynqmp-dma-1.0
     interrupts:
     - type: 0x0
-      num: 20
+      num: 80
       flags: 0x4
-    aliases:
-    - spi1
+    aliases: []
     clock_names:
-    - ref_clk
-    - pclk
+    - clk_main
+    - clk_apb
     clocks:
     - '3'
-    - '59'
+    - '68'
     - '3'
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff050000
-    virtual_start_addr: 0xff050000
+    physical_start_addr: 0xffab0000
+    virtual_start_addr: 0xffab0000
     size: 0x1000
     flags:
     - MEM_READ
@@ -6815,17 +7912,35 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  spidev@0x00.0:
+  perf-monitor@fd490000:
     phandle:
-    path: /amba/spi@ff050000/spidev@0x00
+    path: /amba/perf-monitor@fd490000
     compatible:
-    - rohm,dh2228fv
-    interrupts: []
+    - xlnx,axi-perf-monitor
+    interrupts:
+    - type: 0x0
+      num: 123
+      flags: 0x4
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '28'
     clock_output_names: []
     clock_cells: 0
+    physical_start_addr: 0xfd490000
+    virtual_start_addr: 0xfd490000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
   timer@ff110000:
     phandle:
     path: /amba/timer@ff110000
@@ -6861,30 +7976,25 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  timer@ff120000:
+  i2c@ff020000:
     phandle:
-    path: /amba/timer@ff120000
+    path: /amba/i2c@ff020000
     compatible:
-    - cdns,ttc
+    - cdns,i2c-r1p14
+    - cdns,i2c-r1p10
     interrupts:
     - type: 0x0
-      num: 39
-      flags: 0x4
-    - type: 0x0
-      num: 40
-      flags: 0x4
-    - type: 0x0
-      num: 41
+      num: 17
       flags: 0x4
     aliases: []
     clock_names: []
     clocks:
     - '3'
-    - '31'
+    - '61'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff120000
-    virtual_start_addr: 0xff120000
+    physical_start_addr: 0xff020000
+    virtual_start_addr: 0xff020000
     size: 0x1000
     flags:
     - MEM_READ
@@ -6896,216 +8006,93 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  timer@ff130000:
+  leds:
     phandle:
-    path: /amba/timer@ff130000
+    path: //leds
     compatible:
-    - cdns,ttc
+    - gpio-leds
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  nvmem_firmware:
+    phandle:
+    path: //nvmem_firmware
+    compatible:
+    - xlnx,zynqmp-nvmem-fw
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  smmu@fd800000:
+    phandle: 13
+    path: //smmu@fd800000
+    compatible:
+    - arm,mmu-500
     interrupts:
     - type: 0x0
-      num: 42
+      num: 155
       flags: 0x4
     - type: 0x0
-      num: 43
+      num: 155
       flags: 0x4
     - type: 0x0
-      num: 44
-      flags: 0x4
-    aliases: []
-    clock_names: []
-    clocks:
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff130000
-    virtual_start_addr: 0xff130000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  timer@ff140000:
-    phandle:
-    path: /amba/timer@ff140000
-    compatible:
-    - cdns,ttc
-    interrupts:
-    - type: 0x0
-      num: 45
+      num: 155
       flags: 0x4
     - type: 0x0
-      num: 46
+      num: 155
       flags: 0x4
     - type: 0x0
-      num: 47
-      flags: 0x4
-    aliases: []
-    clock_names: []
-    clocks:
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff140000
-    virtual_start_addr: 0xff140000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  serial@ff000000:
-    phandle:
-    path: /amba/serial@ff000000
-    compatible:
-    - cdns,uart-r1p12
-    - xlnx,xuartps
-    interrupts:
-    - type: 0x0
-      num: 21
-      flags: 0x4
-    aliases:
-    - serial2
-    clock_names:
-    - uart_clk
-    - pclk
-    clocks:
-    - '3'
-    - '56'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff000000
-    virtual_start_addr: 0xff000000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  serial@ff010000:
-    phandle:
-    path: /amba/serial@ff010000
-    compatible:
-    - cdns,uart-r1p12
-    - xlnx,xuartps
-    interrupts:
-    - type: 0x0
-      num: 22
-      flags: 0x4
-    aliases:
-    - serial0
-    clock_names:
-    - uart_clk
-    - pclk
-    clocks:
-    - '3'
-    - '57'
-    - '3'
-    - '31'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff010000
-    virtual_start_addr: 0xff010000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  usb0@ff9d0000:
-    phandle:
-    path: /amba/usb0@ff9d0000
-    compatible:
-    - xlnx,zynqmp-dwc3
-    interrupts: []
-    aliases: []
-    clock_names:
-    - bus_clk
-    - ref_clk
-    clocks:
-    - '3'
-    - '32'
-    - '3'
-    - '34'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff9d0000
-    virtual_start_addr: 0xff9d0000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  dwc3@fe200000:
-    phandle:
-    path: /amba/usb0@ff9d0000/dwc3@fe200000
-    compatible:
-    - snps,dwc3
-    interrupts:
-    - type: 0x0
-      num: 65
+      num: 155
       flags: 0x4
     - type: 0x0
-      num: 69
+      num: 155
       flags: 0x4
     - type: 0x0
-      num: 75
+      num: 155
+      flags: 0x4
+    - type: 0x0
+      num: 155
+      flags: 0x4
+    - type: 0x0
+      num: 155
+      flags: 0x4
+    - type: 0x0
+      num: 155
+      flags: 0x4
+    - type: 0x0
+      num: 155
+      flags: 0x4
+    - type: 0x0
+      num: 155
+      flags: 0x4
+    - type: 0x0
+      num: 155
+      flags: 0x4
+    - type: 0x0
+      num: 155
+      flags: 0x4
+    - type: 0x0
+      num: 155
+      flags: 0x4
+    - type: 0x0
+      num: 155
+      flags: 0x4
+    - type: 0x0
+      num: 155
       flags: 0x4
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  usb1@ff9e0000:
-    phandle:
-    path: /amba/usb1@ff9e0000
-    compatible:
-    - xlnx,zynqmp-dwc3
-    interrupts: []
-    aliases: []
-    clock_names:
-    - bus_clk
-    - ref_clk
-    clocks:
-    - '3'
-    - '33'
-    - '3'
-    - '34'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff9e0000
-    virtual_start_addr: 0xff9e0000
-    size: 0x100
+    physical_start_addr: 0xfd800000
+    virtual_start_addr: 0xfd800000
+    size: 0x20000
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -7116,628 +8103,11 @@ devices:
     - MEM_IO_64
     allocatable: false
     shared: false
-  dwc3@fe300000:
+  psci:
     phandle:
-    path: /amba/usb1@ff9e0000/dwc3@fe300000
+    path: //psci
     compatible:
-    - snps,dwc3
-    interrupts:
-    - type: 0x0
-      num: 70
-      flags: 0x4
-    - type: 0x0
-      num: 74
-      flags: 0x4
-    - type: 0x0
-      num: 76
-      flags: 0x4
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  watchdog@fd4d0000:
-    phandle:
-    path: /amba/watchdog@fd4d0000
-    compatible:
-    - cdns,wdt-r1p2
-    interrupts:
-    - type: 0x0
-      num: 113
-      flags: 0x1
-    aliases: []
-    clock_names: []
-    clocks:
-    - '3'
-    - '75'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xfd4d0000
-    virtual_start_addr: 0xfd4d0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  watchdog@ff150000:
-    phandle:
-    path: /amba/watchdog@ff150000
-    compatible:
-    - cdns,wdt-r1p2
-    interrupts:
-    - type: 0x0
-      num: 52
-      flags: 0x1
-    aliases: []
-    clock_names: []
-    clocks:
-    - '3'
-    - '112'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff150000
-    virtual_start_addr: 0xff150000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  ams@ffa50000:
-    phandle: 38
-    path: /amba/ams@ffa50000
-    compatible:
-    - xlnx,zynqmp-ams
-    interrupts:
-    - type: 0x0
-      num: 56
-      flags: 0x4
-    aliases: []
-    clock_names: []
-    clocks:
-    - '3'
-    - '70'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xffa50000
-    virtual_start_addr: 0xffa50000
-    size: 0x800
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  ams_ps@ffa50800:
-    phandle:
-    path: /amba/ams@ffa50000/ams_ps@ffa50800
-    compatible:
-    - xlnx,zynqmp-ams-ps
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  ams_pl@ffa50c00:
-    phandle:
-    path: /amba/ams@ffa50000/ams_pl@ffa50c00
-    compatible:
-    - xlnx,zynqmp-ams-pl
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  dma@fd4c0000:
-    phandle: 28
-    path: /amba/dma@fd4c0000
-    compatible:
-    - xlnx,dpdma
-    interrupts:
-    - type: 0x0
-      num: 122
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - axi_clk
-    clocks:
-    - '3'
-    - '20'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xfd4c0000
-    virtual_start_addr: 0xfd4c0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  dma-video0channel:
-    phandle:
-    path: /amba/dma@fd4c0000/dma-video0channel
-    compatible:
-    - xlnx,video0
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  dma-video1channel:
-    phandle:
-    path: /amba/dma@fd4c0000/dma-video1channel
-    compatible:
-    - xlnx,video1
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  dma-video2channel:
-    phandle:
-    path: /amba/dma@fd4c0000/dma-video2channel
-    compatible:
-    - xlnx,video2
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  dma-graphicschannel:
-    phandle:
-    path: /amba/dma@fd4c0000/dma-graphicschannel
-    compatible:
-    - xlnx,graphics
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  dma-audio0channel:
-    phandle:
-    path: /amba/dma@fd4c0000/dma-audio0channel
-    compatible:
-    - xlnx,audio0
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  dma-audio1channel:
-    phandle:
-    path: /amba/dma@fd4c0000/dma-audio1channel
-    compatible:
-    - xlnx,audio1
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  zynqmp-display@fd4a0000:
-    phandle:
-    path: /amba/zynqmp-display@fd4a0000
-    compatible:
-    - xlnx,zynqmp-dpsub-1.7
-    interrupts:
-    - type: 0x0
-      num: 119
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - dp_apb_clk
-    - dp_aud_clk
-    - dp_vtc_pixel_clk_in
-    clocks:
-    - '25'
-    - '3'
-    - '17'
-    - '3'
-    - '16'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xfd4a0000
-    virtual_start_addr: 0xfd4a0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  zynqmp-display@fd4a0000.0:
-    phandle:
-    path: /amba/zynqmp-display@fd4a0000
-    compatible:
-    - xlnx,zynqmp-dpsub-1.7
-    interrupts:
-    - type: 0x0
-      num: 119
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - dp_apb_clk
-    - dp_aud_clk
-    - dp_vtc_pixel_clk_in
-    clocks:
-    - '25'
-    - '3'
-    - '17'
-    - '3'
-    - '16'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xfd4aa000
-    virtual_start_addr: 0xfd4aa000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  zynqmp-display@fd4a0000.1:
-    phandle:
-    path: /amba/zynqmp-display@fd4a0000
-    compatible:
-    - xlnx,zynqmp-dpsub-1.7
-    interrupts:
-    - type: 0x0
-      num: 119
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - dp_apb_clk
-    - dp_aud_clk
-    - dp_vtc_pixel_clk_in
-    clocks:
-    - '25'
-    - '3'
-    - '17'
-    - '3'
-    - '16'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xfd4ab000
-    virtual_start_addr: 0xfd4ab000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  zynqmp-display@fd4a0000.2:
-    phandle:
-    path: /amba/zynqmp-display@fd4a0000
-    compatible:
-    - xlnx,zynqmp-dpsub-1.7
-    interrupts:
-    - type: 0x0
-      num: 119
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - dp_apb_clk
-    - dp_aud_clk
-    - dp_vtc_pixel_clk_in
-    clocks:
-    - '25'
-    - '3'
-    - '17'
-    - '3'
-    - '16'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xfd4ac000
-    virtual_start_addr: 0xfd4ac000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  zynqmp_dp_snd_codec0:
-    phandle: 31
-    path: /amba/zynqmp-display@fd4a0000/zynqmp_dp_snd_codec0
-    compatible:
-    - xlnx,dp-snd-codec
-    interrupts: []
-    aliases: []
-    clock_names:
-    - aud_clk
-    clocks:
-    - '3'
-    - '17'
-    clock_output_names: []
-    clock_cells: 0
-  zynqmp_dp_snd_pcm0:
-    phandle: 29
-    path: /amba/zynqmp-display@fd4a0000/zynqmp_dp_snd_pcm0
-    compatible:
-    - xlnx,dp-snd-pcm
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  zynqmp_dp_snd_pcm1:
-    phandle: 30
-    path: /amba/zynqmp-display@fd4a0000/zynqmp_dp_snd_pcm1
-    compatible:
-    - xlnx,dp-snd-pcm
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  zynqmp_dp_snd_card:
-    phandle:
-    path: /amba/zynqmp-display@fd4a0000/zynqmp_dp_snd_card
-    compatible:
-    - xlnx,dp-snd-card
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  tcm@ffe00000:
-    phandle: 34
-    path: /amba/tcm@ffe00000
-    compatible:
-    - mmio-sram
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xffe00000
-    virtual_start_addr: 0xffe00000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  tcm@ffe20000:
-    phandle: 35
-    path: /amba/tcm@ffe20000
-    compatible:
-    - mmio-sram
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xffe20000
-    virtual_start_addr: 0xffe20000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  ddr@3ed00000:
-    phandle: 36
-    path: /amba/ddr@3ed00000
-    compatible:
-    - mmio-sram
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0x3ed00000
-    virtual_start_addr: 0x3ed00000
-    size: 0x40000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  zynqmp_r5_rproc@0:
-    phandle:
-    path: /amba/zynqmp_r5_rproc@0
-    compatible:
-    - xlnx,zynqmp-r5-remoteproc-1.0
-    interrupts:
-    - type: 0x0
-      num: 29
-      flags: 0x4
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff9a0100
-    virtual_start_addr: 0xff9a0100
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  zynqmp_r5_rproc@0.0:
-    phandle:
-    path: /amba/zynqmp_r5_rproc@0
-    compatible:
-    - xlnx,zynqmp-r5-remoteproc-1.0
-    interrupts:
-    - type: 0x0
-      num: 29
-      flags: 0x4
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff340000
-    virtual_start_addr: 0xff340000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  zynqmp_r5_rproc@0.1:
-    phandle:
-    path: /amba/zynqmp_r5_rproc@0
-    compatible:
-    - xlnx,zynqmp-r5-remoteproc-1.0
-    interrupts:
-    - type: 0x0
-      num: 29
-      flags: 0x4
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xff9a0000
-    virtual_start_addr: 0xff9a0000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  fclk0:
-    phandle:
-    path: //fclk0
-    compatible:
-    - xlnx,fclk
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks:
-    - '3'
-    - '71'
-    clock_output_names: []
-    clock_cells: 0
-  fclk1:
-    phandle:
-    path: //fclk1
-    compatible:
-    - xlnx,fclk
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks:
-    - '3'
-    - '72'
-    clock_output_names: []
-    clock_cells: 0
-  fclk2:
-    phandle:
-    path: //fclk2
-    compatible:
-    - xlnx,fclk
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks:
-    - '3'
-    - '73'
-    clock_output_names: []
-    clock_cells: 0
-  fclk3:
-    phandle:
-    path: //fclk3
-    compatible:
-    - xlnx,fclk
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks:
-    - '3'
-    - '74'
-    clock_output_names: []
-    clock_cells: 0
-  pss_ref_clk:
-    phandle: 6
-    path: //pss_ref_clk
-    compatible:
-    - fixed-clock
+    - arm,psci-0.2
     interrupts: []
     aliases: []
     clock_names: []
@@ -7755,9 +8125,9 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  pss_alt_ref_clk:
-    phandle: 8
-    path: //pss_alt_ref_clk
+  pss_ref_clk:
+    phandle: 6
+    path: //pss_ref_clk
     compatible:
     - fixed-clock
     interrupts: []
@@ -7766,22 +8136,59 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  gt_crx_ref_clk:
-    phandle: 10
-    path: //gt_crx_ref_clk
+  zynqmp_aes:
+    phandle:
+    path: //zynqmp_aes
     compatible:
-    - fixed-clock
+    - xlnx,zynqmp-aes
     interrupts: []
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  aux_ref_clk:
-    phandle: 9
-    path: //aux_ref_clk
+  cpu-sleep-0:
+    phandle: 2
+    path: /cpus/idle-states/cpu-sleep-0
     compatible:
-    - fixed-clock
+    - arm,idle-state
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  fclk1:
+    phandle:
+    path: //fclk1
+    compatible:
+    - xlnx,fclk
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks:
+    - '3'
+    - '72'
+    clock_output_names: []
+    clock_cells: 0
+  fclk0:
+    phandle:
+    path: //fclk0
+    compatible:
+    - xlnx,fclk
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks:
+    - '3'
+    - '71'
+    clock_output_names: []
+    clock_cells: 0
+  dcc:
+    phandle:
+    path: //dcc
+    compatible:
+    - arm,dcc
     interrupts: []
     aliases: []
     clock_names: []
@@ -7799,284 +8206,11 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  amba_pl@0:
+  zynqmp_rsa:
     phandle:
-    path: //amba_pl@0
+    path: //zynqmp_rsa
     compatible:
-    - simple-bus
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  PWM_w_Int@a0060000:
-    phandle:
-    path: /amba_pl@0/PWM_w_Int@a0060000
-    compatible:
-    - xlnx,PWM-w-Int-1.0
-    interrupts:
-    - type: 0x0
-      num: 91
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - s00_axi_aclk
-    clocks:
-    - '3'
-    - '71'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xa0060000
-    virtual_start_addr: 0xa0060000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  PWM_w_Int@a0070000:
-    phandle:
-    path: /amba_pl@0/PWM_w_Int@a0070000
-    compatible:
-    - xlnx,PWM-w-Int-1.0
-    interrupts:
-    - type: 0x0
-      num: 92
-      flags: 0x4
-    aliases: []
-    clock_names:
-    - s00_axi_aclk
-    clocks:
-    - '3'
-    - '71'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xa0070000
-    virtual_start_addr: 0xa0070000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  axi_bram_ctrl@a0000000:
-    phandle:
-    path: /amba_pl@0/axi_bram_ctrl@a0000000
-    compatible:
-    - xlnx,axi-bram-ctrl-4.1
-    interrupts: []
-    aliases: []
-    clock_names:
-    - s_axi_aclk
-    clocks:
-    - '3'
-    - '71'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xa0000000
-    virtual_start_addr: 0xa0000000
-    size: 0x2000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  gpio@a0030000:
-    phandle:
-    path: /amba_pl@0/gpio@a0030000
-    compatible:
-    - xlnx,axi-gpio-2.0
-    - xlnx,xps-gpio-1.00.a
-    interrupts: []
-    aliases: []
-    clock_names:
-    - s_axi_aclk
-    clocks:
-    - '3'
-    - '71'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xa0030000
-    virtual_start_addr: 0xa0030000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  gpio@a0040000:
-    phandle:
-    path: /amba_pl@0/gpio@a0040000
-    compatible:
-    - xlnx,axi-gpio-2.0
-    - xlnx,xps-gpio-1.00.a
-    interrupts: []
-    aliases: []
-    clock_names:
-    - s_axi_aclk
-    clocks:
-    - '3'
-    - '71'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xa0040000
-    virtual_start_addr: 0xa0040000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  gpio@a0050000:
-    phandle:
-    path: /amba_pl@0/gpio@a0050000
-    compatible:
-    - xlnx,axi-gpio-2.0
-    - xlnx,xps-gpio-1.00.a
-    interrupts: []
-    aliases: []
-    clock_names:
-    - s_axi_aclk
-    clocks:
-    - '3'
-    - '71'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xa0050000
-    virtual_start_addr: 0xa0050000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  serial@a0010000:
-    phandle:
-    path: /amba_pl@0/serial@a0010000
-    compatible:
-    - xlnx,xps-uart16550-2.00.a
-    - ns16550a
-    interrupts:
-    - type: 0x0
-      num: 89
-      flags: 0x4
-    aliases:
-    - serial3
-    clock_names:
-    - s_axi_aclk
-    clocks:
-    - '3'
-    - '71'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xa0010000
-    virtual_start_addr: 0xa0010000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  serial@a0020000:
-    phandle:
-    path: /amba_pl@0/serial@a0020000
-    compatible:
-    - xlnx,xps-uart16550-2.00.a
-    - ns16550a
-    interrupts:
-    - type: 0x0
-      num: 90
-      flags: 0x4
-    aliases:
-    - serial1
-    clock_names:
-    - s_axi_aclk
-    clocks:
-    - '3'
-    - '71'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xa0020000
-    virtual_start_addr: 0xa0020000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  system_management_wiz@a0080000:
-    phandle:
-    path: /amba_pl@0/system_management_wiz@a0080000
-    compatible:
-    - xlnx,system-management-wiz-1.3
-    interrupts: []
-    aliases: []
-    clock_names:
-    - s_axi_aclk
-    clocks:
-    - '3'
-    - '71'
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xa0080000
-    virtual_start_addr: 0xa0080000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  zyxclmm_drm:
-    phandle:
-    path: /amba_pl@0/zyxclmm_drm
-    compatible:
-    - xlnx,zocl
+    - xlnx,zynqmp-rsa
     interrupts: []
     aliases: []
     clock_names: []
@@ -8094,55 +8228,35 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  iio-hwmon:
+  fpga-full:
     phandle:
-    path: //iio-hwmon
+    path: //fpga-full
     compatible:
-    - iio-hwmon
+    - fpga-region
     interrupts: []
     aliases: []
     clock_names: []
     clocks: []
     clock_output_names: []
     clock_cells: 0
-  leds:
+  fclk3:
     phandle:
-    path: //leds
+    path: //fclk3
     compatible:
-    - gpio-leds
+    - xlnx,fclk
     interrupts: []
     aliases: []
     clock_names: []
-    clocks: []
+    clocks:
+    - '3'
+    - '74'
     clock_output_names: []
     clock_cells: 0
-  fixedregulator-mmcsdio:
-    phandle: 22
-    path: //fixedregulator-mmcsdio
-    compatible:
-    - regulator-fixed
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  sdio_pwrseq:
-    phandle: 21
-    path: //sdio_pwrseq
-    compatible:
-    - mmc-pwrseq-simple
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  xlnk:
+  edac:
     phandle:
-    path: //xlnk
+    path: //edac
     compatible:
-    - xlnx,xlnk-1.0
+    - arm,cortex-a53-edac
     interrupts: []
     aliases: []
     clock_names: []
