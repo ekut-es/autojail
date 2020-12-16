@@ -29,7 +29,7 @@ class AllocatorSegment:
     def __init__(
         self,
         name: str = "unnamed",
-        alignment: int = 0,
+        alignment: int = 2 ** 12,
         shared_regions: Optional[
             Dict[str, List[Union[MemoryRegion, HypervisorMemoryRegion]]]
         ] = None,
@@ -728,9 +728,7 @@ class UnallocatedOrSharedSegmentsAnalysis(object):
                         current_segment.constraint = constraint
                 else:
                     current_segment = AllocatorSegment(
-                        region_name,
-                        alignment=8,
-                        shared_regions={cell_name: [region]},
+                        region_name, shared_regions={cell_name: [region]},
                     )
 
                     if region_name in self.per_region_constraints:
