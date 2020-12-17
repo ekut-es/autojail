@@ -91,7 +91,15 @@ class MemoryConstraint(object):
         self.resolved: Optional[Callable[[MemoryConstraint], None]] = None
 
     def __str__(self):
-        return str(self.__dict__)
+        ret = ""
+        if self.address_range:
+            ret += f"range: {hex(self.range[0])}-{hex(self.range[1])} "
+        if self.alignment:
+            ret += f"alignment: {self.alignment} "
+        if self.allocated_range:
+            ret += f"allocated: {hex(self.allocated_range[0])}-{hex(self.allocated_range[1])} "
+        ret += f"size: {self.size} virtual: {self.virtual}"
+        return ret
 
     # Returns a constraint that satisfies both
     # <self> and <other>, if possible
