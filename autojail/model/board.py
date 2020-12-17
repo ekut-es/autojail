@@ -25,12 +25,7 @@ class Interrupt(BaseModel):
         return self.num
 
 
-class MemoryRegion(BaseModel):
-    """
-    A Memory Region describes a continous chunk of memory
-
-    Memory mapped devices and grouped memory regions are subclasses"""
-
+class MemoryRegionData(BaseModel):
     physical_start_addr: Optional[HexInt] = None
     virtual_start_addr: Optional[HexInt] = None
     size: Optional[ByteSize] = None
@@ -39,7 +34,16 @@ class MemoryRegion(BaseModel):
     shared: bool = False
 
 
-class Device(BaseModel):
+class MemoryRegion(MemoryRegionData):
+    """
+    A Memory Region describes a continous chunk of memory
+
+    Memory mapped devices and grouped memory regions are subclasses"""
+
+    pass
+
+
+class DeviceData(BaseModel):
     phandle: Optional[int]
     path: str
     compatible: List[str] = []
@@ -51,7 +55,11 @@ class Device(BaseModel):
     clock_cells: int
 
 
-class DeviceMemoryRegion(MemoryRegion, Device):
+class Device(DeviceData):
+    pass
+
+
+class DeviceMemoryRegion(MemoryRegionData, DeviceData):
     """Memory Region representing a MemoryMappedDevice"""
 
     pass

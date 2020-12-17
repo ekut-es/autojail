@@ -11,7 +11,15 @@ from fdt.items import Node
 
 from autojail.model.board import Interrupt
 
-from ..model import CPU, GIC, Device, DeviceMemoryRegion, MemoryRegion
+from ..model import (
+    CPU,
+    GIC,
+    Device,
+    DeviceData,
+    DeviceMemoryRegion,
+    MemoryRegion,
+    MemoryRegionData,
+)
 from ..model.datatypes import ByteSize, IntegerList
 from ..utils.logging import getLogger
 
@@ -81,8 +89,10 @@ class DeviceTreeExtractor:
             list
         )  # type: ignore
         self.handles: MutableMapping[str, str] = OrderedDict()
-        self.memory_regions: MutableMapping[str, MemoryRegion] = OrderedDict()
-        self.devices: MutableMapping[str, Device] = OrderedDict()
+        self.memory_regions: MutableMapping[
+            str, MemoryRegionData
+        ] = OrderedDict()
+        self.devices: MutableMapping[str, DeviceData] = OrderedDict()
         self.interrupt_controllers: List[GIC] = []
         self.stdout_path: str = ""
         self.cpus: List[CPU] = []
@@ -197,7 +207,7 @@ class DeviceTreeExtractor:
         return list(current_state.ranges)
 
     def _insert_named_region(
-        self, orig_name: str, region: MemoryRegion
+        self, orig_name: str, region: MemoryRegionData
     ) -> None:
         count = 0
         name = orig_name
@@ -207,7 +217,7 @@ class DeviceTreeExtractor:
 
         self.memory_regions[name] = region
 
-    def _insert_named_device(self, orig_name: str, device: Device):
+    def _insert_named_device(self, orig_name: str, device: DeviceData):
         count = 0
         name = orig_name
         while name in self.devices:
