@@ -9,7 +9,7 @@ from ..model import (
     DebugConsole,
     GroupedMemoryRegion,
     JailhouseConfig,
-    MemoryRegion,
+    MemoryRegionData,
     PlatformInfoArm,
     ShMemNetRegion,
 )
@@ -242,7 +242,7 @@ class JailhouseConfigurator:
             f.write("\n\t")
             f.write("\n\t.mem_regions = {\n")
             for k, v in cell.memory_regions.items():
-                assert isinstance(v, MemoryRegion) or isinstance(
+                assert isinstance(v, MemoryRegionData) or isinstance(
                     v, ShMemNetRegion
                 )
 
@@ -291,7 +291,7 @@ class JailhouseConfigurator:
                 if isinstance(v, GroupedMemoryRegion):
                     for region in v.regions:
                         write_mem_region(region)
-                elif isinstance(v, MemoryRegion):
+                elif isinstance(v, MemoryRegionData):
                     write_mem_region(v)
                 elif isinstance(v, ShMemNetRegion):
                     f.write(f"\t/* {k} */\n")

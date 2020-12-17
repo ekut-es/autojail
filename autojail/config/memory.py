@@ -4,7 +4,16 @@ import math
 import sys
 from collections import defaultdict
 from functools import reduce
-from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import (
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+)
 
 import tabulate
 from ortools.sat.python import cp_model
@@ -12,9 +21,11 @@ from ortools.sat.python import cp_model
 from ..model import (
     Board,
     CellConfig,
+    DeviceMemoryRegion,
     HypervisorMemoryRegion,
     JailhouseConfig,
     MemoryRegion,
+    MemoryRegionData,
     ShMemNetRegion,
 )
 from ..model.datatypes import HexInt
@@ -804,23 +815,26 @@ class MergeIoRegionsPass(BasePass):
         shared_regions_ana.run()
 
         def get_io_regions(
-            regions: Dict[str, Union[str, ShMemNetRegion, MemoryRegion]]
-        ) -> List[Tuple[str, MemoryRegion]]:
+            regions: Dict[
+                str,
+                Union[str, ShMemNetRegion, MemoryRegion, DeviceMemoryRegion],
+            ]
+        ) -> List[Tuple[str, DeviceMemoryRegion]]:
             return list(
                 [
                     (name, r)
                     for name, r in regions.items()
-                    if isinstance(r, MemoryRegion) and "MEM_IO" in r.flags
+                    if isinstance(r, DeviceMemoryRegion)
                 ]
             )
 
-        regions: List[Tuple[str, MemoryRegion]] = get_io_regions(
+        regions: Sequence[Tuple[str, MemoryRegionData]] = get_io_regions(
             self.root_cell.memory_regions
         )
         regions = sorted(regions, key=lambda t: t[1].physical_start_addr,)
 
-        grouped_regions: List[List[Tuple[str, MemoryRegion]]] = []
-        current_group: List[Tuple[str, MemoryRegion]] = []
+        grouped_regions: List[List[Tuple[str, MemoryRegionData]]] = []
+        current_group: List[Tuple[str, MemoryRegionData]] = []
 
         max_dist = 65536
         for name, r in regions:
@@ -869,7 +883,7 @@ class MergeIoRegionsPass(BasePass):
             ) - r_start.physical_start_addr
 
             def aux(
-                acc: Iterable[str], t: Tuple[str, MemoryRegion]
+                acc: Iterable[str], t: Tuple[str, MemoryRegionData]
             ) -> Iterable[str]:
                 _, r = t
 
@@ -952,7 +966,7 @@ class PrepareMemoryRegionsPass(BasePass):
             skip = False
             for cell_region in cell.memory_regions.values():
 
-                if not isinstance(cell_region, MemoryRegion):
+                if not isinstance(cell_region, MemoryRegionData):
                     continue
 
                 assert cell_region.size is not None
