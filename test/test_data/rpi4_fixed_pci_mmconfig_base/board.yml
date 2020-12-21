@@ -17,22 +17,12 @@ memory_regions:
   memory@0:
     physical_start_addr: 0x0
     virtual_start_addr: 0x0
-    size: 0x3b400000
+    size: 0x40000000
     flags:
     - MEM_READ
     - MEM_WRITE
     - MEM_EXECUTE
     allocatable: true
-    shared: false
-  /:
-    physical_start_addr: 0x3b400000
-    virtual_start_addr: 0x3b400000
-    size: 0x4c00000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_EXECUTE
-    allocatable: false
     shared: false
   memory@0.0:
     physical_start_addr: 0x40000000
