@@ -42,13 +42,27 @@ class AllocatorSegment:
         name: str = "unnamed",
         alignment: int = 2 ** 12,
         shared_regions: Optional[
-            Dict[str, List[Union[MemoryRegion, HypervisorMemoryRegion]]]
+            Dict[
+                str,
+                List[
+                    Union[
+                        MemoryRegion, DeviceMemoryRegion, HypervisorMemoryRegion
+                    ]
+                ],
+            ]
         ] = None,
     ) -> None:
         self.name = name
 
         self.shared_regions: Optional[
-            Dict[str, List[Union[MemoryRegion, HypervisorMemoryRegion]]]
+            Dict[
+                str,
+                List[
+                    Union[
+                        MemoryRegion, DeviceMemoryRegion, HypervisorMemoryRegion
+                    ]
+                ],
+            ]
         ] = defaultdict(list)
         if shared_regions:
             self.shared_regions.update(shared_regions)
@@ -266,7 +280,7 @@ class AllocateMemoryPass(BasePass):
         self.root_cell: Optional[CellConfig] = None
 
         self.unallocated_segments: List[AllocatorSegment] = []
-        self.allocated_regions: List[MemoryRegion] = []
+        self.allocated_regions: List[MemoryRegionData] = []
         self.per_region_constraints: Dict[str, MemoryConstraint] = dict()
 
         # data structure for creating and handling generic
@@ -534,7 +548,7 @@ class AllocateMemoryPass(BasePass):
 
         for region in self.root_cell.memory_regions.values():
             assert region is not None
-            if isinstance(region, MemoryRegion) and region.allocatable:
+            if isinstance(region, MemoryRegionData) and region.allocatable:
                 assert region.physical_start_addr is not None
                 assert region.size is not None
                 intervals.append(
@@ -553,7 +567,7 @@ class AllocateMemoryPass(BasePass):
         for cell in self.config.cells.values():
             delete_list = []
             for name, region in cell.memory_regions.items():
-                if isinstance(region, MemoryRegion):
+                if isinstance(region, MemoryRegionData):
                     if region.allocatable:
                         delete_list.append(name)
 
@@ -675,12 +689,12 @@ class UnallocatedOrSharedSegmentsAnalysis(object):
 
     def _detect_shared_memio(self):
         shared: Dict[
-            Tuple[int, int], Tuple[int, List[MemoryRegion]]
+            Tuple[int, int], Tuple[int, List[MemoryRegionData]]
         ] = defaultdict(lambda: (0, []))
 
         for cell in self.cells.values():
             for region in cell.memory_regions.values():
-                if not isinstance(region, MemoryRegion):
+                if not isinstance(region, MemoryRegionData):
                     continue
 
                 if not self.key(region) or "MEM_IO" not in region.flags:
@@ -722,7 +736,7 @@ class UnallocatedOrSharedSegmentsAnalysis(object):
             assert cell.memory_regions is not None
 
             for region_name, region in cell.memory_regions.items():
-                if not isinstance(region, MemoryRegion):
+                if not isinstance(region, MemoryRegionData):
                     continue
                 if region.allocatable:
                     continue
@@ -940,7 +954,7 @@ class PrepareMemoryRegionsPass(BasePass):
         for cell in self.config.cells.values():
             assert cell.memory_regions is not None
             for region in cell.memory_regions.values():
-                if isinstance(region, MemoryRegion) and region.size is None:
+                if isinstance(region, MemoryRegionData) and region.size is None:
                     region.size = self.board.pagesize
 
             if cell.type == "root":
