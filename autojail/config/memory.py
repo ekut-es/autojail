@@ -841,12 +841,12 @@ class MergeIoRegionsPass(BasePass):
                 str,
                 Union[str, ShMemNetRegion, MemoryRegion, DeviceMemoryRegion],
             ]
-        ) -> List[Tuple[str, DeviceMemoryRegion]]:
+        ) -> List[Tuple[str, Union[DeviceMemoryRegion, MemoryRegion]]]:
             return list(
                 [
                     (name, r)
                     for name, r in regions.items()
-                    if isinstance(r, DeviceMemoryRegion)
+                    if isinstance(r, MemoryRegionData) and "MEM_IO" in r.flags
                 ]
             )
 
