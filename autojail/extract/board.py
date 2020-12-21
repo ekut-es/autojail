@@ -1,10 +1,12 @@
 # type: ignore
-
+import json
+import logging
 from collections import OrderedDict
 from pathlib import Path, PosixPath
 from typing import Any, Dict, List, Tuple
 
-from ..model import GIC, Board, MemoryRegion
+from ..model import GIC, Board, Clock, MemoryRegion
+from ..utils.draw_tree import draw_tree
 from .device_tree import DeviceTreeExtractor
 
 
@@ -13,6 +15,7 @@ class BoardInfoExtractor:
         self.name = name
         self.board = board
         self.data_root = Path(data_root)
+        self.logger = logging.getLogger(__name__)
 
     def read_iomem(self, filename: PosixPath) -> Dict[str, MemoryRegion]:
         with open(filename, "r") as iomem_info:
@@ -160,6 +163,52 @@ class BoardInfoExtractor:
 
         return cpuinfo
 
+    def extract_clocks(self):
+        clock_tree_fname = (
+            self.data_root / "sys" / "kernel" / "debug" / "clk" / "clk_dump"
+        )
+        if not clock_tree_fname.exists():
+            self.logger.warning("Could not find %s", str(clock_tree_fname))
+            return {}
+
+        clock_tree_data = {}
+        with clock_tree_fname.open() as clock_tree_file:
+            clock_tree_json = clock_tree_file.read()
+            try:
+                clock_tree_data = json.loads(clock_tree_json)
+            except json.JSONDecodeError:
+                self.logger.warning(
+                    "Could not decode clk_dump trying to work arround json bug"
+                )
+                try:
+                    clock_tree_json = clock_tree_json.replace(
+                        r'"duty_cycle"', r',"duty_cycle"'
+                    )
+                    clock_tree_data = json.loads(clock_tree_json)
+                except json.JSONDecodeError as e:
+                    self.logger.critical(
+                        "Could not parse clk_dump with json bug workaround"
+                    )
+                    self.logger.critical(str(e))
+
+        worklist = [(k, v, None) for k, v in clock_tree_data.items()]
+        clocks = {}
+        while worklist:
+            name, data, parent = worklist.pop()
+            clock_data = {}
+            for key, value in data.items():
+                if isinstance(value, dict):
+                    worklist.append((key, value, name))
+                else:
+                    clock_data[key] = value
+
+            clock = Clock(name=name, **clock_data, parent=parent)
+            clocks[name] = clock
+            if parent is not None:
+                clocks[parent].derived_clocks[name] = clock
+
+        return {k: v for k, v in clocks.items() if not v.parent}
+
     def extract_from_devicetree(
         self, memory_regions: Dict[str, MemoryRegion]
     ) -> Tuple[OrderedDict, List[GIC]]:
@@ -172,18 +221,53 @@ class BoardInfoExtractor:
             extractor.memory_regions,
             extractor.interrupt_controllers,
             extractor.stdout_path,
+            {x.name: x for x in extractor.cpus},
+            extractor.devices,
         )
+
+    def _merge_memory_regions(self, regions):
+        return regions[0]
+
+    def _merge_memory_cpuinfo(self, cpuinfos):
+        lengths = [len(info) for info in cpuinfos]
+        for length in lengths:
+            if length != lengths[0]:
+                self.logger.warning(
+                    "Length of cpuinfos does not match: %s",
+                    ", ".join([str(len) for len in lengths]),
+                )
+
+        return cpuinfos[0]
 
     def extract(self) -> Board:
         memory_regions = self.read_iomem(self.data_root / "proc" / "iomem")
-        pagesize = self.read_getconf_out(self.data_root / "getconf.out")
-        (
-            memory_regions,
-            interrupt_controllers,
-            stdout_path,
-        ) = self.extract_from_devicetree(memory_regions)
 
         cpuinfo = self.extract_cpuinfo()
+
+        pagesize = self.read_getconf_out(self.data_root / "getconf.out")
+
+        (
+            memory_regions_dt,
+            interrupt_controllers,
+            stdout_path,
+            cpuinfo_dt,
+            devices,
+        ) = self.extract_from_devicetree(memory_regions)
+
+        clocks = self.extract_clocks()
+        self.logger.info(
+            "Extracted Clock Tree:\n%s",
+            draw_tree(
+                clocks.values(),
+                lambda x: list(x.derived_clocks.values()),
+                lambda x: f"{x.name}: {x.rate} Hz",
+            ),
+        )
+
+        cpuinfo = self._merge_memory_cpuinfo([cpuinfo_dt, cpuinfo])
+        memory_regions = self._merge_memory_regions(
+            [memory_regions_dt, memory_regions]
+        )
 
         board = Board(
             name=self.name,
@@ -193,5 +277,8 @@ class BoardInfoExtractor:
             interrupt_controllers=interrupt_controllers,
             cpuinfo=cpuinfo,
             stdout_path=stdout_path,
+            clock_tree=clocks,
+            devices=devices,
         )
+
         return board

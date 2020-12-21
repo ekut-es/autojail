@@ -113,6 +113,7 @@ class ExtractCommand(BaseCommand):
         os.unlink(f"{base_folder}/extract.tar.gz")
 
     files = [
+        "/sys/kernel/debug/clk/clk_dump",
         "/sys/bus/pci/devices/*/config",
         "/sys/bus/pci/devices/*/resource",
         "/sys/devices/system/cpu/cpu*/uevent",

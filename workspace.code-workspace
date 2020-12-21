@@ -11,9 +11,20 @@
     "python.testing.unittestEnabled": true,
     "cSpell.words": [
       "AMDIOMMU",
+      "Clikit",
+      "GICR",
       "PROTO",
       "TIPVUIOMMU",
-      "mmconfig"
+      "agic",
+      "archs",
+      "cpus",
+      "gicr",
+      "irqchips",
+      "mmaped",
+      "mmconfig",
+      "munge",
+      "qgic",
+      "tegra"
     ]
   }
 }
