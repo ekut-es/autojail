@@ -74,4 +74,4 @@ def test_sorted_2():
     assert collection.find_ge(1) == (1, "a")
 
     collection.insert((2, "a"))
-    collection.index((2, "a")) == 4
+    assert collection.index((2, "a")) == 4
