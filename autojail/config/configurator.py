@@ -1,3 +1,4 @@
+import json
 import os
 from typing import List, Optional
 
@@ -9,7 +10,7 @@ from ..model import (
     DebugConsole,
     GroupedMemoryRegion,
     JailhouseConfig,
-    MemoryRegion,
+    MemoryRegionData,
     PlatformInfoArm,
     ShMemNetRegion,
 )
@@ -27,8 +28,9 @@ from .shmem import ConfigSHMemRegionsPass, LowerSHMemPass  # type: ignore
 
 
 class JailhouseConfigurator:
-    def __init__(self, board: Board) -> None:
+    def __init__(self, board: Board, print_after_all: bool = False) -> None:
         self.board = board
+        self.print_after_all = print_after_all
         self.config: Optional[JailhouseConfig] = None
         self.passes = [
             TransferBoardInfoPass(),
@@ -242,7 +244,7 @@ class JailhouseConfigurator:
             f.write("\n\t")
             f.write("\n\t.mem_regions = {\n")
             for k, v in cell.memory_regions.items():
-                assert isinstance(v, MemoryRegion) or isinstance(
+                assert isinstance(v, MemoryRegionData) or isinstance(
                     v, ShMemNetRegion
                 )
 
@@ -291,7 +293,7 @@ class JailhouseConfigurator:
                 if isinstance(v, GroupedMemoryRegion):
                     for region in v.regions:
                         write_mem_region(region)
-                elif isinstance(v, MemoryRegion):
+                elif isinstance(v, MemoryRegionData):
                     write_mem_region(v)
                 elif isinstance(v, ShMemNetRegion):
                     f.write(f"\t/* {k} */\n")
@@ -354,6 +356,9 @@ class JailhouseConfigurator:
 
         for pass_instance in self.passes:
             pass_instance(self.board, self.config)
+            if self.print_after_all:
+                print(json.dumps(self.config.dict(), indent=2))
+                print(json.dumps(self.board.dict(), indent=2))
 
     def read_cell_yml(self, cells_yml: str) -> None:
         self.logger.info("Reading cell configuration %s", str(cells_yml))

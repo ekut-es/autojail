@@ -11,6 +11,7 @@ class GenerateCommand(BaseCommand):
     """Generate the Jailhouse configurations
 
     generate
+        {--p|print-after-all : print cell config after each transformation step}
     """
 
     def handle(self) -> None:
@@ -31,7 +32,9 @@ class GenerateCommand(BaseCommand):
             board_dict = yaml.load(f)
             board_info = Board(**board_dict)
 
-        configurator = JailhouseConfigurator(board_info)
+        configurator = JailhouseConfigurator(
+            board_info, print_after_all=self.option("print-after-all")
+        )
         configurator.read_cell_yml(str(cells_yml_path))
         configurator.prepare()
         configurator.write_config("./")

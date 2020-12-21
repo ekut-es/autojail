@@ -4,19 +4,30 @@ import math
 import sys
 from collections import defaultdict
 from functools import reduce
-from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import (
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+)
 
 import tabulate
 from ortools.sat.python import cp_model
 
-from autojail.model.board import (
+from ..model import (
     Board,
+    CellConfig,
+    DeviceMemoryRegion,
     HypervisorMemoryRegion,
+    JailhouseConfig,
     MemoryRegion,
+    MemoryRegionData,
     ShMemNetRegion,
 )
-
-from ..model import BaseMemoryRegion, CellConfig, JailhouseConfig
 from ..model.datatypes import HexInt
 from .passes import BasePass
 
@@ -31,13 +42,27 @@ class AllocatorSegment:
         name: str = "unnamed",
         alignment: int = 2 ** 12,
         shared_regions: Optional[
-            Dict[str, List[Union[MemoryRegion, HypervisorMemoryRegion]]]
+            Dict[
+                str,
+                List[
+                    Union[
+                        MemoryRegion, DeviceMemoryRegion, HypervisorMemoryRegion
+                    ]
+                ],
+            ]
         ] = None,
     ) -> None:
         self.name = name
 
         self.shared_regions: Optional[
-            Dict[str, List[Union[MemoryRegion, HypervisorMemoryRegion]]]
+            Dict[
+                str,
+                List[
+                    Union[
+                        MemoryRegion, DeviceMemoryRegion, HypervisorMemoryRegion
+                    ]
+                ],
+            ]
         ] = defaultdict(list)
         if shared_regions:
             self.shared_regions.update(shared_regions)
@@ -80,7 +105,15 @@ class MemoryConstraint(object):
         self.resolved: Optional[Callable[[MemoryConstraint], None]] = None
 
     def __str__(self):
-        return str(self.__dict__)
+        ret = ""
+        if self.address_range:
+            ret += f"range: {hex(self.range[0])}-{hex(self.range[1])} "
+        if self.alignment:
+            ret += f"alignment: {self.alignment} "
+        if self.allocated_range:
+            ret += f"allocated: {hex(self.allocated_range[0])}-{hex(self.allocated_range[1])} "
+        ret += f"size: {self.size} virtual: {self.virtual}"
+        return ret
 
     # Returns a constraint that satisfies both
     # <self> and <other>, if possible
@@ -247,7 +280,7 @@ class AllocateMemoryPass(BasePass):
         self.root_cell: Optional[CellConfig] = None
 
         self.unallocated_segments: List[AllocatorSegment] = []
-        self.allocated_regions: List[MemoryRegion] = []
+        self.allocated_regions: List[MemoryRegionData] = []
         self.per_region_constraints: Dict[str, MemoryConstraint] = dict()
 
         # data structure for creating and handling generic
@@ -515,7 +548,7 @@ class AllocateMemoryPass(BasePass):
 
         for region in self.root_cell.memory_regions.values():
             assert region is not None
-            if isinstance(region, MemoryRegion) and region.allocatable:
+            if isinstance(region, MemoryRegionData) and region.allocatable:
                 assert region.physical_start_addr is not None
                 assert region.size is not None
                 intervals.append(
@@ -534,7 +567,7 @@ class AllocateMemoryPass(BasePass):
         for cell in self.config.cells.values():
             delete_list = []
             for name, region in cell.memory_regions.items():
-                if isinstance(region, MemoryRegion):
+                if isinstance(region, MemoryRegionData):
                     if region.allocatable:
                         delete_list.append(name)
 
@@ -656,12 +689,12 @@ class UnallocatedOrSharedSegmentsAnalysis(object):
 
     def _detect_shared_memio(self):
         shared: Dict[
-            Tuple[int, int], Tuple[int, List[MemoryRegion]]
+            Tuple[int, int], Tuple[int, List[MemoryRegionData]]
         ] = defaultdict(lambda: (0, []))
 
         for cell in self.cells.values():
             for region in cell.memory_regions.values():
-                if not isinstance(region, MemoryRegion):
+                if not isinstance(region, MemoryRegionData):
                     continue
 
                 if not self.key(region) or "MEM_IO" not in region.flags:
@@ -703,7 +736,7 @@ class UnallocatedOrSharedSegmentsAnalysis(object):
             assert cell.memory_regions is not None
 
             for region_name, region in cell.memory_regions.items():
-                if not isinstance(region, MemoryRegion):
+                if not isinstance(region, MemoryRegionData):
                     continue
                 if region.allocatable:
                     continue
@@ -804,23 +837,26 @@ class MergeIoRegionsPass(BasePass):
         shared_regions_ana.run()
 
         def get_io_regions(
-            regions: Dict[str, Union[str, ShMemNetRegion, MemoryRegion]]
-        ) -> List[Tuple[str, MemoryRegion]]:
+            regions: Dict[
+                str,
+                Union[str, ShMemNetRegion, MemoryRegion, DeviceMemoryRegion],
+            ]
+        ) -> List[Tuple[str, Union[DeviceMemoryRegion, MemoryRegion]]]:
             return list(
                 [
                     (name, r)
                     for name, r in regions.items()
-                    if isinstance(r, BaseMemoryRegion) and "MEM_IO" in r.flags
+                    if isinstance(r, MemoryRegionData) and "MEM_IO" in r.flags
                 ]
             )
 
-        regions: List[Tuple[str, MemoryRegion]] = get_io_regions(
+        regions: Sequence[Tuple[str, MemoryRegionData]] = get_io_regions(
             self.root_cell.memory_regions
         )
         regions = sorted(regions, key=lambda t: t[1].physical_start_addr,)
 
-        grouped_regions: List[List[Tuple[str, MemoryRegion]]] = []
-        current_group: List[Tuple[str, MemoryRegion]] = []
+        grouped_regions: List[List[Tuple[str, MemoryRegionData]]] = []
+        current_group: List[Tuple[str, MemoryRegionData]] = []
 
         max_dist = 65536
         for name, r in regions:
@@ -869,7 +905,7 @@ class MergeIoRegionsPass(BasePass):
             ) - r_start.physical_start_addr
 
             def aux(
-                acc: Iterable[str], t: Tuple[str, MemoryRegion]
+                acc: Iterable[str], t: Tuple[str, MemoryRegionData]
             ) -> Iterable[str]:
                 _, r = t
 
@@ -918,7 +954,7 @@ class PrepareMemoryRegionsPass(BasePass):
         for cell in self.config.cells.values():
             assert cell.memory_regions is not None
             for region in cell.memory_regions.values():
-                if isinstance(region, BaseMemoryRegion) and region.size is None:
+                if isinstance(region, MemoryRegionData) and region.size is None:
                     region.size = self.board.pagesize
 
             if cell.type == "root":
@@ -952,7 +988,7 @@ class PrepareMemoryRegionsPass(BasePass):
             skip = False
             for cell_region in cell.memory_regions.values():
 
-                if not isinstance(cell_region, BaseMemoryRegion):
+                if not isinstance(cell_region, MemoryRegionData):
                     continue
 
                 assert cell_region.size is not None

@@ -90,7 +90,7 @@ struct {
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
-	/*memreserve 0x3b400000-0x40000000*/
+	/*/ 0x3b400000-0x40000000*/
 	{
 		.phys_start = 0x3b400000,
 		.virt_start = 0x3b400000,
@@ -131,10 +131,10 @@ struct {
 			.address = 0xff841000,
 			.pin_base = 32,
 			.pin_bitmap = {
-				0x3, 
+				0xf0003, 
 				0x106, 
 				0x3fff0e00, 
-				0x6b6177d6
+				0x6b6777d6
 			},
 		},
 		{

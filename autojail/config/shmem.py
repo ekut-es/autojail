@@ -180,8 +180,6 @@ class LowerSHMemPass(BasePass):
                 )
                 mem_regions.append(mem_region)
 
-            mem_regions[-1].next_region = None
-
             # add PCI device to each affected cell
             root_added = False
             current_device_id = 0
@@ -277,6 +275,6 @@ class LowerSHMemPass(BasePass):
                         if irq not in irqchip.interrupts:
                             irqchip.interrupts.append(irq)
 
-        self.logger.info("Infered vpci root interupts")
+        self.logger.info("Inferred vpci root interupts")
         for name, cell in self.config.cells.items():
             self.logger.info("%s: %s", name, cell.vpci_irq_base)

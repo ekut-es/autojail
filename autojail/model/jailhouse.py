@@ -3,7 +3,13 @@ from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
-from .board import Board, HypervisorMemoryRegion, MemoryRegion, ShMemNetRegion
+from .board import (
+    Board,
+    DeviceMemoryRegion,
+    HypervisorMemoryRegion,
+    MemoryRegion,
+    ShMemNetRegion,
+)
 from .datatypes import ByteSize, ExpressionInt, HexInt, IntegerList
 
 
@@ -135,7 +141,7 @@ class PCIDevice(BaseModel):
     shmem_protocol: Optional[str]
 
     # List of corresponding memory regions
-    memory_regions: List[MemoryRegion] = []
+    memory_regions: List[DeviceMemoryRegion] = []
 
     @property
     def bus(self) -> int:
@@ -161,7 +167,7 @@ class CellConfig(BaseModel):
     platform_info: Optional[PlatformInfo]
     cpus: Optional[IntegerList]
     memory_regions: Optional[
-        Dict[str, Union[str, ShMemNetRegion, MemoryRegion]]
+        Dict[str, Union[str, ShMemNetRegion, MemoryRegion, DeviceMemoryRegion]]
     ] = {}
     irqchips: Optional[Dict[str, IRQChip]] = {}
     pci_devices: Optional[Dict[str, PCIDevice]] = {}

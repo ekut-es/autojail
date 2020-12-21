@@ -45,6 +45,8 @@ class PrepareIRQChipsPass(BasePass):
             current_base = irqchip.pin_base
 
             for irq in sorted(irqchip.interrupts):
+                if irq < 32:
+                    continue
                 assert irq >= current_base and "Invalid state detected"
 
                 while irq >= current_base + split_factor:

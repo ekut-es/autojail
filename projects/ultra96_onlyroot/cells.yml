@@ -9,7 +9,7 @@ cells:
     cpus: 0,1,2,3
     memory_regions:
       Main Memory:
-        size: 0x30000000
+        size: 768MB
         flags:
         - MEM_READ
         - MEM_WRITE
