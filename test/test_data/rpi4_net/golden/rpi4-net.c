@@ -3,7 +3,7 @@
 struct { 
 	struct jailhouse_system header; 
 	__u64 cpus[1];
-	struct jailhouse_memory mem_regions[9];
+	struct jailhouse_memory mem_regions[11];
 	struct jailhouse_irqchip irqchips[2];
 	struct jailhouse_pci_device pci_devices[1];
 } __attribute__((packed)) config = {
@@ -60,6 +60,13 @@ struct {
 		.size = 0x30000000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE|JAILHOUSE_MEM_DMA,
 	},
+	/*serial@7e215040 0xfe215040-0xfe215080*/
+	{
+		.phys_start = 0xfe215040,
+		.virt_start = 0xfe215040,
+		.size = 0x40,
+		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_IO|JAILHOUSE_MEM_IO_8|JAILHOUSE_MEM_IO_16|JAILHOUSE_MEM_IO_32|JAILHOUSE_MEM_IO_64,
+	},
 	/*net1 0x80000000-0x80001000*/
 	{
 		.phys_start = 0x80000000,
@@ -90,11 +97,18 @@ struct {
 		.size = 0x4c00000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE,
 	},
-	/*mmio_0 0xfd500000-0xff800100*/
+	/*mmio_0 0xfd500000-0xfe215008*/
 	{
 		.phys_start = 0xfd500000,
 		.virt_start = 0xfd500000,
-		.size = 0x2300100,
+		.size = 0xd15008,
+		.flags = JAILHOUSE_MEM_IO|JAILHOUSE_MEM_IO_16|JAILHOUSE_MEM_IO_32|JAILHOUSE_MEM_IO_64|JAILHOUSE_MEM_IO_8|JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE,
+	},
+	/*mmio_1 0xfe215080-0xff800100*/
+	{
+		.phys_start = 0xfe215080,
+		.virt_start = 0xfe215080,
+		.size = 0x15eb080,
 		.flags = JAILHOUSE_MEM_IO|JAILHOUSE_MEM_IO_16|JAILHOUSE_MEM_IO_32|JAILHOUSE_MEM_IO_64|JAILHOUSE_MEM_IO_8|JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE,
 	},
 	/*Boot Memory@guest1 0x80103000-0x80203000*/
@@ -142,7 +156,7 @@ struct {
 			.domain = 1,
 			.bar_mask = JAILHOUSE_IVSHMEM_BAR_MASK_INTX,
 			.bdf = 0 << 8 | 0 << 3 | 0,
-			.shmem_regions_start = 1,
+			.shmem_regions_start = 2,
 			.shmem_dev_id = 0,
 			.shmem_peers = 2,
 			.shmem_protocol = JAILHOUSE_SHMEM_PROTO_VETH,
