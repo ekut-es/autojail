@@ -515,14 +515,12 @@ class DeviceTreeExtractor:
             return
 
         elif node.get_property("interrupt-controller"):
-            print("irq")
             self._extract_interrupt_controller(
                 node, state, compatible, reg, device_type, interrupts
             )
 
         else:
             if state.memory_mapped:
-                print("mmapped")
                 self._extract_mmaped_device(
                     node, state, compatible, reg, device_type, interrupts
                 )
@@ -538,7 +536,6 @@ class DeviceTreeExtractor:
             current_state = worklist.pop()
 
             node = current_state.node
-            print(node.name)
 
             self._add_memreserve(node)
             self._extract_device(node, current_state)
