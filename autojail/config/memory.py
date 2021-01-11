@@ -553,9 +553,9 @@ class AllocateMemoryPass(BasePass):
     def _build_allocation_domain(self) -> None:
         assert self.root_cell is not None
         assert self.root_cell.memory_regions is not None
+        assert self.board is not None
 
         intervals = []
-        assert self.board is not None
 
         for region in self.board.memory_regions.values():
             assert region is not None
