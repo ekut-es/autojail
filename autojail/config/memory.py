@@ -372,6 +372,16 @@ class AllocateMemoryPass(BasePass):
         self.virtual_domain = cp_model.Domain(0, vmem_size)
         self._build_allocation_domain()
 
+        self.logger.info(
+            "Physical Memory Domain: %s",
+            str(self.physical_domain.FlattenedIntervals()),
+        )
+
+        self.logger.info(
+            "Virtual Memory domain: %s",
+            str(self.virtual_domain.FlattenedIntervals()),
+        )
+
         self._preallocate_vpci()
 
         self.no_overlap_constraints["__global"] = self.global_no_overlap
@@ -545,8 +555,9 @@ class AllocateMemoryPass(BasePass):
         assert self.root_cell.memory_regions is not None
 
         intervals = []
+        assert self.board is not None
 
-        for region in self.root_cell.memory_regions.values():
+        for region in self.board.memory_regions.values():
             assert region is not None
             if isinstance(region, MemoryRegionData) and region.allocatable:
                 assert region.physical_start_addr is not None
