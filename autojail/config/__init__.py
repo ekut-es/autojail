@@ -1,4 +1,4 @@
 from .configurator import JailhouseConfigurator  # noqa
-from .wizard import ConfigWizard
+from .wizard import RootConfigArgs, RootConfigWizard  # noqa
 
-__all__ = ["JailhouseConfigurator", "ConfigWizard"]
+__all__ = ["JailhouseConfigurator", "RootConfigWizard", "RootConfigArgs"]

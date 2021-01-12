@@ -1,8 +1,11 @@
-from typing import Union
+from typing import FrozenSet, Optional, Union
+
+from dataclasses import dataclass
 
 from ..commands.base import BaseCommand
 from ..model import (
     Board,
+    ByteSize,
     CellConfig,
     DebugConsole,
     HypervisorMemoryRegion,
@@ -11,15 +14,13 @@ from ..model import (
 )
 
 
-class ConfigWizard:
-    def __init__(self, command: BaseCommand, board: Board):
-        self.command = command
-        self.board = board
-        self.config = None
-
-    def run(self):
-        root_wizard = RootConfigWizard(self.board)
-        self.config = root_wizard.run()
+@dataclass()
+class RootConfigArgs:
+    name: str = "root cell"
+    memory: ByteSize = ByteSize.validate("512 MB")
+    hypervisor_memory: ByteSize = ByteSize.validate("8 MB")
+    console: Optional[str] = None
+    flags: FrozenSet[str] = frozenset()
 
 
 class RootConfigWizard:
@@ -46,27 +47,29 @@ class RootConfigWizard:
                         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA]
     """  # noqa
 
-    def __init__(self, board: Board):
+    def __init__(self, command: BaseCommand, board: Board):
+        self.command = command
         self.board = board
 
-    def run(self) -> JailhouseConfig:
-        name = "Root Cell"
-        flags = ["SYS_VIRTUAL_DEBUG_CONSOLE"]
-        hypervisor_memory = HypervisorMemoryRegion(size="16 MB")
+    def run(self, args: RootConfigArgs) -> JailhouseConfig:
+        name = args.name
+        flags = args.flags
+        hypervisor_memory = HypervisorMemoryRegion(size=args.hypervisor_memory)
 
-        debug_console: Union[str, DebugConsole] = ""
-        if self.board.stdout_path:
-            console_name = self.board.stdout_path.split(":")[0]
-            debug_console = console_name
-        else:
-            debug_console = DebugConsole(
-                type="CON_TYPE_NONE", address=0x0, size=0x0, flags=[]
-            )
+        debug_console: Union[str, DebugConsole] = DebugConsole(
+            type="CON_TYPE_NONE", address=0x0, size=0x0, flags=[]
+        )
+        if args.console is None:
+            if self.board.stdout_path:
+                console_name = self.board.stdout_path.split(":")[0]
+                debug_console = console_name
+        elif args.console:
+            debug_console = args.console
 
         cpus = list(range(len(self.board.cpuinfo)))
 
         main_memory = MemoryRegion(
-            size="768 MB",
+            size=args.memory,
             flags=["MEM_READ", "MEM_WRITE", "MEM_EXECUTE", "MEM_DMA"],
         )
 
