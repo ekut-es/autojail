@@ -39,7 +39,6 @@ cells:
         size: 0x00001000
         flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
 
-
       gpio: /soc/gpiomem
 
   linux2:

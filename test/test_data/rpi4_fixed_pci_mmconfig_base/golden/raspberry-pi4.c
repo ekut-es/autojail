@@ -13,7 +13,7 @@ struct {
 	.revision = JAILHOUSE_CONFIG_REVISION,
 	.flags = JAILHOUSE_SYS_VIRTUAL_DEBUG_CONSOLE,
 	.hypervisor_memory = {
-		.phys_start = 0x40000000,
+		.phys_start = 0x30000000,
 		.size = 0x1000000,
 	},
 
