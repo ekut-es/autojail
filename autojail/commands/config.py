@@ -2,7 +2,14 @@ from pathlib import Path
 
 import ruamel.yaml
 
-from ..config import RootConfigArgs, RootConfigWizard
+from autojail.model.jailhouse import CellConfig
+
+from ..config import (
+    InmateConfigArgs,
+    InmateConfigWizard,
+    RootConfigArgs,
+    RootConfigWizard,
+)
 from ..model import Board
 from ..model.datatypes import (
     ByteSize,
@@ -26,7 +33,7 @@ class InitCommand(BaseCommand):
         {--flags= : Jailhouse flags for root cell}
     """  # noqa
 
-    def _read_args(self) -> RootConfigArgs:
+    def _parse_args(self) -> RootConfigArgs:
 
         name = self.option("root-name")
         memory = self.option("root-memory")
@@ -53,7 +60,7 @@ class InitCommand(BaseCommand):
         return args
 
     def handle(self) -> None:
-        args = self._read_args()
+        args = self._parse_args()
         cells_yml_path = Path.cwd() / self.CELLS_CONFIG_NAME
         if cells_yml_path.exists() and not self.option("force"):
             self.line(f"{cells_yml_path} already exists use -f to overwrite")
@@ -88,12 +95,76 @@ class InitCommand(BaseCommand):
 
 
 class AddCommand(BaseCommand):
-    """ Add a guest cell to the configuration 
+    """ Add a inmate to the configuration 
     
     add
+        {name : name of cell}
+        {--t|type : type of cell}
+        {--m|memory= : amount of memory for inmate} 
+        {--c|console= : device tree path or alias of debug uart}
+        {--F|flags= : jailhouse flags for guest cell}
+        {--d|device= : device to add to inmate device tree path or alias}
+        {--C|cpus= : list of cpus for inmate}
     """  # noqa
 
-    pass
+    def _parse_args(self):
+        name = self.argument("name")
+        type = self.option("type")
+        memory = self.option("memory")
+        console = self.option("console")
+        flags = self.option("flags")
+        devices = self.option("device")
+        cpus = self.option("cpus")
+
+        args = InmateConfigArgs(name=name)
+        if type is not None:
+            assert type in ["linux", "bare"]
+            args.type = type
+
+        if memory is not None:
+            args.memory = ByteSize.validate(memory)
+
+        if console is not None:
+            args.console = console
+
+        if flags is not None:
+            args.flags = frozenset(flags.split(","))
+
+        if devices is not None:
+            args.devices = devices
+
+        if cpus is not None:
+            args.cpus = IntegerList.validate(cpus)
+
+        return args
+
+    def handle(self):
+        args = self._parse_args()
+
+        cells_yml_path = Path.cwd() / self.CELLS_CONFIG_NAME
+        if not cells_yml_path.exists():
+            self.line(
+                f"{cells_yml_path} does not exist use autojail config init to generate root cell config"
+            )
+
+        with cells_yml_path.open() as f:
+            yaml = ruamel.yaml.YAML()
+            cells_dict = yaml.load(f)
+            cells_info = CellConfig(**cells_dict)
+
+        board_yml_path = Path.cwd() / self.BOARD_CONFIG_NAME
+        if not board_yml_path.exists():
+            self.line(f"<error>{board_yml_path} could not be found</error>")
+            self.line("Please run <comment>automate extract</comment> first")
+            return None
+
+        with board_yml_path.open() as f:
+            yaml = ruamel.yaml.YAML()
+            board_dict = yaml.load(f)
+            board_info = Board(**board_dict)
+
+        wizard = InmateConfigWizard(board_info)
+        wizard.add(args, cells_info)
 
 
 class RemoveCommand(BaseCommand):

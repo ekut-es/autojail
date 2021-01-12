@@ -2,6 +2,8 @@ from typing import FrozenSet, Optional, Union
 
 from dataclasses import dataclass
 
+from autojail.model.datatypes import IntegerList
+
 from ..commands.base import BaseCommand
 from ..model import (
     Board,
@@ -23,7 +25,13 @@ class RootConfigArgs:
     flags: FrozenSet[str] = frozenset()
 
 
-class RootConfigWizard:
+class WizardBase:
+    def __init__(self, command: BaseCommand, board: Board):
+        self.command = command
+        self.board = board
+
+
+class RootConfigWizard(WizardBase):
     """ Creates a simple root cell configuration similar to the following 
 
         The configuration corresponds to the following config:
@@ -47,13 +55,13 @@ class RootConfigWizard:
                         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA]
     """  # noqa
 
-    def __init__(self, command: BaseCommand, board: Board):
-        self.command = command
-        self.board = board
-
     def run(self, args: RootConfigArgs) -> JailhouseConfig:
         name = args.name
-        flags = args.flags
+        flags = (
+            args.flags
+            if args.flags is not None
+            else ["SYS_VIRTUAL_DEBUG_CONSOLE"]
+        )
         hypervisor_memory = HypervisorMemoryRegion(size=args.hypervisor_memory)
 
         debug_console: Union[str, DebugConsole] = DebugConsole(
@@ -85,3 +93,19 @@ class RootConfigWizard:
         config = JailhouseConfig(cells={"root": cell_config})
 
         return config
+
+
+@dataclass
+class InmateConfigArgs:
+    name: str = "guest"
+    type: str = "linux"
+    memory: ByteSize = ByteSize.validate("512 MB")
+    console: Optional[str] = None
+    flags: FrozenSet[str] = frozenset()
+    devices: FrozenSet[str] = frozenset()
+    cpus: IntegerList = IntegerList.validate([])
+
+
+class InmateConfigWizard(WizardBase):
+    def add(self, args: InmateConfigArgs):
+        print(args)
