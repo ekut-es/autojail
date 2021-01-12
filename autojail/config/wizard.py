@@ -1,6 +1,6 @@
 from typing import FrozenSet, Optional, Union
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from autojail.model.datatypes import IntegerList
 
@@ -103,7 +103,7 @@ class InmateConfigArgs:
     console: Optional[str] = None
     flags: FrozenSet[str] = frozenset()
     devices: FrozenSet[str] = frozenset()
-    cpus: IntegerList = IntegerList.validate([])
+    cpus: IntegerList = field(default_factory=IntegerList)
 
 
 class InmateConfigWizard(WizardBase):
