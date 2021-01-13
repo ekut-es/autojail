@@ -172,7 +172,7 @@ class InmateConfigWizard(WizardBase):
 
         cell_config = CellConfig(
             name=name,
-            type="root",
+            type=args.type,
             flags=flags,
             debug_console=debug_console,
             cpus=cpus,

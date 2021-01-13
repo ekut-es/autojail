@@ -15,6 +15,7 @@ from ..model import (
     ShMemNetRegion,
 )
 from .board_info import TransferBoardInfoPass
+from .cpu import CPUAllocatorPass
 from .device_tree import GenerateDeviceTreePass
 from .devices import LowerDevicesPass
 from .irq import PrepareIRQChipsPass
@@ -39,6 +40,7 @@ class JailhouseConfigurator:
             PrepareIRQChipsPass(),
             PrepareMemoryRegionsPass(),
             MergeIoRegionsPass(),
+            CPUAllocatorPass(),
             AllocateMemoryPass(),
             ConfigSHMemRegionsPass(),
             InferRootSharedPass(),
