@@ -43,6 +43,7 @@ pytest-cov = "^2.10.0"
 isort = "^5.2.0"
 monkeytype = "^20.5.0"
 pre-commit = "^1.21.0"
+pytest-coverage = "^0.0"
 
 [tool.poetry.scripts]
 autojail = 'autojail.main:app.run'

@@ -187,6 +187,9 @@ class IntegerList(list):
         if isinstance(v, int):
             return cls([v])
 
+        if v == "":
+            return cls([])
+
         selection = set()
         # tokens are comma separated values
         tokens = [x.strip() for x in v.split(",")]
