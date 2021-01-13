@@ -95,12 +95,12 @@ class AddCommand(ConfigCommandBase):
     
     add
         {name : name of cell}
-        {--t|type : type of cell}
+        {--t|type= : type of cell one of "bare", "linux"}
         {--m|memory= : amount of memory for inmate} 
         {--c|console= : device tree path or alias of debug uart}
         {--F|flags= : jailhouse flags for guest cell}
         {--d|device= : device to add to inmate device tree path or alias}
-        {--C|cpus= : list of cpus for inmate}
+        {--C|cpus= : comma separated list of cpus for inmate}
     """  # noqa
 
     def _parse_args(self):
@@ -142,7 +142,7 @@ class AddCommand(ConfigCommandBase):
 
         jailhouse_config = self.load_jailhouse_config()
 
-        wizard = InmateConfigWizard(board_info)
+        wizard = InmateConfigWizard(self, board_info)
         config = wizard.add(args, jailhouse_config)
         self._save_jailhouse_config(config)
 
@@ -174,5 +174,5 @@ class ConfigCommand(ConfigCommandBase):
 
     commands = [InitCommand(), AddCommand(), RemoveCommand()]
 
-    def handle(self):  # type: () -> int
+    def handle(self) -> int:
         return self.call("help", self._config.name)
