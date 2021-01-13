@@ -1,6 +1,6 @@
 import ruamel.yaml
 
-from autojail.model.jailhouse import CellConfig, JailhouseConfig
+from autojail.model.jailhouse import JailhouseConfig
 
 from ..config import (
     InmateConfigArgs,
@@ -8,7 +8,6 @@ from ..config import (
     RootConfigArgs,
     RootConfigWizard,
 )
-from ..model import Board
 from ..model.datatypes import (
     ByteSize,
     ExpressionInt,
@@ -20,7 +19,7 @@ from .base import BaseCommand
 
 
 class ConfigCommandBase(BaseCommand):
-    def _save_config(self, config: JailhouseConfig):
+    def _save_jailhouse_config(self, config: JailhouseConfig):
         if config is not None:
             with self.cells_config_path.open("w") as f:
                 yaml = ruamel.yaml.YAML()
@@ -81,22 +80,14 @@ class InitCommand(ConfigCommandBase):
                 f"{self.cells_config_path} already exists use -f to overwrite"
             )
 
-        if not self.board_config_path.exists():
-            self.line(
-                f"<error>{self.board_config_path} could not be found</error>"
-            )
-            self.line("Please run <comment>automate extract</comment> first")
-            return None
-
-        with self.board_config_path.open() as f:
-            yaml = ruamel.yaml.YAML()
-            board_dict = yaml.load(f)
-            board_info = Board(**board_dict)
+        board_info = self.load_board_info()
+        if not board_info:
+            return
 
         wizard = RootConfigWizard(self, board_info)
         config = wizard.run(args)
 
-        self._save_config(config)
+        self._save_jailhouse_config(config)
 
 
 class AddCommand(ConfigCommandBase):
@@ -145,41 +136,34 @@ class AddCommand(ConfigCommandBase):
 
     def handle(self):
         args = self._parse_args()
+        board_info = self.load_board_info()
+        if not board_info:
+            return
 
-        if not self.cells_config_path.exists():
-            self.line(
-                f"{self.cells_config_path} does not exist use autojail config init to generate root cell config"
-            )
-
-        with self.cells_config_path.open() as f:
-            yaml = ruamel.yaml.YAML()
-            cells_dict = yaml.load(f)
-            cells_info = CellConfig(**cells_dict)
-
-        if not self.board_config_path.exists():
-            self.line(
-                f"<error>{self.board_config_path} could not be found</error>"
-            )
-            self.line("Please run <comment>automate extract</comment> first")
-            return None
-
-        with self.board_config_path.open() as f:
-            yaml = ruamel.yaml.YAML()
-            board_dict = yaml.load(f)
-            board_info = Board(**board_dict)
+        jailhouse_config = self.load_jailhouse_config()
 
         wizard = InmateConfigWizard(board_info)
-        config = wizard.add(args, cells_info)
-        self._save_config(config)
+        config = wizard.add(args, jailhouse_config)
+        self._save_jailhouse_config(config)
 
 
 class RemoveCommand(ConfigCommandBase):
     """ Delete a guest cell from the configuration 
     
     remove
+        {name : Name of Cell to remove}
     """  # noqa
 
-    pass
+    def handle(self):
+        name = self.argument("name")
+        board_info = self.load_board_info()
+        if not board_info:
+            return
+
+        jailhouse_config = self.load_jailhouse_config()
+        wizard = InmateConfigWizard(self, board_info)
+        config = wizard.remove(name, jailhouse_config)
+        self._save_jailhouse_config(config)
 
 
 class ConfigCommand(ConfigCommandBase):

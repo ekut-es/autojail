@@ -107,6 +107,20 @@ class InmateConfigArgs:
 
 
 class InmateConfigWizard(WizardBase):
-    def add(self, args: InmateConfigArgs, config: JailhouseConfig):
+    def add(
+        self, args: InmateConfigArgs, config: JailhouseConfig
+    ) -> JailhouseConfig:
 
         return config
+
+    def remove(self, name: str, config: JailhouseConfig) -> JailhouseConfig:
+        for id, cell in config.cells.items():
+            if id == name or cell.name == name:
+                if cell.type == "root":
+                    raise Exception(
+                        "Cannot remove root cell from jailhouse config"
+                    )
+                del config.cells["id"]
+                return config
+
+        raise Exception(f"Could not find cell with name or id {name}")
