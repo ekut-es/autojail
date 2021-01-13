@@ -19,6 +19,14 @@ class BaseCommand(Command):
     CELLS_CONFIG_NAME = "cells.yml"
     BOARD_CONFIG_NAME = "board.yml"
 
+    @property
+    def cells_config_path(self):
+        return Path.cwd() / self.CELLS_CONFIG_NAME
+
+    @property
+    def board_config_path(self):
+        return Path.cwd() / self.BOARD_CONFIG_NAME
+
     def __init__(self) -> None:
         super().__init__()
 

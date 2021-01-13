@@ -107,5 +107,6 @@ class InmateConfigArgs:
 
 
 class InmateConfigWizard(WizardBase):
-    def add(self, args: InmateConfigArgs):
-        print(args)
+    def add(self, args: InmateConfigArgs, config: JailhouseConfig):
+
+        return config
