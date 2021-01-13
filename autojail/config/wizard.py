@@ -120,7 +120,7 @@ class InmateConfigWizard(WizardBase):
                 raise Exception("Cell with name: {name} already exists")
 
         if id in cells:
-            count = 0
+            count = 1
             while id + str(count) in cells:
                 count += 1
             id = id + str(count)
