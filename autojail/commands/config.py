@@ -1,3 +1,5 @@
+import logging
+
 import ruamel.yaml
 
 from autojail.model.jailhouse import JailhouseConfig
@@ -175,4 +177,27 @@ class ConfigCommand(ConfigCommandBase):
     commands = [InitCommand(), AddCommand(), RemoveCommand()]
 
     def handle(self) -> int:
-        return self.call("help", self._config.name)
+        # FIXME replace in v0.3 with:
+        # return logging.warning("directly calling jailhouse config has been deprecated")
+
+        logging.warning(
+            "directly calling 'jailhouse config' has been deprecated and will be removed in the next version"
+        )
+        logging.warning("please use 'jailhouse config init' instead")
+
+        args = RootConfigArgs()
+        if self.cells_config_path.exists() and not self.option("force"):
+            self.line(
+                f"{self.cells_config_path} already exists use -f to overwrite"
+            )
+
+        board_info = self.load_board_info()
+        if not board_info:
+            return 1
+
+        wizard = RootConfigWizard(self, board_info)
+        config = wizard.run(args)
+
+        self._save_jailhouse_config(config)
+
+        return 0
