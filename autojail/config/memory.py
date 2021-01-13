@@ -875,12 +875,51 @@ class MergeIoRegionsPass(BasePass):
             assert r.size
 
             if current_group:
+                assert current_group[-1][1].physical_start_addr is not None
+                assert current_group[0][1].physical_start_addr is not None
+
                 r1_end = r.physical_start_addr + r.size
 
-                assert current_group[-1][1].physical_start_addr
+                # Do not merge regions if merged regions would
+                # overlap with gic
+                gic_overlap = False
+                interrupt_ranges = []
+
+                for interrupt_controller in board.interrupt_controllers:
+                    if interrupt_controller.gic_version == 2:
+                        interrupt_ranges.append(
+                            (interrupt_controller.gicd_base, 0x1000)
+                        )
+                        interrupt_ranges.append(
+                            (interrupt_controller.gicc_base, 0x2000)
+                        )
+                        interrupt_ranges.append(
+                            (interrupt_controller.gich_base, 0x2000)
+                        )
+                        interrupt_ranges.append(
+                            (interrupt_controller.gicv_base, 0x2000)
+                        )
+                    elif interrupt_controller.gic_version == 3:
+                        interrupt_ranges.append(
+                            (interrupt_controller.gicd_base, 0x10000)
+                        )
+                        interrupt_ranges.append(
+                            (interrupt_controller.gicr_base, 0x20000)
+                        )
+
+                for interrupt_range in interrupt_ranges:
+                    if (
+                        current_group[0][1].physical_start_addr
+                        < interrupt_range[0] + interrupt_range[1]
+                    ):
+                        if r1_end > interrupt_range[0]:
+                            gic_overlap = True
+                            break
+
                 if (
                     current_group[-1][1].physical_start_addr - r1_end > max_dist
                     or r.shared
+                    or gic_overlap
                 ):
                     grouped_regions.append(current_group)
 
