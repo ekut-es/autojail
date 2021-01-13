@@ -1,0 +1,17 @@
+cells:
+  root:
+    type: root
+    name: Root Cell
+    flags:
+    - SYS_VIRTUAL_DEBUG_CONSOLE
+    hypervisor_memory: {}
+    debug_console: serial0
+    cpus: 0,1,2,3
+    memory_regions:
+      Main Memory:
+        size: 768MB
+        flags:
+        - MEM_READ
+        - MEM_WRITE
+        - MEM_EXECUTE
+        - MEM_DMA

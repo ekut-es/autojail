@@ -3,7 +3,14 @@ from cleo.config.application_config import ApplicationConfig
 from cleo.io.console_io import ConsoleIO
 
 from . import __version__
-from .commands import ConfigCommand, ExtractCommand, InitCommand, TestCommand
+from .commands import (
+    ConfigCommand,
+    ExploreCommand,
+    ExtractCommand,
+    GenerateCommand,
+    InitCommand,
+    TestCommand,
+)
 from .utils import ClikitLoggingHandler
 
 
@@ -24,7 +31,9 @@ class AutojailApp(Application):
         self.add(InitCommand())
         self.add(ExtractCommand())
         self.add(ConfigCommand())
+        self.add(GenerateCommand())
         self.add(TestCommand())
+        self.add(ExploreCommand())
 
 
 app = AutojailApp()

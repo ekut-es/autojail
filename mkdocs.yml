@@ -11,8 +11,10 @@ nav:
   - Data Sources:
       Device Tree: device_tree.md
       Proc Filesystem: proc.md
+      Debug Filesystem: debugfs.md
       Data Sheets: ml_extractor.md
   - Test Rack: schrank.md
+  - Release Notes: releases.md
 
 docs_dir: doc
 

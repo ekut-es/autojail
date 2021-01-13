@@ -90,6 +90,8 @@ def test_device_tree(tmpdir):
     for alias, path in alias_pairs:
         assert extractor.aliases[alias] == path
 
+    assert extractor.stdout_path == "serial0"
+
 
 def test_extract_command(test_project):
     os.chdir(test_project)

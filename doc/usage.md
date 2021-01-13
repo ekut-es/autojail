@@ -24,6 +24,11 @@ To show detailed information about the extracted board information use _-v_ to a
 
 ## autojail config
 
+Implements a basic configuration wizard to generate a basic _cells.yml_ . 
+It currently only supports linux based cell configurations. 
+
+## autojail generate
+
 This command builds the configured cell configuration for root and guest cell.
 
 A configuration file cells.yml must provided in the project directory. For a description

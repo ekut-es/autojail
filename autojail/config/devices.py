@@ -2,7 +2,7 @@ from collections import namedtuple
 from copy import deepcopy
 from typing import Optional, Tuple
 
-from autojail.model.board import Board, MemoryRegion
+from autojail.model.board import Board, DeviceMemoryRegion
 from autojail.model.jailhouse import JailhouseConfig
 
 from ..model import DebugConsole
@@ -13,17 +13,21 @@ ConsoleSettings = namedtuple("ConsoleSettings", ["type", "flags"])
 console_sentinels = {
     "brcm,bcm2835-aux-uart": ConsoleSettings(
         "CON_TYPE_8250", ["CON_ACCESS_MMIO", "CON_REGDIST_4"]
-    )
+    ),
+    "xlnx,xuartps": ConsoleSettings(
+        "CON_TYPE_XUARTPS", ["CON_ACCESS_MMIO", "CON_REGDIST_4"]
+    ),
 }
 
 
 class LowerDevicesPass(BasePass):
     def _find_device(
         self, board: Board, name: str
-    ) -> Tuple[Optional[str], Optional[MemoryRegion]]:
+    ) -> Tuple[Optional[str], Optional[DeviceMemoryRegion]]:
         for device_name, device in board.memory_regions.items():
-            if name in device.aliases or device.path == name:
-                return device_name, device
+            if isinstance(device, DeviceMemoryRegion):
+                if name in device.aliases or device.path == name:
+                    return device_name, device
 
         return None, None
 
@@ -86,9 +90,9 @@ class LowerDevicesPass(BasePass):
 
             irqchip = list(cell.irqchips.values())[0]
             for memory_region in cell.memory_regions.values():
-                if isinstance(memory_region, MemoryRegion):
+                if isinstance(memory_region, DeviceMemoryRegion):
                     for interrupt in memory_region.interrupts:
-                        irqchip.interrupts.append(interrupt)
+                        irqchip.interrupts.append(interrupt.to_jailhouse())
             irqchip.interrupts.sort()
 
     def __call__(

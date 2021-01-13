@@ -44,3 +44,4 @@ shmem:
   net1:
     protocol: SHMEM_PROTO_VETH
     peers: [root, guest1]
+

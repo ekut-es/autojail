@@ -2,6 +2,7 @@ id: board1
 name: board1
 board: board
 pagesize: 4 KB
+cpuinfo: []
 
 memory_regions:
   ram:

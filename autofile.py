@@ -36,7 +36,7 @@ def update(c, reset=False):
 
 
 @task
-def build(c, board_ids="all", sync_kernel=False):
+def build(c, board_ids="all", sync_kernel=False, ignore_dtb=False):
     "Build jailhouse hypervisor and kernel module for target system"
     if board_ids == "all":
         board_ids = JAILHOUSE_BOARDS
@@ -62,7 +62,7 @@ def build(c, board_ids="all", sync_kernel=False):
 
             if not build_cache_path.exists():
                 logging.warning(
-                    f"Could not find cached kernel build directory for board {board.id}"
+                    f"Could not find cached kernel build directory for board {board.id} in {str(build_cache_path)} "
                 )
                 logging.warning("Skipping jailhouse build")
                 continue
@@ -100,9 +100,13 @@ def build(c, board_ids="all", sync_kernel=False):
                 )
 
                 if result.return_code != 0:
-                    logging.error(
-                        "Could not build with device trees retrying build without device trees"
-                    )
+                    logging.error("Could not build with device trees")
+                    if not ignore_dtb:
+                        logging.error("to retry without dtbs try --ignore-dtb")
+                        return result.return_code
+
+                    logging.error("retrying build without device trees")
+
                     c.run(
                         "rm -rf configs/*/dts"
                     )  # Currently does not build for many targets

@@ -13,8 +13,6 @@ cells:
 
     memory_regions:
       "Main Memory":
-        physical_start_addr: 0x0
-        virtual_start_addr: 0x0 
         size: 768 MB
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
 
@@ -36,6 +34,11 @@ cells:
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
+      communication_region:
+        virtual_start_addr: 0x80000000
+        size: 0x00001000
+        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
+
       gpio: /soc/gpiomem
 
   linux2:
@@ -56,6 +59,11 @@ cells:
         size: 0x8000000
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA, MEM_LOADABLE]
 
+      communication_region:
+        virtual_start_addr: 0x80000000
+        size: 0x00001000
+        flags: [MEM_READ, MEM_WRITE, MEM_COMM_REGION]
+
       gpio: /soc/gpiomem
 
 shmem:
@@ -66,3 +74,4 @@ shmem:
   net2:
     protocol: SHMEM_PROTO_VETH
     peers: [root, linux2]
+

@@ -1,3 +1,4 @@
+import json
 import os
 from typing import List, Optional
 
@@ -7,22 +8,30 @@ from .. import utils
 from ..model import (
     Board,
     DebugConsole,
+    GroupedMemoryRegion,
     JailhouseConfig,
-    MemoryRegion,
+    MemoryRegionData,
     PlatformInfoArm,
     ShMemNetRegion,
 )
 from .board_info import TransferBoardInfoPass
+from .cpu import CPUAllocatorPass
+from .device_tree import GenerateDeviceTreePass
 from .devices import LowerDevicesPass
 from .irq import PrepareIRQChipsPass
-from .memory import AllocateMemoryPass, PrepareMemoryRegionsPass
+from .memory import (
+    AllocateMemoryPass,
+    MergeIoRegionsPass,
+    PrepareMemoryRegionsPass,
+)
 from .root_shared import InferRootSharedPass
 from .shmem import ConfigSHMemRegionsPass, LowerSHMemPass  # type: ignore
 
 
 class JailhouseConfigurator:
-    def __init__(self, board: Board) -> None:
+    def __init__(self, board: Board, print_after_all: bool = False) -> None:
         self.board = board
+        self.print_after_all = print_after_all
         self.config: Optional[JailhouseConfig] = None
         self.passes = [
             TransferBoardInfoPass(),
@@ -30,9 +39,12 @@ class JailhouseConfigurator:
             LowerSHMemPass(),
             PrepareIRQChipsPass(),
             PrepareMemoryRegionsPass(),
+            MergeIoRegionsPass(),
             AllocateMemoryPass(),
+            CPUAllocatorPass(),
             ConfigSHMemRegionsPass(),
             InferRootSharedPass(),
+            GenerateDeviceTreePass(),
         ]
 
         self.logger = utils.logging.getLogger()
@@ -57,7 +69,14 @@ class JailhouseConfigurator:
 
             f = open(output_file, "w+")
             amount_pci_devices = len(cell.pci_devices)
-            amount_memory_regions = len(cell.memory_regions)
+            amount_memory_regions = sum(
+                map(
+                    lambda r: len(r.regions)
+                    if isinstance(r, GroupedMemoryRegion)
+                    else 1,
+                    cell.memory_regions.values(),
+                )
+            )
             amount_irqchips = len(cell.irqchips)
             cpu_set = cell.cpus
 
@@ -227,14 +246,15 @@ class JailhouseConfigurator:
             f.write("\n\t")
             f.write("\n\t.mem_regions = {\n")
             for k, v in cell.memory_regions.items():
-                assert isinstance(v, MemoryRegion) or isinstance(
+                assert isinstance(v, MemoryRegionData) or isinstance(
                     v, ShMemNetRegion
                 )
-                if v.size == 0:
-                    f.write("\t/* empty optional region */\n\t{ 0 },\n")
-                    continue
 
-                if isinstance(v, MemoryRegion):
+                def write_mem_region(v):
+                    if v.size == 0:
+                        f.write("\t/* empty optional region */\n\t{ 0 },\n")
+                        return
+
                     assert v.virtual_start_addr is not None
                     assert v.physical_start_addr is not None
                     assert v.size is not None
@@ -271,6 +291,12 @@ class JailhouseConfigurator:
                         "\n\t\t.flags = " + str(s.join(jailhouse_flags)) + ","
                     )
                     f.write("\n\t},\n")
+
+                if isinstance(v, GroupedMemoryRegion):
+                    for region in v.regions:
+                        write_mem_region(region)
+                elif isinstance(v, MemoryRegionData):
+                    write_mem_region(v)
                 elif isinstance(v, ShMemNetRegion):
                     f.write(f"\t/* {k} */\n")
                     f.write(
@@ -303,7 +329,9 @@ class JailhouseConfigurator:
                 f.write(f"\n\t\t\t.type = JAILHOUSE_{device.type},")
                 f.write(f"\n\t\t\t.domain = {device.domain},")
                 f.write(f"\n\t\t\t.bar_mask = JAILHOUSE_{device.bar_mask},")
-                f.write(f"\n\t\t\t.bdf = {device.bdf} << 3,")
+                f.write(
+                    f"\n\t\t\t.bdf = {device.bus} << 8 | {device.device} << 3 | {device.function},"
+                )
 
                 if device.shmem_regions_start is not None:
                     f.write(
@@ -330,6 +358,9 @@ class JailhouseConfigurator:
 
         for pass_instance in self.passes:
             pass_instance(self.board, self.config)
+            if self.print_after_all:
+                print(json.dumps(self.config.dict(), indent=2))
+                print(json.dumps(self.board.dict(), indent=2))
 
     def read_cell_yml(self, cells_yml: str) -> None:
         self.logger.info("Reading cell configuration %s", str(cells_yml))
