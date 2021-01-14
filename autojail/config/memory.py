@@ -871,8 +871,8 @@ class MergeIoRegionsPass(BasePass):
 
         max_dist = 65536
         for name, r in regions:
-            assert r.physical_start_addr
-            assert r.size
+            assert r.physical_start_addr is not None
+            assert r.size is not None
 
             if current_group:
                 assert current_group[-1][1].physical_start_addr is not None
@@ -947,9 +947,10 @@ class MergeIoRegionsPass(BasePass):
             r_start = regions[0][1]
             r_end = regions[-1][1]
 
-            assert r_start.physical_start_addr
-            assert r_end.size
-            assert r_end.physical_start_addr
+            assert r_start.physical_start_addr is not None
+            assert r_end.size is not None
+            assert r_end.physical_start_addr is not None
+
             new_size = (
                 r_end.physical_start_addr + r_end.size
             ) - r_start.physical_start_addr
