@@ -5,10 +5,15 @@ VMLINUZ_URL=https://atreus.informatik.uni-tuebingen.de/seafile/f/998f76ccd65e4ff
 ROOTFS_URL=https://atreus.informatik.uni-tuebingen.de/seafile/f/8760e85c366a42eca26a/?dl=1
 
 mkdir -p qemu
-wget -c ${INITRD_URL} -O qemu/initrd.img 
-wget -c ${VMLINUZ_URL} -O qemu/vmlinuz 
-wget -c ${ROOTFS_URL} -O qemu/rootfs.img
-
+if [ ! -f qemu/initrd.img ]; then
+  wget -c ${INITRD_URL} -O qemu/initrd.img
+fi
+if [ ! -f qemu/initrd.img ]; then 
+  wget -c ${VMLINUZ_URL} -O qemu/vmlinuz 
+fi
+if [ ! -f qemu/rootfs.img ]; then 
+  wget -c ${ROOTFS_URL} -O qemu/rootfs.img
+fi
 
 QEMU=qemu-system-aarch64
 QEMU_EXTRA_ARGS=" \
@@ -25,12 +30,21 @@ QEMU_EXTRA_ARGS=" \
 KERNEL_CMDLINE=" \
 			root=/dev/vda mem=768M"
 
-
+if [ -e qemu/monitor.sock ]; then 
+	echo ""
+	echo "Qemu seems to be already started"
+	echo "If qemu is not running run 'rm qemu/monitor.sock'"
+	exit 0 
+fi
 
 ${QEMU_PATH}${QEMU} \
     -nographic \
 	-drive file=qemu/rootfs.img,discard=unmap,if=none,id=disk,format=raw \
 	-m 4G -netdev user,id=net,hostfwd=tcp::2222-:22 \
 	-kernel qemu/vmlinuz -append "${KERNEL_CMDLINE}" \
-	-initrd qemu/initrd.img ${QEMU_EXTRA_ARGS} "$@"
+	-initrd qemu/initrd.img ${QEMU_EXTRA_ARGS} "$@" &
 
+sleep 1
+if [ -f $(which socat) ]; then
+	socat qemu/serial0.sock - 
+fi

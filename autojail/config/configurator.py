@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import subprocess
 import sys
 from typing import List, Optional
@@ -63,6 +64,19 @@ class JailhouseConfigurator:
 
         cc = self.autojail_config.cross_compile + "gcc"
         objcopy = self.autojail_config.cross_compile + "objcopy"
+
+        if not shutil.which(cc):
+            self.logger.critical(
+                f"Could not find {cc} so no binary .cell file will be generated"
+            )
+            return 1
+
+        if not shutil.which(objcopy):
+            self.logger.critical(
+                f"Could not find {objcopy} so no binary cell file will be generated"
+            )
+            return 1
+
         jailhouse_dir = self.autojail_config.jailhouse_dir
 
         syscfg = None
