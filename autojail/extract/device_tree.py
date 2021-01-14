@@ -1,3 +1,4 @@
+import os
 import subprocess
 from collections import OrderedDict, defaultdict
 from pathlib import Path
@@ -424,7 +425,7 @@ class DeviceTreeExtractor:
 
         extracted_interrupts = self._extract_interrupts(interrupts)
 
-        path = node.path + "/" + node.name
+        path = os.path.join(node.path, node.name)
         for device_register in device_registers:
             device = DeviceMemoryRegion(
                 phandle=phandle[0] if phandle else None,
