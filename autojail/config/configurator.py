@@ -1,11 +1,14 @@
 import json
 import os
+import subprocess
+import sys
 from typing import List, Optional
 
 import ruamel.yaml
 
 from .. import utils
 from ..model import (
+    AutojailConfig,
     Board,
     DebugConsole,
     GroupedMemoryRegion,
@@ -29,8 +32,14 @@ from .shmem import ConfigSHMemRegionsPass, LowerSHMemPass  # type: ignore
 
 
 class JailhouseConfigurator:
-    def __init__(self, board: Board, print_after_all: bool = False) -> None:
+    def __init__(
+        self,
+        board: Board,
+        autojail_config: AutojailConfig,
+        print_after_all: bool = False,
+    ) -> None:
         self.board = board
+        self.autojail_config = autojail_config
         self.print_after_all = print_after_all
         self.config: Optional[JailhouseConfig] = None
         self.passes = [
@@ -49,6 +58,102 @@ class JailhouseConfigurator:
 
         self.logger = utils.logging.getLogger()
 
+    def build_config(self, output_path: str) -> int:
+        assert self.config is not None
+
+        cc = self.autojail_config.cross_compile + "gcc"
+        objcopy = self.autojail_config.cross_compile + "objcopy"
+        jailhouse_dir = self.autojail_config.jailhouse_dir
+
+        syscfg = None
+        cellcfgs: List[str] = []
+
+        for cell in self.config.cells.values():
+            output_name = str(cell.name).lower().replace(" ", "-")
+            c_name = output_name + ".c"
+            object_name = output_name + ".o"
+            cell_name = output_name + ".cell"
+
+            if cell.type == "root":
+                syscfg = cell_name
+            else:
+                cellcfgs.append(cell_name)
+
+            c_file = os.path.join(output_path, c_name)
+            object_file = os.path.join(output_path, object_name)
+            cell_file = os.path.join(output_path, cell_name)
+
+            # -isystem /usr/lib/gcc-cross/aarch64-linux-gnu/9/include
+            # f"-include {jailhouse_dir}/include/linux/compiler_types.h",
+            compile_command = [
+                f"{cc}",
+                "-nostdinc",
+                f"-I{jailhouse_dir}/hypervisor/arch/arm64/include",
+                f"-I{jailhouse_dir}/hypervisor/include",
+                f"-I{jailhouse_dir}/include",
+                "-D__KERNEL",
+                "-mlittle-endian",
+                "-DKASAN_SHADOW_SCALE_SHIFT=3",
+                "-Werror",
+                "-Wall",
+                "-Wextra",
+                "-D__LINUX_COMPILER_TYPES_H",
+                "-c",
+                "-o",
+                f"{object_file}",
+                f"{c_file}",
+            ]
+            subprocess.run(compile_command, check=True)
+
+            objcopy_command = [
+                f"{objcopy}",
+                "-O",
+                "binary",
+                "--remove-section=.note.gnu.property",
+                f"{object_file}",
+                f"{cell_file}",
+            ]
+            subprocess.run(objcopy_command, check=True)
+
+        # Run jailhouse config check on generated cells
+        if syscfg is None:
+            self.logger.critical("No root cell configuration generated")
+            return 1
+
+        ret = 0
+        try:
+            sys.path = [str(jailhouse_dir)] + sys.path
+            import pyjailhouse.check as check
+
+            arch = self.autojail_config.arch.lower()
+            syscfg_file = open(syscfg, "rb")
+            cellcfg_files = [open(f, "rb") for f in cellcfgs]
+
+            ret = check.run_checks(
+                arch=arch, syscfg=syscfg_file, cellcfgs=cellcfg_files
+            )
+        except ModuleNotFoundError:
+            self.logger.warning("Could not import jailhouse config checker")
+            self.logger.warning("Trying command line tool instead")
+
+            config_check_command = (
+                [
+                    f"{self.autojail_config.jailhouse_dir}/tools/jailhouse-config-check"
+                ]
+                + [f"--arch={self.autojail_config.arch.lower()}"]
+                + [syscfg]
+                + cellcfgs
+            )
+            return_val = subprocess.run(config_check_command)
+            ret = return_val.returncode
+
+        if ret != 0:
+            self.logger.critical(
+                "Found critical errors in generated jailhouse config"
+            )
+
+        return ret
+
     def write_config(self, output_path: str) -> None:
         """Write configuration data to file"""
         assert self.config is not None
@@ -63,9 +168,9 @@ class JailhouseConfigurator:
             output_name = str(cell.name).lower().replace(" ", "-")
             output_name += ".c"
 
-            self.logger.info("Writing cell config %s", output_name)
-
             output_file = os.path.join(output_path, output_name)
+
+            self.logger.info("Writing cell config %s", output_name)
 
             f = open(output_file, "w+")
             amount_pci_devices = len(cell.pci_devices)
