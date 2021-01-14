@@ -14,7 +14,6 @@ from .passes import BasePass
 
 
 def format_range(val, cells):
-    print(hex(val), cells)
     chunks = [hex((val >> i * 32) & 0xFFFFFFFF) for i in range(0, cells)]
     chunks.reverse()
 
