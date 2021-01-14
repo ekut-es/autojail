@@ -46,5 +46,5 @@ class GenerateCommand(BaseCommand):
         configurator.prepare()
         configurator.write_config("./")
         return configurator.build_config(
-            "./", skip_check=self.options("skip-check")
+            "./", skip_check=self.option("skip-check")
         )
