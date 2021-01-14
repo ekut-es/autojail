@@ -17,6 +17,9 @@ console_sentinels = {
     "xlnx,xuartps": ConsoleSettings(
         "CON_TYPE_XUARTPS", ["CON_ACCESS_MMIO", "CON_REGDIST_4"]
     ),
+    "arm,pl011": ConsoleSettings(
+        "CON_TYPE_PL011", ["CON_ACCESS_MMIO", "CON_REGDIST_4"]
+    ),
 }
 
 
