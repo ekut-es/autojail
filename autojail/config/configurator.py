@@ -58,7 +58,7 @@ class JailhouseConfigurator:
 
         self.logger = utils.logging.getLogger()
 
-    def build_config(self, output_path: str) -> int:
+    def build_config(self, output_path: str, skip_check: bool = False) -> int:
         assert self.config is not None
 
         cc = self.autojail_config.cross_compile + "gcc"
@@ -119,6 +119,9 @@ class JailhouseConfigurator:
         if syscfg is None:
             self.logger.critical("No root cell configuration generated")
             return 1
+
+        if skip_check:
+            return 0
 
         ret = 0
         try:

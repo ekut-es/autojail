@@ -12,6 +12,7 @@ class GenerateCommand(BaseCommand):
 
     generate
         {--p|print-after-all : print cell config after each transformation step}
+        {--skip-check : Do not statically check generated configs}
     """
 
     def handle(self) -> int:
@@ -44,4 +45,6 @@ class GenerateCommand(BaseCommand):
         configurator.read_cell_yml(str(cells_yml_path))
         configurator.prepare()
         configurator.write_config("./")
-        return configurator.build_config("./")
+        return configurator.build_config(
+            "./", skip_check=self.options("skip-check")
+        )
