@@ -91,7 +91,7 @@ def test_config_rpi4_net(tmpdir):
     application = AutojailApp()
     command = application.find("generate")
     tester = CommandTester(command)
-    tester.execute(interactive=False)
+    tester.execute(interactive=False, skip_check=True)
 
     assert Path("rpi4-net.c").exists()
     assert Path("rpi4-net-guest.c").exists()
@@ -110,7 +110,7 @@ def test_config_rpi4_default(tmpdir):
     application = AutojailApp()
     command = application.find("generate")
     tester = CommandTester(command)
-    tester.execute(interactive=False)
+    tester.execute(interactive=False, skip_check=True)
 
     assert Path("raspberry-pi4.c").exists()
 
@@ -130,7 +130,7 @@ def test_config_rpi4_fixed_pci_mmconfig_base(tmpdir):
     application = AutojailApp()
     command = application.find("generate")
     tester = CommandTester(command)
-    tester.execute(interactive=False)
+    tester.execute(interactive=False, skip_check=True)
 
     assert Path("raspberry-pi4.c").exists()
 
