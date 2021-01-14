@@ -3,12 +3,11 @@ from typing import Dict, List, Union
 from pydantic import BaseModel
 
 
-class ScriptEntry(BaseModel):
-    command: str
-    connection: str = "ssh"
+class SwitchTargetCommand(BaseModel):
+    target: str
 
 
-ScriptList = List[Union[str, ScriptEntry]]
+ScriptList = List[Union[str, SwitchTargetCommand]]
 CheckList = List[str]
 LogList = List[str]
 

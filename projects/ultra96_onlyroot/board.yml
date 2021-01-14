@@ -14,6 +14,30 @@ memory_regions:
     - MEM_EXECUTE
     allocatable: true
     shared: false
+  pci@0:
+    phandle:
+    path: /pci@0
+    compatible:
+    - pci-host-ecam-generic
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0x20000000
+    virtual_start_addr: 0x20000000
+    size: 0x100000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
   ddr@3ed00000:
     phandle: 36
     path: /amba/ddr@3ed00000
@@ -361,30 +385,6 @@ memory_regions:
     physical_start_addr: 0xc0000000
     virtual_start_addr: 0xc0000000
     size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  pci@0:
-    phandle:
-    path: //pci@0
-    compatible:
-    - pci-host-ecam-generic
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0xe0000000
-    virtual_start_addr: 0xe0000000
-    size: 0x100000
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -1180,7 +1180,7 @@ memory_regions:
     shared: false
   smmu@fd800000:
     phandle: 13
-    path: //smmu@fd800000
+    path: /smmu@fd800000
     compatible:
     - arm,mmu-500
     interrupts:
@@ -4965,19 +4965,6 @@ devices:
     - '71'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xa0070000
-    virtual_start_addr: 0xa0070000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   system_management_wiz@a0080000:
     phandle:
     path: /amba_pl@0/system_management_wiz@a0080000
@@ -4992,19 +4979,6 @@ devices:
     - '71'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xa0080000
-    virtual_start_addr: 0xa0080000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   gpio@a0040000:
     phandle:
     path: /amba_pl@0/gpio@a0040000
@@ -5020,19 +4994,6 @@ devices:
     - '71'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xa0040000
-    virtual_start_addr: 0xa0040000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   interrupt-controller@a0090000:
     phandle:
     path: /amba_pl@0/interrupt-controller@a0090000
@@ -5048,19 +5009,6 @@ devices:
     - '71'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xa0090000
-    virtual_start_addr: 0xa0090000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   PWM_w_Int@a0060000:
     phandle:
     path: /amba_pl@0/PWM_w_Int@a0060000
@@ -5078,19 +5026,6 @@ devices:
     - '71'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xa0060000
-    virtual_start_addr: 0xa0060000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   zyxclmm_drm:
     phandle:
     path: /amba_pl@0/zyxclmm_drm
@@ -5117,19 +5052,6 @@ devices:
     - '71'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xa0050000
-    virtual_start_addr: 0xa0050000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   axi_bram_ctrl@a0000000:
     phandle:
     path: /amba_pl@0/axi_bram_ctrl@a0000000
@@ -5144,19 +5066,6 @@ devices:
     - '71'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xa0000000
-    virtual_start_addr: 0xa0000000
-    size: 0x2000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   gpio@a0030000:
     phandle:
     path: /amba_pl@0/gpio@a0030000
@@ -5172,19 +5081,6 @@ devices:
     - '71'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xa0030000
-    virtual_start_addr: 0xa0030000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   serial@a0020000:
     phandle:
     path: /amba_pl@0/serial@a0020000
@@ -5204,19 +5100,6 @@ devices:
     - '71'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xa0020000
-    virtual_start_addr: 0xa0020000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   serial@a0010000:
     phandle:
     path: /amba_pl@0/serial@a0010000
@@ -5236,19 +5119,6 @@ devices:
     - '71'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xa0010000
-    virtual_start_addr: 0xa0010000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   pmu:
     phandle:
     path: //pmu
@@ -5547,19 +5417,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff000000
-    virtual_start_addr: 0xff000000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   can@ff070000:
     phandle:
     path: /amba/can@ff070000
@@ -5580,19 +5437,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff070000
-    virtual_start_addr: 0xff070000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   ams@ffa50000:
     phandle: 38
     path: /amba/ams@ffa50000
@@ -5609,19 +5453,6 @@ devices:
     - '70'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffa50000
-    virtual_start_addr: 0xffa50000
-    size: 0x800
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   ams_ps@ffa50800:
     phandle:
     path: /amba/ams@ffa50000/ams_ps@ffa50800
@@ -5660,19 +5491,6 @@ devices:
     - '75'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd4d0000
-    virtual_start_addr: 0xfd4d0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@fd560000:
     phandle:
     path: /amba/dma@fd560000
@@ -5693,19 +5511,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd560000
-    virtual_start_addr: 0xfd560000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   watchdog@ff150000:
     phandle:
     path: /amba/watchdog@ff150000
@@ -5722,19 +5527,6 @@ devices:
     - '112'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff150000
-    virtual_start_addr: 0xff150000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   timer@ff140000:
     phandle:
     path: /amba/timer@ff140000
@@ -5757,19 +5549,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff140000
-    virtual_start_addr: 0xff140000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   gpu@fd4b0000:
     phandle:
     path: /amba/gpu@fd4b0000
@@ -5809,19 +5588,6 @@ devices:
     - '26'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd4b0000
-    virtual_start_addr: 0xfd4b0000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@ffae0000:
     phandle:
     path: /amba/dma@ffae0000
@@ -5842,19 +5608,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffae0000
-    virtual_start_addr: 0xffae0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   zynqmp_r5_rproc@0:
     phandle:
     path: /amba/zynqmp_r5_rproc@0
@@ -5869,19 +5622,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff9a0100
-    virtual_start_addr: 0xff9a0100
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   zynqmp_r5_rproc@0.0:
     phandle:
     path: /amba/zynqmp_r5_rproc@0
@@ -5896,19 +5636,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff340000
-    virtual_start_addr: 0xff340000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   zynqmp_r5_rproc@0.1:
     phandle:
     path: /amba/zynqmp_r5_rproc@0
@@ -5923,19 +5650,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff9a0000
-    virtual_start_addr: 0xff9a0000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   ahci@fd0c0000:
     phandle:
     path: /amba/ahci@fd0c0000
@@ -5952,19 +5666,6 @@ devices:
     - '22'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd0c0000
-    virtual_start_addr: 0xfd0c0000
-    size: 0x2000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   ethernet@ff0c0000:
     phandle:
     path: /amba/ethernet@ff0c0000
@@ -5998,19 +5699,6 @@ devices:
     - '44'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff0c0000
-    virtual_start_addr: 0xff0c0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   spi@ff050000:
     phandle:
     path: /amba/spi@ff050000
@@ -6032,19 +5720,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff050000
-    virtual_start_addr: 0xff050000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   spidev@0x00:
     phandle:
     path: /amba/spi@ff050000/spidev@0x00
@@ -6078,19 +5753,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff130000
-    virtual_start_addr: 0xff130000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   memory-controller@ff960000:
     phandle:
     path: /amba/memory-controller@ff960000
@@ -6105,19 +5767,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff960000
-    virtual_start_addr: 0xff960000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@fd4c0000:
     phandle: 28
     path: /amba/dma@fd4c0000
@@ -6135,19 +5784,6 @@ devices:
     - '20'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd4c0000
-    virtual_start_addr: 0xfd4c0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma-audio1channel:
     phandle:
     path: /amba/dma@fd4c0000/dma-audio1channel
@@ -6225,19 +5861,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffe00000
-    virtual_start_addr: 0xffe00000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@ffaf0000:
     phandle:
     path: /amba/dma@ffaf0000
@@ -6258,19 +5881,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffaf0000
-    virtual_start_addr: 0xffaf0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@ffa80000:
     phandle:
     path: /amba/dma@ffa80000
@@ -6291,19 +5901,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffa80000
-    virtual_start_addr: 0xffa80000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   serial@ff010000:
     phandle:
     path: /amba/serial@ff010000
@@ -6326,19 +5923,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff010000
-    virtual_start_addr: 0xff010000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@fd530000:
     phandle:
     path: /amba/dma@fd530000
@@ -6359,19 +5943,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd530000
-    virtual_start_addr: 0xfd530000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@fd500000:
     phandle:
     path: /amba/dma@fd500000
@@ -6392,19 +5963,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd500000
-    virtual_start_addr: 0xfd500000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   ethernet@ff0e0000:
     phandle:
     path: /amba/ethernet@ff0e0000
@@ -6438,19 +5996,6 @@ devices:
     - '44'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff0e0000
-    virtual_start_addr: 0xff0e0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   ethernet@ff0b0000:
     phandle:
     path: /amba/ethernet@ff0b0000
@@ -6484,19 +6029,6 @@ devices:
     - '44'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff0b0000
-    virtual_start_addr: 0xff0b0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@fd510000:
     phandle:
     path: /amba/dma@fd510000
@@ -6517,19 +6049,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd510000
-    virtual_start_addr: 0xfd510000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@fd520000:
     phandle:
     path: /amba/dma@fd520000
@@ -6550,19 +6069,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd520000
-    virtual_start_addr: 0xfd520000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@ffac0000:
     phandle:
     path: /amba/dma@ffac0000
@@ -6583,19 +6089,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffac0000
-    virtual_start_addr: 0xffac0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@fd540000:
     phandle:
     path: /amba/dma@fd540000
@@ -6616,19 +6109,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd540000
-    virtual_start_addr: 0xfd540000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   tcm@ffe20000:
     phandle: 35
     path: /amba/tcm@ffe20000
@@ -6640,19 +6120,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffe20000
-    virtual_start_addr: 0xffe20000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   ddr@3ed00000:
     phandle: 36
     path: /amba/ddr@3ed00000
@@ -6664,19 +6131,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0x3ed00000
-    virtual_start_addr: 0x3ed00000
-    size: 0x40000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@ffaa0000:
     phandle:
     path: /amba/dma@ffaa0000
@@ -6697,19 +6151,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffaa0000
-    virtual_start_addr: 0xffaa0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   i2c@ff030000:
     phandle:
     path: /amba/i2c@ff030000
@@ -6728,19 +6169,6 @@ devices:
     - '62'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff030000
-    virtual_start_addr: 0xff030000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   i2c-mux@75:
     phandle:
     path: /amba/i2c@ff030000/i2c-mux@75
@@ -6835,19 +6263,6 @@ devices:
     - '34'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff9d0000
-    virtual_start_addr: 0xff9d0000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dwc3@fe200000:
     phandle:
     path: /amba/usb0@ff9d0000/dwc3@fe200000
@@ -6868,19 +6283,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfe200000
-    virtual_start_addr: 0xfe200000
-    size: 0x40000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   rtc@ffa60000:
     phandle:
     path: /amba/rtc@ffa60000
@@ -6898,19 +6300,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffa60000
-    virtual_start_addr: 0xffa60000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@fd550000:
     phandle:
     path: /amba/dma@fd550000
@@ -6931,19 +6320,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd550000
-    virtual_start_addr: 0xfd550000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@ffa90000:
     phandle:
     path: /amba/dma@ffa90000
@@ -6964,19 +6340,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffa90000
-    virtual_start_addr: 0xffa90000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   perf-monitor@fd0b0000:
     phandle:
     path: /amba/perf-monitor@fd0b0000
@@ -6993,19 +6356,6 @@ devices:
     - '28'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd0b0000
-    virtual_start_addr: 0xfd0b0000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   mmc@ff160000:
     phandle:
     path: /amba/mmc@ff160000
@@ -7027,19 +6377,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff160000
-    virtual_start_addr: 0xff160000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   spi@ff040000:
     phandle:
     path: /amba/spi@ff040000
@@ -7061,19 +6398,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff040000
-    virtual_start_addr: 0xff040000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   spidev@0x00.0:
     phandle:
     path: /amba/spi@ff040000/spidev@0x00
@@ -7105,19 +6429,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd570000
-    virtual_start_addr: 0xfd570000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   zynqmp-display@fd4a0000:
     phandle:
     path: /amba/zynqmp-display@fd4a0000
@@ -7140,19 +6451,6 @@ devices:
     - '16'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd4a0000
-    virtual_start_addr: 0xfd4a0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   zynqmp-display@fd4a0000.0:
     phandle:
     path: /amba/zynqmp-display@fd4a0000
@@ -7175,19 +6473,6 @@ devices:
     - '16'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd4aa000
-    virtual_start_addr: 0xfd4aa000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   zynqmp-display@fd4a0000.1:
     phandle:
     path: /amba/zynqmp-display@fd4a0000
@@ -7210,19 +6495,6 @@ devices:
     - '16'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd4ab000
-    virtual_start_addr: 0xfd4ab000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   zynqmp-display@fd4a0000.2:
     phandle:
     path: /amba/zynqmp-display@fd4a0000
@@ -7245,19 +6517,6 @@ devices:
     - '16'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd4ac000
-    virtual_start_addr: 0xfd4ac000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   zynqmp_dp_snd_pcm1:
     phandle: 30
     path: /amba/zynqmp-display@fd4a0000/zynqmp_dp_snd_pcm1
@@ -7322,19 +6581,6 @@ devices:
     - '34'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff9e0000
-    virtual_start_addr: 0xff9e0000
-    size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dwc3@fe300000:
     phandle:
     path: /amba/usb1@ff9e0000/dwc3@fe300000
@@ -7355,19 +6601,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfe300000
-    virtual_start_addr: 0xfe300000
-    size: 0x40000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   timer@ff120000:
     phandle:
     path: /amba/timer@ff120000
@@ -7390,19 +6623,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff120000
-    virtual_start_addr: 0xff120000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   memory-controller@fd070000:
     phandle:
     path: /amba/memory-controller@fd070000
@@ -7417,19 +6637,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd070000
-    virtual_start_addr: 0xfd070000
-    size: 0x30000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   mmc@ff170000:
     phandle:
     path: /amba/mmc@ff170000
@@ -7451,19 +6658,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff170000
-    virtual_start_addr: 0xff170000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   wilc_sdio@1:
     phandle:
     path: /amba/mmc@ff170000/wilc_sdio@1
@@ -7492,19 +6686,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff0a0000
-    virtual_start_addr: 0xff0a0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   cci@fd6e0000:
     phandle:
     path: /amba/cci@fd6e0000
@@ -7516,19 +6697,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd6e0000
-    virtual_start_addr: 0xfd6e0000
-    size: 0x9000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   pmu@9000:
     phandle:
     path: /amba/cci@fd6e0000/pmu@9000
@@ -7575,19 +6743,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff0f0000
-    virtual_start_addr: 0xff0f0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   spi@ff0f0000.0:
     phandle:
     path: /amba/spi@ff0f0000
@@ -7608,19 +6763,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xc0000000
-    virtual_start_addr: 0xc0000000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   perf-monitor@ffa10000:
     phandle:
     path: /amba/perf-monitor@ffa10000
@@ -7637,19 +6779,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffa10000
-    virtual_start_addr: 0xffa10000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   pcie@fd0e0000:
     phandle: 17
     path: /amba/pcie@fd0e0000
@@ -7678,19 +6807,6 @@ devices:
     - '23'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd0e0000
-    virtual_start_addr: 0xfd0e0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   pcie@fd0e0000.0:
     phandle: 17
     path: /amba/pcie@fd0e0000
@@ -7719,19 +6835,6 @@ devices:
     - '23'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd480000
-    virtual_start_addr: 0xfd480000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   pcie@fd0e0000.1:
     phandle: 17
     path: /amba/pcie@fd0e0000
@@ -7760,19 +6863,6 @@ devices:
     - '23'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0x8000000000
-    virtual_start_addr: 0x8000000000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   perf-monitor@ffa00000:
     phandle:
     path: /amba/perf-monitor@ffa00000
@@ -7789,19 +6879,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffa00000
-    virtual_start_addr: 0xffa00000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   ethernet@ff0d0000:
     phandle:
     path: /amba/ethernet@ff0d0000
@@ -7835,19 +6912,6 @@ devices:
     - '44'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff0d0000
-    virtual_start_addr: 0xff0d0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   zynqmp_phy@fd400000:
     phandle:
     path: /amba/zynqmp_phy@fd400000
@@ -7859,19 +6923,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd400000
-    virtual_start_addr: 0xfd400000
-    size: 0x40000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   zynqmp_phy@fd400000.0:
     phandle:
     path: /amba/zynqmp_phy@fd400000
@@ -7883,19 +6934,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd3d0000
-    virtual_start_addr: 0xfd3d0000
-    size: 0x40000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@ffad0000:
     phandle:
     path: /amba/dma@ffad0000
@@ -7916,19 +6954,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffad0000
-    virtual_start_addr: 0xffad0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   nand@ff100000:
     phandle:
     path: /amba/nand@ff100000
@@ -7949,19 +6974,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff100000
-    virtual_start_addr: 0xff100000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   can@ff060000:
     phandle:
     path: /amba/can@ff060000
@@ -7982,19 +6994,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff060000
-    virtual_start_addr: 0xff060000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   dma@ffab0000:
     phandle:
     path: /amba/dma@ffab0000
@@ -8015,19 +7014,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xffab0000
-    virtual_start_addr: 0xffab0000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   perf-monitor@fd490000:
     phandle:
     path: /amba/perf-monitor@fd490000
@@ -8044,19 +7030,6 @@ devices:
     - '28'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd490000
-    virtual_start_addr: 0xfd490000
-    size: 0x10000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   timer@ff110000:
     phandle:
     path: /amba/timer@ff110000
@@ -8079,19 +7052,6 @@ devices:
     - '31'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff110000
-    virtual_start_addr: 0xff110000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   i2c@ff020000:
     phandle:
     path: /amba/i2c@ff020000
@@ -8109,19 +7069,6 @@ devices:
     - '61'
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xff020000
-    virtual_start_addr: 0xff020000
-    size: 0x1000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   leds:
     phandle:
     path: //leds
@@ -8146,7 +7093,7 @@ devices:
     clock_cells: 0
   smmu@fd800000:
     phandle: 13
-    path: //smmu@fd800000
+    path: /smmu@fd800000
     compatible:
     - arm,mmu-500
     interrupts:
@@ -8206,19 +7153,6 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xfd800000
-    virtual_start_addr: 0xfd800000
-    size: 0x20000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
   psci:
     phandle:
     path: //psci
@@ -8381,7 +7315,7 @@ devices:
     clock_cells: 0
   pci@0:
     phandle:
-    path: //pci@0
+    path: /pci@0
     compatible:
     - pci-host-ecam-generic
     interrupts: []
@@ -8390,16 +7324,3 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
-    physical_start_addr: 0xe0000000
-    virtual_start_addr: 0xe0000000
-    size: 0x100000
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false

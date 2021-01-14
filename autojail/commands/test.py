@@ -8,7 +8,9 @@ class TestCommand(BaseCommand):
     test
     """
 
-    def handle(self) -> None:
+    def handle(self) -> int:
         runner = TestRunner("./test.yml")
 
         runner.run()
+
+        return 0

@@ -29,14 +29,19 @@ class TestRunner:
         except Exception:
             self._run_reset()
 
+    def _run_script(self, script):
+        for command in script:
+            print(command)
+
+    def _run_command(self, command) -> int:
+        print(command)
+        return 0
+
     def _run_start(self):
-        for command in self.start_script:
-            self.run_command(command, default_target="local")
+        self._run_script(self.start_script)
 
     def _run_reset(self):
-        for command in self.reset_script:
-            self.run_command(command, default_target="local")
+        self._run_script(self.reset_script)
 
     def _run_stop(self):
-        for command in self.stop_script:
-            self.run_command(command, default_target="local")
+        self._run_script(self.stop_script)

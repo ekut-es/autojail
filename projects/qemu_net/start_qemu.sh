@@ -30,7 +30,7 @@ KERNEL_CMDLINE=" \
 ${QEMU_PATH}${QEMU} \
     -nographic \
 	-drive file=qemu/rootfs.img,discard=unmap,if=none,id=disk,format=raw \
-	-m 1G -netdev user,id=net,hostfwd=tcp::2222-:22 \
+	-m 4G -netdev user,id=net,hostfwd=tcp::2222-:22 \
 	-kernel qemu/vmlinuz -append "${KERNEL_CMDLINE}" \
 	-initrd qemu/initrd.img ${QEMU_EXTRA_ARGS} "$@"
 
