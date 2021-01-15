@@ -73,7 +73,7 @@
 	};
 
 
-    pci@0x80003000 {
+    pci@0x30003000 {
         compatible = "pci-host-ecam-generic";
         device_type = "pci";
         bus-range = <0x0 0x0>;
@@ -83,7 +83,7 @@
         interrupt-map-mask = <0 0 0 7>;
         interrupt-map =  
             <0 0 0 1 &gic GIC_SPI 33 IRQ_TYPE_EDGE_RISING>;
-        reg = <0x0 0x80003000 0x0 0x100000>;
+        reg = <0x0 0x30003000 0x0 0x100000>;
         ranges =
              <0x02000000 0x00 0x10000000 0x0 0x10000000 0x00 0x10000>;
 	};

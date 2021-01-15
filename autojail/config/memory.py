@@ -875,10 +875,6 @@ class MergeIoRegionsPass(BasePass):
             assert r.size is not None
 
             if current_group:
-                from devtools import debug
-
-                debug(current_group)
-
                 assert current_group[-1][1].physical_start_addr is not None
                 assert current_group[0][1].physical_start_addr is not None
 
@@ -920,10 +916,6 @@ class MergeIoRegionsPass(BasePass):
                             gic_overlap = True
                             break
 
-                print("r1_end:", hex(r1_end))
-                print(
-                    "group_addr:", hex(current_group[-1][1].physical_start_addr)
-                )
                 if (
                     r1_end - (current_group[-1][1].physical_start_addr)
                     > max_dist
