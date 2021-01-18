@@ -2,7 +2,7 @@ name: qemu_net
 board: qemu_net
 login: ssh:root@localhost:2222
 arch: ARM64
-cross_compile: aarch64-linux-gnu-
+cross_compile: skip
 kernel_dir: ./kernel
 jailhouse_dir: ../../jailhouse
 uart: unix:///$pwd/qemu/serial0.sock

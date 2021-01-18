@@ -43,7 +43,7 @@ test_python_latest:
     - apt-get update
     - apt-get install device-tree-compiler -y
     - poetry install
-    - poetry run python -m pytest --cov=autojail --test
+    - poetry run python -m pytest --cov=autojail test
   tags:
     - docker
 
