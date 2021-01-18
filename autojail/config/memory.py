@@ -5,6 +5,7 @@ import sys
 from collections import defaultdict
 from functools import reduce
 from typing import (
+    Any,
     Callable,
     Dict,
     Iterable,
@@ -104,8 +105,8 @@ class MemoryConstraint(object):
         # E.g. mem loadable in root cell
         self.equal_constraint: Optional["MemoryConstraint"] = None
 
-        # Solver variable names corresponding to this constraint
-        self.constraint_variables: Optional[Tuple[str, str]] = None
+        # Solver Interval Variable
+        self.bound_vars: Optional[Tuple[Any, Any]] = None
 
         # Values for the allocated range after constraint solving
         self.allocated_range: Optional[Tuple[int, int]] = None
@@ -271,13 +272,21 @@ class CPMemorySolver(object):
                         upper = self.model.NewIntVarFromDomain(
                             domain, f"{constr_name}_upper"
                         )
-
                 ivar = self.model.NewIntervalVar(
                     lower, constr.size, upper, f"{constr_name}_ivar"
                 )
+                constr.bound_vars = (lower, upper)
 
                 if constr.alignment:
                     self.model.AddModuloEquality(0, lower, constr.alignment)
+
+                if constr.equal_constraint:
+                    self.model.Add(
+                        lower == constr.equal_constraint.bound_vars[0]
+                    )
+                    self.model.Add(
+                        upper == constr.equal_constraint.bound_vars[1]
+                    )
 
                 cp_no_overlap.append(ivar)
 
@@ -341,6 +350,7 @@ class AllocateMemoryPass(BasePass):
                     str(mc.size) if mc.size is not None else "-",
                     str(mc.alignment) if mc.alignment else "-",
                     str(mc.virtual),
+                    "yes" if mc.equal_constraint else "-",
                     str(mc.resolved) if mc.resolved else "-",
                 ]
             )
@@ -359,6 +369,7 @@ class AllocateMemoryPass(BasePass):
                     "Size",
                     "Alignment",
                     "Virtual?",
+                    "Equal?",
                     "Resolved callback",
                 ],
             )
@@ -487,14 +498,8 @@ class AllocateMemoryPass(BasePass):
                 elif mc_seg and mc_seg.start_addr and mc_seg.virtual:
                     mc_local.start_addr = mc_seg.start_addr
 
-                self.no_overlap_constraints[sharer].add_memory_constraint(
-                    mc_local
-                )
-
                 if mc_seg and mc_seg.virtual:
                     mc_local.resolved = mc_seg.resolved
-
-                self.memory_constraints[mc_local] = seg
 
                 if not mc_global:
                     mc_global = copy.deepcopy(mc_local)
@@ -521,16 +526,20 @@ class AllocateMemoryPass(BasePass):
 
                 # Add physical == virtual constraint for MEM_LOADABLEs in root cell
                 if sharer == self.root_cell_id:
-                    print("Adding equal constraint for MEM_LOADABLE")
                     is_loadable = False
-                    for shared_region in seg.shared_regions.values():
-                        if (
-                            isinstance(shared_region, MemoryRegionData)
-                            and "MEM_LOADABLE" in shared_region.flags
-                        ):
-                            is_loadable = True
+                    for shared_regions in seg.shared_regions.values():
+                        for shared_region in shared_regions:
+                            if isinstance(shared_region, MemoryRegionData):
+                                for flag in shared_region.flags:
+                                    if flag == "MEM_LOADABLE":
+                                        is_loadable = True
                     if is_loadable:
                         mc_local.equal_constraint = mc_global
+
+                self.no_overlap_constraints[sharer].add_memory_constraint(
+                    mc_local
+                )
+                self.memory_constraints[mc_local] = seg
 
         # Add virtually reserved segments
         for cell_name, cell in self.config.cells.items():
