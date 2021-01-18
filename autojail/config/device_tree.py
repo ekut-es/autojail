@@ -249,17 +249,18 @@ class GenerateDeviceTreePass(BasePass):
 
                 matches.sort(key=lambda x: x[1])
 
-                self.logger.info(
-                    "Selected clock %s for device %s", matches[-1], name
-                )
+                if matches:
+                    self.logger.info(
+                        "Selected clock %s for device %s", matches[-1], name
+                    )
 
-                clock = clock_paths_dict[matches[-1][0]]
-                dt_clock = DTClock(
-                    name=name + "_clock",
-                    frequency=clock.rate,
-                    clock_output_names=[matches[-1][0]],
-                )
-                clocks.append(dt_clock)
+                    clock = clock_paths_dict[matches[-1][0]]
+                    dt_clock = DTClock(
+                        name=name + "_clock",
+                        frequency=clock.rate,
+                        clock_output_names=[matches[-1][0]],
+                    )
+                    clocks.append(dt_clock)
 
         return clocks
 

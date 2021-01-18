@@ -234,10 +234,10 @@ class DeviceTreeExtractor:
                 virtual_start_addr=memreserve[0],
                 physical_start_addr=memreserve[0],
                 size=memreserve[1],
-                flags=["MEM_READ", "MEM_WRITE", "MEM_EXECUTE"],
+                flags=["MEM_READ", "MEM_WRITE", "MEM_EXECUTE", "MEM_DMA"],
             )
 
-            self._insert_named_region(node.name, region)
+            self._insert_named_region("mem_reserve", region)
 
     def _extract_interrupt_controller(
         self, node, state, compatible, reg, device_type, interrupts

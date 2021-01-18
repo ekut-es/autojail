@@ -84,12 +84,17 @@ class AllocatorSegment:
 class MemoryConstraint(object):
     """Implements a generic constraint for AllocatorSegments"""
 
-    def __init__(self, size: int, virtual: bool) -> None:
+    def __init__(
+        self, size: int, virtual: bool, start_addr: int = None
+    ) -> None:
         self.size = size
         self.virtual = virtual
 
+        self.start_addr: Optional[int] = start_addr
         self.address_range: Optional[Tuple[int, int]] = None
-        self.start_addr: Optional[int] = None
+        # FIXME: Are end addresses inclusive
+        # if start_addr is not None:
+        #    self.address_range = (start_addr, start_addr + size - 1)
 
         # Addresses must be aligned such that
         # addr % self.alignment == 0
@@ -106,8 +111,10 @@ class MemoryConstraint(object):
 
     def __str__(self):
         ret = ""
+        if self.start_addr is not None:
+            ret += f"addr: {hex(self.start_addr)} "
         if self.address_range:
-            ret += f"range: {hex(self.range[0])}-{hex(self.range[1])} "
+            ret += f"range: {hex(self.address_range[0])}-{hex(self.address_range[1])} "
         if self.alignment:
             ret += f"alignment: {self.alignment} "
         if self.allocated_range:
@@ -184,13 +191,13 @@ class CPMemorySolver(object):
     def __init__(
         self,
         constraints: List[NoOverlapConstraint],
-        pyhsical_domain: cp_model.Domain,
+        physical_domain: cp_model.Domain,
         virtual_domain: cp_model.Domain,
     ):
         self.constraints = constraints
         self.model = cp_model.CpModel()
 
-        self.physical_domain = pyhsical_domain
+        self.physical_domain = physical_domain
         self.virtual_domain = virtual_domain
 
         self.ivars: Dict[cp_model.IntervalVar, MemoryConstraint] = dict()
@@ -202,6 +209,8 @@ class CPMemorySolver(object):
 
     def solve(self):
         solver = cp_model.CpSolver()
+        solver.parameters.log_search_progress = True
+
         status = solver.Solve(self.model)
 
         if status == cp_model.FEASIBLE or status == cp_model.OPTIMAL:
@@ -305,14 +314,47 @@ class AllocateMemoryPass(BasePass):
                 f_mc(cell_name, mc)
 
     def _dump_constraints(self):
-        def f_no_overlap(cell_name, no_overlap):
-            self.logger.info(f"No-overlap Constraint for: {cell_name}")
+        constraint_tables = {}
+
+        def f_no_overlap(
+            cell_name: str, no_overlap: NoOverlapConstraint
+        ) -> bool:
+            constraint_tables[cell_name] = []
             return True
 
-        def f_mc(cell_name, mc):
-            self.logger.info(mc)
+        def f_mc(cell_name: str, mc: MemoryConstraint) -> None:
+            constraint_tables[cell_name].append(
+                [
+                    hex(mc.start_addr) if mc.start_addr is not None else "-",
+                    hex(mc.address_range[0]) + "-" + hex(mc.address_range[1])
+                    if mc.address_range
+                    else "-",
+                    str(mc.size) if mc.size is not None else "-",
+                    str(mc.alignment) if mc.alignment else "-",
+                    str(mc.virtual),
+                    str(mc.resolved) if mc.resolved else "-",
+                ]
+            )
 
         self._iter_constraints(f_no_overlap, f_mc)
+
+        self.logger.info("")
+        self.logger.info("Memory Constraints:")
+        for cell_name, constraints in constraint_tables.items():
+            self.logger.info("Cell: %s", cell_name)
+            formatted = tabulate.tabulate(
+                constraints,
+                headers=[
+                    "Start Address",
+                    "Start Address Range",
+                    "Size",
+                    "Alignment",
+                    "Virtual?",
+                    "Resolved callback",
+                ],
+            )
+            self.logger.info(formatted)
+            self.logger.info("")
 
     def _check_constraints(self):
         def f_no_overlap(cell_name, no_overlap):
@@ -331,6 +373,8 @@ class AllocateMemoryPass(BasePass):
                             f"Regions overlap for {cell_name}: (0x{start:x}, 0x{end:x}) and (0x{o_start:x}, 0x{o_end:x})"
                         )
 
+                        if mc not in self.memory_constraints:
+                            continue
                         seg = self.memory_constraints[mc]
                         print("Affected memory cells:")
 
@@ -341,7 +385,7 @@ class AllocateMemoryPass(BasePass):
 
             for mc in no_overlap.constraints:
                 if mc.start_addr is not None:
-                    region = (mc.start_addr, mc.start_addr + mc.size)
+                    region = (mc.start_addr, mc.start_addr + mc.size - 1)
                     insert_region(region)
 
             return False
@@ -414,12 +458,13 @@ class AllocateMemoryPass(BasePass):
             mc_global = None
             for sharer, regions in seg.shared_regions.items():
                 mc_seg = seg.constraint
-                mc_local = MemoryConstraint(seg.size - 1, True)
+                mc_local = MemoryConstraint(seg.size, True)
 
                 if mc_seg and mc_seg.alignment:
                     mc_local.alignment = mc_seg.alignment
                 else:
-                    mc_local.alignment = seg.alignment
+                    if regions[0].virtual_start_addr is None:
+                        mc_local.alignment = seg.alignment
 
                 fst_region = regions[0]
                 if fst_region.virtual_start_addr is not None:
@@ -465,6 +510,36 @@ class AllocateMemoryPass(BasePass):
                     self.global_no_overlap.add_memory_constraint(mc_global)
                     self.memory_constraints[mc_global] = seg
 
+        # Add virtually reserved segments
+        for cell_name, cell in self.config.cells.items():
+            assert cell.memory_regions is not None
+            for memory_region in cell.memory_regions.values():
+                assert memory_region is not None
+                assert isinstance(memory_region, MemoryRegionData)
+
+                if (
+                    memory_region.virtual_start_addr is not None
+                    and memory_region.physical_start_addr is not None
+                ):
+                    if memory_region.allocatable:
+                        continue
+
+                    if self.physical_domain.Contains(
+                        memory_region.physical_start_addr
+                    ):
+                        continue
+
+                    assert memory_region.size is not None
+                    memory_constraint = MemoryConstraint(
+                        size=int(memory_region.size),
+                        virtual=True,
+                        start_addr=memory_region.virtual_start_addr,
+                    )
+
+                    self.no_overlap_constraints[
+                        cell_name
+                    ].add_memory_constraint(memory_constraint)
+
         self._dump_constraints()
 
         solver = CPMemorySolver(
@@ -479,13 +554,15 @@ class AllocateMemoryPass(BasePass):
             sys.exit(-1)
 
         for cell_name, no_overlap_constr in self.no_overlap_constraints.items():
-            # for root make sure, all pairs (phys,virt) are equal (to phys!)
-            if cell_name == "root":
-                continue
-
             for constr in no_overlap_constr.constraints:
-                assert constr.allocated_range
+                if not constr.allocated_range:
+                    print(constr, "has not been allocated")
+                    continue
+
                 (start, _) = constr.allocated_range
+
+                if constr not in self.memory_constraints:
+                    continue
 
                 seg = self.memory_constraints[constr]
                 if cell_name == "__global":
@@ -505,18 +582,6 @@ class AllocateMemoryPass(BasePass):
 
                 if constr.resolved:
                     constr.resolved(constr)
-
-        # handle root separately
-        for constr in self.no_overlap_constraints["root"].constraints:
-            seg = self.memory_constraints[constr]
-
-            assert seg.shared_regions
-            for region in seg.shared_regions["root"]:
-                if region.virtual_start_addr is None:
-                    region.virtual_start_addr = region.physical_start_addr
-
-            if constr.resolved:
-                constr.resolved(constr)
 
         self._remove_allocatable()
 
@@ -751,8 +816,8 @@ class UnallocatedOrSharedSegmentsAnalysis(object):
                     continue
                 if region.allocatable:
                     continue
-                if self.key(region) is not None and region_name == "memreserve":
-                    continue
+                # if self.key(region) is not None and region_name == "memreserve":
+                #    continue
 
                 assert self.shared is not None
                 if region.shared and region_name in self.shared:
