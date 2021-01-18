@@ -100,6 +100,14 @@ class MemoryConstraint(object):
         # addr % self.alignment == 0
         self.alignment: Optional[int] = None
 
+        # Constraint for Memory regions where physical == virtual address
+        # E.g. mem loadable in root cell
+        self.equal_constraint: Optional["MemoryConstraint"] = None
+
+        # Solver variable names corresponding to this constraint
+        self.constraint_variables: Optional[Tuple[str, str]] = None
+
+        # Values for the allocated range after constraint solving
         self.allocated_range: Optional[Tuple[int, int]] = None
 
         # allow arbitrary actions upon resolving a constraint
@@ -287,6 +295,7 @@ class AllocateMemoryPass(BasePass):
         self.config: Optional[JailhouseConfig] = None
         self.board: Optional[Board] = None
         self.root_cell: Optional[CellConfig] = None
+        self.root_cell_id: Optional[str] = None
 
         self.unallocated_segments: List[AllocatorSegment] = []
         self.allocated_regions: List[MemoryRegionData] = []
@@ -404,9 +413,10 @@ class AllocateMemoryPass(BasePass):
         self.config = config
         self.root_cell = None
 
-        for cell in self.config.cells.values():
+        for id, cell in self.config.cells.items():
             if cell.type == "root":
                 self.root_cell = cell
+                self.root_cell_id = id
                 break
 
         vmem_size = 2 ** 32
@@ -430,6 +440,7 @@ class AllocateMemoryPass(BasePass):
 
         self.no_overlap_constraints["__global"] = self.global_no_overlap
         self.unallocated_segments = self._build_unallocated_segments()
+        self._lift_loadable()
 
         self.logger.info("")
         self.logger.info("Unallocated physical segments: ")
@@ -448,8 +459,6 @@ class AllocateMemoryPass(BasePass):
                 headers=["Name", "Size (Byte)", "# Subregions", "Sharers"],
             )
         )
-
-        self._lift_loadable()
 
         for seg in self.unallocated_segments:
             assert seg.size > 0
@@ -509,6 +518,19 @@ class AllocateMemoryPass(BasePass):
 
                     self.global_no_overlap.add_memory_constraint(mc_global)
                     self.memory_constraints[mc_global] = seg
+
+                # Add physical == virtual constraint for MEM_LOADABLEs in root cell
+                if sharer == self.root_cell_id:
+                    print("Adding equal constraint for MEM_LOADABLE")
+                    is_loadable = False
+                    for shared_region in seg.shared_regions.values():
+                        if (
+                            isinstance(shared_region, MemoryRegionData)
+                            and "MEM_LOADABLE" in shared_region.flags
+                        ):
+                            is_loadable = True
+                    if is_loadable:
+                        mc_local.equal_constraint = mc_global
 
         # Add virtually reserved segments
         for cell_name, cell in self.config.cells.items():
@@ -600,6 +622,9 @@ class AllocateMemoryPass(BasePass):
 
                     copy_region = copy.deepcopy(region)
                     copy_region.flags.remove("MEM_LOADABLE")
+                    if "MEM_EXECUTE" in copy_region.flags:
+                        copy_region.flags.remove("MEM_EXECUTE")
+
                     # FIXME: is it really true, that that MEM_LOADABLE must be the same at their respective memory region
                     copy_region.virtual_start_addr = (
                         copy_region.physical_start_addr
