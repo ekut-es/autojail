@@ -546,6 +546,12 @@ class AllocateMemoryPass(BasePass):
             assert cell.memory_regions is not None
             for memory_region in cell.memory_regions.values():
                 assert memory_region is not None
+                if isinstance(memory_region, HypervisorMemoryRegion):
+                    continue
+
+                if isinstance(memory_region, ShMemNetRegion):
+                    continue
+
                 assert isinstance(memory_region, MemoryRegionData)
 
                 if (
