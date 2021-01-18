@@ -1,3 +1,4 @@
+from ..test import TestRunner
 from .base import BaseCommand
 
 
@@ -7,5 +8,9 @@ class TestCommand(BaseCommand):
     test
     """
 
-    def handle(self) -> None:
-        pass
+    def handle(self) -> int:
+        runner = TestRunner("./test.yml")
+
+        runner.run()
+
+        return 0

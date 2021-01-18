@@ -47,6 +47,14 @@ class AutojailLogin(str):
             return host_part
         return host_part
 
+    @property
+    def port(self) -> int:
+        split = self.split(":")
+        if len(split) < 3:
+            return 22
+        else:
+            return int(split[2])
+
 
 class AutojailArch(str):
     @classmethod

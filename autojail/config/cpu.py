@@ -19,5 +19,7 @@ class CPUAllocatorPass(BasePass):
                         if i not in reserved_cpus:
                             reserved_cpus.add(i)
                             cell.cpus = [i]
+                            break
+                assert len(cell.cpus) > 0
 
         return board, config
