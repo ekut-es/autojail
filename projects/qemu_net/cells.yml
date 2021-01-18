@@ -43,9 +43,44 @@ cells:
         - MEM_READ
         - MEM_WRITE
         - MEM_COMM_REGION
-
+  guest1:
+    type: linux
+    name: guest1
+    debug_console: /pl011@9000000
+    cpus: ''
+    memory_regions:
+      boot:
+        virtual_start_addr: 0x0
+        size: 0x100000
+        flags:
+        - MEM_READ
+        - MEM_WRITE
+        - MEM_EXECUTE
+        - MEM_LOADABLE
+      main:
+        size: 0x20000000
+        flags:
+        - MEM_READ
+        - MEM_WRITE
+        - MEM_EXECUTE
+        - MEM_DMA
+        - MEM_LOADABLE
+      comm:
+        virtual_start_addr: 0x80000000
+        size: 0x1000
+        flags:
+        - MEM_READ
+        - MEM_WRITE
+        - MEM_COMM_REGION
 shmem:
   net1:
     protocol: SHMEM_PROTO_VETH
-    peers: [root, guest]
+    peers:
+    - root
+    - guest
 
+  net2:
+    protocol: SHMEM_PROTO_VETH
+    peers:
+    - root
+    - guest1
