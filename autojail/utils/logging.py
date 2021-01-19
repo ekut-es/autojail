@@ -29,8 +29,14 @@ class ClikitLoggingHandler(logging.Handler):
         levelno = record.levelno
         level = _levels[levelno]
         text = record.getMessage()
-        if levelno in [logging.ERROR, logging.CRITICAL, logging.WARNING]:
+        if levelno in [logging.ERROR, logging.CRITICAL]:
             text = "<error>" + text + "</error>"
+        if levelno in [logging.WARNING]:
+            text = text
+        if levelno in [logging.INFO]:
+            text = "<info>" + text + "</info>"
+        if levelno in [logging.DEBUG]:
+            text = "<comment>" + text + "</comment>"
 
         self.io.write_line(text, flags=level)
 

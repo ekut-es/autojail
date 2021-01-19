@@ -3,7 +3,8 @@ import os
 import shutil
 import subprocess
 import sys
-from typing import List, Optional
+from pathlib import Path
+from typing import List, Optional, Union
 
 import ruamel.yaml
 
@@ -61,6 +62,7 @@ class JailhouseConfigurator:
 
     def build_config(self, output_path: str, skip_check: bool = False) -> int:
         assert self.config is not None
+        assert self.autojail_config is not None
 
         cc = self.autojail_config.cross_compile + "gcc"
         objcopy = self.autojail_config.cross_compile + "objcopy"
@@ -171,7 +173,46 @@ class JailhouseConfigurator:
 
         return ret
 
-    def write_config(self, output_path: str) -> None:
+    def deploy(
+        self, output_path: Union[str, Path], deploy_path: Union[str, Path]
+    ):
+        "Install to deploy_path/prefix and build a file deploy.tar.gz for installation on the target system"
+        assert self.autojail_config is not None
+        assert self.config is not None
+
+        output_path = Path(output_path)
+        deploy_path = Path(deploy_path)
+
+        jailhouse_config_dir = deploy_path / "etc" / "jailhouse"
+        jailhouse_config_dir.mkdir(exist_ok=True, parents=True)
+
+        for cell in self.config.cells.values():
+            output_name = str(cell.name).lower().replace(" ", "-") + ".cell"
+            cell_file = output_path / output_name
+
+            if not cell_file.exists():
+                self.logger.warning("%s does not exist", str(cell_file))
+            else:
+                shutil.copy(cell_file, jailhouse_config_dir / output_name)
+
+        jailhouse_install_command = [
+            "make",
+            "install",
+            f"ARCH={self.autojail_config.arch.lower()}",
+            f"CROSS_COMPILE={self.autojail_config.cross_compile}",
+            f"KDIR={Path(self.autojail_config.kernel_dir).absolute()}",
+            f"DESTDIR={deploy_path.absolute()}",
+            f"prefix={self.autojail_config.prefix}",
+            "PYTHON_PIP_USABLE=no",
+        ]
+        print(" ".join(jailhouse_install_command))
+        return_val = subprocess.run(
+            jailhouse_install_command, cwd=self.autojail_config.jailhouse_dir
+        )
+        if return_val.returncode:
+            return return_val.returncode
+
+    def write_config(self, output_path: str) -> int:
         """Write configuration data to file"""
         assert self.config is not None
 
@@ -471,6 +512,8 @@ class JailhouseConfigurator:
                 f.write("\n\t\t},")
             f.write("\n\t},\n")
             f.write("\n};")
+
+        return 0
 
     def prepare(self) -> None:
         if self.config is None:

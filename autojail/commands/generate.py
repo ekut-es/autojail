@@ -44,7 +44,18 @@ class GenerateCommand(BaseCommand):
         )
         configurator.read_cell_yml(str(cells_yml_path))
         configurator.prepare()
-        configurator.write_config("./")
-        return configurator.build_config(
-            "./", skip_check=self.option("skip-check")
+        ret = configurator.write_config(self.autojail_config.build_dir)
+        if ret:
+            return ret
+
+        ret = configurator.build_config(
+            self.autojail_config.build_dir, skip_check=self.option("skip-check")
         )
+        if ret:
+            return ret
+
+        ret = configurator.deploy(
+            self.autojail_config.build_dir, self.autojail_config.deploy_dir
+        )
+
+        return ret

@@ -45,6 +45,6 @@ ${QEMU_PATH}${QEMU} \
 	-initrd qemu/initrd.img ${QEMU_EXTRA_ARGS} "$@" &
 
 sleep 1
-if [ -f $(which socat) ]; then
-	socat qemu/serial0.sock - 
-fi
+#if [ -f $(which socat) ]; then
+#	socat qemu/serial0.sock - 
+#fi
