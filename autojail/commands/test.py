@@ -25,8 +25,14 @@ class TestCommand(BaseCommand):
         if not test_config:
             return 1
 
+        automate_context = self.automate_context
+
         runner = TestRunner(
-            autojail_config, board_info, jailhouse_config, test_config
+            autojail_config,
+            board_info,
+            jailhouse_config,
+            test_config,
+            automate_context,
         )
 
         runner.run()

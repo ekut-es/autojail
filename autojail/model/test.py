@@ -19,9 +19,19 @@ class TestEntry(BaseModel):
 
 
 class TestConfig(BaseModel):
-    reset_script: ScriptList = []
-    stop_script: ScriptList = []
-    start_script: ScriptList = []
-    pre_run_script: ScriptList = []
-    post_run_script: ScriptList = []
-    tests: Dict[str, TestEntry] = {}
+    __root__: Dict[str, TestEntry]
+
+    def values(self):
+        return self.__root__.values()
+
+    def keys(self):
+        return self.__root__.keys()
+
+    def items(self):
+        return self.__root__.items()
+
+    def __iter__(self):
+        return iter(self.__root__)
+
+    def __getitem__(self, item):
+        return self.__root__[item]

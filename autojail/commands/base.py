@@ -74,7 +74,7 @@ class BaseCommand(Command):
         with self.test_config_path.open("r") as config_file:
             yaml = ruamel.yaml.YAML()
             config_dict = yaml.load(config_file)
-            config = TestConfig(**config_dict)
+            config = TestConfig.parse_obj(config_dict)
 
         return config
 

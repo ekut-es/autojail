@@ -44,7 +44,7 @@ ${QEMU_PATH}${QEMU} \
 	-kernel qemu/vmlinuz -append "${KERNEL_CMDLINE}" \
 	-initrd qemu/initrd.img ${QEMU_EXTRA_ARGS} "$@" &
 
-sleep 1
+sleep 30
 #if [ -f $(which socat) ]; then
 #	socat qemu/serial0.sock - 
 #fi

@@ -9,7 +9,7 @@ from typing import Union
 import ruamel.yaml
 from fabric.connection import Connection
 
-from ..extract import BoardInfoExtractor
+from ..extract import BoardInfoExtractor, ClockInfoExtractor
 from ..model import (
     ByteSize,
     ExpressionInt,
@@ -36,7 +36,7 @@ class ExtractCommand(BaseCommand):
         dtc_path = which("dtc")
         if dtc_path is None:
             self.line(
-                "ERROR: Could not find device-tree compiler (dtc) in $PATH"
+                "<error>ERROR: Could not find device-tree compiler (dtc) in $PATH</error>"
             )
             self.line(
                 "Please install device-tree compiler or set $PATH accordingly"
@@ -52,10 +52,12 @@ class ExtractCommand(BaseCommand):
                 connection = connect(
                     self.autojail_config, self.automate_context
                 )
+
                 if not base_folder:
                     base_folder = tempfile.mkdtemp(prefix="aj-extract")
                     tmp_folder = True
                 self._sync(connection, base_folder)
+
             else:
                 self.line(f"Extracting target data from folder {base_folder}")
 
@@ -84,35 +86,46 @@ class ExtractCommand(BaseCommand):
     def _sync(
         self, connection: Connection, base_folder: Union[str, Path]
     ) -> None:
+        assert self.autojail_config
+
         base_folder = Path(base_folder)
         if not base_folder.exists():
             base_folder.mkdir(exist_ok=True, parents=True)
 
-        res = connection.run("mktemp -d", warn=True, hide="both")
-        target_tmpdir = res.stdout.strip()
+        clock_info_extractor = ClockInfoExtractor(self.autojail_config)
+        clock_info_extractor.prepare()
+        clock_info_extractor.start(connection)
+        try:
+            res = connection.run("mktemp -d", warn=True, hide="both")
+            target_tmpdir = res.stdout.strip()
 
-        with connection.cd(target_tmpdir):
-            for file_name in self.files:
-                connection.run(
-                    f"sudo cp --parents -r {file_name} .",
-                    warn=True,
-                    hide="both",
+            with connection.cd(target_tmpdir):
+                for file_name in self.files:
+                    connection.run(
+                        f"sudo cp --parents -r {file_name} .",
+                        warn=True,
+                        hide="both",
+                    )
+
+                res = connection.run(
+                    f"getconf -a > {target_tmpdir}/getconf.out"
                 )
 
-            res = connection.run(f"getconf -a > {target_tmpdir}/getconf.out")
-
-            connection.run("sudo tar czf extract.tar.gz *")
-            connection.get(
-                f"{target_tmpdir}/extract.tar.gz",
-                local=f"{base_folder}/extract.tar.gz",
-            )
-            connection.run(f"sudo rm -rf {target_tmpdir}")
+                connection.run("sudo tar czf extract.tar.gz *")
+                connection.get(
+                    f"{target_tmpdir}/extract.tar.gz",
+                    local=f"{base_folder}/extract.tar.gz",
+                )
+                connection.run(f"sudo rm -rf {target_tmpdir}")
+        finally:
+            clock_info_extractor.stop(connection)
 
         subprocess.run("tar xzf extract.tar.gz".split(), cwd=base_folder)
 
         os.unlink(f"{base_folder}/extract.tar.gz")
 
     files = [
+        "/sys/kernel/debug/autojail/clocks",
         "/sys/kernel/debug/clk/clk_dump",
         "/sys/bus/pci/devices/*/config",
         "/sys/bus/pci/devices/*/resource",

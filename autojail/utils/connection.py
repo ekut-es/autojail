@@ -1,4 +1,5 @@
 import getpass
+import time
 from typing import TYPE_CHECKING, Any
 
 from fabric.connection import Connection
@@ -13,14 +14,33 @@ if TYPE_CHECKING:
 
 
 def connect(
-    config: "AutojailConfig", context: Any, passwd_retries: int = 5
+    config: "AutojailConfig",
+    context: Any,
+    passwd_retries: int = 5,
+    timeout_retries=10,
 ) -> Connection:
     login = config.login
     connection = None
     if login.is_ssh:
         try:
-            connection = Connection(login.host, user=login.user)
-            connection.open()
+            for _timeout_retry in range(timeout_retries):
+                try:
+                    connection = Connection(login.host, user=login.user)
+                    connection.open()
+                except SSHException as e:
+                    if isinstance(e, AuthenticationException):
+                        raise e
+                    if _timeout_retry == timeout_retries - 1:
+                        raise e
+                    time.sleep(5)
+                    continue
+                except EOFError as e:
+                    if _timeout_retry == timeout_retries - 1:
+                        raise e
+                    time.sleep(5)
+                    continue
+                break
+
         except (
             AuthenticationException,
             PasswordRequiredException,
@@ -34,13 +54,24 @@ def connect(
                     )
                 )
                 try:
-                    connection = Connection(
-                        user=login.user,
-                        host=login.host,
-                        port=login.port,
-                        connect_kwargs={"password": password},
-                    )
-                    connection.open()
+                    for _timeout_retry in range(timeout_retries):
+                        try:
+                            connection = Connection(
+                                user=login.user,
+                                host=login.host,
+                                port=login.port,
+                                connect_kwargs={"password": password},
+                            )
+                            connection.open()
+                        except SSHException as e:
+                            if isinstance(e, AuthenticationException):
+                                raise e
+                            time.sleep(5)
+                            continue
+                        except EOFError:
+                            time.sleep(5)
+                            continue
+                        break
                 except (
                     AuthenticationException,
                     PasswordRequiredException,

@@ -21,8 +21,8 @@ from ..model import (
 )
 from .board_info import TransferBoardInfoPass
 from .cpu import CPUAllocatorPass
-from .device_tree import GenerateDeviceTreePass
 from .devices import LowerDevicesPass
+from .devicetree import GenerateDeviceTreePass
 from .irq import PrepareIRQChipsPass
 from .memory import (
     AllocateMemoryPass,
