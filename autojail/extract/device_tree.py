@@ -316,6 +316,16 @@ class DeviceTreeExtractor:
                     "GIC %s does not have virtualization extensions", node.name,
                 )
         else:
+            if len(gic_addresses) < 5:
+                self.logger.critical(
+                    "GIC definition from device tree does not include gicv register"
+                )
+                self.logger.critical(
+                    "The correct address will be estimated during Jailhouse configuration"
+                )
+                gic_addresses = gic_addresses + [None] * (
+                    5 - len(gic_addresses)
+                )
             (
                 gicd_base,
                 gicr_base,

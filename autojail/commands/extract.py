@@ -1,4 +1,5 @@
 import os
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -96,6 +97,11 @@ class ExtractCommand(BaseCommand):
         clock_info_extractor.prepare()
         clock_info_extractor.start(connection)
         try:
+
+            if self.autojail_config.start_command:
+                for command in self.autojail_config.start_command:
+                    subprocess.run(shlex.split(command),)
+
             res = connection.run("mktemp -d", warn=True, hide="both")
             target_tmpdir = res.stdout.strip()
 
@@ -119,6 +125,9 @@ class ExtractCommand(BaseCommand):
                 connection.run(f"sudo rm -rf {target_tmpdir}")
         finally:
             clock_info_extractor.stop(connection)
+            if self.autojail_config.stop_command:
+                for command in self.autojail_config.stop_command:
+                    subprocess.run(shlex.split(command))
 
         subprocess.run("tar xzf extract.tar.gz".split(), cwd=base_folder)
 
