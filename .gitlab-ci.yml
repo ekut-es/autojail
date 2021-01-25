@@ -7,7 +7,9 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
-  - sudo apt-get install -y qemu-system-arm
+  - apt-get update -y 
+  - apt-get upgrade -y 
+  - apt-get install -y qemu-system-arm
   - python3 -m ensurepip --user
   - python3 -m pip install virtualenv --user
   - python3 -m virtualenv venv
