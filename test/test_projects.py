@@ -3,7 +3,7 @@ import os
 import shutil
 from pathlib import Path
 
-import pytest.mark
+import pytest
 from cleo import CommandTester
 from ruamel.yaml import YAML
 
