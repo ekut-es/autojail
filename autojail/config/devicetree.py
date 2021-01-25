@@ -118,7 +118,6 @@ _dts_template = Template(
     pci@${hex(pci_mmconfig_base)} {
         compatible = "pci-host-ecam-generic";
         device_type = "pci";
-        bus-range = <${format_range(pci_mmconfig_end_bus, address_cells)}>;
         #address-cells = <3>;
         #size-cells = <2>;
         #interrupt-cells = <1>;
