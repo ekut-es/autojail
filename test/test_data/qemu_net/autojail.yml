@@ -1,11 +1,16 @@
 name: qemu_net
 board: qemu_net
 login: ssh:root@localhost:2222
+password: root
 arch: ARM64
-cross_compile: skip
-kernel_dir: ./kernel
+cross_compile: aarch64-linux-gnu-
+kernel_dir: qemu/linux-jailhouse-images/build-full
 jailhouse_dir: ../../jailhouse
 uart: unix:///$pwd/qemu/serial0.sock
 kernel_cmdline:
 jailhouse_git:
 kernel_git:
+start_command:
+  - ./start_qemu.sh
+stop_command:
+  - ./stop_qemu.sh

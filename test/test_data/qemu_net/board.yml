@@ -5,8 +5,9 @@ stdout_path: /pl011@9000000
 virtual_address_bits: 48
 memory_regions:
   flash@0:
-    phandle:
     path: /flash@0
+    name: flash@0
+    phandle:
     compatible:
     - cfi-flash
     interrupts: []
@@ -29,8 +30,9 @@ memory_regions:
     allocatable: false
     shared: false
   flash@0.0:
-    phandle:
     path: /flash@0
+    name: flash@0
+    phandle:
     compatible:
     - cfi-flash
     interrupts: []
@@ -53,8 +55,9 @@ memory_regions:
     allocatable: false
     shared: false
   pl011@9000000:
-    phandle:
     path: /pl011@9000000
+    name: pl011@9000000
+    phandle:
     compatible:
     - arm,pl011
     - arm,primecell
@@ -85,8 +88,9 @@ memory_regions:
     allocatable: false
     shared: false
   pl031@9010000:
-    phandle:
     path: /pl031@9010000
+    name: pl031@9010000
+    phandle:
     compatible:
     - arm,pl031
     - arm,primecell
@@ -115,8 +119,9 @@ memory_regions:
     allocatable: false
     shared: false
   fw-cfg@9020000:
-    phandle:
     path: /fw-cfg@9020000
+    name: fw-cfg@9020000
+    phandle:
     compatible:
     - qemu,fw-cfg-mmio
     interrupts: []
@@ -139,8 +144,9 @@ memory_regions:
     allocatable: false
     shared: false
   pl061@9030000:
-    phandle: 32770
     path: /pl061@9030000
+    name: pl061@9030000
+    phandle: 32770
     compatible:
     - arm,pl061
     - arm,primecell
@@ -169,8 +175,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a000000:
-    phandle:
     path: /virtio_mmio@a000000
+    name: virtio_mmio@a000000
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -196,8 +203,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a000200:
-    phandle:
     path: /virtio_mmio@a000200
+    name: virtio_mmio@a000200
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -223,8 +231,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a000400:
-    phandle:
     path: /virtio_mmio@a000400
+    name: virtio_mmio@a000400
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -250,8 +259,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a000600:
-    phandle:
     path: /virtio_mmio@a000600
+    name: virtio_mmio@a000600
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -277,8 +287,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a000800:
-    phandle:
     path: /virtio_mmio@a000800
+    name: virtio_mmio@a000800
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -304,8 +315,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a000a00:
-    phandle:
     path: /virtio_mmio@a000a00
+    name: virtio_mmio@a000a00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -331,8 +343,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a000c00:
-    phandle:
     path: /virtio_mmio@a000c00
+    name: virtio_mmio@a000c00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -358,8 +371,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a000e00:
-    phandle:
     path: /virtio_mmio@a000e00
+    name: virtio_mmio@a000e00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -385,8 +399,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a001000:
-    phandle:
     path: /virtio_mmio@a001000
+    name: virtio_mmio@a001000
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -412,8 +427,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a001200:
-    phandle:
     path: /virtio_mmio@a001200
+    name: virtio_mmio@a001200
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -439,8 +455,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a001400:
-    phandle:
     path: /virtio_mmio@a001400
+    name: virtio_mmio@a001400
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -466,8 +483,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a001600:
-    phandle:
     path: /virtio_mmio@a001600
+    name: virtio_mmio@a001600
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -493,8 +511,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a001800:
-    phandle:
     path: /virtio_mmio@a001800
+    name: virtio_mmio@a001800
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -520,8 +539,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a001a00:
-    phandle:
     path: /virtio_mmio@a001a00
+    name: virtio_mmio@a001a00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -547,8 +567,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a001c00:
-    phandle:
     path: /virtio_mmio@a001c00
+    name: virtio_mmio@a001c00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -574,8 +595,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a001e00:
-    phandle:
     path: /virtio_mmio@a001e00
+    name: virtio_mmio@a001e00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -601,8 +623,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a002000:
-    phandle:
     path: /virtio_mmio@a002000
+    name: virtio_mmio@a002000
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -628,8 +651,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a002200:
-    phandle:
     path: /virtio_mmio@a002200
+    name: virtio_mmio@a002200
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -655,8 +679,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a002400:
-    phandle:
     path: /virtio_mmio@a002400
+    name: virtio_mmio@a002400
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -682,8 +707,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a002600:
-    phandle:
     path: /virtio_mmio@a002600
+    name: virtio_mmio@a002600
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -709,8 +735,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a002800:
-    phandle:
     path: /virtio_mmio@a002800
+    name: virtio_mmio@a002800
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -736,8 +763,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a002a00:
-    phandle:
     path: /virtio_mmio@a002a00
+    name: virtio_mmio@a002a00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -763,8 +791,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a002c00:
-    phandle:
     path: /virtio_mmio@a002c00
+    name: virtio_mmio@a002c00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -790,8 +819,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a002e00:
-    phandle:
     path: /virtio_mmio@a002e00
+    name: virtio_mmio@a002e00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -817,8 +847,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a003000:
-    phandle:
     path: /virtio_mmio@a003000
+    name: virtio_mmio@a003000
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -844,8 +875,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a003200:
-    phandle:
     path: /virtio_mmio@a003200
+    name: virtio_mmio@a003200
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -871,8 +903,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a003400:
-    phandle:
     path: /virtio_mmio@a003400
+    name: virtio_mmio@a003400
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -898,8 +931,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a003600:
-    phandle:
     path: /virtio_mmio@a003600
+    name: virtio_mmio@a003600
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -925,8 +959,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a003800:
-    phandle:
     path: /virtio_mmio@a003800
+    name: virtio_mmio@a003800
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -952,8 +987,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a003a00:
-    phandle:
     path: /virtio_mmio@a003a00
+    name: virtio_mmio@a003a00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -979,8 +1015,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a003c00:
-    phandle:
     path: /virtio_mmio@a003c00
+    name: virtio_mmio@a003c00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1006,8 +1043,9 @@ memory_regions:
     allocatable: false
     shared: false
   virtio_mmio@a003e00:
-    phandle:
     path: /virtio_mmio@a003e00
+    name: virtio_mmio@a003e00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1033,6 +1071,8 @@ memory_regions:
     allocatable: false
     shared: false
   memory@40000000:
+    path:
+    name: memory@40000000
     physical_start_addr: 0x40000000
     virtual_start_addr: 0x40000000
     size: 0x100000000
@@ -1043,8 +1083,9 @@ memory_regions:
     allocatable: true
     shared: false
   pcie@10000000:
-    phandle:
     path: /pcie@10000000
+    name: pcie@10000000
+    phandle:
     compatible:
     - pci-host-ecam-generic
     interrupts: []
@@ -1169,9 +1210,9 @@ interrupt_controllers:
   - arm,gic-v3
   gic_version: 3
   gicd_base: 0x8000000
-  gicc_base: 0x8010000
-  gich_base: 0x8030000
-  gicv_base: 0x8040000
+  gicc_base: 0x0
+  gich_base: 0x0
+  gicv_base: 0x0
   gicr_base: 0x80a0000
   interrupts: 23,26,27,29,30,33,34,39,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79
 clock_tree:
@@ -1186,10 +1227,23 @@ clock_tree:
     duty_cycle: 50000
     derived_clocks: {}
     parent:
+clock_mapping:
+  pl061@9030000:
+  - parent_name: clk24mhz
+    rate:
+  pl031@9010000:
+  - parent_name: clk24mhz
+    rate:
+  pl011@9000000:
+  - parent_name: clk24mhz
+    rate:
+  - parent_name: clk24mhz
+    rate:
 devices:
   /:
-    phandle:
     path: ///
+    name: /
+    phandle:
     compatible:
     - linux,dummy-virt
     interrupts: []
@@ -1199,8 +1253,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   flash@0:
-    phandle:
     path: /flash@0
+    name: flash@0
+    phandle:
     compatible:
     - cfi-flash
     interrupts: []
@@ -1210,8 +1265,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   flash@0.0:
-    phandle:
     path: /flash@0
+    name: flash@0
+    phandle:
     compatible:
     - cfi-flash
     interrupts: []
@@ -1221,8 +1277,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pmu:
-    phandle:
     path: //pmu
+    name: pmu
+    phandle:
     compatible:
     - arm,armv8-pmuv3
     interrupts:
@@ -1235,8 +1292,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a002a00:
-    phandle:
     path: /virtio_mmio@a002a00
+    name: virtio_mmio@a002a00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1249,8 +1307,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a003e00:
-    phandle:
     path: /virtio_mmio@a003e00
+    name: virtio_mmio@a003e00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1263,8 +1322,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pl031@9010000:
-    phandle:
     path: /pl031@9010000
+    name: pl031@9010000
+    phandle:
     compatible:
     - arm,pl031
     - arm,primecell
@@ -1280,8 +1340,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a003c00:
-    phandle:
     path: /virtio_mmio@a003c00
+    name: virtio_mmio@a003c00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1294,8 +1355,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pl011@9000000:
-    phandle:
     path: /pl011@9000000
+    name: pl011@9000000
+    phandle:
     compatible:
     - arm,pl011
     - arm,primecell
@@ -1313,8 +1375,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   timer:
-    phandle:
     path: //timer
+    name: timer
+    phandle:
     compatible:
     - arm,armv8-timer
     - arm,armv7-timer
@@ -1337,8 +1400,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a000000:
-    phandle:
     path: /virtio_mmio@a000000
+    name: virtio_mmio@a000000
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1351,8 +1415,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a000400:
-    phandle:
     path: /virtio_mmio@a000400
+    name: virtio_mmio@a000400
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1365,8 +1430,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a002e00:
-    phandle:
     path: /virtio_mmio@a002e00
+    name: virtio_mmio@a002e00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1379,8 +1445,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   platform@c000000:
-    phandle:
     path: //platform@c000000
+    name: platform@c000000
+    phandle:
     compatible:
     - qemu,platform
     - simple-bus
@@ -1391,8 +1458,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a002800:
-    phandle:
     path: /virtio_mmio@a002800
+    name: virtio_mmio@a002800
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1405,8 +1473,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a001200:
-    phandle:
     path: /virtio_mmio@a001200
+    name: virtio_mmio@a001200
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1419,8 +1488,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pcie@10000000:
-    phandle:
     path: /pcie@10000000
+    name: pcie@10000000
+    phandle:
     compatible:
     - pci-host-ecam-generic
     interrupts: []
@@ -1430,8 +1500,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a001800:
-    phandle:
     path: /virtio_mmio@a001800
+    name: virtio_mmio@a001800
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1444,8 +1515,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a000e00:
-    phandle:
     path: /virtio_mmio@a000e00
+    name: virtio_mmio@a000e00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1458,8 +1530,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a002c00:
-    phandle:
     path: /virtio_mmio@a002c00
+    name: virtio_mmio@a002c00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1472,8 +1545,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a003200:
-    phandle:
     path: /virtio_mmio@a003200
+    name: virtio_mmio@a003200
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1486,8 +1560,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a000a00:
-    phandle:
     path: /virtio_mmio@a000a00
+    name: virtio_mmio@a000a00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1500,8 +1575,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a000600:
-    phandle:
     path: /virtio_mmio@a000600
+    name: virtio_mmio@a000600
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1514,8 +1590,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a001a00:
-    phandle:
     path: /virtio_mmio@a001a00
+    name: virtio_mmio@a001a00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1528,8 +1605,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pl061@9030000:
-    phandle: 32770
     path: /pl061@9030000
+    name: pl061@9030000
+    phandle: 32770
     compatible:
     - arm,pl061
     - arm,primecell
@@ -1545,8 +1623,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a000c00:
-    phandle:
     path: /virtio_mmio@a000c00
+    name: virtio_mmio@a000c00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1559,8 +1638,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a002600:
-    phandle:
     path: /virtio_mmio@a002600
+    name: virtio_mmio@a002600
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1573,8 +1653,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a002400:
-    phandle:
     path: /virtio_mmio@a002400
+    name: virtio_mmio@a002400
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1587,8 +1668,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   psci:
-    phandle:
     path: //psci
+    name: psci
+    phandle:
     compatible:
     - arm,psci-0.2
     - arm,psci
@@ -1599,8 +1681,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a002200:
-    phandle:
     path: /virtio_mmio@a002200
+    name: virtio_mmio@a002200
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1613,8 +1696,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a001400:
-    phandle:
     path: /virtio_mmio@a001400
+    name: virtio_mmio@a001400
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1627,8 +1711,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a003000:
-    phandle:
     path: /virtio_mmio@a003000
+    name: virtio_mmio@a003000
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1641,8 +1726,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   apb-pclk:
-    phandle: 32768
     path: //apb-pclk
+    name: apb-pclk
+    phandle: 32768
     compatible:
     - fixed-clock
     interrupts: []
@@ -1653,8 +1739,9 @@ devices:
     - clk24mhz
     clock_cells: 0
   virtio_mmio@a003400:
-    phandle:
     path: /virtio_mmio@a003400
+    name: virtio_mmio@a003400
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1667,8 +1754,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a001000:
-    phandle:
     path: /virtio_mmio@a001000
+    name: virtio_mmio@a001000
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1681,8 +1769,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a002000:
-    phandle:
     path: /virtio_mmio@a002000
+    name: virtio_mmio@a002000
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1695,8 +1784,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a001c00:
-    phandle:
     path: /virtio_mmio@a001c00
+    name: virtio_mmio@a001c00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1709,8 +1799,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a003800:
-    phandle:
     path: /virtio_mmio@a003800
+    name: virtio_mmio@a003800
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1723,8 +1814,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a001e00:
-    phandle:
     path: /virtio_mmio@a001e00
+    name: virtio_mmio@a001e00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1737,8 +1829,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a000800:
-    phandle:
     path: /virtio_mmio@a000800
+    name: virtio_mmio@a000800
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1751,8 +1844,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a000200:
-    phandle:
     path: /virtio_mmio@a000200
+    name: virtio_mmio@a000200
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1765,8 +1859,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   fw-cfg@9020000:
-    phandle:
     path: /fw-cfg@9020000
+    name: fw-cfg@9020000
+    phandle:
     compatible:
     - qemu,fw-cfg-mmio
     interrupts: []
@@ -1776,8 +1871,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   gpio-keys:
-    phandle:
     path: //gpio-keys
+    name: gpio-keys
+    phandle:
     compatible:
     - gpio-keys
     interrupts: []
@@ -1787,8 +1883,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a003a00:
-    phandle:
     path: /virtio_mmio@a003a00
+    name: virtio_mmio@a003a00
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1801,8 +1898,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a001600:
-    phandle:
     path: /virtio_mmio@a001600
+    name: virtio_mmio@a001600
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:
@@ -1815,8 +1913,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtio_mmio@a003600:
-    phandle:
     path: /virtio_mmio@a003600
+    name: virtio_mmio@a003600
+    phandle:
     compatible:
     - virtio,mmio
     interrupts:

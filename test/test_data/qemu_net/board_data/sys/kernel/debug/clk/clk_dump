@@ -1,1 +1,0 @@
-{"clk24mhz": { "enable_count": 4,"prepare_count": 5,"protect_count": 0,"rate": 24000000,"min_rate": 0,"max_rate": 18446744073709551615,"accuracy": 0,"phase": 0,"duty_cycle": 50000}}
