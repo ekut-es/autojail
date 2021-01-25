@@ -212,6 +212,19 @@ class JailhouseConfigurator:
         if return_val.returncode:
             return return_val.returncode
 
+        jailhouse_sdist_command = [
+            "python",
+            "setup.py",
+            "sdist",
+            "-d",
+            f"{deploy_path.absolute()}",
+        ]
+        return_val = subprocess.run(
+            jailhouse_sdist_command, cwd=self.autojail_config.jailhouse_dir
+        )
+        if return_val.returncode:
+            return return_val.returncode
+
     def write_config(self, output_path: str) -> int:
         """Write configuration data to file"""
         assert self.config is not None
