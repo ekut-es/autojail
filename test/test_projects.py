@@ -142,7 +142,7 @@ def test_config_rpi4_fixed_pci_mmconfig_base(tmpdir):
     not shutil.which("qemu-system-aarch64"),
     reason="Requires qemu-system-aarch64",
 )
-def test_config_qemu(tmpdir):
+def test_config_qemu(tmpdir, capsys):
     """ Tests that rpi4_fixed_pci_mmconfig_base creates the expected configuration"""
 
     os.chdir(tmpdir)
@@ -154,7 +154,8 @@ def test_config_qemu(tmpdir):
     application = AutojailApp()
     extract = application.find("extract")
     extract_tester = CommandTester(extract)
-    extract_tester.execute(interactive=False)
+    with capsys.disabled():
+        extract_tester.execute(interactive=False)
 
     generate = application.find("generate")
     generate_tester = CommandTester(generate)
