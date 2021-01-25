@@ -138,7 +138,10 @@ def test_config_rpi4_fixed_pci_mmconfig_base(tmpdir):
     assert filecmp.cmp("raspberry-pi4.c", "golden/raspberry-pi4.c")
 
 
-@pytest.mark.skip()
+@pytest.mark.skipif(
+    not shutil.which("qemu-system-aarch64"),
+    reason="Requires qemu-system-aarch64",
+)
 def test_config_qemu(tmpdir):
     """ Tests that rpi4_fixed_pci_mmconfig_base creates the expected configuration"""
 

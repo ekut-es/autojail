@@ -1,15 +1,13 @@
 stages:
   - sca
   - test
+  - deploy_test
   - deploy
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 before_script:
-  - apt-get update -y 
-  - apt-get upgrade -y 
-  - apt-get install -y qemu-system-arm netcat-openbsd
   - python3 -m ensurepip --user
   - python3 -m pip install virtualenv --user
   - python3 -m virtualenv venv
@@ -41,6 +39,28 @@ test:
 test_python_latest:
   image: python:latest
   stage: test
+  script:
+    - set -e
+    - apt-get update
+    - apt-get install device-tree-compiler -y
+    - poetry install
+    - poetry run python -m pytest --cov=autojail test
+  tags:
+    - docker
+
+
+test_with_qemu:
+  image: ubuntu:20.04
+  stage: deploy_test
+  before_script:
+    - apt-get update -y 
+    - apt-get upgrade -y 
+    - apt-get install -y qemu-system-arm netcat-openbsd
+    - python3 -m ensurepip --user
+    - python3 -m pip install virtualenv --user
+    - python3 -m virtualenv venv
+    - source venv/bin/activate
+    - python3 -m pip install poetry
   script:
     - set -e
     - apt-get update
