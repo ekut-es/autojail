@@ -3,6 +3,7 @@ import os
 import shutil
 from pathlib import Path
 
+import pytest.mark
 from cleo import CommandTester
 from ruamel.yaml import YAML
 
@@ -137,6 +138,7 @@ def test_config_rpi4_fixed_pci_mmconfig_base(tmpdir):
     assert filecmp.cmp("raspberry-pi4.c", "golden/raspberry-pi4.c")
 
 
+@pytest.mark.skip()
 def test_config_qemu(tmpdir):
     """ Tests that rpi4_fixed_pci_mmconfig_base creates the expected configuration"""
 
