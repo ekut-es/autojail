@@ -29,7 +29,7 @@ QEMU_EXTRA_ARGS=" \
 			-smp 16 \
 			-machine virt,gic-version=3,virtualization=on \
 			-device virtio-serial-device \
-			-chardev socket,id=serial0,path=qemu/serial0.sock,server,nowait \
+			-chardev socket,id=serial0,path=qemu/serial0.sock,server,nowait,logfile=qemu/serial0.log \
             -serial chardev:serial0 \
             -chardev socket,id=monitor,path=qemu/monitor.sock,server,nowait \
             -monitor chardev:monitor \
@@ -52,7 +52,9 @@ ${QEMU_PATH}${QEMU} \
 	-kernel qemu/vmlinuz -append "${KERNEL_CMDLINE}" \
 	-initrd qemu/initrd.img ${QEMU_EXTRA_ARGS} "$@" &
 
-sleep 60
+sleep 1
+tail -f qemu/serial0.log &
+sleep 30
 #if [ -f $(which socat) ]; then
 #	socat qemu/serial0.sock - 
 #fi
