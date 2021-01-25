@@ -31,7 +31,7 @@ QEMU_EXTRA_ARGS=" \
 			-device virtio-serial-device \
 			-chardev socket,id=serial0,path=qemu/serial0.sock,server,nowait,logfile=qemu/serial0.log \
             -serial chardev:serial0 \
-            -chardev socket,id=monitor,path=qemu/monitor.sock,server,nowait \
+            -chardev socket,id=monitor,path=qemu/monitor.sock,server,nowait,logfile=qemu/monitor.log \
             -monitor chardev:monitor \
 			-device virtio-blk-device,drive=disk \
 			-device virtio-net-device,netdev=net"
@@ -53,8 +53,13 @@ ${QEMU_PATH}${QEMU} \
 	-initrd qemu/initrd.img ${QEMU_EXTRA_ARGS} "$@" &
 
 sleep 1
+
 tail -f qemu/serial0.log &
-sleep 30
+boot_pid=$! 
+grep -m1 "Jailhouse Demo Image (login: root/root)" < <(stdbuf -oL tail -f qemu/serial0.log)
+kill $boot_pid
+
+
 #if [ -f $(which socat) ]; then
 #	socat qemu/serial0.sock - 
 #fi

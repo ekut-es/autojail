@@ -52,9 +52,14 @@ ${QEMU_PATH}${QEMU} \
 	-kernel qemu/vmlinuz -append "${KERNEL_CMDLINE}" \
 	-initrd qemu/initrd.img ${QEMU_EXTRA_ARGS} "$@" &
 
-sleep 1
+sleep 5
+
+# Wait until image is started
 tail -f qemu/serial0.log &
-sleep 240
+boot_pid=$! 
+grep -m1 "Jailhouse Demo Image (login: root/root)" < <(stdbuf -oL tail -f qemu/serial0.log)
+kill $boot_pid
+
 #if [ -f $(which socat) ]; then
 #	socat qemu/serial0.sock - 
 #fi
