@@ -57,7 +57,7 @@ test_with_qemu:
     - apt-get update -y 
     - apt-get upgrade -y 
     - apt-get install -y dpkg
-    - apt-get install -y qemu-system-arm netcat-openbsd python3-dev python3-pip git gcc-aarch64-linux-gnu wget build-essential
+    - apt-get install -y qemu-system-arm netcat-openbsd python3-dev python3-pip git gcc-aarch64-linux-gnu g++-aarch64-linux-gnu wget build-essential
     - python3 -m pip install virtualenv --user
     - python3 -m virtualenv venv
     - source venv/bin/activate
