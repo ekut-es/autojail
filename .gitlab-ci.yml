@@ -9,7 +9,7 @@ variables:
 before_script:
   - apt-get update -y 
   - apt-get upgrade -y 
-  - apt-get install -y qemu-system-arm
+  - apt-get install -y qemu-system-arm netcat-openbsd
   - python3 -m ensurepip --user
   - python3 -m pip install virtualenv --user
   - python3 -m virtualenv venv
