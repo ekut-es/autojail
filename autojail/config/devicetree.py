@@ -363,10 +363,6 @@ class GenerateDeviceTreePass(BasePass):
             device_regions = self._prepare_device_regions(cell.memory_regions)
             clock_mapping, clocks = self._find_clocks(device_regions)
 
-            from devtools import debug
-
-            debug(clock_mapping)
-
             timer = self._find_timer()
 
             dts_data = _dts_template.render(

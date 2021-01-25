@@ -25,13 +25,26 @@ def connect(
         try:
             for _timeout_retry in range(timeout_retries):
                 try:
-                    connection = Connection(login.host, user=login.user)
+                    connect_kwargs = None
+                    if config.password is not None:
+                        connect_kwargs = {"password": config.password}
+                    connection = Connection(
+                        login.host,
+                        user=login.user,
+                        port=login.port,
+                        connect_kwargs=connect_kwargs,
+                    )
                     connection.open()
                 except SSHException as e:
-                    if isinstance(e, AuthenticationException):
-                        raise e
                     if _timeout_retry == timeout_retries - 1:
                         raise e
+
+                    if isinstance(e, AuthenticationException):
+                        if config.password is not None:
+                            time.sleep(5)
+                            continue
+                        else:
+                            raise e
                     time.sleep(5)
                     continue
                 except EOFError as e:
@@ -45,6 +58,7 @@ def connect(
             AuthenticationException,
             PasswordRequiredException,
             SSHException,
+            EOFError,
         ):
             for _retry in range(passwd_retries):
 

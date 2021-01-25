@@ -81,6 +81,7 @@ class AutojailConfig(BaseModel):
     cross_compile: str
     kernel_dir: str
     jailhouse_dir: str
+    password: Optional[str] = None
     uart: Optional[str] = None
     kernel_cmdline: Optional[str] = None
     jailhouse_git: Optional[str] = None

@@ -147,9 +147,13 @@ def test_config_qemu(tmpdir):
     os.chdir("qemu_net")
 
     application = AutojailApp()
-    command = application.find("generate")
-    tester = CommandTester(command)
-    tester.execute(interactive=False, skip_check=True)
+    extract = application.find("extract")
+    extract_tester = CommandTester(extract)
+    extract_tester.execute(interactive=False)
+
+    generate = application.find("generate")
+    generate_tester = CommandTester(generate)
+    generate_tester.execute(interactive=False, skip_check=True)
 
     assert Path("root-cell.c").exists()
     assert Path("guest.c").exists()
