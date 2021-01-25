@@ -1,7 +1,7 @@
 #!/bin/bash
 
 INITRD_URL=https://atreus.informatik.uni-tuebingen.de/seafile/f/827fb5d90a4040f98794/?dl=1
-VMLINUZ_URL=https://atreus.informatik.uni-tuebingen.de/seafile/f/998f76ccd65e4fffa581/
+VMLINUZ_URL=https://atreus.informatik.uni-tuebingen.de/seafile/f/998f76ccd65e4fffa581/?dl=1
 ROOTFS_URL=https://atreus.informatik.uni-tuebingen.de/seafile/f/8760e85c366a42eca26a/?dl=1
 KERNEL_URL=https://atreus.informatik.uni-tuebingen.de/seafile/f/dfc7fc6ac5ce4b27bc18/?dl=1
 
