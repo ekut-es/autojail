@@ -17,7 +17,6 @@ initvm/
 .pytest_cache/
 tmp/
 .mypy_cache/
-projects/
 *.cpio
 *.img
 *.cell

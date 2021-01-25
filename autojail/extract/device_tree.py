@@ -323,9 +323,7 @@ class DeviceTreeExtractor:
                 self.logger.critical(
                     "The correct address will be estimated during Jailhouse configuration"
                 )
-                gic_addresses = gic_addresses + [None] * (
-                    5 - len(gic_addresses)
-                )
+                gic_addresses = gic_addresses + [0] * (5 - len(gic_addresses))
             (
                 gicd_base,
                 gicr_base,

@@ -50,14 +50,22 @@ class ExtractCommand(BaseCommand):
                 self.line(
                     f"Extracting target data from board {self.autojail_config.login}"
                 )
-                connection = connect(
-                    self.autojail_config, self.automate_context
-                )
+                if self.autojail_config.start_command:
+                    for command in self.autojail_config.start_command:
+                        subprocess.run(shlex.split(command),)
+                try:
+                    connection = connect(
+                        self.autojail_config, self.automate_context
+                    )
 
-                if not base_folder:
-                    base_folder = tempfile.mkdtemp(prefix="aj-extract")
-                    tmp_folder = True
-                self._sync(connection, base_folder)
+                    if not base_folder:
+                        base_folder = tempfile.mkdtemp(prefix="aj-extract")
+                        tmp_folder = True
+                    self._sync(connection, base_folder)
+                finally:
+                    if self.autojail_config.stop_command:
+                        for command in self.autojail_config.stop_command:
+                            subprocess.run(shlex.split(command))
 
             else:
                 self.line(f"Extracting target data from folder {base_folder}")
@@ -97,11 +105,6 @@ class ExtractCommand(BaseCommand):
         clock_info_extractor.prepare()
         clock_info_extractor.start(connection)
         try:
-
-            if self.autojail_config.start_command:
-                for command in self.autojail_config.start_command:
-                    subprocess.run(shlex.split(command),)
-
             res = connection.run("mktemp -d", warn=True, hide="both")
             target_tmpdir = res.stdout.strip()
 
@@ -125,9 +128,6 @@ class ExtractCommand(BaseCommand):
                 connection.run(f"sudo rm -rf {target_tmpdir}")
         finally:
             clock_info_extractor.stop(connection)
-            if self.autojail_config.stop_command:
-                for command in self.autojail_config.stop_command:
-                    subprocess.run(shlex.split(command))
 
         subprocess.run("tar xzf extract.tar.gz".split(), cwd=base_folder)
 
