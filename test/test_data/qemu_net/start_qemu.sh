@@ -18,7 +18,7 @@ fi
 if [ ! -f qemu/linux-jailhouse-images.tar.bz ]; then
   wget -c ${KERNEL_URL} -O qemu/linux-jailhouse-images.tar.bz
   pushd qemu
-  tar xvJf linux-jailhouse-images.tar.bz
+  tar xJf linux-jailhouse-images.tar.bz
   popd
 fi
 

@@ -59,7 +59,9 @@ def connect(
             PasswordRequiredException,
             SSHException,
             EOFError,
-        ):
+        ) as e:
+            if config.password is not None:
+                raise e
             for _retry in range(passwd_retries):
 
                 password = getpass.getpass(
