@@ -1,6 +1,7 @@
 import filecmp
 import os
 import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -150,6 +151,9 @@ def test_config_qemu(tmpdir):
         Path(project_folder) / "qemu_net", "qemu_net",
     )
     os.chdir("qemu_net")
+
+    clone_command = ["git", "clone", "https://github.com/siemens/jailhouse.git"]
+    subprocess.run(clone_command, check=True)
 
     application = AutojailApp()
     extract = application.find("extract")
