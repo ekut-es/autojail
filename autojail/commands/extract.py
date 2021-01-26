@@ -52,7 +52,7 @@ class ExtractCommand(BaseCommand):
                 )
                 if self.autojail_config.start_command:
                     for command in self.autojail_config.start_command:
-                        subprocess.run(shlex.split(command),)
+                        subprocess.run(shlex.split(command))
                 try:
                     connection = connect(
                         self.autojail_config, self.automate_context
@@ -105,7 +105,9 @@ class ExtractCommand(BaseCommand):
         clock_info_extractor.prepare()
         clock_info_extractor.start(connection)
         try:
-            res = connection.run("mktemp -d", warn=True, hide="both")
+            res = connection.run(
+                "mktemp -d", warn=True, hide="both", in_stream=False
+            )
             target_tmpdir = res.stdout.strip()
 
             with connection.cd(target_tmpdir):
@@ -114,18 +116,20 @@ class ExtractCommand(BaseCommand):
                         f"sudo cp --parents -r {file_name} .",
                         warn=True,
                         hide="both",
+                        in_stream=False,
                     )
 
                 res = connection.run(
-                    f"getconf -a > {target_tmpdir}/getconf.out"
+                    f"getconf -a > {target_tmpdir}/getconf.out",
+                    in_stream=False,
                 )
 
-                connection.run("sudo tar czf extract.tar.gz *")
+                connection.run("sudo tar czf extract.tar.gz *", in_stream=False)
                 connection.get(
                     f"{target_tmpdir}/extract.tar.gz",
                     local=f"{base_folder}/extract.tar.gz",
                 )
-                connection.run(f"sudo rm -rf {target_tmpdir}")
+                connection.run(f"sudo rm -rf {target_tmpdir}", in_stream=False)
         finally:
             clock_info_extractor.stop(connection)
 

@@ -53,10 +53,16 @@ class ClockInfoExtractor:
 
         connection.put(str(module_local), remote="/tmp/")
         connection.run(
-            "sudo /sbin/insmod /tmp/extract-clocks.ko", shell=True, warn=True
+            "sudo /sbin/insmod /tmp/extract-clocks.ko",
+            shell=True,
+            warn=True,
+            in_stream=False,
         )
 
     def stop(self, connection):
         connection.run(
-            "sudo /sbin/rmmod extract-clocks.ko", shell=True, warn=True
+            "sudo /sbin/rmmod extract-clocks.ko",
+            shell=True,
+            warn=True,
+            in_stream=False,
         )
