@@ -57,7 +57,7 @@ class JailhouseConfigurator:
             CPUAllocatorPass(),
             ConfigSHMemRegionsPass(),
             InferRootSharedPass(),
-            GenerateDeviceTreePass(),
+            GenerateDeviceTreePass(self.autojail_config),
         ]
 
         self.logger = utils.logging.getLogger()
@@ -93,9 +93,9 @@ class JailhouseConfigurator:
             cell_name = output_name + ".cell"
 
             if cell.type == "root":
-                syscfg = cell_name
+                syscfg = os.path.join(output_path, cell_name)
             else:
-                cellcfgs.append(cell_name)
+                cellcfgs.append(os.path.join(output_path, cell_name))
 
             c_file = os.path.join(output_path, c_name)
             object_file = os.path.join(output_path, object_name)
@@ -254,6 +254,16 @@ class JailhouseConfigurator:
                         if fixup:
                             line = fixup(line)
                         tool_deploy_file.write(line)
+
+        # deploy dtbs
+        shutil.copytree(
+            Path(self.autojail_config.build_dir) / "dts",
+            Path(self.autojail_config.deploy_dir) / "etc" / "jailhouse" / "dts",
+            dirs_exist_ok=True,
+            ignore=lambda path, names: [
+                name for name in names if not name.endswith(".dtb")
+            ],
+        )
 
         # Create deploy bundle
         deploy_files = os.listdir(deploy_path)

@@ -1,3 +1,4 @@
+import subprocess
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, MutableMapping, Optional, Tuple
@@ -9,6 +10,7 @@ from mako.template import Template
 from autojail.model.jailhouse import CellConfig
 
 from ..model import (
+    AutojailConfig,
     Board,
     DeviceMemoryRegion,
     GroupedMemoryRegion,
@@ -108,7 +110,7 @@ _dts_template = Template(
                  >;
     %endif
     %if memory_region.clock_names:
-        clock-names = <${" ".join('"' + cn + '"' for cn in memory_region.clock_names)}>
+        clock-names = ${", ".join('"' + cn + '"' for cn in memory_region.clock_names)};
     %endif     
         status = "okay";
 	};
@@ -156,6 +158,10 @@ class DTClock:
 
 class GenerateDeviceTreePass(BasePass):
     """Generate a device tree for inmates"""
+
+    def __init__(self, config: AutojailConfig):
+        self.autojail_config = config
+        super(GenerateDeviceTreePass, self).__init__()
 
     def _prepare_device_regions(self, memory_regions):
         worklist = [(name, region) for name, region in memory_regions.items()]
@@ -325,8 +331,9 @@ class GenerateDeviceTreePass(BasePass):
         self.logger.info("Generating inmate device trees")
 
         # FIXME: use build dir
-        dts_path = Path(".") / "dts"
+        dts_path = Path(self.autojail_config.build_dir) / "dts"
         dts_path.mkdir(exist_ok=True, parents=True)
+        dts_names = []
 
         self.board = board
 
@@ -388,12 +395,30 @@ class GenerateDeviceTreePass(BasePass):
             dts_name = cell.name.lower()
             dts_name = dts_name.replace(" ", "-")
             dts_name += ".dts"
+            dts_names.append(dts_name)
 
             dts_file_path = dts_path / dts_name
 
             self.logger.info("Writing %s", dts_file_path)
             with dts_file_path.open("w") as dts_file:
                 dts_file.write(dts_data)
+
+        if dts_names:
+            makefile_path = dts_path / "Makefile"
+            with makefile_path.open("w") as makefile:
+                for name in dts_names:
+                    dtb_name = name.replace(".dts", ".dtb")
+                    makefile.write(f"dtb-y += {dtb_name}\n")
+            build_dts_command = [
+                "make",
+                "-C",
+                f"{Path(self.autojail_config.kernel_dir).absolute()}",
+                f"ARCH={self.autojail_config.arch.lower()}",
+                f"CROSS_COMPILE={self.autojail_config.cross_compile}",
+                f"M={dts_path.absolute()}",
+            ]
+            print(" ".join(build_dts_command))
+            subprocess.run(build_dts_command, check=True)
 
         return board, config
 
