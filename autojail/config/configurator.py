@@ -212,18 +212,43 @@ class JailhouseConfigurator:
         if return_val.returncode:
             return return_val.returncode
 
-        jailhouse_sdist_command = [
-            "python",
-            "setup.py",
-            "sdist",
-            "-d",
-            f"{deploy_path.absolute()}",
-        ]
-        return_val = subprocess.run(
-            jailhouse_sdist_command, cwd=self.autojail_config.jailhouse_dir
+        prefix = Path(self.autojail_config.prefix)
+        assert prefix.is_absolute()
+        jailhouse_path = Path(self.autojail_config.jailhouse_dir)
+        deploy_path_prefix = (
+            deploy_path.absolute() / self.autojail_config.prefix[1:]
         )
-        if return_val.returncode:
-            return return_val.returncode
+        pyjailhouse_path = (
+            deploy_path_prefix / "share" / "jailhouse" / "pyjailhouse"
+        )
+        pyjailhouse_path.mkdir(exist_ok=True, parents=True)
+        shutil.copytree(
+            jailhouse_path / "pyjailhouse",
+            pyjailhouse_path,
+            dirs_exist_ok=True,
+            ignore=lambda path, names: ["__pycache__"],
+        )
+
+        jailhouse_tools = [
+            (
+                "jailhouse-cell-linux",
+                lambda x: x.replace(
+                    "libexecdir = None",
+                    f"libexecdir = {str(prefix / 'libexec')}",
+                ),
+            ),
+            ("jailhouse-cell-stats", None),
+        ]
+
+        for tool, fixup in jailhouse_tools:
+            tool_path = jailhouse_path / "tools" / tool
+            tool_deploy_path = deploy_path_prefix / "sbin" / tool
+            with tool_path.open() as tool_file:
+                with tool_deploy_path.open("w") as tool_deploy_file:
+                    for line in tool_file.readlines():
+                        if fixup:
+                            line = fixup(line)
+                        tool_deploy_file.write(line)
 
     def write_config(self, output_path: str) -> int:
         """Write configuration data to file"""
