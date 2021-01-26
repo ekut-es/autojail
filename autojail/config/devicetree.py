@@ -1,7 +1,8 @@
 from collections import defaultdict
+from pathlib import Path
 from typing import Dict, List, MutableMapping, Optional, Tuple
 
-import fuzzywuzzy.process
+# import fuzzywuzzy.process
 from dataclasses import dataclass
 from mako.template import Template
 
@@ -323,6 +324,10 @@ class GenerateDeviceTreePass(BasePass):
 
         self.logger.info("Generating inmate device trees")
 
+        # FIXME: use build dir
+        dts_path = Path(".") / "dts"
+        dts_path.mkdir(exist_ok=True, parents=True)
+
         self.board = board
 
         pci_mmconfig_base, pci_mmconfig_end_bus = self.__build_pciconfig(config)
@@ -384,8 +389,10 @@ class GenerateDeviceTreePass(BasePass):
             dts_name = dts_name.replace(" ", "-")
             dts_name += ".dts"
 
-            self.logger.info("Writing %s", dts_name)
-            with open(dts_name, "w") as dts_file:
+            dts_file_path = dts_path / dts_name
+
+            self.logger.info("Writing %s", dts_file_path)
+            with dts_file_path.open("w") as dts_file:
                 dts_file.write(dts_data)
 
         return board, config
