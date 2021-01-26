@@ -231,6 +231,7 @@ class JailhouseConfigurator:
         shutil.copytree(
             jailhouse_path / "pyjailhouse",
             pyjailhouse_path,
+            dirs_exist_ok=True,
             ignore=lambda path, names: ["__pycache__"],
         )
 
@@ -265,6 +266,7 @@ class JailhouseConfigurator:
         shutil.copytree(
             Path(self.autojail_config.build_dir) / "dts",
             Path(self.autojail_config.deploy_dir) / "etc" / "jailhouse" / "dts",
+            dirs_exist_ok=True,
             ignore=lambda path, names: [
                 name for name in names if not name.endswith(".dtb")
             ],
