@@ -418,6 +418,12 @@ class GenerateDeviceTreePass(BasePass):
                 f"M={dts_path.absolute()}",
             ]
             print(" ".join(build_dts_command))
+
+            if not Path(self.autojail_config.kernel_dir).exists():
+                self.logger.critical(
+                    "Kernel build directory does not exist, skipping building of binary device trees"
+                )
+
             subprocess.run(build_dts_command, check=True)
 
         return board, config
