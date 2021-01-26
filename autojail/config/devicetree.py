@@ -124,7 +124,7 @@ _dts_template = Template(
         interrupt-map-mask = <0 0 0 7>;
         interrupt-map =  
         %for interrupt in pci_interrupts:
-            <0 0 0 ${interrupt.device + 1} &${interrupt.controller} GIC_SPI ${interrupt.interrupt} IRQ_TYPE_EDGE_RISING>${',' if loop.index < len(pci_interrupts) - 1 else ';'}
+            <0 0 0 ${interrupt.device + 1} &${interrupt.controller} GIC_SPI ${interrupt.interrupt - 32} IRQ_TYPE_EDGE_RISING>${',' if loop.index < len(pci_interrupts) - 1 else ';'}
         %endfor
         reg = <0x0 ${hex(pci_mmconfig_base)} 0x0 0x100000>;
         ranges =
