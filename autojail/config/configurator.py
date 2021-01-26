@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -239,7 +240,7 @@ class JailhouseConfigurator:
                 "jailhouse-cell-linux",
                 lambda x: x.replace(
                     "libexecdir = None",
-                    f"libexecdir = {str(prefix / 'libexec')}",
+                    f"libexecdir = \"{str(prefix / 'libexec')}\"",
                 ),
             ),
             ("jailhouse-cell-stats", None),
@@ -253,6 +254,12 @@ class JailhouseConfigurator:
                     for line in tool_file.readlines():
                         if fixup:
                             line = fixup(line)
+
+                        line = re.sub(
+                            r"^sys.path\[0\] = .*",
+                            f'sys.path[0] = "{prefix / "share" / "jailhouse"}"',
+                            line,
+                        )
                         tool_deploy_file.write(line)
 
         # deploy dtbs
