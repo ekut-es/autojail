@@ -39,11 +39,13 @@ class JailhouseConfigurator:
         board: Board,
         autojail_config: AutojailConfig,
         print_after_all: bool = False,
+        context=None,
     ) -> None:
         self.board = board
         self.autojail_config = autojail_config
         self.print_after_all = print_after_all
         self.config: Optional[JailhouseConfig] = None
+        self.context = context
         self.passes = [
             TransferBoardInfoPass(),
             LowerDevicesPass(),
@@ -174,7 +176,10 @@ class JailhouseConfigurator:
         return ret
 
     def deploy(
-        self, output_path: Union[str, Path], deploy_path: Union[str, Path]
+        self,
+        output_path: Union[str, Path],
+        deploy_path: Union[str, Path],
+        target: bool = False,
     ):
         "Install to deploy_path/prefix and build a file deploy.tar.gz for installation on the target system"
         assert self.autojail_config is not None
@@ -249,6 +254,32 @@ class JailhouseConfigurator:
                         if fixup:
                             line = fixup(line)
                         tool_deploy_file.write(line)
+
+        # Create deploy bundle
+        deploy_files = os.listdir(deploy_path)
+        deploy_bundle_command = [
+            "tar",
+            "cvzf",
+            "deploy.tar.gz",
+            "-C",
+            f"{deploy_path}",
+        ] + deploy_files
+
+        print(" ".join(deploy_bundle_command))
+        subprocess.run(deploy_bundle_command, check=True)
+
+        if target:
+            self.logger.info("Deploying to target")
+            utils.start_board(self.autojail_config)
+            connection = utils.connect(self.autojail_config, self.context)
+            connection.put("deploy.tar.gz", remote="/tmp")
+            with connection.cd("/tmp"):
+                connection.run(
+                    "sudo tar --overwrite -C / -hxvzf deploy.tar.gz",
+                    in_stream=False,
+                )
+            connection.run("sudo depmod", in_stream=False, warn=True)
+            utils.stop_board(self.autojail_config)
 
     def write_config(self, output_path: str) -> int:
         """Write configuration data to file"""

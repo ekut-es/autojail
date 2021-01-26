@@ -1,5 +1,4 @@
 import os
-import shlex
 import subprocess
 import sys
 import tempfile
@@ -18,7 +17,7 @@ from ..model import (
     IntegerList,
     JailhouseFlagList,
 )
-from ..utils import connect, which
+from ..utils import connect, start_board, stop_board, which
 from .base import BaseCommand
 
 
@@ -50,9 +49,7 @@ class ExtractCommand(BaseCommand):
                 self.line(
                     f"Extracting target data from board {self.autojail_config.login}"
                 )
-                if self.autojail_config.start_command:
-                    for command in self.autojail_config.start_command:
-                        subprocess.run(shlex.split(command))
+                start_board(self.autojail_config)
                 try:
                     connection = connect(
                         self.autojail_config, self.automate_context
@@ -63,9 +60,7 @@ class ExtractCommand(BaseCommand):
                         tmp_folder = True
                     self._sync(connection, base_folder)
                 finally:
-                    if self.autojail_config.stop_command:
-                        for command in self.autojail_config.stop_command:
-                            subprocess.run(shlex.split(command))
+                    stop_board(self.autojail_config)
 
             else:
                 self.line(f"Extracting target data from folder {base_folder}")
