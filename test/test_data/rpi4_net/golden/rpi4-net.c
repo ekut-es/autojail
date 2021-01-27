@@ -25,7 +25,7 @@ struct {
 	},
 
 	.platform_info = {
-		.pci_mmconfig_base = 0x30003000,
+		.pci_mmconfig_base = 0x30000000,
 		.pci_mmconfig_end_bus = 0,
 		.pci_is_virtual = 1,
 		.pci_domain = 1,
@@ -67,26 +67,26 @@ struct {
 		.size = 0x40,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_IO|JAILHOUSE_MEM_IO_8|JAILHOUSE_MEM_IO_16|JAILHOUSE_MEM_IO_32|JAILHOUSE_MEM_IO_64,
 	},
-	/*net1 0x30000000-0x30001000*/
+	/*net1 0x30200000-0x30201000*/
 	{
-		.phys_start = 0x30000000,
-		.virt_start = 0x30000000,
+		.phys_start = 0x30200000,
+		.virt_start = 0x30200000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
 	/* empty optional region */
 	{ 0 },
-	/*net1 0x30001000-0x30002000*/
+	/*net1 0x30201000-0x30202000*/
 	{
-		.phys_start = 0x30001000,
-		.virt_start = 0x30001000,
+		.phys_start = 0x30201000,
+		.virt_start = 0x30201000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED|JAILHOUSE_MEM_WRITE,
 	},
-	/*net1 0x30002000-0x30003000*/
+	/*net1 0x30202000-0x30203000*/
 	{
-		.phys_start = 0x30002000,
-		.virt_start = 0x30002000,
+		.phys_start = 0x30202000,
+		.virt_start = 0x30202000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_ROOTSHARED,
 	},
@@ -545,10 +545,10 @@ struct {
 		.size = 0x100,
 		.flags = JAILHOUSE_MEM_IO|JAILHOUSE_MEM_IO_16|JAILHOUSE_MEM_IO_32|JAILHOUSE_MEM_IO_64|JAILHOUSE_MEM_IO_8|JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE,
 	},
-	/*Boot Memory@guest1 0x30103000-0x30203000*/
+	/*Boot Memory@guest1 0x30203000-0x30303000*/
 	{
-		.phys_start = 0x30103000,
-		.virt_start = 0x30103000,
+		.phys_start = 0x30203000,
+		.virt_start = 0x30203000,
 		.size = 0x100000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE,
 	},

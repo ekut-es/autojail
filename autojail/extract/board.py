@@ -5,6 +5,8 @@ from collections import OrderedDict
 from pathlib import Path, PosixPath
 from typing import Any, Dict, List, Tuple
 
+from autojail.model.board import ParentClockInfo
+
 from ..model import GIC, Board, Clock, MemoryRegion
 from ..utils.draw_tree import draw_tree
 from .device_tree import DeviceTreeExtractor
@@ -163,6 +165,24 @@ class BoardInfoExtractor:
 
         return cpuinfo
 
+    def extract_clock_mapping(self) -> Dict[str, ParentClockInfo]:
+        clock_mapping_fname = (
+            self.data_root / "sys" / "kernel" / "debug" / "autojail" / "clocks"
+        )
+        if not clock_mapping_fname.exists():
+            self.logger.warning("Could not find %s", str(clock_mapping_fname))
+            return {}
+
+        with clock_mapping_fname.open() as f:
+            clock_mapping_json = f.read()
+            clock_mapping_data = json.loads(clock_mapping_json)
+
+        clock_mapping_result = {}
+        for k, v in clock_mapping_data.items():
+            clock_mapping_result[k] = [ParentClockInfo(**item) for item in v]
+
+        return clock_mapping_result
+
     def extract_clocks(self):
         clock_tree_fname = (
             self.data_root / "sys" / "kernel" / "debug" / "clk" / "clk_dump"
@@ -264,6 +284,8 @@ class BoardInfoExtractor:
             ),
         )
 
+        clock_mapping = self.extract_clock_mapping()
+
         cpuinfo = self._merge_memory_cpuinfo([cpuinfo_dt, cpuinfo])
         memory_regions = self._merge_memory_regions(
             [memory_regions_dt, memory_regions]
@@ -279,6 +301,7 @@ class BoardInfoExtractor:
             stdout_path=stdout_path,
             clock_tree=clocks,
             devices=devices,
+            clock_mapping=clock_mapping,
         )
 
         return board

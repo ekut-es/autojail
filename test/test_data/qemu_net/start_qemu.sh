@@ -18,20 +18,21 @@ fi
 if [ ! -f qemu/linux-jailhouse-images.tar.bz ]; then
   wget -c ${KERNEL_URL} -O qemu/linux-jailhouse-images.tar.bz
   pushd qemu
-  tar xvJf linux-jailhouse-images.tar.bz
+  tar xJf linux-jailhouse-images.tar.bz
   popd
 fi
 
+rm -f qemu/serial0.log
 
 QEMU=qemu-system-aarch64
 QEMU_EXTRA_ARGS=" \
 			-cpu cortex-a57 \
-			-smp 16 \
+			-smp 4 \
 			-machine virt,gic-version=3,virtualization=on \
 			-device virtio-serial-device \
 			-chardev socket,id=serial0,path=qemu/serial0.sock,server,nowait,logfile=qemu/serial0.log \
             -serial chardev:serial0 \
-            -chardev socket,id=monitor,path=qemu/monitor.sock,server,nowait,logfile=qemu/monitor.log \
+            -chardev socket,id=monitor,path=qemu/monitor.sock,server,nowait \
             -monitor chardev:monitor \
 			-device virtio-blk-device,drive=disk \
 			-device virtio-net-device,netdev=net"
@@ -48,17 +49,17 @@ fi
 ${QEMU_PATH}${QEMU} \
     -nographic \
 	-drive file=qemu/rootfs.img,discard=unmap,if=none,id=disk,format=raw \
-	-m 4G -netdev user,id=net,hostfwd=tcp::2222-:22 \
+	-m 2G -netdev user,id=net,hostfwd=tcp::2222-:22 \
 	-kernel qemu/vmlinuz -append "${KERNEL_CMDLINE}" \
 	-initrd qemu/initrd.img ${QEMU_EXTRA_ARGS} "$@" &
 
-sleep 1
+sleep 5
 
+# Wait until image is started
 tail -f qemu/serial0.log &
 boot_pid=$! 
 grep -m1 "Jailhouse Demo Image (login: root/root)" < <(stdbuf -oL tail -f qemu/serial0.log)
 kill $boot_pid
-
 
 #if [ -f $(which socat) ]; then
 #	socat qemu/serial0.sock - 

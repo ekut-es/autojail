@@ -1,3 +1,4 @@
+from .board import start_board, stop_board
 from .collections import SortedCollection
 from .connection import connect  # noqa
 from .debug import debug
@@ -15,4 +16,6 @@ __all__ = [
     "pprint_tree",
     "get_overlap",
     "which",
+    "start_board",
+    "stop_board",
 ]

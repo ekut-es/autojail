@@ -1,9 +1,11 @@
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
-from typing import List, Optional
+from pathlib import Path
+from typing import List, Optional, Union
 
 import ruamel.yaml
 
@@ -20,8 +22,8 @@ from ..model import (
 )
 from .board_info import TransferBoardInfoPass
 from .cpu import CPUAllocatorPass
-from .device_tree import GenerateDeviceTreePass
 from .devices import LowerDevicesPass
+from .devicetree import GenerateDeviceTreePass
 from .irq import PrepareIRQChipsPass
 from .memory import (
     AllocateMemoryPass,
@@ -38,11 +40,13 @@ class JailhouseConfigurator:
         board: Board,
         autojail_config: AutojailConfig,
         print_after_all: bool = False,
+        context=None,
     ) -> None:
         self.board = board
         self.autojail_config = autojail_config
         self.print_after_all = print_after_all
         self.config: Optional[JailhouseConfig] = None
+        self.context = context
         self.passes = [
             TransferBoardInfoPass(),
             LowerDevicesPass(),
@@ -54,13 +58,14 @@ class JailhouseConfigurator:
             CPUAllocatorPass(),
             ConfigSHMemRegionsPass(),
             InferRootSharedPass(),
-            GenerateDeviceTreePass(),
+            GenerateDeviceTreePass(self.autojail_config),
         ]
 
         self.logger = utils.logging.getLogger()
 
     def build_config(self, output_path: str, skip_check: bool = False) -> int:
         assert self.config is not None
+        assert self.autojail_config is not None
 
         cc = self.autojail_config.cross_compile + "gcc"
         objcopy = self.autojail_config.cross_compile + "objcopy"
@@ -89,9 +94,9 @@ class JailhouseConfigurator:
             cell_name = output_name + ".cell"
 
             if cell.type == "root":
-                syscfg = cell_name
+                syscfg = os.path.join(output_path, cell_name)
             else:
-                cellcfgs.append(cell_name)
+                cellcfgs.append(os.path.join(output_path, cell_name))
 
             c_file = os.path.join(output_path, c_name)
             object_file = os.path.join(output_path, object_name)
@@ -171,7 +176,139 @@ class JailhouseConfigurator:
 
         return ret
 
-    def write_config(self, output_path: str) -> None:
+    def deploy(
+        self,
+        output_path: Union[str, Path],
+        deploy_path: Union[str, Path],
+        target: bool = False,
+    ):
+        "Install to deploy_path/prefix and build a file deploy.tar.gz for installation on the target system"
+        assert self.autojail_config is not None
+        assert self.config is not None
+
+        output_path = Path(output_path)
+        deploy_path = Path(deploy_path)
+
+        jailhouse_config_dir = deploy_path / "etc" / "jailhouse"
+        jailhouse_config_dir.mkdir(exist_ok=True, parents=True)
+
+        for cell in self.config.cells.values():
+            output_name = str(cell.name).lower().replace(" ", "-") + ".cell"
+            cell_file = output_path / output_name
+
+            if not cell_file.exists():
+                self.logger.warning("%s does not exist", str(cell_file))
+            else:
+                shutil.copy(cell_file, jailhouse_config_dir / output_name)
+
+        jailhouse_install_command = [
+            "make",
+            "install",
+            f"ARCH={self.autojail_config.arch.lower()}",
+            f"CROSS_COMPILE={self.autojail_config.cross_compile}",
+            f"KDIR={Path(self.autojail_config.kernel_dir).absolute()}",
+            f"DESTDIR={deploy_path.absolute()}",
+            f"prefix={self.autojail_config.prefix}",
+            "PYTHON_PIP_USABLE=no",
+        ]
+        print(" ".join(jailhouse_install_command))
+        return_val = subprocess.run(
+            jailhouse_install_command, cwd=self.autojail_config.jailhouse_dir
+        )
+        if return_val.returncode:
+            return return_val.returncode
+
+        prefix = Path(self.autojail_config.prefix)
+        assert prefix.is_absolute()
+        jailhouse_path = Path(self.autojail_config.jailhouse_dir)
+        deploy_path_prefix = (
+            deploy_path.absolute() / self.autojail_config.prefix[1:]
+        )
+        pyjailhouse_path = (
+            deploy_path_prefix / "share" / "jailhouse" / "pyjailhouse"
+        )
+        pyjailhouse_path.parent.mkdir(exist_ok=True, parents=True)
+        if pyjailhouse_path.exists():
+            shutil.rmtree(pyjailhouse_path)
+        shutil.copytree(
+            jailhouse_path / "pyjailhouse",
+            pyjailhouse_path,
+            ignore=lambda path, names: ["__pycache__"],
+        )
+
+        jailhouse_tools = [
+            (
+                "jailhouse-cell-linux",
+                lambda x: x.replace(
+                    "libexecdir = None",
+                    f"libexecdir = \"{str(prefix / 'libexec')}\"",
+                ),
+            ),
+            ("jailhouse-cell-stats", None),
+        ]
+
+        for tool, fixup in jailhouse_tools:
+            tool_path = jailhouse_path / "tools" / tool
+            tool_deploy_path = deploy_path_prefix / "sbin" / tool
+            with tool_path.open() as tool_file:
+                with tool_deploy_path.open("w") as tool_deploy_file:
+                    for line in tool_file.readlines():
+                        if fixup:
+                            line = fixup(line)
+
+                        line = re.sub(
+                            r"^sys.path\[0\] = .*",
+                            f'sys.path[0] = "{prefix / "share" / "jailhouse"}"',
+                            line,
+                        )
+                        tool_deploy_file.write(line)
+
+        # deploy dtbs
+        if (
+            Path(self.autojail_config.deploy_dir) / "etc" / "jailhouse" / "dts"
+        ).exists():
+            shutil.rmtree(
+                Path(self.autojail_config.deploy_dir)
+                / "etc"
+                / "jailhouse"
+                / "dts"
+            )
+
+        shutil.copytree(
+            Path(self.autojail_config.build_dir) / "dts",
+            Path(self.autojail_config.deploy_dir) / "etc" / "jailhouse" / "dts",
+            ignore=lambda path, names: [
+                name for name in names if not name.endswith(".dtb")
+            ],
+        )
+
+        # Create deploy bundle
+        deploy_files = os.listdir(deploy_path)
+        deploy_bundle_command = [
+            "tar",
+            "czf",
+            "deploy.tar.gz",
+            "-C",
+            f"{deploy_path}",
+        ] + deploy_files
+
+        self.logger.debug(" ".join(deploy_bundle_command))
+        subprocess.run(deploy_bundle_command, check=True)
+
+        if target:
+            self.logger.info("Deploying to target")
+            utils.start_board(self.autojail_config)
+            connection = utils.connect(self.autojail_config, self.context)
+            connection.put("deploy.tar.gz", remote="/tmp")
+            with connection.cd("/tmp"):
+                connection.run(
+                    "sudo tar --overwrite -C / -hxzf deploy.tar.gz",
+                    in_stream=False,
+                )
+            connection.run("sudo depmod", in_stream=False, warn=True)
+            utils.stop_board(self.autojail_config)
+
+    def write_config(self, output_path: str) -> int:
         """Write configuration data to file"""
         assert self.config is not None
 
@@ -242,7 +379,7 @@ class JailhouseConfigurator:
                 prefix = "JAILHOUSE_CELL"
 
             f.write("\n\t.revision = JAILHOUSE_CONFIG_REVISION,")
-
+            print(cell.flags)
             if cell.flags:
                 cell_flags = " | ".join(
                     list(map(lambda x: f"{prefix}_{x}", cell.flags))
@@ -471,6 +608,8 @@ class JailhouseConfigurator:
                 f.write("\n\t\t},")
             f.write("\n\t},\n")
             f.write("\n};")
+
+        return 0
 
     def prepare(self) -> None:
         if self.config is None:

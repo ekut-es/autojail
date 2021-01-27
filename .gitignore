@@ -17,4 +17,16 @@ initvm/
 .pytest_cache/
 tmp/
 .mypy_cache/
-projects/broken
+*.cpio
+*.img
+*.cell
+deploy/
+qemu/
+*.cmd
+*.mod
+*.mod.c 
+*.o
+*.ko 
+modules.order
+Module.symvers
+

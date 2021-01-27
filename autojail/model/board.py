@@ -25,7 +25,12 @@ class Interrupt(BaseModel):
         return self.num
 
 
-class MemoryRegionData(BaseModel):
+class DTNode(BaseModel):
+    path: Optional[str] = None
+    name: Optional[str] = None
+
+
+class MemoryRegionData(DTNode):
     physical_start_addr: Optional[HexInt] = None
     virtual_start_addr: Optional[HexInt] = None
     size: Optional[ByteSize] = None
@@ -43,9 +48,8 @@ class MemoryRegion(MemoryRegionData):
     pass
 
 
-class DeviceData(BaseModel):
+class DeviceData(DTNode):
     phandle: Optional[int]
-    path: str
     compatible: List[str] = []
     interrupts: List[Interrupt] = []
     aliases: List[str] = []
@@ -189,6 +193,11 @@ class SimpleBus(BaseModel):
     name: str
 
 
+class ParentClockInfo(BaseModel):
+    parent_name: Optional[str]
+    rate: Optional[int]
+
+
 class Board(BaseModel):
     name: str
     board: str
@@ -199,6 +208,7 @@ class Board(BaseModel):
     cpuinfo: Dict[str, CPU]
     interrupt_controllers: List[GIC] = []
     clock_tree: Dict[str, Clock] = {}
+    clock_mapping: Dict[str, List[ParentClockInfo]] = {}
 
     # This dict contains all devices (MemoryMapped Devices are represented by DeviceMemoryRegion, Devices without memory mapping or represnted by Device)
     devices: Dict[str, Union[Device, DeviceMemoryRegion]] = {}

@@ -2,6 +2,7 @@ from typing import Tuple
 
 from ..model import (
     Board,
+    HexInt,
     IntegerList,
     IRQChip,
     JailhouseConfig,
@@ -60,6 +61,24 @@ class TransferBoardInfoPass(BasePass):
                 return
 
             gic = board.interrupt_controllers[0]
+
+            if gic.gicc_base == 0:
+                gic.gicc_base = HexInt.validate(gic.gicd_base + 0x10000)
+                self.logger.critical(
+                    "gicc has not been defined assuming: %d", gic.gicc_base
+                )
+
+            if gic.gich_base == 0:
+                gic.gich_base = HexInt.validate(gic.gicc_base + 0x20000)
+                self.logger.critical(
+                    "gicc has not been defined assuming: %d", gic.gich_base
+                )
+
+            if gic.gicv_base == 0:
+                gic.gicv_base = HexInt.validate(gic.gich_base + 0x10000)
+                self.logger.critical(
+                    "gicb has not been defined assuming: %d", gic.gicv_base
+                )
 
             cell.platform_info.arch = PlatformInfoArm(
                 maintenance_irq=gic.maintenance_irq,

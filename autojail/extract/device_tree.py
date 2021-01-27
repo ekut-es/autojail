@@ -212,6 +212,7 @@ class DeviceTreeExtractor:
     ) -> None:
         count = 0
         name = orig_name
+        region.name = orig_name
         while name in self.memory_regions:
             name = orig_name + "." + str(count)
             count += 1
@@ -221,6 +222,7 @@ class DeviceTreeExtractor:
     def _insert_named_device(self, orig_name: str, device: DeviceData):
         count = 0
         name = orig_name
+        device.name = orig_name
         while name in self.devices:
             name = orig_name + "." + str(count)
             count += 1
@@ -299,7 +301,6 @@ class DeviceTreeExtractor:
             gic_sizes.append(size)
 
         if gic_version <= 2:
-
             try:
                 gicd_base, gicc_base, gich_base, gicv_base = gic_addresses
                 gicd_size, gicc_size, gich_size, gicv_size = gic_sizes
@@ -315,6 +316,14 @@ class DeviceTreeExtractor:
                     "GIC %s does not have virtualization extensions", node.name,
                 )
         else:
+            if len(gic_addresses) < 5:
+                self.logger.critical(
+                    "GIC definition from device tree does not include gicv register"
+                )
+                self.logger.critical(
+                    "The correct address will be estimated during Jailhouse configuration"
+                )
+                gic_addresses = gic_addresses + [0] * (5 - len(gic_addresses))
             (
                 gicd_base,
                 gicr_base,

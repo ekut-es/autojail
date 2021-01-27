@@ -13,6 +13,7 @@ class GenerateCommand(BaseCommand):
     generate
         {--p|print-after-all : print cell config after each transformation step}
         {--skip-check : Do not statically check generated configs}
+        {--target} : Deploy generated configs to target board
     """
 
     def handle(self) -> int:
@@ -41,10 +42,24 @@ class GenerateCommand(BaseCommand):
             board_info,
             self.autojail_config,
             print_after_all=self.option("print-after-all"),
+            context=self.automate_context,
         )
         configurator.read_cell_yml(str(cells_yml_path))
         configurator.prepare()
-        configurator.write_config("./")
-        return configurator.build_config(
-            "./", skip_check=self.option("skip-check")
+        ret = configurator.write_config(self.autojail_config.build_dir)
+        if ret:
+            return ret
+
+        ret = configurator.build_config(
+            self.autojail_config.build_dir, skip_check=self.option("skip-check")
         )
+        if ret:
+            return ret
+
+        ret = configurator.deploy(
+            self.autojail_config.build_dir,
+            self.autojail_config.deploy_dir,
+            target=self.option("target"),
+        )
+
+        return ret

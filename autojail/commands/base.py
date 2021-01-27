@@ -4,10 +4,10 @@ from typing import Optional
 import ruamel.yaml
 from cleo import Command
 
-from autojail.model.board import Board
-from autojail.model.jailhouse import JailhouseConfig
-
-from ..model import AutojailConfig
+from ..model.board import Board
+from ..model.config import AutojailConfig
+from ..model.jailhouse import JailhouseConfig
+from ..model.test import TestConfig
 
 automate_available = False
 try:
@@ -22,6 +22,7 @@ class BaseCommand(Command):
     CONFIG_NAME = "autojail.yml"
     CELLS_CONFIG_NAME = "cells.yml"
     BOARD_CONFIG_NAME = "board.yml"
+    TEST_CONFIG_NAME = "test.yml"
 
     @property
     def cells_config_path(self):
@@ -30,6 +31,10 @@ class BaseCommand(Command):
     @property
     def board_config_path(self):
         return Path.cwd() / self.BOARD_CONFIG_NAME
+
+    @property
+    def test_config_path(self):
+        return Path.cwd() / self.TEST_CONFIG_NAME
 
     def load_jailhouse_config(self) -> Optional[JailhouseConfig]:
         if not self.cells_config_path.exists():
@@ -59,6 +64,19 @@ class BaseCommand(Command):
             board_info = Board(**board_dict)
 
         return board_info
+
+    def load_test_config(self) -> Optional[TestConfig]:
+        if not self.test_config_path.exists():
+            self.line(f"<error>{self.test_config_path} does not exist</error>")
+            self.line(
+                "Please define your test configuration in <comment>test.yml</comment>"
+            )
+        with self.test_config_path.open("r") as config_file:
+            yaml = ruamel.yaml.YAML()
+            config_dict = yaml.load(config_file)
+            config = TestConfig.parse_obj(config_dict)
+
+        return config
 
     def __init__(self) -> None:
         super().__init__()

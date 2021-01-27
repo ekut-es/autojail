@@ -1,10 +1,16 @@
-from typing import Dict, List, Tuple
+import subprocess
+from collections import defaultdict
+from pathlib import Path
+from typing import Dict, List, MutableMapping, Optional, Tuple
 
-import fuzzywuzzy.process
+# import fuzzywuzzy.process
 from dataclasses import dataclass
 from mako.template import Template
 
+from autojail.model.jailhouse import CellConfig
+
 from ..model import (
+    AutojailConfig,
     Board,
     DeviceMemoryRegion,
     GroupedMemoryRegion,
@@ -76,11 +82,10 @@ _dts_template = Template(
 	};
 
 % for clock in clocks:
-	${"fixed_" + str(loop.index)}: ${clock.name}{
+	${clock.label_name}: ${clock.name}{
 		compatible = "fixed-clock";
 		#clock-cells = <0>;
-		clock-frequency = <${clock.frequency}>;
-		clock-output-names = "${",".join(clock.clock_output_names)}";
+		clock-frequency = <${clock.rate}>;
 	};
 % endfor
 
@@ -95,11 +100,17 @@ _dts_template = Template(
       %endfor
                       >;
     % endif
-    % if memory_region.clocks:             
-        clocks = < &fixed>;
+    % if memory_region.name in clock_mapping:             
+        clocks = < 
+        %for clock in clock_mapping[memory_region.name]:
+            %if clock is not None:
+                 &${clock.label_name}
+            %endif
+        %endfor
+                 >;
     %endif
     %if memory_region.clock_names:
-        clock-names = <${" ".join('"' + cn + '"' for cn in memory_region.clock_names)}>
+        clock-names = ${", ".join('"' + cn + '"' for cn in memory_region.clock_names)};
     %endif     
         status = "okay";
 	};
@@ -110,16 +121,16 @@ _dts_template = Template(
     pci@${hex(pci_mmconfig_base)} {
         compatible = "pci-host-ecam-generic";
         device_type = "pci";
-        bus-range = <${format_range(pci_mmconfig_end_bus, address_cells)}>;
         #address-cells = <3>;
         #size-cells = <2>;
         #interrupt-cells = <1>;
         interrupt-map-mask = <0 0 0 7>;
         interrupt-map =  
         %for interrupt in pci_interrupts:
-            <0 0 0 ${interrupt.device + 1} &${interrupt.controller} GIC_SPI ${interrupt.interrupt} IRQ_TYPE_EDGE_RISING>${',' if loop.index < len(pci_interrupts) - 1 else ';'}
+            <0 0 0 ${interrupt.device + 1} &${interrupt.controller} GIC_SPI ${interrupt.interrupt - 32} IRQ_TYPE_EDGE_RISING>${',' if loop.index < len(pci_interrupts) - 1 else ';'}
         %endfor
-        reg = <0x0 ${hex(pci_mmconfig_base)} 0x0 0x100000>;
+        bus-range = <0 ${pci_mmconfig_end_bus}>;
+        reg = <0x0 ${hex(pci_mmconfig_base)} 0x0 ${hex(pci_mmconfig_size)}>;
         ranges =
              <0x02000000 0x00 0x10000000 0x0 0x10000000 0x00 0x10000>;
 	};
@@ -142,12 +153,16 @@ class PCIInterruptData:
 @dataclass
 class DTClock:
     name: str
-    frequency: int
-    clock_output_names: List[str]
+    label_name: str
+    rate: int
 
 
 class GenerateDeviceTreePass(BasePass):
     """Generate a device tree for inmates"""
+
+    def __init__(self, config: AutojailConfig):
+        self.autojail_config = config
+        super(GenerateDeviceTreePass, self).__init__()
 
     def _prepare_device_regions(self, memory_regions):
         worklist = [(name, region) for name, region in memory_regions.items()]
@@ -222,9 +237,28 @@ class GenerateDeviceTreePass(BasePass):
 
         return paths
 
+    def _find_clock_rate(self, clock_name):
+        worklist = list(self.board.clock_tree.values())
+
+        while worklist:
+            current_clock = worklist.pop()
+
+            print(current_clock.name, clock_name)
+            if current_clock.name == clock_name:
+                return current_clock.rate
+
+            worklist.extend(current_clock.derived_clocks.values())
+
+        return -1
+
     def _find_clocks(self, device_regions: Dict[str, DeviceMemoryRegion]):
-        clock_paths_dict = self._build_clock_dict()
-        clocks = []
+
+        # clock_paths_dict = self._build_clock_dict()
+
+        dt_clocks: List[DTClock] = []
+        clock_mapping_dict: MutableMapping[
+            str, List[Optional[DTClock]]
+        ] = defaultdict(list)
         for name, device in device_regions.items():
             if isinstance(device, DeviceMemoryRegion):
                 if not device.clocks:
@@ -232,49 +266,47 @@ class GenerateDeviceTreePass(BasePass):
 
                 self.logger.info("Searching clock input for %s", name)
 
-                # clock_paths_dt = self._extract_clock_paths(device)
-                # clock_path_strings = []
-                # for clock_path in clock_paths_dt:
-                #     clock_path = "/".join(reversed(clock_path))
-                #     clock_path_strings.append(clock_path)
-
-                # print(clock_path_strings)
-
-                matches: List[str] = []
-                for compatible in device.compatible:
-                    fuzzy_result = fuzzywuzzy.process.extract(
-                        compatible, list(clock_paths_dict.keys()), limit=10,
+                clock_input_names: List[str] = []
+                if name in self.board.clock_mapping:
+                    mapped_clocks = self.board.clock_mapping[name]
+                    clock_input_names = [
+                        mapped_clock.parent_name
+                        for mapped_clock in mapped_clocks
+                        if mapped_clock.parent_name
+                    ]
+                else:
+                    self.logger.warning(
+                        "Could not find clock input names for: %s", name
                     )
-                    matches.extend(fuzzy_result)
+                    self.logger.warning("Trying fuzzy match")
+                    # FIXME: TODO
 
-                matches.sort(key=lambda x: x[1])
+                for clock_name in clock_input_names:
+                    clock_rate = self._find_clock_rate(clock_name)
+                    selected_clock = None
+                    if clock_rate > 0:
+                        for dt_clock in dt_clocks:
+                            if dt_clock.rate == clock_rate:
+                                selected_clock = dt_clock
+                                break
+                        if selected_clock is None:
+                            selected_clock = DTClock(
+                                name=f"fixed_{clock_rate}Hz",
+                                rate=clock_rate,
+                                label_name=f"fixed{len(dt_clocks)}",
+                            )
+                            dt_clocks.append(selected_clock)
 
-                if matches:
-                    self.logger.info(
-                        "Selected clock %s for device %s", matches[-1], name
-                    )
+                    assert device.name
+                    clock_mapping_dict[device.name].append(selected_clock)
 
-                    clock = clock_paths_dict[matches[-1][0]]
-                    dt_clock = DTClock(
-                        name=name + "_clock",
-                        frequency=clock.rate,
-                        clock_output_names=[matches[-1][0]],
-                    )
-                    clocks.append(dt_clock)
+        return clock_mapping_dict, dt_clocks
 
-        return clocks
-
-    def __call__(
-        self, board: Board, config: JailhouseConfig
-    ) -> Tuple[Board, JailhouseConfig]:
-
-        self.logger.info("Generating inmate device trees")
-
-        self.board = board
+    def __build_pciconfig(self, config):
 
         pci_mmconfig_base = None
         pci_mmconfig_end_bus = None
-
+        pci_mmconfig_size = None
         for _cell_name, cell in config.cells.items():
             if cell.type == "root":
                 if cell.platform_info is not None:
@@ -282,7 +314,41 @@ class GenerateDeviceTreePass(BasePass):
                     pci_mmconfig_end_bus = (
                         cell.platform_info.pci_mmconfig_end_bus
                     )
+
+                    # FIXME: code duplication with memory allocator
+                    # see hypvervisor/pci.c:850
+                    pci_mmconfig_size = (pci_mmconfig_end_bus + 1) * 256 * 4096
+
                     break
+
+        return pci_mmconfig_base, pci_mmconfig_end_bus, pci_mmconfig_size
+
+    def _build_cpus(self, cell: CellConfig, board: Board):
+        cpus = []
+        assert cell.cpus is not None
+        for cpu in cell.cpus:
+            board_cpus = list(board.cpuinfo.values())
+            cpus.append(board_cpus[cpu])
+        return cpus
+
+    def __call__(
+        self, board: Board, config: JailhouseConfig
+    ) -> Tuple[Board, JailhouseConfig]:
+
+        self.logger.info("Generating inmate device trees")
+
+        # FIXME: use build dir
+        dts_path = Path(self.autojail_config.build_dir) / "dts"
+        dts_path.mkdir(exist_ok=True, parents=True)
+        dts_names = []
+
+        self.board = board
+
+        (
+            pci_mmconfig_base,
+            pci_mmconfig_end_bus,
+            pci_mmconfig_size,
+        ) = self.__build_pciconfig(config)
 
         for _cell_name, cell in config.cells.items():
             if cell.type == "root":
@@ -315,14 +381,10 @@ class GenerateDeviceTreePass(BasePass):
                     )
                     pci_interrupts.append(interrupt_data)
 
-            cpus = []
-            assert cell.cpus is not None
-            for cpu in cell.cpus:
-                board_cpus = list(board.cpuinfo.values())
-                cpus.append(board_cpus[cpu])
-
+            cpus = self._build_cpus(cell, board)
             device_regions = self._prepare_device_regions(cell.memory_regions)
-            clocks = self._find_clocks(device_regions)
+            clock_mapping, clocks = self._find_clocks(device_regions)
+
             timer = self._find_timer()
 
             dts_data = _dts_template.render(
@@ -333,20 +395,48 @@ class GenerateDeviceTreePass(BasePass):
                 gic=board.interrupt_controllers[0],
                 pci_mmconfig_base=pci_mmconfig_base,
                 pci_mmconfig_end_bus=pci_mmconfig_end_bus,
+                pci_mmconfig_size=pci_mmconfig_size,
                 pci_interrupts=pci_interrupts,
                 cpus=cpus,
                 format_range=format_range,
                 timer=timer,
                 clocks=clocks,
+                clock_mapping=clock_mapping,
             )
 
             dts_name = cell.name.lower()
             dts_name = dts_name.replace(" ", "-")
             dts_name += ".dts"
+            dts_names.append(dts_name)
 
-            self.logger.info("Writing %s", dts_name)
-            with open(dts_name, "w") as dts_file:
+            dts_file_path = dts_path / dts_name
+
+            self.logger.info("Writing %s", dts_file_path)
+            with dts_file_path.open("w") as dts_file:
                 dts_file.write(dts_data)
+
+        if dts_names:
+            makefile_path = dts_path / "Makefile"
+            with makefile_path.open("w") as makefile:
+                for name in dts_names:
+                    dtb_name = name.replace(".dts", ".dtb")
+                    makefile.write(f"dtb-y += {dtb_name}\n")
+            build_dts_command = [
+                "make",
+                "-C",
+                f"{Path(self.autojail_config.kernel_dir).absolute()}",
+                f"ARCH={self.autojail_config.arch.lower()}",
+                f"CROSS_COMPILE={self.autojail_config.cross_compile}",
+                f"M={dts_path.absolute()}",
+            ]
+            print(" ".join(build_dts_command))
+
+            if not Path(self.autojail_config.kernel_dir).exists():
+                self.logger.critical(
+                    "Kernel build directory does not exist, skipping building of binary device trees"
+                )
+            else:
+                subprocess.run(build_dts_command, check=True)
 
         return board, config
 

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import BaseModel
 
@@ -81,7 +81,14 @@ class AutojailConfig(BaseModel):
     cross_compile: str
     kernel_dir: str
     jailhouse_dir: str
+    password: Optional[str] = None
     uart: Optional[str] = None
     kernel_cmdline: Optional[str] = None
     jailhouse_git: Optional[str] = None
     kernel_git: Optional[str] = None
+    build_dir: str = "."
+    deploy_dir: str = "./deploy"
+    prefix: str = "/usr"
+    reset_command: List[str] = []
+    start_command: List[str] = []
+    stop_command: List[str] = []

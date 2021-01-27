@@ -5,6 +5,8 @@ stdout_path: serial0
 virtual_address_bits: 48
 memory_regions:
   atf@0:
+    path:
+    name: atf@0
     physical_start_addr: 0x0
     virtual_start_addr: 0x0
     size: 0x80000
@@ -15,6 +17,8 @@ memory_regions:
     allocatable: false
     shared: false
   memory@0:
+    path:
+    name: memory@0
     physical_start_addr: 0x0
     virtual_start_addr: 0x0
     size: 0x3b400000
@@ -25,6 +29,8 @@ memory_regions:
     allocatable: true
     shared: false
   mem_reserve:
+    path:
+    name: mem_reserve
     physical_start_addr: 0x3b400000
     virtual_start_addr: 0x3b400000
     size: 0x4c00000
@@ -36,6 +42,8 @@ memory_regions:
     allocatable: false
     shared: false
   memory@0.0:
+    path:
+    name: memory@0
     physical_start_addr: 0x40000000
     virtual_start_addr: 0x40000000
     size: 0xbc000000
@@ -46,8 +54,9 @@ memory_regions:
     allocatable: true
     shared: false
   pcie@7d500000:
-    phandle: 34
     path: /scb/pcie@7d500000
+    name: pcie@7d500000
+    phandle: 34
     compatible:
     - brcm,bcm7211-pcie
     - brcm,bcm7445-pcie
@@ -78,8 +87,9 @@ memory_regions:
     allocatable: false
     shared: false
   genet@7d580000:
-    phandle: 193
     path: /scb/genet@7d580000
+    name: genet@7d580000
+    phandle: 193
     compatible:
     - brcm,genet-v5
     interrupts:
@@ -109,8 +119,9 @@ memory_regions:
     allocatable: false
     shared: false
   thermal@7d5d2200:
-    phandle: 2
     path: /soc/thermal@7d5d2200
+    name: thermal@7d5d2200
+    phandle: 2
     compatible:
     - brcm,avs-tmon-bcm2838
     interrupts:
@@ -139,8 +150,9 @@ memory_regions:
     allocatable: false
     shared: false
   txp@7e004000:
-    phandle: 54
     path: /soc/txp@7e004000
+    name: txp@7e004000
+    phandle: 54
     compatible:
     - brcm,bcm2835-txp
     interrupts:
@@ -166,8 +178,9 @@ memory_regions:
     allocatable: false
     shared: false
   dma@7e007000:
-    phandle: 10
     path: /soc/dma@7e007000
+    name: dma@7e007000
+    phandle: 10
     compatible:
     - brcm,bcm2835-dma
     interrupts:
@@ -224,8 +237,9 @@ memory_regions:
     allocatable: false
     shared: false
   dma@7e007b00:
-    phandle: 194
     path: /scb/dma@7e007b00
+    name: dma@7e007b00
+    phandle: 194
     compatible:
     - brcm,bcm2838-dma
     interrupts:
@@ -260,8 +274,9 @@ memory_regions:
     allocatable: false
     shared: false
   axiperf:
-    phandle: 47
     path: /soc/axiperf
+    name: axiperf
+    phandle: 47
     compatible:
     - brcm,bcm2835-axiperf
     interrupts: []
@@ -285,8 +300,9 @@ memory_regions:
     allocatable: false
     shared: false
   watchdog@7e100000.0:
-    phandle: 33
     path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 33
     compatible:
     - brcm,bcm2835-pm
     - brcm,bcm2835-pm-wdt
@@ -323,8 +339,9 @@ memory_regions:
     allocatable: false
     shared: false
   usb@7e980000.0:
-    phandle: 167
     path: /soc/usb@7e980000
+    name: usb@7e980000
+    phandle: 167
     compatible:
     - brcm,bcm2708-usb
     interrupts:
@@ -356,8 +373,9 @@ memory_regions:
     allocatable: false
     shared: false
   mailbox@7e00b840:
-    phandle: 196
     path: /scb/mailbox@7e00b840
+    name: mailbox@7e00b840
+    phandle: 196
     compatible:
     - brcm,bcm2838-vchiq
     interrupts:
@@ -383,8 +401,9 @@ memory_regions:
     allocatable: false
     shared: false
   mailbox@7e00b880:
-    phandle: 27
     path: /soc/mailbox@7e00b880
+    name: mailbox@7e00b880
+    phandle: 27
     compatible:
     - brcm,bcm2835-mbox
     interrupts:
@@ -411,8 +430,9 @@ memory_regions:
     allocatable: false
     shared: false
   pcie@7d500000.0:
-    phandle: 34
     path: /scb/pcie@7d500000
+    name: pcie@7d500000
+    phandle: 34
     compatible:
     - brcm,bcm7211-pcie
     - brcm,bcm7445-pcie
@@ -443,8 +463,9 @@ memory_regions:
     allocatable: false
     shared: false
   watchdog@7e100000:
-    phandle: 33
     path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 33
     compatible:
     - brcm,bcm2835-pm
     - brcm,bcm2835-pm-wdt
@@ -481,8 +502,9 @@ memory_regions:
     allocatable: false
     shared: false
   cprman@7e101000:
-    phandle: 3
     path: /soc/cprman@7e101000
+    name: cprman@7e101000
+    phandle: 3
     compatible:
     - brcm,bcm2711-cprman
     interrupts: []
@@ -518,8 +540,9 @@ memory_regions:
     allocatable: false
     shared: false
   rng@7e104000:
-    phandle: 43
     path: /soc/rng@7e104000
+    name: rng@7e104000
+    phandle: 43
     compatible:
     - brcm,bcm2838-rng200
     interrupts:
@@ -546,8 +569,9 @@ memory_regions:
     allocatable: false
     shared: false
   gpio@7e200000:
-    phandle: 15
     path: /soc/gpio@7e200000
+    name: gpio@7e200000
+    phandle: 15
     compatible:
     - brcm,bcm2711-gpio
     - brcm,bcm2835-gpio
@@ -578,8 +602,9 @@ memory_regions:
     allocatable: false
     shared: false
   gpiomem:
-    phandle:
     path: /soc/gpiomem
+    name: gpiomem
+    phandle:
     compatible:
     - brcm,bcm2835-gpiomem
     interrupts: []
@@ -602,8 +627,9 @@ memory_regions:
     allocatable: false
     shared: false
   serial@7e201000:
-    phandle: 36
     path: /soc/serial@7e201000
+    name: serial@7e201000
+    phandle: 36
     compatible:
     - brcm,bcm2835-pl011
     - arm,pl011
@@ -639,8 +665,9 @@ memory_regions:
     allocatable: false
     shared: false
   serial@7e201400:
-    phandle: 170
     path: /soc/serial@7e201400
+    name: serial@7e201400
+    phandle: 170
     compatible:
     - brcm,bcm2835-pl011
     - arm,pl011
@@ -674,8 +701,9 @@ memory_regions:
     allocatable: false
     shared: false
   serial@7e201600:
-    phandle: 171
     path: /soc/serial@7e201600
+    name: serial@7e201600
+    phandle: 171
     compatible:
     - brcm,bcm2835-pl011
     - arm,pl011
@@ -709,8 +737,9 @@ memory_regions:
     allocatable: false
     shared: false
   serial@7e201800:
-    phandle: 172
     path: /soc/serial@7e201800
+    name: serial@7e201800
+    phandle: 172
     compatible:
     - brcm,bcm2835-pl011
     - arm,pl011
@@ -744,8 +773,9 @@ memory_regions:
     allocatable: false
     shared: false
   serial@7e201a00:
-    phandle: 173
     path: /soc/serial@7e201a00
+    name: serial@7e201a00
+    phandle: 173
     compatible:
     - brcm,bcm2835-pl011
     - arm,pl011
@@ -779,8 +809,9 @@ memory_regions:
     allocatable: false
     shared: false
   mmc@7e202000:
-    phandle: 44
     path: /soc/mmc@7e202000
+    name: mmc@7e202000
+    phandle: 44
     compatible:
     - brcm,bcm2835-sdhost
     interrupts:
@@ -810,8 +841,9 @@ memory_regions:
     allocatable: false
     shared: false
   i2s@7e203000:
-    phandle: 38
     path: /soc/i2s@7e203000
+    name: i2s@7e203000
+    phandle: 38
     compatible:
     - brcm,bcm2835-i2s
     interrupts: []
@@ -837,8 +869,9 @@ memory_regions:
     allocatable: false
     shared: false
   spi@7e204000:
-    phandle: 39
     path: /soc/spi@7e204000
+    name: spi@7e204000
+    phandle: 39
     compatible:
     - brcm,bcm2835-spi
     interrupts:
@@ -867,8 +900,9 @@ memory_regions:
     allocatable: false
     shared: false
   spi@7e204600:
-    phandle: 174
     path: /soc/spi@7e204600
+    name: spi@7e204600
+    phandle: 174
     compatible:
     - brcm,bcm2835-spi
     interrupts:
@@ -896,8 +930,9 @@ memory_regions:
     allocatable: false
     shared: false
   spi@7e204800:
-    phandle: 175
     path: /soc/spi@7e204800
+    name: spi@7e204800
+    phandle: 175
     compatible:
     - brcm,bcm2835-spi
     interrupts:
@@ -925,8 +960,9 @@ memory_regions:
     allocatable: false
     shared: false
   spi@7e204a00:
-    phandle: 176
     path: /soc/spi@7e204a00
+    name: spi@7e204a00
+    phandle: 176
     compatible:
     - brcm,bcm2835-spi
     interrupts:
@@ -954,8 +990,9 @@ memory_regions:
     allocatable: false
     shared: false
   spi@7e204c00:
-    phandle: 177
     path: /soc/spi@7e204c00
+    name: spi@7e204c00
+    phandle: 177
     compatible:
     - brcm,bcm2835-spi
     interrupts:
@@ -983,8 +1020,9 @@ memory_regions:
     allocatable: false
     shared: false
   i2c@7e205000:
-    phandle: 40
     path: /soc/i2c@7e205000
+    name: i2c@7e205000
+    phandle: 40
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -1014,8 +1052,9 @@ memory_regions:
     allocatable: false
     shared: false
   i2c@7e205600:
-    phandle: 178
     path: /soc/i2c@7e205600
+    name: i2c@7e205600
+    phandle: 178
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -1044,8 +1083,9 @@ memory_regions:
     allocatable: false
     shared: false
   i2c@7e205800:
-    phandle: 179
     path: /soc/i2c@7e205800
+    name: i2c@7e205800
+    phandle: 179
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -1074,8 +1114,9 @@ memory_regions:
     allocatable: false
     shared: false
   i2c@7e205a00:
-    phandle: 180
     path: /soc/i2c@7e205a00
+    name: i2c@7e205a00
+    phandle: 180
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -1104,8 +1145,9 @@ memory_regions:
     allocatable: false
     shared: false
   i2c@7e205c00:
-    phandle: 181
     path: /soc/i2c@7e205c00
+    name: i2c@7e205c00
+    phandle: 181
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -1134,8 +1176,9 @@ memory_regions:
     allocatable: false
     shared: false
   pixelvalve@7e206000:
-    phandle: 155
     path: /soc/pixelvalve@7e206000
+    name: pixelvalve@7e206000
+    phandle: 155
     compatible:
     - brcm,bcm2835-pixelvalve0
     interrupts:
@@ -1161,8 +1204,9 @@ memory_regions:
     allocatable: false
     shared: false
   pixelvalve@7e207000:
-    phandle: 156
     path: /soc/pixelvalve@7e207000
+    name: pixelvalve@7e207000
+    phandle: 156
     compatible:
     - brcm,bcm2835-pixelvalve1
     interrupts:
@@ -1188,8 +1232,9 @@ memory_regions:
     allocatable: false
     shared: false
   dpi@7e208000:
-    phandle: 157
     path: /soc/dpi@7e208000
+    name: dpi@7e208000
+    phandle: 157
     compatible:
     - brcm,bcm2835-dpi
     interrupts: []
@@ -1218,8 +1263,9 @@ memory_regions:
     allocatable: false
     shared: false
   dsi@7e209000:
-    phandle: 5
     path: /soc/dsi@7e209000
+    name: dsi@7e209000
+    phandle: 5
     compatible:
     - brcm,bcm2835-dsi0
     interrupts:
@@ -1257,8 +1303,9 @@ memory_regions:
     allocatable: false
     shared: false
   pwm@7e20c000:
-    phandle: 160
     path: /soc/pwm@7e20c000
+    name: pwm@7e20c000
+    phandle: 160
     compatible:
     - brcm,bcm2835-pwm
     interrupts: []
@@ -1283,8 +1330,9 @@ memory_regions:
     allocatable: false
     shared: false
   pwm@7e20c800:
-    phandle: 182
     path: /soc/pwm@7e20c800
+    name: pwm@7e20c800
+    phandle: 182
     compatible:
     - brcm,bcm2835-pwm
     interrupts: []
@@ -1309,8 +1357,9 @@ memory_regions:
     allocatable: false
     shared: false
   aux@7e215000:
-    phandle: 18
     path: /soc/aux@7e215000
+    name: aux@7e215000
+    phandle: 18
     compatible:
     - brcm,bcm2835-aux
     interrupts: []
@@ -1336,8 +1385,9 @@ memory_regions:
     allocatable: false
     shared: false
   serial@7e215040:
-    phandle: 37
     path: /soc/serial@7e215040
+    name: serial@7e215040
+    phandle: 37
     compatible:
     - brcm,bcm2835-aux-uart
     interrupts:
@@ -1367,8 +1417,9 @@ memory_regions:
     allocatable: false
     shared: false
   spi@7e215080:
-    phandle: 158
     path: /soc/spi@7e215080
+    name: spi@7e215080
+    phandle: 158
     compatible:
     - brcm,bcm2835-aux-spi
     interrupts:
@@ -1397,8 +1448,9 @@ memory_regions:
     allocatable: false
     shared: false
   spi@7e2150c0:
-    phandle: 159
     path: /soc/spi@7e2150c0
+    name: spi@7e2150c0
+    phandle: 159
     compatible:
     - brcm,bcm2835-aux-spi
     interrupts:
@@ -1427,8 +1479,9 @@ memory_regions:
     allocatable: false
     shared: false
   mmc@7e300000:
-    phandle: 45
     path: /soc/mmc@7e300000
+    name: mmc@7e300000
+    phandle: 45
     compatible:
     - brcm,bcm2835-mmc
     - brcm,bcm2835-sdhci
@@ -1458,8 +1511,9 @@ memory_regions:
     allocatable: false
     shared: false
   mmcnr@7e300000:
-    phandle: 46
     path: /soc/mmcnr@7e300000
+    name: mmcnr@7e300000
+    phandle: 46
     compatible:
     - brcm,bcm2835-mmc
     - brcm,bcm2835-sdhci
@@ -1489,8 +1543,9 @@ memory_regions:
     allocatable: false
     shared: false
   emmc2@7e340000:
-    phandle: 183
     path: /soc/emmc2@7e340000
+    name: emmc2@7e340000
+    phandle: 183
     compatible:
     - brcm,bcm2711-emmc2
     interrupts:
@@ -1519,8 +1574,9 @@ memory_regions:
     allocatable: false
     shared: false
   hvs@7e400000:
-    phandle: 161
     path: /soc/hvs@7e400000
+    name: hvs@7e400000
+    phandle: 161
     compatible:
     - brcm,bcm2835-hvs
     interrupts:
@@ -1546,8 +1602,9 @@ memory_regions:
     allocatable: false
     shared: false
   firmwarekms@7e600000:
-    phandle: 184
     path: /soc/firmwarekms@7e600000
+    name: firmwarekms@7e600000
+    phandle: 184
     compatible:
     - raspberrypi,rpi-firmware-kms
     interrupts:
@@ -1573,8 +1630,9 @@ memory_regions:
     allocatable: false
     shared: false
   smi@7e600000:
-    phandle: 185
     path: /soc/smi@7e600000
+    name: smi@7e600000
+    phandle: 185
     compatible:
     - brcm,bcm2835-smi
     interrupts:
@@ -1602,8 +1660,9 @@ memory_regions:
     allocatable: false
     shared: false
   dsi@7e700000:
-    phandle: 6
     path: /soc/dsi@7e700000
+    name: dsi@7e700000
+    phandle: 6
     compatible:
     - brcm,bcm2835-dsi1
     interrupts:
@@ -1641,8 +1700,9 @@ memory_regions:
     allocatable: false
     shared: false
   csi@7e800000:
-    phandle: 162
     path: /soc/csi@7e800000
+    name: csi@7e800000
+    phandle: 162
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
@@ -1671,8 +1731,9 @@ memory_regions:
     allocatable: false
     shared: false
   csi@7e801000:
-    phandle: 163
     path: /soc/csi@7e801000
+    name: csi@7e801000
+    phandle: 163
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
@@ -1701,8 +1762,9 @@ memory_regions:
     allocatable: false
     shared: false
   csi@7e800000.0:
-    phandle: 162
     path: /soc/csi@7e800000
+    name: csi@7e800000
+    phandle: 162
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
@@ -1731,8 +1793,9 @@ memory_regions:
     allocatable: false
     shared: false
   csi@7e801000.0:
-    phandle: 163
     path: /soc/csi@7e801000
+    name: csi@7e801000
+    phandle: 163
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
@@ -1761,8 +1824,9 @@ memory_regions:
     allocatable: false
     shared: false
   i2c@7e804000:
-    phandle: 41
     path: /soc/i2c@7e804000
+    name: i2c@7e804000
+    phandle: 41
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -1793,8 +1857,9 @@ memory_regions:
     allocatable: false
     shared: false
   i2c@7e805000:
-    phandle: 21
     path: /soc/i2c@7e805000
+    name: i2c@7e805000
+    phandle: 21
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -1823,8 +1888,9 @@ memory_regions:
     allocatable: false
     shared: false
   vec@7e806000:
-    phandle: 164
     path: /soc/vec@7e806000
+    name: vec@7e806000
+    phandle: 164
     compatible:
     - brcm,bcm2835-vec
     interrupts:
@@ -1852,8 +1918,9 @@ memory_regions:
     allocatable: false
     shared: false
   pixelvalve@7e807000:
-    phandle: 165
     path: /soc/pixelvalve@7e807000
+    name: pixelvalve@7e807000
+    phandle: 165
     compatible:
     - brcm,bcm2835-pixelvalve2
     interrupts:
@@ -1879,8 +1946,9 @@ memory_regions:
     allocatable: false
     shared: false
   hdmi@7e902000.0:
-    phandle: 166
     path: /soc/hdmi@7e902000
+    name: hdmi@7e902000
+    phandle: 166
     compatible:
     - brcm,bcm2835-hdmi
     interrupts:
@@ -1915,8 +1983,9 @@ memory_regions:
     allocatable: false
     shared: false
   hdmi@7e902000:
-    phandle: 166
     path: /soc/hdmi@7e902000
+    name: hdmi@7e902000
+    phandle: 166
     compatible:
     - brcm,bcm2835-hdmi
     interrupts:
@@ -1951,8 +2020,9 @@ memory_regions:
     allocatable: false
     shared: false
   usb@7e980000:
-    phandle: 167
     path: /soc/usb@7e980000
+    name: usb@7e980000
+    phandle: 167
     compatible:
     - brcm,bcm2708-usb
     interrupts:
@@ -1984,8 +2054,9 @@ memory_regions:
     allocatable: false
     shared: false
   xhci@7e9c0000:
-    phandle: 195
     path: /scb/xhci@7e9c0000
+    name: xhci@7e9c0000
+    phandle: 195
     compatible:
     - generic-xhci
     interrupts:
@@ -2011,8 +2082,9 @@ memory_regions:
     allocatable: false
     shared: false
   hevc-decoder@7eb00000:
-    phandle:
     path: /scb/hevc-decoder@7eb00000
+    name: hevc-decoder@7eb00000
+    phandle:
     compatible:
     - raspberrypi,rpivid-hevc-decoder
     interrupts: []
@@ -2035,8 +2107,9 @@ memory_regions:
     allocatable: false
     shared: false
   rpivid-local-intc@7eb10000:
-    phandle:
     path: /scb/rpivid-local-intc@7eb10000
+    name: rpivid-local-intc@7eb10000
+    phandle:
     compatible:
     - raspberrypi,rpivid-local-intc
     interrupts:
@@ -2062,8 +2135,9 @@ memory_regions:
     allocatable: false
     shared: false
   h264-decoder@7eb20000:
-    phandle:
     path: /scb/h264-decoder@7eb20000
+    name: h264-decoder@7eb20000
+    phandle:
     compatible:
     - raspberrypi,rpivid-h264-decoder
     interrupts: []
@@ -2086,8 +2160,9 @@ memory_regions:
     allocatable: false
     shared: false
   vp9-decoder@7eb30000:
-    phandle:
     path: /scb/vp9-decoder@7eb30000
+    name: vp9-decoder@7eb30000
+    phandle:
     compatible:
     - raspberrypi,rpivid-vp9-decoder
     interrupts: []
@@ -2110,8 +2185,9 @@ memory_regions:
     allocatable: false
     shared: false
   v3d@7ec04000:
-    phandle: 191
     path: /v3dbus/v3d@7ec04000
+    name: v3d@7ec04000
+    phandle: 191
     compatible:
     - brcm,2711-v3d
     interrupts:
@@ -2139,8 +2215,9 @@ memory_regions:
     allocatable: false
     shared: false
   v3d@7ec04000.0:
-    phandle: 191
     path: /v3dbus/v3d@7ec04000
+    name: v3d@7ec04000
+    phandle: 191
     compatible:
     - brcm,2711-v3d
     interrupts:
@@ -2168,8 +2245,9 @@ memory_regions:
     allocatable: false
     shared: false
   watchdog@7e100000.1:
-    phandle: 33
     path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 33
     compatible:
     - brcm,bcm2835-pm
     - brcm,bcm2835-pm-wdt
@@ -2206,8 +2284,9 @@ memory_regions:
     allocatable: false
     shared: false
   axiperf.0:
-    phandle: 47
     path: /soc/axiperf
+    name: axiperf
+    phandle: 47
     compatible:
     - brcm,bcm2835-axiperf
     interrupts: []
@@ -2231,8 +2310,9 @@ memory_regions:
     allocatable: false
     shared: false
   local_intc@40000000:
-    phandle: 169
     path: /soc/local_intc@40000000
+    name: local_intc@40000000
+    phandle: 169
     compatible:
     - brcm,bcm2836-l1-intc
     interrupts: []
@@ -2244,30 +2324,6 @@ memory_regions:
     physical_start_addr: 0xff800000
     virtual_start_addr: 0xff800000
     size: 0x100
-    flags:
-    - MEM_READ
-    - MEM_WRITE
-    - MEM_IO
-    - MEM_IO_8
-    - MEM_IO_16
-    - MEM_IO_32
-    - MEM_IO_64
-    allocatable: false
-    shared: false
-  pci@0:
-    phandle:
-    path: /pci@0
-    compatible:
-    - pci-host-ecam-generic
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-    physical_start_addr: 0x800000000
-    virtual_start_addr: 0x800000000
-    size: 0x100000
     flags:
     - MEM_READ
     - MEM_WRITE
@@ -2314,11 +2370,742 @@ interrupt_controllers:
   gicv_base: 0xff846000
   gicr_base: 0x0
   interrupts: 26,27,29,30,48,49,50,51,65,66,72,105,106,107,112,113,114,115,116,117,118,119,120,121,122,123,124,125,129,130,132,134,135,136,137,138,140,141,142,144,145,146,149,150,152,153,155,157,158,169,180,189,190,208
-clock_tree: {}
+clock_tree:
+  vec:
+    name: vec
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  hsm:
+    name: hsm
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  sdram:
+    name: sdram
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  pwm:
+    name: pwm
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  pcm:
+    name: pcm
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  aveo:
+    name: aveo
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dft:
+    name: dft
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  gp0:
+    name: gp0
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  gp1:
+    name: gp1
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  gp2:
+    name: gp2
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  slim:
+    name: slim
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  smi:
+    name: smi
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  tec:
+    name: tec
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dpi:
+    name: dpi
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  cam0:
+    name: cam0
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  cam1:
+    name: cam1
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dsi0e:
+    name: dsi0e
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dsi1e:
+    name: dsi1e
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dsi0p:
+    name: dsi0p
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dsi1p:
+    name: dsi1p
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  osc:
+    name: osc
+    enable_count: 4
+    prepare_count: 4
+    protect_count: 1
+    rate: 54000000
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks:
+      pllb:
+        name: pllb
+        enable_count: 0
+        prepare_count: 0
+        protect_count: 0
+        rate: 1500000000
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks:
+          pllb_arm:
+            name: pllb_arm
+            enable_count: 0
+            prepare_count: 0
+            protect_count: 0
+            rate: 1500000000
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: pllb
+        parent: osc
+      v3d:
+        name: v3d
+        enable_count: 0
+        prepare_count: 0
+        protect_count: 0
+        rate: 500000000
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks: {}
+        parent: osc
+      plla:
+        name: plla
+        enable_count: 2
+        prepare_count: 2
+        protect_count: 0
+        rate: 2999999988
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks:
+          plla_core:
+            name: plla_core
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 499999998
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks:
+              isp:
+                name: isp
+                enable_count: 0
+                prepare_count: 0
+                protect_count: 0
+                rate: 499999998
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks: {}
+                parent: plla_core
+              h264:
+                name: h264
+                enable_count: 0
+                prepare_count: 0
+                protect_count: 0
+                rate: 499999998
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks: {}
+                parent: plla_core
+            parent: plla
+          plla_dsi0:
+            name: plla_dsi0
+            enable_count: 0
+            prepare_count: 0
+            protect_count: 0
+            rate: 11718750
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: plla
+          plla_ccp2:
+            name: plla_ccp2
+            enable_count: 0
+            prepare_count: 0
+            protect_count: 0
+            rate: 11718750
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: plla
+        parent: osc
+      pllc:
+        name: pllc
+        enable_count: 5
+        prepare_count: 5
+        protect_count: 1
+        rate: 2999999988
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks:
+          pllc_core0:
+            name: pllc_core0
+            enable_count: 2
+            prepare_count: 2
+            protect_count: 1
+            rate: 499999998
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks:
+              vpu:
+                name: vpu
+                enable_count: 5
+                prepare_count: 5
+                protect_count: 1
+                rate: 500000000
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks:
+                  peri_image:
+                    name: peri_image
+                    enable_count: 0
+                    prepare_count: 0
+                    protect_count: 0
+                    rate: 500000000
+                    accuracy: 0
+                    phase: 0
+                    duty_cycle: 50000
+                    derived_clocks: {}
+                    parent: vpu
+                  aux_uart:
+                    name: aux_uart
+                    enable_count: 1
+                    prepare_count: 1
+                    protect_count: 0
+                    rate: 500000000
+                    accuracy: 0
+                    phase: 0
+                    duty_cycle: 50000
+                    derived_clocks: {}
+                    parent: vpu
+                  aux_spi1:
+                    name: aux_spi1
+                    enable_count: 0
+                    prepare_count: 0
+                    protect_count: 0
+                    rate: 500000000
+                    accuracy: 0
+                    phase: 0
+                    duty_cycle: 50000
+                    derived_clocks: {}
+                    parent: vpu
+                  aux_spi2:
+                    name: aux_spi2
+                    enable_count: 0
+                    prepare_count: 0
+                    protect_count: 0
+                    rate: 500000000
+                    accuracy: 0
+                    phase: 0
+                    duty_cycle: 50000
+                    derived_clocks: {}
+                    parent: vpu
+                  fe804000.i2c_div:
+                    name: fe804000.i2c_div
+                    enable_count: 1
+                    prepare_count: 1
+                    protect_count: 1
+                    rate: 100000
+                    accuracy: 0
+                    phase: 0
+                    duty_cycle: 50000
+                    derived_clocks: {}
+                    parent: vpu
+                parent: pllc_core0
+            parent: pllc
+          pllc_core1:
+            name: pllc_core1
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 11718750
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: pllc
+          pllc_core2:
+            name: pllc_core2
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 11718750
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: pllc
+          pllc_per:
+            name: pllc_per
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 599999998
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks:
+              emmc:
+                name: emmc
+                enable_count: 0
+                prepare_count: 0
+                protect_count: 0
+                rate: 199999999
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks: {}
+                parent: pllc_per
+            parent: pllc
+        parent: osc
+      plld:
+        name: plld
+        enable_count: 5
+        prepare_count: 5
+        protect_count: 0
+        rate: 2999999988
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks:
+          plld_core:
+            name: plld_core
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 599999998
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: plld
+          plld_per:
+            name: plld_per
+            enable_count: 2
+            prepare_count: 2
+            protect_count: 0
+            rate: 749999997
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks:
+              uart:
+                name: uart
+                enable_count: 0
+                prepare_count: 0
+                protect_count: 0
+                rate: 47999999
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks: {}
+                parent: plld_per
+              emmc2:
+                name: emmc2
+                enable_count: 1
+                prepare_count: 1
+                protect_count: 0
+                rate: 99999999
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks: {}
+                parent: plld_per
+            parent: plld
+          plld_dsi0:
+            name: plld_dsi0
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 11718750
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: plld
+          plld_dsi1:
+            name: plld_dsi1
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 11718750
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: plld
+        parent: osc
+      timer:
+        name: timer
+        enable_count: 0
+        prepare_count: 0
+        protect_count: 0
+        rate: 1000000
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks: {}
+        parent: osc
+      otp:
+        name: otp
+        enable_count: 0
+        prepare_count: 0
+        protect_count: 0
+        rate: 13500000
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks: {}
+        parent: osc
+      tsens:
+        name: tsens
+        enable_count: 1
+        prepare_count: 1
+        protect_count: 0
+        rate: 3375000
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks: {}
+        parent: osc
+    parent:
+  otg:
+    name: otg
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 480000000
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+clock_mapping:
+  cprman@7e101000:
+  - parent_name: osc
+    rate:
+  - parent_name: dsi0_byte
+    rate:
+  - parent_name: dsi0_ddr2
+    rate:
+  - parent_name: dsi0_ddr
+    rate:
+  - parent_name: dsi1_byte
+    rate:
+  - parent_name: dsi1_ddr2
+    rate:
+  - parent_name: dsi1_ddr
+    rate:
+  serial@7e201000:
+  - parent_name: uart
+    rate:
+  - parent_name: vpu
+    rate:
+  mmc@7e202000:
+  - parent_name: vpu
+    rate:
+  i2s@7e203000:
+  - parent_name: pcm
+    rate:
+  spi@7e204000:
+  - parent_name: vpu
+    rate:
+  i2c@7e205000:
+  - parent_name: vpu
+    rate:
+  dpi@7e208000:
+  - parent_name: vpu
+    rate:
+  - parent_name: dpi
+    rate:
+  dsi@7e209000:
+  - parent_name: plla_dsi0
+    rate:
+  - parent_name: dsi0e
+    rate:
+  - parent_name: dsi0p
+    rate:
+  aux@7e215000:
+  - parent_name: vpu
+    rate:
+  serial@7e215040:
+  - parent_name: aux_uart
+    rate:
+  spi@7e215080:
+  - parent_name: aux_spi1
+    rate:
+  spi@7e2150c0:
+  - parent_name: aux_spi2
+    rate:
+  pwm@7e20c000:
+  - parent_name: pwm
+    rate:
+  dsi@7e700000:
+  - parent_name: plld_dsi1
+    rate:
+  - parent_name: dsi1e
+    rate:
+  - parent_name: dsi1p
+    rate:
+  csi@7e800000:
+  - parent_name: cam0
+    rate:
+  csi@7e801000:
+  - parent_name: cam1
+    rate:
+  i2c@7e804000:
+  - parent_name: vpu
+    rate:
+  i2c@7e805000:
+  - parent_name: vpu
+    rate:
+  vec@7e806000:
+  - parent_name: vec
+    rate:
+  usb@7e980000:
+  - parent_name: otg
+    rate:
+  thermal@7d5d2200:
+  - parent_name: tsens
+    rate:
+  serial@7e201400:
+  - parent_name: uart
+    rate:
+  - parent_name: vpu
+    rate:
+  serial@7e201600:
+  - parent_name: uart
+    rate:
+  - parent_name: vpu
+    rate:
+  serial@7e201800:
+  - parent_name: uart
+    rate:
+  - parent_name: vpu
+    rate:
+  serial@7e201a00:
+  - parent_name: uart
+    rate:
+  - parent_name: vpu
+    rate:
+  spi@7e204600:
+  - parent_name: vpu
+    rate:
+  spi@7e204800:
+  - parent_name: vpu
+    rate:
+  spi@7e204a00:
+  - parent_name: vpu
+    rate:
+  spi@7e204c00:
+  - parent_name: vpu
+    rate:
+  i2c@7e205600:
+  - parent_name: vpu
+    rate:
+  i2c@7e205800:
+  - parent_name: vpu
+    rate:
+  i2c@7e205a00:
+  - parent_name: vpu
+    rate:
+  i2c@7e205c00:
+  - parent_name: vpu
+    rate:
+  pwm@7e20c800:
+  - parent_name: pwm
+    rate:
+  emmc2@7e340000:
+  - parent_name: emmc2
+    rate:
+  mmc@7e300000:
+  - parent_name: emmc
+    rate:
+  mmcnr@7e300000:
+  - parent_name: emmc
+    rate:
+  smi@7e600000:
+  - parent_name: smi
+    rate:
 devices:
   /:
-    phandle:
     path: ///
+    name: /
+    phandle:
     compatible:
     - raspberrypi,4-model-b
     - brcm,bcm2711
@@ -2329,8 +3116,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   fixedregulator_3v3:
-    phandle: 198
     path: //fixedregulator_3v3
+    name: fixedregulator_3v3
+    phandle: 198
     compatible:
     - regulator-fixed
     interrupts: []
@@ -2340,8 +3128,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   timer:
-    phandle:
     path: //timer
+    name: timer
+    phandle:
     compatible:
     - arm,armv7-timer
     interrupts:
@@ -2363,8 +3152,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   phy:
-    phandle: 23
     path: //phy
+    name: phy
+    phandle: 23
     compatible:
     - usb-nop-xceiv
     interrupts: []
@@ -2374,8 +3164,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   scb:
-    phandle: 192
     path: //scb
+    name: scb
+    phandle: 192
     compatible:
     - simple-bus
     interrupts: []
@@ -2385,8 +3176,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   mailbox@7e00b840:
-    phandle: 196
     path: /scb/mailbox@7e00b840
+    name: mailbox@7e00b840
+    phandle: 196
     compatible:
     - brcm,bcm2838-vchiq
     interrupts:
@@ -2399,8 +3191,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   hevc-decoder@7eb00000:
-    phandle:
     path: /scb/hevc-decoder@7eb00000
+    name: hevc-decoder@7eb00000
+    phandle:
     compatible:
     - raspberrypi,rpivid-hevc-decoder
     interrupts: []
@@ -2410,8 +3203,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   dma@7e007b00:
-    phandle: 194
     path: /scb/dma@7e007b00
+    name: dma@7e007b00
+    phandle: 194
     compatible:
     - brcm,bcm2838-dma
     interrupts:
@@ -2433,8 +3227,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   rpivid-local-intc@7eb10000:
-    phandle:
     path: /scb/rpivid-local-intc@7eb10000
+    name: rpivid-local-intc@7eb10000
+    phandle:
     compatible:
     - raspberrypi,rpivid-local-intc
     interrupts:
@@ -2447,8 +3242,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   vp9-decoder@7eb30000:
-    phandle:
     path: /scb/vp9-decoder@7eb30000
+    name: vp9-decoder@7eb30000
+    phandle:
     compatible:
     - raspberrypi,rpivid-vp9-decoder
     interrupts: []
@@ -2458,8 +3254,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   xhci@7e9c0000:
-    phandle: 195
     path: /scb/xhci@7e9c0000
+    name: xhci@7e9c0000
+    phandle: 195
     compatible:
     - generic-xhci
     interrupts:
@@ -2472,8 +3269,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pcie@7d500000:
-    phandle: 34
     path: /scb/pcie@7d500000
+    name: pcie@7d500000
+    phandle: 34
     compatible:
     - brcm,bcm7211-pcie
     - brcm,bcm7445-pcie
@@ -2491,8 +3289,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pcie@7d500000.0:
-    phandle: 34
     path: /scb/pcie@7d500000
+    name: pcie@7d500000
+    phandle: 34
     compatible:
     - brcm,bcm7211-pcie
     - brcm,bcm7445-pcie
@@ -2510,8 +3309,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   genet@7d580000:
-    phandle: 193
     path: /scb/genet@7d580000
+    name: genet@7d580000
+    phandle: 193
     compatible:
     - brcm,genet-v5
     interrupts:
@@ -2528,8 +3328,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   mdio@e14:
-    phandle:
     path: /scb/genet@7d580000/mdio@e14
+    name: mdio@e14
+    phandle:
     compatible:
     - brcm,genet-mdio-v5
     interrupts: []
@@ -2539,8 +3340,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   genet-phy@0:
-    phandle: 35
     path: /scb/genet@7d580000/mdio@e14/genet-phy@0
+    name: genet-phy@0
+    phandle: 35
     compatible:
     - ethernet-phy-ieee802.3-c22
     interrupts: []
@@ -2550,8 +3352,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   h264-decoder@7eb20000:
-    phandle:
     path: /scb/h264-decoder@7eb20000
+    name: h264-decoder@7eb20000
+    phandle:
     compatible:
     - raspberrypi,rpivid-h264-decoder
     interrupts: []
@@ -2561,8 +3364,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   framebuffer:
-    phandle:
     path: //framebuffer
+    name: framebuffer
+    phandle:
     compatible:
     - simple-framebuffer
     interrupts: []
@@ -2572,8 +3376,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   soc:
-    phandle: 53
     path: //soc
+    name: soc
+    phandle: 53
     compatible:
     - simple-bus
     interrupts: []
@@ -2583,8 +3388,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   dsi@7e700000:
-    phandle: 6
     path: /soc/dsi@7e700000
+    name: dsi@7e700000
+    phandle: 6
     compatible:
     - brcm,bcm2835-dsi1
     interrupts:
@@ -2609,8 +3415,9 @@ devices:
     - dsi1_ddr
     clock_cells: 1
   mmc@7e300000:
-    phandle: 45
     path: /soc/mmc@7e300000
+    name: mmc@7e300000
+    phandle: 45
     compatible:
     - brcm,bcm2835-mmc
     - brcm,bcm2835-sdhci
@@ -2627,8 +3434,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   i2c@7e205600:
-    phandle: 178
     path: /soc/i2c@7e205600
+    name: i2c@7e205600
+    phandle: 178
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -2644,8 +3452,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   i2s@7e203000:
-    phandle: 38
     path: /soc/i2s@7e203000
+    name: i2s@7e203000
+    phandle: 38
     compatible:
     - brcm,bcm2835-i2s
     interrupts: []
@@ -2658,8 +3467,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pwm@7e20c000:
-    phandle: 160
     path: /soc/pwm@7e20c000
+    name: pwm@7e20c000
+    phandle: 160
     compatible:
     - brcm,bcm2835-pwm
     interrupts: []
@@ -2671,8 +3481,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   emmc2@7e340000:
-    phandle: 183
     path: /soc/emmc2@7e340000
+    name: emmc2@7e340000
+    phandle: 183
     compatible:
     - brcm,bcm2711-emmc2
     interrupts:
@@ -2688,8 +3499,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   serial@7e201400:
-    phandle: 170
     path: /soc/serial@7e201400
+    name: serial@7e201400
+    phandle: 170
     compatible:
     - brcm,bcm2835-pl011
     - arm,pl011
@@ -2710,8 +3522,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pwm@7e20c800:
-    phandle: 182
     path: /soc/pwm@7e20c800
+    name: pwm@7e20c800
+    phandle: 182
     compatible:
     - brcm,bcm2835-pwm
     interrupts: []
@@ -2723,8 +3536,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   mmc@7e202000:
-    phandle: 44
     path: /soc/mmc@7e202000
+    name: mmc@7e202000
+    phandle: 44
     compatible:
     - brcm,bcm2835-sdhost
     interrupts:
@@ -2741,8 +3555,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   i2c@7e205800:
-    phandle: 179
     path: /soc/i2c@7e205800
+    name: i2c@7e205800
+    phandle: 179
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -2758,8 +3573,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   spi@7e204600:
-    phandle: 174
     path: /soc/spi@7e204600
+    name: spi@7e204600
+    phandle: 174
     compatible:
     - brcm,bcm2835-spi
     interrupts:
@@ -2774,8 +3590,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   serial@7e201000:
-    phandle: 36
     path: /soc/serial@7e201000
+    name: serial@7e201000
+    phandle: 36
     compatible:
     - brcm,bcm2835-pl011
     - arm,pl011
@@ -2798,8 +3615,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   spi@7e204000:
-    phandle: 39
     path: /soc/spi@7e204000
+    name: spi@7e204000
+    phandle: 39
     compatible:
     - brcm,bcm2835-spi
     interrupts:
@@ -2815,8 +3633,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   spidev@1:
-    phandle: 154
     path: /soc/spi@7e204000/spidev@1
+    name: spidev@1
+    phandle: 154
     compatible:
     - spidev
     interrupts: []
@@ -2826,8 +3645,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   spidev@0:
-    phandle: 153
     path: /soc/spi@7e204000/spidev@0
+    name: spidev@0
+    phandle: 153
     compatible:
     - spidev
     interrupts: []
@@ -2837,8 +3657,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   firmware:
-    phandle: 7
     path: /soc/firmware
+    name: firmware
+    phandle: 7
     compatible:
     - raspberrypi,bcm2835-firmware
     - simple-bus
@@ -2849,8 +3670,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   gpio:
-    phandle: 50
     path: /soc/firmware/gpio
+    name: gpio
+    phandle: 50
     compatible:
     - raspberrypi,firmware-gpio
     interrupts: []
@@ -2860,8 +3682,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   dma@7e007000:
-    phandle: 10
     path: /soc/dma@7e007000
+    name: dma@7e007000
+    phandle: 10
     compatible:
     - brcm,bcm2835-dma
     interrupts:
@@ -2905,8 +3728,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pixelvalve@7e807000:
-    phandle: 165
     path: /soc/pixelvalve@7e807000
+    name: pixelvalve@7e807000
+    phandle: 165
     compatible:
     - brcm,bcm2835-pixelvalve2
     interrupts:
@@ -2919,8 +3743,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   spi@7e2150c0:
-    phandle: 159
     path: /soc/spi@7e2150c0
+    name: spi@7e2150c0
+    phandle: 159
     compatible:
     - brcm,bcm2835-aux-spi
     interrupts:
@@ -2936,8 +3761,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   audio:
-    phandle: 42
     path: /soc/audio
+    name: audio
+    phandle: 42
     compatible:
     - brcm,bcm2835-audio
     interrupts: []
@@ -2947,8 +3773,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   dpi@7e208000:
-    phandle: 157
     path: /soc/dpi@7e208000
+    name: dpi@7e208000
+    phandle: 157
     compatible:
     - brcm,bcm2835-dpi
     interrupts: []
@@ -2964,8 +3791,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   virtgpio:
-    phandle: 189
     path: /soc/virtgpio
+    name: virtgpio
+    phandle: 189
     compatible:
     - brcm,bcm2835-virtgpio
     interrupts: []
@@ -2975,8 +3803,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   i2c@7e805000:
-    phandle: 21
     path: /soc/i2c@7e805000
+    name: i2c@7e805000
+    phandle: 21
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -2992,8 +3821,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   firmwarekms@7e600000:
-    phandle: 184
     path: /soc/firmwarekms@7e600000
+    name: firmwarekms@7e600000
+    phandle: 184
     compatible:
     - raspberrypi,rpi-firmware-kms
     interrupts:
@@ -3006,8 +3836,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   spi@7e204800:
-    phandle: 175
     path: /soc/spi@7e204800
+    name: spi@7e204800
+    phandle: 175
     compatible:
     - brcm,bcm2835-spi
     interrupts:
@@ -3022,8 +3853,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   rng@7e104000:
-    phandle: 43
     path: /soc/rng@7e104000
+    name: rng@7e104000
+    phandle: 43
     compatible:
     - brcm,bcm2838-rng200
     interrupts:
@@ -3037,8 +3869,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   i2c@7e205c00:
-    phandle: 181
     path: /soc/i2c@7e205c00
+    name: i2c@7e205c00
+    phandle: 181
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -3054,8 +3887,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   i2c@7e804000:
-    phandle: 41
     path: /soc/i2c@7e804000
+    name: i2c@7e804000
+    phandle: 41
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -3073,8 +3907,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   i2c@7e205a00:
-    phandle: 180
     path: /soc/i2c@7e205a00
+    name: i2c@7e205a00
+    phandle: 180
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -3090,8 +3925,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   mailbox@7e00b880:
-    phandle: 27
     path: /soc/mailbox@7e00b880
+    name: mailbox@7e00b880
+    phandle: 27
     compatible:
     - brcm,bcm2835-mbox
     interrupts:
@@ -3105,8 +3941,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   smi@7e600000:
-    phandle: 185
     path: /soc/smi@7e600000
+    name: smi@7e600000
+    phandle: 185
     compatible:
     - brcm,bcm2835-smi
     interrupts:
@@ -3121,8 +3958,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   vec@7e806000:
-    phandle: 164
     path: /soc/vec@7e806000
+    name: vec@7e806000
+    phandle: 164
     compatible:
     - brcm,bcm2835-vec
     interrupts:
@@ -3137,8 +3975,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   aux@7e215000:
-    phandle: 18
     path: /soc/aux@7e215000
+    name: aux@7e215000
+    phandle: 18
     compatible:
     - brcm,bcm2835-aux
     interrupts: []
@@ -3151,8 +3990,9 @@ devices:
     clock_output_names: []
     clock_cells: 1
   axiperf:
-    phandle: 47
     path: /soc/axiperf
+    name: axiperf
+    phandle: 47
     compatible:
     - brcm,bcm2835-axiperf
     interrupts: []
@@ -3163,8 +4003,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   axiperf.0:
-    phandle: 47
     path: /soc/axiperf
+    name: axiperf
+    phandle: 47
     compatible:
     - brcm,bcm2835-axiperf
     interrupts: []
@@ -3175,8 +4016,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   spi@7e204c00:
-    phandle: 177
     path: /soc/spi@7e204c00
+    name: spi@7e204c00
+    phandle: 177
     compatible:
     - brcm,bcm2835-spi
     interrupts:
@@ -3191,8 +4033,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   dsi@7e209000:
-    phandle: 5
     path: /soc/dsi@7e209000
+    name: dsi@7e209000
+    phandle: 5
     compatible:
     - brcm,bcm2835-dsi0
     interrupts:
@@ -3217,8 +4060,9 @@ devices:
     - dsi0_ddr
     clock_cells: 1
   serial@7e215040:
-    phandle: 37
     path: /soc/serial@7e215040
+    name: serial@7e215040
+    phandle: 37
     compatible:
     - brcm,bcm2835-aux-uart
     interrupts:
@@ -3235,8 +4079,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   serial@7e201a00:
-    phandle: 173
     path: /soc/serial@7e201a00
+    name: serial@7e201a00
+    phandle: 173
     compatible:
     - brcm,bcm2835-pl011
     - arm,pl011
@@ -3257,8 +4102,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   gpu:
-    phandle: 168
     path: /soc/gpu
+    name: gpu
+    phandle: 168
     compatible:
     - brcm,bcm2835-vc4
     interrupts: []
@@ -3268,8 +4114,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   csi@7e801000:
-    phandle: 163
     path: /soc/csi@7e801000
+    name: csi@7e801000
+    phandle: 163
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
@@ -3285,8 +4132,9 @@ devices:
     clock_output_names: []
     clock_cells: 1
   csi@7e801000.0:
-    phandle: 163
     path: /soc/csi@7e801000
+    name: csi@7e801000
+    phandle: 163
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
@@ -3302,8 +4150,9 @@ devices:
     clock_output_names: []
     clock_cells: 1
   serial@7e201800:
-    phandle: 172
     path: /soc/serial@7e201800
+    name: serial@7e201800
+    phandle: 172
     compatible:
     - brcm,bcm2835-pl011
     - arm,pl011
@@ -3324,8 +4173,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   gpio@7e200000:
-    phandle: 15
     path: /soc/gpio@7e200000
+    name: gpio@7e200000
+    phandle: 15
     compatible:
     - brcm,bcm2711-gpio
     - brcm,bcm2835-gpio
@@ -3343,8 +4193,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   csi@7e800000:
-    phandle: 162
     path: /soc/csi@7e800000
+    name: csi@7e800000
+    phandle: 162
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
@@ -3360,8 +4211,9 @@ devices:
     clock_output_names: []
     clock_cells: 1
   csi@7e800000.0:
-    phandle: 162
     path: /soc/csi@7e800000
+    name: csi@7e800000
+    phandle: 162
     compatible:
     - brcm,bcm2835-unicam
     interrupts:
@@ -3377,8 +4229,9 @@ devices:
     clock_output_names: []
     clock_cells: 1
   fb:
-    phandle: 186
     path: /soc/fb
+    name: fb
+    phandle: 186
     compatible:
     - brcm,bcm2708-fb
     interrupts: []
@@ -3388,8 +4241,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   vcsm:
-    phandle: 187
     path: /soc/vcsm
+    name: vcsm
+    phandle: 187
     compatible:
     - raspberrypi,bcm2835-vcsm
     interrupts: []
@@ -3399,8 +4253,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   watchdog@7e100000:
-    phandle: 33
     path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 33
     compatible:
     - brcm,bcm2835-pm
     - brcm,bcm2835-pm-wdt
@@ -3424,8 +4279,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   watchdog@7e100000.0:
-    phandle: 33
     path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 33
     compatible:
     - brcm,bcm2835-pm
     - brcm,bcm2835-pm-wdt
@@ -3449,8 +4305,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   watchdog@7e100000.1:
-    phandle: 33
     path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 33
     compatible:
     - brcm,bcm2835-pm
     - brcm,bcm2835-pm-wdt
@@ -3474,8 +4331,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   thermal@7d5d2200:
-    phandle: 2
     path: /soc/thermal@7d5d2200
+    name: thermal@7d5d2200
+    phandle: 2
     compatible:
     - brcm,avs-tmon-bcm2838
     interrupts:
@@ -3491,8 +4349,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   spi@7e204a00:
-    phandle: 176
     path: /soc/spi@7e204a00
+    name: spi@7e204a00
+    phandle: 176
     compatible:
     - brcm,bcm2835-spi
     interrupts:
@@ -3507,8 +4366,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   spi@7e215080:
-    phandle: 158
     path: /soc/spi@7e215080
+    name: spi@7e215080
+    phandle: 158
     compatible:
     - brcm,bcm2835-aux-spi
     interrupts:
@@ -3524,8 +4384,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pixelvalve@7e206000:
-    phandle: 155
     path: /soc/pixelvalve@7e206000
+    name: pixelvalve@7e206000
+    phandle: 155
     compatible:
     - brcm,bcm2835-pixelvalve0
     interrupts:
@@ -3538,8 +4399,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   power:
-    phandle: 17
     path: /soc/power
+    name: power
+    phandle: 17
     compatible:
     - raspberrypi,bcm2835-power
     interrupts: []
@@ -3549,8 +4411,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   hdmi@7e902000:
-    phandle: 166
     path: /soc/hdmi@7e902000
+    name: hdmi@7e902000
+    phandle: 166
     compatible:
     - brcm,bcm2835-hdmi
     interrupts:
@@ -3572,8 +4435,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   hdmi@7e902000.0:
-    phandle: 166
     path: /soc/hdmi@7e902000
+    name: hdmi@7e902000
+    phandle: 166
     compatible:
     - brcm,bcm2835-hdmi
     interrupts:
@@ -3595,8 +4459,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   serial@7e201600:
-    phandle: 171
     path: /soc/serial@7e201600
+    name: serial@7e201600
+    phandle: 171
     compatible:
     - brcm,bcm2835-pl011
     - arm,pl011
@@ -3617,8 +4482,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   pixelvalve@7e207000:
-    phandle: 156
     path: /soc/pixelvalve@7e207000
+    name: pixelvalve@7e207000
+    phandle: 156
     compatible:
     - brcm,bcm2835-pixelvalve1
     interrupts:
@@ -3631,8 +4497,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   usb@7e980000:
-    phandle: 167
     path: /soc/usb@7e980000
+    name: usb@7e980000
+    phandle: 167
     compatible:
     - brcm,bcm2708-usb
     interrupts:
@@ -3651,8 +4518,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   usb@7e980000.0:
-    phandle: 167
     path: /soc/usb@7e980000
+    name: usb@7e980000
+    phandle: 167
     compatible:
     - brcm,bcm2708-usb
     interrupts:
@@ -3671,8 +4539,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   mmcnr@7e300000:
-    phandle: 46
     path: /soc/mmcnr@7e300000
+    name: mmcnr@7e300000
+    phandle: 46
     compatible:
     - brcm,bcm2835-mmc
     - brcm,bcm2835-sdhci
@@ -3689,8 +4558,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   i2c@7e205000:
-    phandle: 40
     path: /soc/i2c@7e205000
+    name: i2c@7e205000
+    phandle: 40
     compatible:
     - brcm,bcm2835-i2c
     interrupts:
@@ -3707,8 +4577,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   hvs@7e400000:
-    phandle: 161
     path: /soc/hvs@7e400000
+    name: hvs@7e400000
+    phandle: 161
     compatible:
     - brcm,bcm2835-hvs
     interrupts:
@@ -3721,8 +4592,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   txp@7e004000:
-    phandle: 54
     path: /soc/txp@7e004000
+    name: txp@7e004000
+    phandle: 54
     compatible:
     - brcm,bcm2835-txp
     interrupts:
@@ -3735,8 +4607,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   local_intc@40000000:
-    phandle: 169
     path: /soc/local_intc@40000000
+    name: local_intc@40000000
+    phandle: 169
     compatible:
     - brcm,bcm2836-l1-intc
     interrupts: []
@@ -3746,8 +4619,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   cprman@7e101000:
-    phandle: 3
     path: /soc/cprman@7e101000
+    name: cprman@7e101000
+    phandle: 3
     compatible:
     - brcm,bcm2711-cprman
     interrupts: []
@@ -3770,8 +4644,9 @@ devices:
     clock_output_names: []
     clock_cells: 1
   gpiomem:
-    phandle:
     path: /soc/gpiomem
+    name: gpiomem
+    phandle:
     compatible:
     - brcm,bcm2835-gpiomem
     interrupts: []
@@ -3781,8 +4656,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   arm-pmu:
-    phandle:
     path: //arm-pmu
+    name: arm-pmu
+    phandle:
     compatible:
     - arm,cortex-a72-pmu
     interrupts:
@@ -3804,8 +4680,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   clocks:
-    phandle:
     path: //clocks
+    name: clocks
+    phandle:
     compatible:
     - simple-bus
     interrupts: []
@@ -3815,8 +4692,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   clock@4:
-    phandle: 22
     path: /clocks/clock@4
+    name: clock@4
+    phandle: 22
     compatible:
     - fixed-clock
     interrupts: []
@@ -3827,8 +4705,9 @@ devices:
     - otg
     clock_cells: 0
   clock@3:
-    phandle: 4
     path: /clocks/clock@3
+    name: clock@3
+    phandle: 4
     compatible:
     - fixed-clock
     interrupts: []
@@ -3839,8 +4718,9 @@ devices:
     - osc
     clock_cells: 0
   leds:
-    phandle: 197
     path: //leds
+    name: leds
+    phandle: 197
     compatible:
     - gpio-leds
     interrupts: []
@@ -3850,8 +4730,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   psci:
-    phandle:
     path: //psci
+    name: psci
+    phandle:
     compatible:
     - arm,psci-1.0
     - arm,psci-0.2
@@ -3863,8 +4744,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   sd_io_1v8_reg:
-    phandle: 24
     path: //sd_io_1v8_reg
+    name: sd_io_1v8_reg
+    phandle: 24
     compatible:
     - regulator-gpio
     interrupts: []
@@ -3874,8 +4756,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   v3dbus:
-    phandle:
     path: //v3dbus
+    name: v3dbus
+    phandle:
     compatible:
     - simple-bus
     interrupts: []
@@ -3885,8 +4768,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   v3d@7ec04000:
-    phandle: 191
     path: /v3dbus/v3d@7ec04000
+    name: v3d@7ec04000
+    phandle: 191
     compatible:
     - brcm,2711-v3d
     interrupts:
@@ -3901,8 +4785,9 @@ devices:
     clock_output_names: []
     clock_cells: 0
   v3d@7ec04000.0:
-    phandle: 191
     path: /v3dbus/v3d@7ec04000
+    name: v3d@7ec04000
+    phandle: 191
     compatible:
     - brcm,2711-v3d
     interrupts:
@@ -3917,21 +4802,11 @@ devices:
     clock_output_names: []
     clock_cells: 0
   fixedregulator_5v0:
-    phandle: 51
     path: //fixedregulator_5v0
+    name: fixedregulator_5v0
+    phandle: 51
     compatible:
     - regulator-fixed
-    interrupts: []
-    aliases: []
-    clock_names: []
-    clocks: []
-    clock_output_names: []
-    clock_cells: 0
-  pci@0:
-    phandle:
-    path: /pci@0
-    compatible:
-    - pci-host-ecam-generic
     interrupts: []
     aliases: []
     clock_names: []

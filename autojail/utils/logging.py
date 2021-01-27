@@ -26,8 +26,18 @@ class ClikitLoggingHandler(logging.Handler):
         self.io = io
 
     def emit(self, record: logging.LogRecord) -> None:
-        level = _levels[record.levelno]
+        levelno = record.levelno
+        level = _levels[levelno]
         text = record.getMessage()
+        if levelno in [logging.ERROR, logging.CRITICAL]:
+            text = "<error>" + text + "</error>"
+        if levelno in [logging.WARNING]:
+            text = text
+        if levelno in [logging.INFO]:
+            text = "<info>" + text + "</info>"
+        if levelno in [logging.DEBUG]:
+            text = "<comment>" + text + "</comment>"
+
         self.io.write_line(text, flags=level)
 
     @classmethod
