@@ -227,11 +227,12 @@ class JailhouseConfigurator:
         pyjailhouse_path = (
             deploy_path_prefix / "share" / "jailhouse" / "pyjailhouse"
         )
-        pyjailhouse_path.mkdir(exist_ok=True, parents=True)
+        pyjailhouse_path.parent.mkdir(exist_ok=True, parents=True)
+        if pyjailhouse_path.exists():
+            shutil.rmtree(pyjailhouse_path)
         shutil.copytree(
             jailhouse_path / "pyjailhouse",
             pyjailhouse_path,
-            dirs_exist_ok=True,
             ignore=lambda path, names: ["__pycache__"],
         )
 
@@ -263,10 +264,19 @@ class JailhouseConfigurator:
                         tool_deploy_file.write(line)
 
         # deploy dtbs
+        if (
+            Path(self.autojail_config.deploy_dir) / "etc" / "jailhouse" / "dts"
+        ).exists():
+            shutil.rmtree(
+                Path(self.autojail_config.deploy_dir)
+                / "etc"
+                / "jailhouse"
+                / "dts"
+            )
+
         shutil.copytree(
             Path(self.autojail_config.build_dir) / "dts",
             Path(self.autojail_config.deploy_dir) / "etc" / "jailhouse" / "dts",
-            dirs_exist_ok=True,
             ignore=lambda path, names: [
                 name for name in names if not name.endswith(".dtb")
             ],

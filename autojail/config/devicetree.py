@@ -435,8 +435,8 @@ class GenerateDeviceTreePass(BasePass):
                 self.logger.critical(
                     "Kernel build directory does not exist, skipping building of binary device trees"
                 )
-
-            subprocess.run(build_dts_command, check=True)
+            else:
+                subprocess.run(build_dts_command, check=True)
 
         return board, config
 
