@@ -2,7 +2,6 @@ import json
 import os
 import re
 import shutil
-import stat
 import subprocess
 import sys
 from pathlib import Path
@@ -263,8 +262,7 @@ class JailhouseConfigurator:
                             line,
                         )
                         tool_deploy_file.write(line)
-                st = os.stat(tool_deploy_path)
-                os.chmod(tool_deploy_path, st.st_mode | stat.S_IEXEC)
+                os.chmod(tool_deploy_path, 0o755)
 
         # deploy dtbs
         if (
