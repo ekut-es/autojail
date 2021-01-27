@@ -129,7 +129,8 @@ _dts_template = Template(
         %for interrupt in pci_interrupts:
             <0 0 0 ${interrupt.device + 1} &${interrupt.controller} GIC_SPI ${interrupt.interrupt - 32} IRQ_TYPE_EDGE_RISING>${',' if loop.index < len(pci_interrupts) - 1 else ';'}
         %endfor
-        reg = <0x0 ${hex(pci_mmconfig_base)} 0x0 0x100000>;
+        bus-range = <0 ${pci_mmconfig_end_bus}>;
+        reg = <0x0 ${hex(pci_mmconfig_base)} 0x0 ${hex(pci_mmconfig_size)}>;
         ranges =
              <0x02000000 0x00 0x10000000 0x0 0x10000000 0x00 0x10000>;
 	};
@@ -305,6 +306,7 @@ class GenerateDeviceTreePass(BasePass):
 
         pci_mmconfig_base = None
         pci_mmconfig_end_bus = None
+        pci_mmconfig_size = None
         for _cell_name, cell in config.cells.items():
             if cell.type == "root":
                 if cell.platform_info is not None:
@@ -312,9 +314,14 @@ class GenerateDeviceTreePass(BasePass):
                     pci_mmconfig_end_bus = (
                         cell.platform_info.pci_mmconfig_end_bus
                     )
+
+                    # FIXME: code duplication with memory allocator
+                    # see hypvervisor/pci.c:850
+                    pci_mmconfig_size = (pci_mmconfig_end_bus + 1) * 256 * 4096
+
                     break
 
-        return pci_mmconfig_base, pci_mmconfig_end_bus
+        return pci_mmconfig_base, pci_mmconfig_end_bus, pci_mmconfig_size
 
     def _build_cpus(self, cell: CellConfig, board: Board):
         cpus = []
@@ -337,7 +344,11 @@ class GenerateDeviceTreePass(BasePass):
 
         self.board = board
 
-        pci_mmconfig_base, pci_mmconfig_end_bus = self.__build_pciconfig(config)
+        (
+            pci_mmconfig_base,
+            pci_mmconfig_end_bus,
+            pci_mmconfig_size,
+        ) = self.__build_pciconfig(config)
 
         for _cell_name, cell in config.cells.items():
             if cell.type == "root":
@@ -384,6 +395,7 @@ class GenerateDeviceTreePass(BasePass):
                 gic=board.interrupt_controllers[0],
                 pci_mmconfig_base=pci_mmconfig_base,
                 pci_mmconfig_end_bus=pci_mmconfig_end_bus,
+                pci_mmconfig_size=pci_mmconfig_size,
                 pci_interrupts=pci_interrupts,
                 cpus=cpus,
                 format_range=format_range,

@@ -93,9 +93,6 @@ class MemoryConstraint(object):
 
         self.start_addr: Optional[int] = start_addr
         self.address_range: Optional[Tuple[int, int]] = None
-        # FIXME: Are end addresses inclusive
-        # if start_addr is not None:
-        #    self.address_range = (start_addr, start_addr + size - 1)
 
         # Addresses must be aligned such that
         # addr % self.alignment == 0
@@ -126,8 +123,8 @@ class MemoryConstraint(object):
             ret += f"range: {hex(self.address_range[0])}-{hex(self.address_range[1])} "
         if self.alignment:
             ret += f"alignment: {self.alignment} "
-        if self.allocated_range:
-            ret += f"allocated: {hex(self.allocated_range[0])}-{hex(self.allocated_range[1])} "
+        if self.address_range:
+            ret += f"allocated: {hex(self.address_range[0])}-{hex(self.adress_range[1])} "
         ret += f"size: {self.size} virtual: {self.virtual}"
         return ret
 
@@ -231,6 +228,7 @@ class CPMemorySolver(object):
             raise MemoryAllocationInfeasibleException()
 
     def _build_cp_constraints(self):
+        equal_pairs = []
         for overlap_index, no_overlap in enumerate(self.constraints):
             cp_no_overlap = []
 
@@ -275,18 +273,15 @@ class CPMemorySolver(object):
                 ivar = self.model.NewIntervalVar(
                     lower, constr.size, upper, f"{constr_name}_ivar"
                 )
+                print(lower, constr.size, upper)
                 constr.bound_vars = (lower, upper)
 
                 if constr.alignment:
                     self.model.AddModuloEquality(0, lower, constr.alignment)
 
                 if constr.equal_constraint:
-                    self.model.Add(
-                        lower == constr.equal_constraint.bound_vars[0]
-                    )
-                    self.model.Add(
-                        upper == constr.equal_constraint.bound_vars[1]
-                    )
+
+                    equal_pairs.append((constr, constr.equal_constraint))
 
                 cp_no_overlap.append(ivar)
 
@@ -294,6 +289,10 @@ class CPMemorySolver(object):
                 self.vars[ivar] = (lower, upper)
 
             self.model.AddNoOverlap(cp_no_overlap)
+
+        for first, second in equal_pairs:
+            self.model.Add(first.bound_vars[0] == second.bound_vars[0])
+            self.model.Add(first.bound_vars[1] == second.bound_vars[1])
 
 
 class AllocateMemoryPass(BasePass):
@@ -447,11 +446,10 @@ class AllocateMemoryPass(BasePass):
             str(self.virtual_domain.FlattenedIntervals()),
         )
 
-        self._preallocate_vpci()
-
         self.no_overlap_constraints["__global"] = self.global_no_overlap
         self.unallocated_segments = self._build_unallocated_segments()
         self._lift_loadable()
+        self._preallocate_vpci()
 
         self.logger.info("")
         self.logger.info("Unallocated physical segments: ")
@@ -544,6 +542,7 @@ class AllocateMemoryPass(BasePass):
         # Add virtually reserved segments
         for cell_name, cell in self.config.cells.items():
             assert cell.memory_regions is not None
+
             for memory_region in cell.memory_regions.values():
                 assert memory_region is not None
                 if isinstance(memory_region, HypervisorMemoryRegion):
@@ -598,6 +597,9 @@ class AllocateMemoryPass(BasePass):
 
                 (start, _) = constr.allocated_range
 
+                if constr.resolved:
+                    constr.resolved(constr)
+
                 if constr not in self.memory_constraints:
                     continue
 
@@ -616,9 +618,6 @@ class AllocateMemoryPass(BasePass):
                     for region in seg.shared_regions[cell_name]:
                         if region.virtual_start_addr is None:
                             region.virtual_start_addr = HexInt(start)
-
-                if constr.resolved:
-                    constr.resolved(constr)
 
         self._remove_allocatable()
 
@@ -716,35 +715,18 @@ class AllocateMemoryPass(BasePass):
         assert self.config is not None
 
         if self.root_cell and self.root_cell.platform_info:
-            region = MemoryRegion()
-            region_name = "pci_mmconfig_generated"
-
-            region.flags = ["MEM_IO"]
-
             # see hypvervisor/pci.c:850
             end_bus = self.root_cell.platform_info.pci_mmconfig_end_bus
-            region.size = (end_bus + 1) * 256 * 4096
+            vpci_size = (end_bus + 2) * 256 * 4096
 
             if self.root_cell.platform_info.pci_mmconfig_base:
-                region.physical_start_addr = (
-                    self.root_cell.platform_info.pci_mmconfig_base
-                )
-                region.virtual_start_addr = region.physical_start_addr
-
-                assert (region.physical_start_addr + region.size) < 2 ** 32
-
-                def callback(mc: MemoryConstraint):
-                    assert self.root_cell
-                    assert self.root_cell.memory_regions
-
-                    del self.root_cell.memory_regions[region_name]
-
-                mc = MemoryConstraint(region.size, False)
-                mc.start_addr = region.physical_start_addr
-                mc.resolved = callback
-
-                self.root_cell.memory_regions[region_name] = region
-                self.per_region_constraints[region_name] = mc
+                for constraints in self.no_overlap_constraints.values():
+                    mc = MemoryConstraint(
+                        vpci_size,
+                        True,
+                        self.root_cell.platform_info.pci_mmconfig_base,
+                    )
+                    constraints.add_memory_constraint(mc)
             else:
 
                 def callback(mc: MemoryConstraint):
@@ -758,22 +740,31 @@ class AllocateMemoryPass(BasePass):
                         physical_start_addr
                     )
 
-                    region = self.root_cell.memory_regions[region_name]
-                    assert isinstance(region, MemoryRegion)
+                    self.logger.info(
+                        "Print resolved pci_mmconfig %s",
+                        hex(physical_start_addr),
+                    )
 
-                    region.physical_start_addr = HexInt(physical_start_addr)
-                    region.virtual_start_addr = HexInt(physical_start_addr)
+                # Allocate vpci physically
+                last_mc = MemoryConstraint(
+                    vpci_size, True
+                )  # This is a physical constraint, but it does not need to be backed by allocatable memory
+                last_mc.resolved = callback
+                last_mc.alignment = self.board.pagesize
+                last_mc.address_range = (0x0, 2 ** 32 - 1)
+                self.no_overlap_constraints["__global"].add_memory_constraint(
+                    last_mc
+                )
 
-                    del self.root_cell.memory_regions[region_name]
+                for cell_name in self.config.cells.keys():
+                    mc = MemoryConstraint(vpci_size, True)
+                    mc.equal_constraint = last_mc
+                    self.no_overlap_constraints[
+                        cell_name
+                    ].add_memory_constraint(mc)
+                    mc.alignment = self.board.pagesize
 
-                mc = MemoryConstraint(region.size, False)
-                mc.resolved = callback
-
-                # this is MEM_IO but should still be allocated
-                region.flags = []
-
-                self.per_region_constraints[region_name] = mc
-                self.root_cell.memory_regions[region_name] = region
+                    last_mc = mc
 
 
 class UnallocatedOrSharedSegmentsAnalysis(object):

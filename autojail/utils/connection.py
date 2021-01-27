@@ -12,6 +12,8 @@ from paramiko.ssh_exception import (
 if TYPE_CHECKING:
     from ..model import AutojailConfig
 
+global_context = None
+
 
 def connect(
     config: "AutojailConfig",

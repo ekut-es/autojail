@@ -231,6 +231,7 @@ class JailhouseConfigurator:
         shutil.copytree(
             jailhouse_path / "pyjailhouse",
             pyjailhouse_path,
+            dirs_exist_ok=True,
             ignore=lambda path, names: ["__pycache__"],
         )
 
@@ -265,6 +266,7 @@ class JailhouseConfigurator:
         shutil.copytree(
             Path(self.autojail_config.build_dir) / "dts",
             Path(self.autojail_config.deploy_dir) / "etc" / "jailhouse" / "dts",
+            dirs_exist_ok=True,
             ignore=lambda path, names: [
                 name for name in names if not name.endswith(".dtb")
             ],
@@ -274,13 +276,13 @@ class JailhouseConfigurator:
         deploy_files = os.listdir(deploy_path)
         deploy_bundle_command = [
             "tar",
-            "cvzf",
+            "czf",
             "deploy.tar.gz",
             "-C",
             f"{deploy_path}",
         ] + deploy_files
 
-        print(" ".join(deploy_bundle_command))
+        self.logger.debug(" ".join(deploy_bundle_command))
         subprocess.run(deploy_bundle_command, check=True)
 
         if target:
@@ -290,7 +292,7 @@ class JailhouseConfigurator:
             connection.put("deploy.tar.gz", remote="/tmp")
             with connection.cd("/tmp"):
                 connection.run(
-                    "sudo tar --overwrite -C / -hxvzf deploy.tar.gz",
+                    "sudo tar --overwrite -C / -hxzf deploy.tar.gz",
                     in_stream=False,
                 )
             connection.run("sudo depmod", in_stream=False, warn=True)
@@ -367,7 +369,7 @@ class JailhouseConfigurator:
                 prefix = "JAILHOUSE_CELL"
 
             f.write("\n\t.revision = JAILHOUSE_CONFIG_REVISION,")
-
+            print(cell.flags)
             if cell.flags:
                 cell_flags = " | ".join(
                     list(map(lambda x: f"{prefix}_{x}", cell.flags))

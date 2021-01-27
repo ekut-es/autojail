@@ -1,5 +1,5 @@
-name: rpi4_default
-board: raspberrypi4b-jh1
+name: rpi4_shmem_demo
+board: rpi4_shmem_demo
 pagesize: 0x1000
 stdout_path: serial0
 virtual_address_bits: 48

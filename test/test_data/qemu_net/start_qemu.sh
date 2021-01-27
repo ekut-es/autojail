@@ -22,6 +22,7 @@ if [ ! -f qemu/linux-jailhouse-images.tar.bz ]; then
   popd
 fi
 
+rm -f qemu/serial0.log
 
 QEMU=qemu-system-aarch64
 QEMU_EXTRA_ARGS=" \

@@ -13,7 +13,9 @@ cells:
 
     memory_regions:
       Main Memory:
-        size: 128 MB
+        size: 768 MB
+        virtual_start_addr: 0x0
+        physical_start_addr: 0x0 
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
 
 
