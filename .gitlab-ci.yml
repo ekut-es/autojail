@@ -49,7 +49,7 @@ test_python_latest:
     - docker
 
 
-test_with_qemu:
+test_qemu_ubuntu:
   image: ubuntu:20.04
   stage: deploy_test
   before_script:
@@ -73,6 +73,32 @@ test_with_qemu:
   only:
     - master
     - merge_requests
+
+test_qemu_debian:
+  image: debian:stable
+  stage: deploy_test
+  before_script:
+    - export  DEBIAN_FRONTEND=noninteractive 
+    - apt-get update -y 
+    - apt-get upgrade -y 
+    - apt-get install -y dpkg apt-utils
+    - apt-get install -y qemu-system-arm netcat-openbsd python3-dev python3-pip git gcc-aarch64-linux-gnu g++-aarch64-linux-gnu wget build-essential
+    - python3 -m pip install virtualenv --user
+    - python3 -m virtualenv venv
+    - source venv/bin/activate
+    - python3 -m pip install poetry
+  script:
+    - set -e
+    - apt-get update
+    - apt-get install device-tree-compiler -y
+    - poetry install
+    - poetry run python -m pytest --cov=autojail test
+  tags:
+    - docker
+  only:
+    - master
+    - merge_requests
+
 
 build_doc:
   script:
