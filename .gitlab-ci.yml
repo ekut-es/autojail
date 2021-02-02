@@ -24,6 +24,16 @@ run_pre_commit:
   tags:
     - docker
 
+run_pre_commit_latest:
+  image: python:latest
+  stage: sca
+  script:
+    - set -e
+    - poetry install
+    - poetry run pre-commit run -a
+  tags:
+    - docker
+
 test:
   image: python:3.6
   stage: test
