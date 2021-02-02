@@ -299,7 +299,7 @@ class JailhouseConfigurator:
         if target:
             utils.start_board(self.autojail_config)
             connection = utils.connect(self.autojail_config, self.context)
-            utils.deploy_target(connection)
+            utils.deploy_target(connection, Path("deploy.tar.gz"))
             utils.stop_board(self.autojail_config)
 
     def write_config(self, output_path: str) -> int:

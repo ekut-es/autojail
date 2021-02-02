@@ -2606,7 +2606,7 @@ clock_tree:
         enable_count: 0
         prepare_count: 0
         protect_count: 0
-        rate: 1500000000
+        rate: 600000000
         accuracy: 0
         phase: 0
         duty_cycle: 50000
@@ -2616,7 +2616,7 @@ clock_tree:
             enable_count: 0
             prepare_count: 0
             protect_count: 0
-            rate: 1500000000
+            rate: 600000000
             accuracy: 0
             phase: 0
             duty_cycle: 50000
@@ -2954,153 +2954,7 @@ clock_tree:
     duty_cycle: 50000
     derived_clocks: {}
     parent:
-clock_mapping:
-  cprman@7e101000:
-  - parent_name: osc
-    rate:
-  - parent_name: dsi0_byte
-    rate:
-  - parent_name: dsi0_ddr2
-    rate:
-  - parent_name: dsi0_ddr
-    rate:
-  - parent_name: dsi1_byte
-    rate:
-  - parent_name: dsi1_ddr2
-    rate:
-  - parent_name: dsi1_ddr
-    rate:
-  serial@7e201000:
-  - parent_name: uart
-    rate:
-  - parent_name: vpu
-    rate:
-  mmc@7e202000:
-  - parent_name: vpu
-    rate:
-  i2s@7e203000:
-  - parent_name: pcm
-    rate:
-  spi@7e204000:
-  - parent_name: vpu
-    rate:
-  i2c@7e205000:
-  - parent_name: vpu
-    rate:
-  dpi@7e208000:
-  - parent_name: vpu
-    rate:
-  - parent_name: dpi
-    rate:
-  dsi@7e209000:
-  - parent_name: plla_dsi0
-    rate:
-  - parent_name: dsi0e
-    rate:
-  - parent_name: dsi0p
-    rate:
-  aux@7e215000:
-  - parent_name: vpu
-    rate:
-  serial@7e215040:
-  - parent_name: aux_uart
-    rate:
-  spi@7e215080:
-  - parent_name: aux_spi1
-    rate:
-  spi@7e2150c0:
-  - parent_name: aux_spi2
-    rate:
-  pwm@7e20c000:
-  - parent_name: pwm
-    rate:
-  dsi@7e700000:
-  - parent_name: plld_dsi1
-    rate:
-  - parent_name: dsi1e
-    rate:
-  - parent_name: dsi1p
-    rate:
-  csi@7e800000:
-  - parent_name: cam0
-    rate:
-  csi@7e801000:
-  - parent_name: cam1
-    rate:
-  i2c@7e804000:
-  - parent_name: vpu
-    rate:
-  i2c@7e805000:
-  - parent_name: vpu
-    rate:
-  vec@7e806000:
-  - parent_name: vec
-    rate:
-  usb@7e980000:
-  - parent_name: otg
-    rate:
-  thermal@7d5d2200:
-  - parent_name: tsens
-    rate:
-  serial@7e201400:
-  - parent_name: uart
-    rate:
-  - parent_name: vpu
-    rate:
-  serial@7e201600:
-  - parent_name: uart
-    rate:
-  - parent_name: vpu
-    rate:
-  serial@7e201800:
-  - parent_name: uart
-    rate:
-  - parent_name: vpu
-    rate:
-  serial@7e201a00:
-  - parent_name: uart
-    rate:
-  - parent_name: vpu
-    rate:
-  spi@7e204600:
-  - parent_name: vpu
-    rate:
-  spi@7e204800:
-  - parent_name: vpu
-    rate:
-  spi@7e204a00:
-  - parent_name: vpu
-    rate:
-  spi@7e204c00:
-  - parent_name: vpu
-    rate:
-  i2c@7e205600:
-  - parent_name: vpu
-    rate:
-  i2c@7e205800:
-  - parent_name: vpu
-    rate:
-  i2c@7e205a00:
-  - parent_name: vpu
-    rate:
-  i2c@7e205c00:
-  - parent_name: vpu
-    rate:
-  pwm@7e20c800:
-  - parent_name: pwm
-    rate:
-  emmc2@7e340000:
-  - parent_name: emmc2
-    rate:
-  mmc@7e300000:
-  - parent_name: emmc
-    rate:
-  mmcnr@7e300000:
-  - parent_name: emmc
-    rate:
-  smi@7e600000:
-  - parent_name: smi
-    rate:
+clock_mapping: {}
 devices:
   /:
     path: ///

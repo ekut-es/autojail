@@ -1,0 +1,17 @@
+start_root_cell:
+  script:
+    - sudo modprobe jailhouse
+    - sudo jailhouse enable /etc/jailhouse/rpi4-net.cell
+    - sudo jailhouse console > console.out
+    - sudo jailhouse disable
+  asserts:
+    serial: 
+      - CHECK: Initializing Jailhouse hypervisor
+      - CHECK-NEXT: Activating hypervisor
+      - CHECK-NEXT: Shutting down hypervisor
+    
+
+
+          
+       
+          
