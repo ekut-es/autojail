@@ -134,7 +134,7 @@ class MemoryConstraint(object):
     def merge(self, other):
         assert (
             self.virtual == other.virtual
-            and "Unable to merge constraints for pyhsical and virtual addresses"
+            and "Unable to merge constraints for physical and virtual addresses"
         )
 
         assert (
@@ -576,6 +576,8 @@ class AllocateMemoryPass(BasePass):
                         cell_name
                     ].add_memory_constraint(memory_constraint)
 
+        self._add_gic_constraints()
+
         self._dump_constraints()
 
         solver = CPMemorySolver(
@@ -622,6 +624,39 @@ class AllocateMemoryPass(BasePass):
         self._remove_allocatable()
 
         return self.board, self.config
+
+    def _add_gic_constraints(self):
+        interrupt_ranges: List[Tuple[int, int]] = []
+        for interrupt_controller in self.board.interrupt_controllers:
+            if interrupt_controller.gic_version == 2:
+                interrupt_ranges.append(
+                    (interrupt_controller.gicd_base, 0x1000)
+                )
+                interrupt_ranges.append(
+                    (interrupt_controller.gicc_base, 0x2000)
+                )
+                interrupt_ranges.append(
+                    (interrupt_controller.gich_base, 0x2000)
+                )
+                interrupt_ranges.append(
+                    (interrupt_controller.gicv_base, 0x2000)
+                )
+            elif interrupt_controller.gic_version == 3:
+                interrupt_ranges.append(
+                    (interrupt_controller.gicd_base, 0x10000)
+                )
+                interrupt_ranges.append(
+                    (interrupt_controller.gicr_base, 0x20000)
+                )
+
+        for name, constraint in self.no_overlap_constraints.items():
+            for interrupt_range in interrupt_ranges:
+                mc = MemoryConstraint(
+                    size=interrupt_range[1],
+                    start_addr=interrupt_range[0],
+                    virtual=False if name == "__global" else True,
+                )
+                constraint.add_memory_constraint(mc)
 
     def _lift_loadable(self):
         root_cell = self.root_cell
