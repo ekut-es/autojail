@@ -684,11 +684,14 @@ class AllocateMemoryPass(BasePass):
                     end = tmp_end
 
         allocatable_regions.sort(key=lambda r: r.physical_start_addr)
-        holes = []
+        holes: List[List[int]] = []
 
         for i in range(0, len(allocatable_regions) - 1):
             r0 = allocatable_regions[i]
             r1 = allocatable_regions[i + 1]
+
+            assert r0.physical_start_addr is not None and r0.size is not None
+            assert r1.physical_start_addr is not None
 
             r0_end = r0.physical_start_addr + r0.size
             r1_start = r1.physical_start_addr
@@ -710,14 +713,23 @@ class AllocateMemoryPass(BasePass):
         # Make sure all pre-allocated regions part of a cell have a corresponding
         # constraint (technically, we only need constraints for those regions that
         # overlapp with the allocatable range/physical domain)
-        non_alloc_ranges = []
-        for cell in self.config.cells.values():
-            for region in cell.memory_regions.values():
-                if region.physical_start_addr is not None:
-                    assert region.size is not None
+        non_alloc_ranges: List[List[int]] = []
+        assert self.config
 
-                    end = region.physical_start_addr + region.size
-                    non_alloc_range = [region.physical_start_addr, end]
+        for cell in self.config.cells.values():
+            assert cell.memory_regions
+
+            for r in cell.memory_regions.values():
+                if not isinstance(r, ShMemNetRegion) and not isinstance(
+                    r, MemoryRegion
+                ):
+                    continue
+
+                if r.physical_start_addr is not None:
+                    assert r.size is not None
+
+                    end = r.physical_start_addr + r.size
+                    non_alloc_range = [r.physical_start_addr, end]
 
                     if non_alloc_range in non_alloc_ranges:
                         continue
@@ -728,19 +740,19 @@ class AllocateMemoryPass(BasePass):
                         continue
 
                     non_alloc_ranges.append(non_alloc_range)
-                    remove_hole(region.physical_start_addr, end)
+                    remove_hole(r.physical_start_addr, end)
 
                     mc = MemoryConstraint(
-                        region.size, False, region.physical_start_addr
+                        r.size, False, region.physical_start_addr
                     )
                     self.global_no_overlap.add_memory_constraint(mc)
 
         # fill remaining holes in between allocatable regions
         for hole in holes:
-            start, end = hole
-            size = end - start
+            s, e = hole
+            size = e - s
 
-            mc = MemoryConstraint(size, False, start)
+            mc = MemoryConstraint(size, False, e)
             self.global_no_overlap.add_memory_constraint(mc)
 
     def _remove_allocatable(self):
@@ -1030,11 +1042,12 @@ class MergeIoRegionsPass(BasePass):
             assert r.size is not None
 
             if current_group:
-                assert current_group[-1][1].physical_start_addr is not None
-                assert current_group[0][1].physical_start_addr is not None
-
                 r1_end = r.physical_start_addr + r.size
                 r1_start = r.physical_start_addr
+
+                assert current_group[-1][1].physical_start_addr is not None
+                assert current_group[-1][1].size is not None
+                assert current_group[0][1].physical_start_addr is not None
 
                 last_region_end = (
                     current_group[-1][1].physical_start_addr
@@ -1183,6 +1196,7 @@ class PrepareMemoryRegionsPass(BasePass):
         for region in self.board.memory_regions.values():
             if region.allocatable:
                 assert region.size
+                assert region.physical_start_addr
 
                 start = region.physical_start_addr
                 end = start + region.size
