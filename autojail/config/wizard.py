@@ -1,4 +1,4 @@
-from typing import FrozenSet, Optional, Union
+from typing import FrozenSet, List, Optional, Union
 
 from dataclasses import dataclass, field
 
@@ -76,8 +76,20 @@ class RootConfigWizard(WizardBase):
 
         cpus = list(range(len(self.board.cpuinfo)))
 
+        allocatable_start_addresses: List[int] = []
+        for memory_region in self.board.memory_regions.values():
+            if memory_region.allocatable:
+                if memory_region.physical_start_addr is not None:
+                    allocatable_start_addresses.append(
+                        memory_region.physical_start_addr
+                    )
+
+        start_addr = min(allocatable_start_addresses)
+
         main_memory = MemoryRegion(
             size=args.memory,
+            physical_start_addr=start_addr,
+            virtual_start_addr=start_addr,
             flags=["MEM_READ", "MEM_WRITE", "MEM_EXECUTE", "MEM_DMA"],
         )
 
