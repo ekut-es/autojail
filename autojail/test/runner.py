@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from ..model.board import Board
 from ..model.config import AutojailConfig
 from ..model.jailhouse import JailhouseConfig
-from ..model.test import SwitchTargetCommand, TestConfig, TestEntry
+from ..model.test import TestConfig, TestEntry
 from ..utils.connection import Connection, connect
 from ..utils.logging import getLogger
 
@@ -92,19 +92,6 @@ class TestRunner:
                         target.run(command, warn=True)
                 else:
                     self._run_command(command)
-            elif isinstance(command, SwitchTargetCommand):
-                self.logger.info("Switching target to %s", command.target)
-                for cell_name, cell in self.jailhouse_config.cells.items():
-                    if (
-                        cell_name == command.target
-                        or cell.name == command.target
-                    ):
-                        if cell.type == "root":
-                            current_targets = [self.connection]
-                        else:
-                            raise Exception(
-                                "Connections to non root targets are currently not supported"
-                            )
 
     def _wait_for_connection(self):
         if self.connection is None or not self.connection.is_connected:

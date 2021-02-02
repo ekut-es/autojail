@@ -297,16 +297,9 @@ class JailhouseConfigurator:
         subprocess.run(deploy_bundle_command, check=True)
 
         if target:
-            self.logger.info("Deploying to target")
             utils.start_board(self.autojail_config)
             connection = utils.connect(self.autojail_config, self.context)
-            connection.put("deploy.tar.gz", remote="/tmp")
-            with connection.cd("/tmp"):
-                connection.run(
-                    "sudo tar --overwrite -C / -hxzf deploy.tar.gz",
-                    in_stream=False,
-                )
-            connection.run("sudo depmod", in_stream=False, warn=True)
+            utils.deploy_target(connection)
             utils.stop_board(self.autojail_config)
 
     def write_config(self, output_path: str) -> int:

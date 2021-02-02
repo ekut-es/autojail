@@ -2,12 +2,7 @@ from typing import Dict, List, Union
 
 from pydantic import BaseModel
 
-
-class SwitchTargetCommand(BaseModel):
-    target: str
-
-
-ScriptList = List[Union[str, SwitchTargetCommand]]
+ScriptList = List[str]
 CheckList = List[str]
 LogList = List[str]
 
