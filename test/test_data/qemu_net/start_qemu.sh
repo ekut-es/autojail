@@ -53,7 +53,8 @@ ${QEMU_PATH}${QEMU} \
 	-kernel qemu/vmlinuz -append "${KERNEL_CMDLINE}" \
 	-initrd qemu/initrd.img ${QEMU_EXTRA_ARGS} "$@" &
 
-sleep 5
+sleep 1
+touch qemu/serial0.log
 
 # Wait until image is started
 tail -f qemu/serial0.log &
