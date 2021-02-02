@@ -746,9 +746,8 @@ class AllocateMemoryPass(BasePass):
                     non_alloc_ranges.append(non_alloc_range)
                     remove_hole(r.physical_start_addr, end)
 
-                    mc = MemoryConstraint(
-                        r.size, False, region.physical_start_addr
-                    )
+                    mc = MemoryConstraint(r.size, False, r.physical_start_addr)
+
                     self.global_no_overlap.add_memory_constraint(mc)
 
         # fill remaining holes in between allocatable regions
@@ -756,7 +755,7 @@ class AllocateMemoryPass(BasePass):
             s, e = hole
             size = e - s
 
-            mc = MemoryConstraint(size, False, e)
+            mc = MemoryConstraint(size, False, s)
             self.global_no_overlap.add_memory_constraint(mc)
 
     def _remove_allocatable(self):
@@ -1120,7 +1119,16 @@ class MergeIoRegionsPass(BasePass):
 
         self.logger.info(f"Got {len(grouped_regions)} grouped region(s):")
         for group in grouped_regions:
-            self.logger.info("Group-Begin:")
+            assert group[0][1].physical_start_addr is not None
+            assert group[-1][1].physical_start_addr is not None
+            assert group[-1][1].size is not None
+
+            group_begin = group[0][1].physical_start_addr
+            group_end = group[-1][1].physical_start_addr + group[-1][1].size
+
+            self.logger.info(
+                f"Group-Begin: (0x{group_begin:x} - 0x{group_end:x})"
+            )
             for region in group:
                 self.logger.info(f"\t{region}")
 
@@ -1204,8 +1212,8 @@ class PrepareMemoryRegionsPass(BasePass):
         allocatable_ranges = []
         for region in self.board.memory_regions.values():
             if region.allocatable:
-                assert region.size
-                assert region.physical_start_addr
+                assert region.size is not None
+                assert region.physical_start_addr is not None
 
                 start = region.physical_start_addr
                 end = start + region.size
