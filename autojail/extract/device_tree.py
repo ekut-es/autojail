@@ -619,7 +619,10 @@ class DeviceTreeExtractor:
     def _summarize(self) -> None:
         table = []
         for name, region in sorted(
-            self.memory_regions.items(), key=lambda x: x[1].physical_start_addr
+            self.memory_regions.items(),
+            key=lambda x: x[1].physical_start_addr
+            if x[1].physical_start_addr is not None
+            else 0,
         ):
 
             assert region.physical_start_addr is not None

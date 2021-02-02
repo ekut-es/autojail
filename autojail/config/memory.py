@@ -683,7 +683,11 @@ class AllocateMemoryPass(BasePass):
                 if tmp_end > end:
                     end = tmp_end
 
-        allocatable_regions.sort(key=lambda r: r.physical_start_addr)
+        allocatable_regions.sort(
+            key=lambda r: r.physical_start_addr
+            if r.physical_start_addr is not None
+            else 0
+        )
         holes: List[List[int]] = []
 
         for i in range(0, len(allocatable_regions) - 1):
@@ -1031,7 +1035,12 @@ class MergeIoRegionsPass(BasePass):
         regions: Sequence[Tuple[str, MemoryRegionData]] = get_io_regions(
             self.root_cell.memory_regions
         )
-        regions = sorted(regions, key=lambda t: t[1].physical_start_addr,)
+        regions = sorted(
+            regions,
+            key=lambda t: t[1].physical_start_addr
+            if t[1].physical_start_addr is not None
+            else 0,
+        )
 
         grouped_regions: List[List[Tuple[str, MemoryRegionData]]] = []
         current_group: List[Tuple[str, MemoryRegionData]] = []
