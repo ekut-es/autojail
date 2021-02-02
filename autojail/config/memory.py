@@ -519,6 +519,11 @@ class AllocateMemoryPass(BasePass):
                     if mc_seg and not mc_seg.virtual:
                         mc_global.resolved = mc_seg.resolved
 
+                    if mc_global.start_addr and mc_global.size:
+                        print(
+                            f"Adding global no-overlapp (shared): [0x{mc_global.start_addr:x}, 0x{mc_global.start_addr + mc_global.size:x}]"
+                        )
+
                     self.global_no_overlap.add_memory_constraint(mc_global)
                     self.memory_constraints[mc_global] = seg
 
@@ -558,11 +563,6 @@ class AllocateMemoryPass(BasePass):
                     and memory_region.physical_start_addr is not None
                 ):
                     if memory_region.allocatable:
-                        continue
-
-                    if self.physical_domain.Contains(
-                        memory_region.physical_start_addr
-                    ):
                         continue
 
                     assert memory_region.size is not None
@@ -659,21 +659,104 @@ class AllocateMemoryPass(BasePass):
         assert self.root_cell.memory_regions is not None
         assert self.board is not None
 
-        intervals = []
+        start = None
+        end = 0
 
+        allocatable_regions = []
         for region in self.board.memory_regions.values():
             assert region is not None
             if isinstance(region, MemoryRegionData) and region.allocatable:
                 assert region.physical_start_addr is not None
                 assert region.size is not None
-                intervals.append(
-                    [
-                        region.physical_start_addr,
-                        region.physical_start_addr + region.size,
-                    ]
-                )
 
-        self.physical_domain = cp_model.Domain.FromIntervals(intervals)
+                allocatable_regions.append(region)
+
+                tmp_start = region.physical_start_addr
+                tmp_end = region.physical_start_addr + region.size
+
+                if start is None:
+                    start = tmp_start
+
+                if tmp_start < start:
+                    start = tmp_start
+
+                if tmp_end > end:
+                    end = tmp_end
+
+        allocatable_regions.sort(
+            key=lambda r: r.physical_start_addr
+            if r.physical_start_addr is not None
+            else 0
+        )
+        holes: List[List[int]] = []
+
+        for i in range(0, len(allocatable_regions) - 1):
+            r0 = allocatable_regions[i]
+            r1 = allocatable_regions[i + 1]
+
+            assert r0.physical_start_addr is not None and r0.size is not None
+            assert r1.physical_start_addr is not None
+
+            r0_end = r0.physical_start_addr + r0.size
+            r1_start = r1.physical_start_addr
+
+            if r0_end != r1_start:
+                holes.append([r0_end, r1_start])
+
+        # Physical domain spans the entire range from the first allocatable memory region
+        # to the end of the last one. Any holes in that range are accomodated for using
+        # constant interval constraints
+        def remove_hole(start, end):
+            try:
+                holes.remove([start, end])
+            except ValueError:
+                pass
+
+        self.physical_domain = cp_model.Domain.FromIntervals([[start, end]])
+
+        # Make sure all pre-allocated regions part of a cell have a corresponding
+        # constraint (technically, we only need constraints for those regions that
+        # overlapp with the allocatable range/physical domain)
+        non_alloc_ranges: List[List[int]] = []
+        assert self.config
+
+        for cell in self.config.cells.values():
+            assert cell.memory_regions
+
+            for r in cell.memory_regions.values():
+                if not isinstance(r, ShMemNetRegion) and not isinstance(
+                    r, MemoryRegion
+                ):
+                    continue
+
+                if r.physical_start_addr is not None:
+                    assert r.size is not None
+
+                    end = r.physical_start_addr + r.size
+                    non_alloc_range = [r.physical_start_addr, end]
+
+                    if non_alloc_range in non_alloc_ranges:
+                        continue
+
+                    if not self.physical_domain.Contains(
+                        non_alloc_range[0]
+                    ) and not self.physical_domain.Contains(non_alloc_range[1]):
+                        continue
+
+                    non_alloc_ranges.append(non_alloc_range)
+                    remove_hole(r.physical_start_addr, end)
+
+                    mc = MemoryConstraint(r.size, False, r.physical_start_addr)
+
+                    self.global_no_overlap.add_memory_constraint(mc)
+
+        # fill remaining holes in between allocatable regions
+        for hole in holes:
+            s, e = hole
+            size = e - s
+
+            mc = MemoryConstraint(size, False, s)
+            self.global_no_overlap.add_memory_constraint(mc)
 
     def _remove_allocatable(self):
         """Finally remove allocatable memory regions from cells"""
@@ -876,16 +959,7 @@ class UnallocatedOrSharedSegmentsAnalysis(object):
                             region_name
                         ]
 
-                    if region.physical_start_addr is not None:
-                        if (
-                            self.physical_domain
-                            and self.physical_domain.Contains(
-                                int(region.physical_start_addr)
-                            )
-                            or "MEM_IO" not in region.flags
-                        ):
-                            self.unallocated.append(current_segment)
-                    else:
+                    if region.physical_start_addr is None:
                         self.unallocated.append(current_segment)
 
                     # TODO are shared regions required to have
@@ -960,7 +1034,12 @@ class MergeIoRegionsPass(BasePass):
         regions: Sequence[Tuple[str, MemoryRegionData]] = get_io_regions(
             self.root_cell.memory_regions
         )
-        regions = sorted(regions, key=lambda t: t[1].physical_start_addr,)
+        regions = sorted(
+            regions,
+            key=lambda t: t[1].physical_start_addr
+            if t[1].physical_start_addr is not None
+            else 0,
+        )
 
         grouped_regions: List[List[Tuple[str, MemoryRegionData]]] = []
         current_group: List[Tuple[str, MemoryRegionData]] = []
@@ -971,10 +1050,17 @@ class MergeIoRegionsPass(BasePass):
             assert r.size is not None
 
             if current_group:
+                r1_end = r.physical_start_addr + r.size
+                r1_start = r.physical_start_addr
+
                 assert current_group[-1][1].physical_start_addr is not None
+                assert current_group[-1][1].size is not None
                 assert current_group[0][1].physical_start_addr is not None
 
-                r1_end = r.physical_start_addr + r.size
+                last_region_end = (
+                    current_group[-1][1].physical_start_addr
+                    + current_group[-1][1].size
+                )
 
                 # Do not merge regions if merged regions would
                 # overlap with gic
@@ -1013,13 +1099,13 @@ class MergeIoRegionsPass(BasePass):
                             break
 
                 if (
-                    r1_end - (current_group[-1][1].physical_start_addr)
-                    > max_dist
+                    r1_start - last_region_end > max_dist
                     or r.shared
                     or gic_overlap
                 ):
+                    grouped_regions.append(current_group)
 
-                    if not r.shared:
+                    if not r.shared and not gic_overlap:
                         current_group = [(name, r)]
                     else:
                         current_group = []
@@ -1033,7 +1119,16 @@ class MergeIoRegionsPass(BasePass):
 
         self.logger.info(f"Got {len(grouped_regions)} grouped region(s):")
         for group in grouped_regions:
-            self.logger.info("Group-Begin:")
+            assert group[0][1].physical_start_addr is not None
+            assert group[-1][1].physical_start_addr is not None
+            assert group[-1][1].size is not None
+
+            group_begin = group[0][1].physical_start_addr
+            group_end = group[-1][1].physical_start_addr + group[-1][1].size
+
+            self.logger.info(
+                f"Group-Begin: (0x{group_begin:x} - 0x{group_end:x})"
+            )
             for region in group:
                 self.logger.info(f"\t{region}")
 
@@ -1114,6 +1209,31 @@ class PrepareMemoryRegionsPass(BasePass):
         assert self.board.memory_regions is not None
         assert cell.memory_regions is not None
 
+        allocatable_ranges = []
+        for region in self.board.memory_regions.values():
+            if region.allocatable:
+                assert region.size is not None
+                assert region.physical_start_addr is not None
+
+                start = region.physical_start_addr
+                end = start + region.size
+
+                allocatable_ranges.append([start, end])
+
+        allocatable_ranges.sort(key=lambda r: r[0])
+
+        def overlaps_allocatable_region(start, end):
+            for r in allocatable_ranges:
+                if (
+                    r[0] <= start
+                    and start <= r[1]
+                    or r[0] <= end
+                    and end <= r[1]
+                ):
+                    return True
+
+            return False
+
         for name, memory_region in self.board.memory_regions.items():
             if memory_region.physical_start_addr is None:
                 continue
@@ -1131,6 +1251,9 @@ class PrepareMemoryRegionsPass(BasePass):
             assert v_start is not None
             assert p_end is not None
             assert v_end is not None
+
+            if overlaps_allocatable_region(p_start, p_end):
+                continue
 
             skip = False
             for cell_region in cell.memory_regions.values():

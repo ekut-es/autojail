@@ -55,12 +55,6 @@
 		#interrupt-cells = <3>;
 	};
 
-	fixed_0: serial@7e215040_clock{
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <47999999>;
-		clock-output-names = "uart";
-	};
 
     serial@7e215040 {
         compatible = "brcm,bcm2835-aux-uart";
@@ -68,22 +62,21 @@
         interrupts = <
                         0 93 4
                       >;
-        clocks = < &fixed>;
         status = "okay";
 	};
 
 
-    pci@0x30003000 {
+    pci@0x30000000 {
         compatible = "pci-host-ecam-generic";
         device_type = "pci";
-        bus-range = <0x0 0x0>;
         #address-cells = <3>;
         #size-cells = <2>;
         #interrupt-cells = <1>;
         interrupt-map-mask = <0 0 0 7>;
         interrupt-map =  
-            <0 0 0 1 &gic GIC_SPI 33 IRQ_TYPE_EDGE_RISING>;
-        reg = <0x0 0x30003000 0x0 0x100000>;
+            <0 0 0 1 &gic GIC_SPI 1 IRQ_TYPE_EDGE_RISING>;
+        bus-range = <0 0>;
+        reg = <0x0 0x30000000 0x0 0x100000>;
         ranges =
              <0x02000000 0x00 0x10000000 0x0 0x10000000 0x00 0x10000>;
 	};

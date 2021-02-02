@@ -320,15 +320,18 @@ class JailhouseConfigurator:
 
             self.logger.info("Writing cell config %s", output_name)
 
+            def mem_region_size(region):
+                if isinstance(region, GroupedMemoryRegion):
+                    return len(region.regions)
+                elif isinstance(region, ShMemNetRegion):
+                    return 4
+                else:
+                    return 1
+
             f = open(output_file, "w+")
             amount_pci_devices = len(cell.pci_devices)
             amount_memory_regions = sum(
-                map(
-                    lambda r: len(r.regions)
-                    if isinstance(r, GroupedMemoryRegion)
-                    else 1,
-                    cell.memory_regions.values(),
-                )
+                map(mem_region_size, cell.memory_regions.values(),)
             )
             amount_irqchips = len(cell.irqchips)
             cpu_set = cell.cpus
