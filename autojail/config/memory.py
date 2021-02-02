@@ -965,8 +965,6 @@ class UnallocatedOrSharedSegmentsAnalysis(object):
                     continue
                 if region.allocatable:
                     continue
-                # if self.key(region) is not None and region_name == "memreserve":
-                #    continue
 
                 assert self.shared is not None
                 if region.shared and region_name in self.shared:
