@@ -70,9 +70,6 @@ test_qemu_ubuntu:
     - poetry run python -m pytest --cov=autojail test
   tags:
     - docker
-  only:
-    - master
-    - merge_requests
 
 test_qemu_debian:
   image: debian:stable
@@ -95,10 +92,6 @@ test_qemu_debian:
     - poetry run python -m pytest --cov=autojail test
   tags:
     - docker
-  only:
-    - master
-    - merge_requests
-
 
 build_doc:
   script:
