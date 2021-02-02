@@ -140,8 +140,9 @@ def test_config_rpi4_fixed_pci_mmconfig_base(tmpdir):
 
 
 @pytest.mark.skipif(
-    not shutil.which("qemu-system-aarch64"),
-    reason="Requires qemu-system-aarch64",
+    not shutil.which("qemu-system-aarch64")
+    or not shutil.which("aarch64-linux-gnu-gcc"),
+    reason="Requires qemu-system-aarch64 and aarch64-linux-gnu-gcc",
 )
 def test_config_qemu(tmpdir):
     """ Tests that rpi4_fixed_pci_mmconfig_base creates the expected configuration"""
@@ -152,7 +153,13 @@ def test_config_qemu(tmpdir):
     )
     os.chdir("qemu_net")
 
-    clone_command = ["git", "clone", "https://github.com/siemens/jailhouse.git"]
+    clone_command = [
+        "git",
+        "clone",
+        "--branch",
+        "next",
+        "https://github.com/siemens/jailhouse.git",
+    ]
     subprocess.run(clone_command, check=True)
 
     application = AutojailApp()
@@ -163,12 +170,12 @@ def test_config_qemu(tmpdir):
 
     generate = application.find("generate")
     generate_tester = CommandTester(generate)
-    generate_tester.execute(interactive=False, skip_check=True)
+    generate_tester.execute(interactive=False)
 
-    # assert Path("root-cell.c").exists()
-    # assert Path("guest.c").exists()
-    # assert Path("guest1.c").exists()
+    assert Path("root-cell.c").exists()
+    assert Path("guest.c").exists()
+    assert Path("guest1.c").exists()
 
-    # assert filecmp.cmp("root-cell.c", "golden/root-cell.c")
-    # assert filecmp.cmp("guest.c", "golden/guest.c")
-    # assert filecmp.cmp("guest1.c", "golden/guest1.c")
+    test = application.find("generate")
+    test_tester = CommandTester(test)
+    test_tester.execute(interactive=False)
