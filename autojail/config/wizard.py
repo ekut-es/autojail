@@ -51,7 +51,7 @@ class RootConfigWizard(WizardBase):
 
                 memory_regions:
                     Main Memory:
-                        size: 768 MB
+                        size: 512 MB
                         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE, MEM_DMA]
     """  # noqa
 
