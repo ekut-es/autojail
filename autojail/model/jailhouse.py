@@ -2,6 +2,8 @@
 from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
+from pydantic.networks import IPvAnyInterface, IPvAnyNetwork
+from typing_extensions import Literal
 
 from .board import (
     Board,
@@ -174,15 +176,35 @@ class CellConfig(BaseModel):
 
 
 class ShmemConfig(BaseModel):
-    protocol: str
+    protocol: Literal[
+        "SHMEM_PROTO_UNDEFINED", "SHMEM_VIRTIO_BACK", "SHMEM_PROTO_VETH"
+    ]
     peers: List[str]
     common_output_region_size: Optional[ByteSize]
     per_device_region_size: Optional[ByteSize]
 
 
+class InterfaceConfig(BaseModel):
+    addresses: List[IPvAnyInterface]
+
+
+class ShmemConfigNet(ShmemConfig):
+    protocol: Literal["SHMEM_PROTO_VETH"]
+    renderer: Literal["interfaces"] = "interfaces"
+    network: Union[List[IPvAnyNetwork], Dict[str, InterfaceConfig]] = {}
+
+
 class JailhouseConfig(BaseModel):
     cells: Dict[str, CellConfig]
-    shmem: Optional[Dict[str, ShmemConfig]]
+    shmem: Optional[Dict[str, Union[ShmemConfigNet, ShmemConfig]]] = None
+
+    @property
+    def root_cell(self) -> CellConfig:
+        for cell in self.cells.values():
+            if cell.type == "root":
+                return cell
+
+        raise Exception("No root cell found")
 
 
 if __name__ == "__main__":

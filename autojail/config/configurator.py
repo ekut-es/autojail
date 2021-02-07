@@ -30,6 +30,7 @@ from .memory import (
     MergeIoRegionsPass,
     PrepareMemoryRegionsPass,
 )
+from .network import NetworkConfigPass
 from .root_shared import InferRootSharedPass
 from .shmem import ConfigSHMemRegionsPass, LowerSHMemPass  # type: ignore
 
@@ -59,6 +60,7 @@ class JailhouseConfigurator:
             ConfigSHMemRegionsPass(),
             InferRootSharedPass(),
             GenerateDeviceTreePass(self.autojail_config),
+            NetworkConfigPass(),
         ]
 
         self.logger = utils.logging.getLogger()
