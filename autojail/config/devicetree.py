@@ -33,12 +33,18 @@ _overlay_template = Template(
 /dts-v1/;
 
 / {
-    reserved_memory {
+    fragment@0 {
+        target-path="/reserved-memory";
+        __overlay__  {
+            #address-cells = <${hex(address_cells)}>;
+            #size-cells = <${hex(size_cells)}>;
+
 %for region in reserved_regions:
-        ${region.id}: ${region.name} {
-            reg = <${format_range(region.start, address_cells)} ${format_range(region.size, size_cells)}>;
-        };
+            ${region.id}: ${region.name} {
+                reg = <${format_range(region.start, address_cells)} ${format_range(region.size, size_cells)}>;
+            };
 %endfor
+        };
     };
 };
     """,
@@ -229,17 +235,17 @@ class GenerateDeviceTreePass(BasePass):
         return clocks
 
     def _find_clock_parent(self, handle):
-        print("Searching for parent", handle)
+        # print("Searching for parent", handle)
         for name, device in self.board.devices.items():
             if device.phandle == handle:
-                print("Found parent", name, "handle is", handle)
+                # print("Found parent", name, "handle is", handle)
                 return name, device
 
     def _extract_clock_paths(self, device):
         device_clocks = list(reversed(device.clocks))
         paths = []
 
-        print("Device clocks: ", ",".join(device_clocks))
+        # print("Device clocks: ", ",".join(device_clocks))
         while device_clocks:
             clock_parent_handle = int(device_clocks.pop())
             parent_name, parent = self._find_clock_parent(clock_parent_handle)
@@ -259,7 +265,7 @@ class GenerateDeviceTreePass(BasePass):
                     paths.append((compatible,) + parent_path)
                 else:
                     parent_paths = self._extract_clock_paths(parent)
-                    print("Searching for clock", clock_num)
+                    # print("Searching for clock", clock_num)
                     for parent_path in parent_paths:
                         paths.append((compatible,) + parent_path)
 
@@ -271,7 +277,7 @@ class GenerateDeviceTreePass(BasePass):
         while worklist:
             current_clock = worklist.pop()
 
-            print(current_clock.name, clock_name)
+            # print(current_clock.name, clock_name)
             if current_clock.name == clock_name:
                 return current_clock.rate
 
@@ -436,7 +442,7 @@ class GenerateDeviceTreePass(BasePass):
 
         overlay = _overlay_template.render(
             reserved_regions=reserved_regions,
-            size_cells=2,
+            size_cells=1,
             address_cells=2,
             format_range=format_range,
         )
@@ -556,7 +562,7 @@ class GenerateDeviceTreePass(BasePass):
                 f"CROSS_COMPILE={self.autojail_config.cross_compile}",
                 f"M={dts_path.absolute()}",
             ]
-            print(" ".join(build_dts_command))
+            # print(" ".join(build_dts_command))
 
             if not Path(self.autojail_config.kernel_dir).exists():
                 self.logger.critical(
