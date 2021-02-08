@@ -662,7 +662,8 @@ class JailhouseConfigurator:
                 shmem_section.add(pci_table)
                 pci_device_count = 0
                 for shmem_device_name, shmem_device in cell.pci_devices.items():
-                    assert shmem_device_name in cell.memory_regions
+                    if shmem_device_name not in cell.memory_regions:
+                        continue
                     device_memory_region = cell.memory_regions[
                         shmem_device_name
                     ]
@@ -728,12 +729,17 @@ class JailhouseConfigurator:
                 cell.memory_regions.items(),
                 key=lambda x: x[1].virtual_start_addr,
             ):
+                region_size = (
+                    region.size.human_readable()
+                    if hasattr(region.size, "human_readable")
+                    else region.size
+                )
                 memory_table.append(
                     [
                         region_name,
                         hex(region.virtual_start_addr),
                         hex(region.physical_start_addr),
-                        region.size.human_readable(),
+                        str(region_size),
                         " | ".join(region.flags),
                     ]
                 )
