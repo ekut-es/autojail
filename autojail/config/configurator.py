@@ -695,6 +695,10 @@ class JailhouseConfigurator:
                     interface_name = f"eth{interface_count}"
                     addresses = ["unknown"]
                     if shmem_device_name in self.config.shmem:
+                        if not hasattr(
+                            self.config.shmem[shmem_device_name], "network"
+                        ):
+                            continue
                         if (
                             cell_id
                             in self.config.shmem[shmem_device_name].network
