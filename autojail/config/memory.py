@@ -1021,7 +1021,7 @@ class UnallocatedOrSharedSegmentsAnalysis(object):
 class MergeIoRegionsPass(BasePass):
     """ Merge IO regions in root cell that are at most 64 kB apart """
 
-    MAX_DIST = 16 * 1024 * 1024
+    MAX_DIST = 64 * 1024
 
     def __init__(self) -> None:
         self.config: Optional[JailhouseConfig] = None

@@ -636,21 +636,87 @@ class JailhouseConfigurator:
 
         report = Report("Jailhouse Config")
 
-        for id, cell in self.config.cells.items():
+        for cell_id, cell in self.config.cells.items():
             cell_section = Section(cell.name)
             report.add(cell_section)
             cell_info_table = Table(headers=["Attribute", "Value"])
-            cell_info_table.content.append(["ID", id])
+            cell_info_table.content.append(["ID", cell_id])
             cell_info_table.content.append(["Type", cell.type])
             cell_info_table.content.append(["Flags", " | ".join(cell.flags)])
             cell_section.add(cell_info_table)
 
-            if self.config.shmem:
-                shmem_section = Section("Shared Memory Configuration")
+            if cell.pci_devices:
+                shmem_section = Section("Virtual PCI Devices")
                 report.add(shmem_section)
+                pci_table = Table(
+                    [
+                        "Name",
+                        "Domain",
+                        "BDF",
+                        "Interrupt",
+                        "Protocol",
+                        "Virtual Memory",
+                        "Physical Memory",
+                    ]
+                )
+                shmem_section.add(pci_table)
+                pci_device_count = 0
+                for shmem_device_name, shmem_device in cell.pci_devices.items():
+                    assert shmem_device_name in cell.memory_regions
+                    device_memory_region = cell.memory_regions[
+                        shmem_device_name
+                    ]
+                    pci_table.append(
+                        [
+                            shmem_device_name,
+                            str(shmem_device.domain),
+                            f"{shmem_device.bus}:{shmem_device.device}.{shmem_device.function}",
+                            str(cell.vpci_irq_base + pci_device_count),
+                            shmem_device.shmem_protocol,
+                            hex(device_memory_region.virtual_start_addr),
+                            hex(device_memory_region.physical_start_addr),
+                        ]
+                    )
+                    pci_device_count += 1
 
+            if self.config.shmem:
                 network_section = Section("Network Configuration")
                 report.add(network_section)
+                network_interface_table = Table(
+                    ["Name", "Interface", "Address"]
+                )
+
+                interface_count = 0
+                for shmem_device_name, shmem_device in cell.pci_devices.items():
+                    if shmem_device.shmem_protocol != "SHMEM_PROTO_VETH":
+                        continue
+                    interface_count += 1
+                    interface_name = f"eth{interface_count}"
+                    addresses = ["unknown"]
+                    if shmem_device_name in self.config.shmem:
+                        if (
+                            cell_id
+                            in self.config.shmem[shmem_device_name].network
+                        ):
+                            shmem_addresses = (
+                                self.config.shmem[shmem_device_name]
+                                .network[cell_id]
+                                .addresses
+                            )
+                            addresses = (
+                                shmem_addresses
+                                if shmem_addresses
+                                else addresses
+                            )
+                    for address in addresses:
+                        network_interface_table.append(
+                            [shmem_device_name, interface_name, str(address)]
+                        )
+
+                if network_interface_table.content:
+                    report.add(network_interface_table)
+                else:
+                    report.add("No network interfaces configured")
 
             memory_section = Section("Memory Map")
             report.add(memory_section)
