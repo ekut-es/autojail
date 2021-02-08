@@ -20,6 +20,7 @@ from ..model import (
     PlatformInfoArm,
     ShMemNetRegion,
 )
+from ..utils.report import Report, Section, Table
 from .board_info import TransferBoardInfoPass
 from .cpu import CPUAllocatorPass
 from .devices import LowerDevicesPass
@@ -629,3 +630,60 @@ class JailhouseConfigurator:
             yaml_info = yaml.load(stream)
             config = JailhouseConfig(**yaml_info)
             self.config = config
+
+    def report(self, show=True):
+        self.logger.info("Generating reports")
+
+        report = Report("Jailhouse Config")
+
+        for id, cell in self.config.cells.items():
+            cell_section = Section(cell.name)
+            report.add(cell_section)
+            cell_info_table = Table(headers=["Attribute", "Value"])
+            cell_info_table.content.append(["ID", id])
+            cell_info_table.content.append(["Type", cell.type])
+            cell_info_table.content.append(["Flags", " | ".join(cell.flags)])
+            cell_section.add(cell_info_table)
+
+            if self.config.shmem:
+                shmem_section = Section("Shared Memory Configuration")
+                report.add(shmem_section)
+
+                network_section = Section("Network Configuration")
+                report.add(network_section)
+
+            memory_section = Section("Memory Map")
+            report.add(memory_section)
+
+            memory_table = Table(
+                headers=["Name", "Virtual", "Phys", "Size", "Flags"]
+            )
+            for region_name, region in sorted(
+                cell.memory_regions.items(),
+                key=lambda x: x[1].virtual_start_addr,
+            ):
+                memory_table.append(
+                    [
+                        region_name,
+                        hex(region.virtual_start_addr),
+                        hex(region.physical_start_addr),
+                        region.size.human_readable(),
+                        " | ".join(region.flags),
+                    ]
+                )
+            memory_section.add(memory_table)
+
+        # Save report
+        build_path = Path(self.autojail_config.build_dir) / "report"
+        build_path.mkdir(parents=True, exist_ok=True)
+
+        report_path = build_path / "generate.md"
+        with report_path.open("w") as report_file:
+            report_file.write(str(report))
+
+        # Render to console
+        if show:
+            from rich.console import Console
+
+            console = Console()
+            console.print(report)

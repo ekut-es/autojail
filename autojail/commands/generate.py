@@ -48,12 +48,14 @@ class GenerateCommand(BaseCommand):
         configurator.prepare()
         ret = configurator.write_config(self.autojail_config.build_dir)
         if ret:
+            configurator.report()
             return ret
 
         ret = configurator.build_config(
             self.autojail_config.build_dir, skip_check=self.option("skip-check")
         )
         if ret:
+            configurator.report()
             return ret
 
         ret = configurator.deploy(
@@ -61,5 +63,6 @@ class GenerateCommand(BaseCommand):
             self.autojail_config.deploy_dir,
             target=self.option("target"),
         )
+        configurator.report()
 
         return ret

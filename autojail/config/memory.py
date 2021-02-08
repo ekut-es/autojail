@@ -673,6 +673,8 @@ class AllocateMemoryPass(BasePass):
                     copy_region.flags.remove("MEM_LOADABLE")
                     if "MEM_EXECUTE" in copy_region.flags:
                         copy_region.flags.remove("MEM_EXECUTE")
+                    if "MEM_DMA" in copy_region.flags:
+                        copy_region.flags.remove("MEM_DMA")
 
                     # FIXME: is it really true, that that MEM_LOADABLE must be the same at their respective memory region
                     copy_region.virtual_start_addr = (
@@ -1019,6 +1021,8 @@ class UnallocatedOrSharedSegmentsAnalysis(object):
 class MergeIoRegionsPass(BasePass):
     """ Merge IO regions in root cell that are at most 64 kB apart """
 
+    MAX_DIST = 16 * 1024 * 1024
+
     def __init__(self) -> None:
         self.config: Optional[JailhouseConfig] = None
         self.board: Optional[Board] = None
@@ -1077,7 +1081,7 @@ class MergeIoRegionsPass(BasePass):
         grouped_regions: List[List[Tuple[str, MemoryRegionData]]] = []
         current_group: List[Tuple[str, MemoryRegionData]] = []
 
-        max_dist = 65536
+        max_dist = self.MAX_DIST
         for name, r in regions:
             assert r.physical_start_addr is not None
             assert r.size is not None
