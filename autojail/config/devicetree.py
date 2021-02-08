@@ -6,6 +6,7 @@ from typing import Dict, List, MutableMapping, Optional, Tuple
 # import fuzzywuzzy.process
 from dataclasses import dataclass
 from mako.template import Template
+from ortools.util.sorted_interval_list import Domain
 
 from autojail.model.jailhouse import CellConfig
 
@@ -25,6 +26,30 @@ def format_range(val, cells):
 
     return " ".join(chunks)
 
+
+_overlay_template = Template(
+    r"""
+// Device tree overlay for root cell
+/dts-v1/;
+
+/ {
+    fragment@0 {
+        target-path="/reserved-memory";
+        __overlay__  {
+            #address-cells = <${hex(address_cells)}>;
+            #size-cells = <${hex(size_cells)}>;
+
+%for region in reserved_regions:
+            ${region.id}: ${region.name} {
+                reg = <${format_range(region.start, address_cells)} ${format_range(region.size, size_cells)}>;
+            };
+%endfor
+        };
+    };
+};
+    """,
+    strict_undefined=True,
+)
 
 _dts_template = Template(
     r"""
@@ -137,8 +162,17 @@ _dts_template = Template(
 % endif
 	
 };
-"""
+""",
+    strict_undefined=True,
 )
+
+
+@dataclass
+class ReservedRegion:
+    start: int
+    size: int
+    id: str
+    name: str
 
 
 @dataclass
@@ -201,17 +235,17 @@ class GenerateDeviceTreePass(BasePass):
         return clocks
 
     def _find_clock_parent(self, handle):
-        print("Searching for parent", handle)
+        # print("Searching for parent", handle)
         for name, device in self.board.devices.items():
             if device.phandle == handle:
-                print("Found parent", name, "handle is", handle)
+                # print("Found parent", name, "handle is", handle)
                 return name, device
 
     def _extract_clock_paths(self, device):
         device_clocks = list(reversed(device.clocks))
         paths = []
 
-        print("Device clocks: ", ",".join(device_clocks))
+        # print("Device clocks: ", ",".join(device_clocks))
         while device_clocks:
             clock_parent_handle = int(device_clocks.pop())
             parent_name, parent = self._find_clock_parent(clock_parent_handle)
@@ -231,7 +265,7 @@ class GenerateDeviceTreePass(BasePass):
                     paths.append((compatible,) + parent_path)
                 else:
                     parent_paths = self._extract_clock_paths(parent)
-                    print("Searching for clock", clock_num)
+                    # print("Searching for clock", clock_num)
                     for parent_path in parent_paths:
                         paths.append((compatible,) + parent_path)
 
@@ -243,7 +277,7 @@ class GenerateDeviceTreePass(BasePass):
         while worklist:
             current_clock = worklist.pop()
 
-            print(current_clock.name, clock_name)
+            # print(current_clock.name, clock_name)
             if current_clock.name == clock_name:
                 return current_clock.rate
 
@@ -322,6 +356,97 @@ class GenerateDeviceTreePass(BasePass):
                     break
 
         return pci_mmconfig_base, pci_mmconfig_end_bus, pci_mmconfig_size
+
+    def _generate_dtso(self, board: Board, config: JailhouseConfig):
+        """
+        Generate a device tree overlay for root cell to reserve memory regions 
+        of guest devices
+        """
+        allocatable_ranges = []
+
+        for board_region in board.memory_regions.values():
+            if board_region.allocatable:
+                assert board_region.virtual_start_addr is not None
+                assert board_region.physical_start_addr is not None
+                assert board_region.size is not None
+
+                start = board_region.virtual_start_addr
+                end = board_region.virtual_start_addr + board_region.size
+                allocatable_ranges.append((start, end - 1))
+
+        allocatable_domain = Domain.FromIntervals(allocatable_ranges)
+
+        guest_domain = Domain()
+        root_domain = Domain()
+        for cell in config.cells.values():
+            assert cell.memory_regions is not None
+            for region_name, memory_region in cell.memory_regions.items():
+                assert not isinstance(memory_region, str)
+                assert memory_region.physical_start_addr is not None
+                assert memory_region.virtual_start_addr is not None
+                assert memory_region.size is not None
+
+                start_addr = memory_region.physical_start_addr
+                end_addr = start_addr + memory_region.size
+                memory_region_domain = Domain.FromIntervals(
+                    [(start_addr, end_addr - 1)]
+                )
+
+                intersection = allocatable_domain.IntersectionWith(
+                    memory_region_domain
+                )
+
+                if intersection.Size() > 0:
+                    if cell.type == "root":
+                        root_domain = root_domain.UnionWith(intersection)
+                    else:
+                        guest_domain = guest_domain.UnionWith(intersection)
+
+        rootshared_domain = root_domain.IntersectionWith(guest_domain)
+        root_only_domain = root_domain.IntersectionWith(
+            rootshared_domain.Complement()
+        )
+        root_unreachable_domain = allocatable_domain.IntersectionWith(
+            root_domain.Complement()
+        )
+
+        def to_intervals(domain: Domain) -> List[Tuple[int, int]]:
+            flat_intervals = domain.FlattenedIntervals()
+            starts = flat_intervals[:-1]
+            ends = flat_intervals[1:]
+            return list(zip(starts, ends))
+
+        reserved_regions: List[ReservedRegion] = []
+
+        for num, interval in enumerate(to_intervals(rootshared_domain)):
+            region_start = interval[0]
+            region_size = interval[1] - interval[0]
+            id = "jailhouse_shared" + str(num)
+            name = "jailhouse_shared_region@" + hex(region_start)
+            reserved_regions.append(
+                ReservedRegion(
+                    start=region_start, size=region_size, id=id, name=name
+                )
+            )
+
+        for num, interval in enumerate(to_intervals(root_unreachable_domain)):
+            region_start = interval[0]
+            region_size = interval[1] - interval[0]
+            id = "jailhouse_reserved" + str(num)
+            name = "jailhouse_reserved@" + hex(region_start)
+            reserved_regions.append(
+                ReservedRegion(
+                    start=region_start, size=region_size, id=id, name=name
+                )
+            )
+
+        overlay = _overlay_template.render(
+            reserved_regions=reserved_regions,
+            size_cells=1,
+            address_cells=2,
+            format_range=format_range,
+        )
+        return overlay
 
     def _build_cpus(self, cell: CellConfig, board: Board):
         cpus = []
@@ -415,6 +540,14 @@ class GenerateDeviceTreePass(BasePass):
             with dts_file_path.open("w") as dts_file:
                 dts_file.write(dts_data)
 
+        root_dtso_name = config.root_cell.name
+        root_dtso_name = root_dtso_name.lower().replace(" ", "-") + ".dts"
+        root_dtso = self._generate_dtso(board, config)
+        dts_names.append(root_dtso_name)
+        root_dtso_path = dts_path / root_dtso_name
+        with root_dtso_path.open("w") as dtso_file:
+            dtso_file.write(root_dtso)
+
         if dts_names:
             makefile_path = dts_path / "Makefile"
             with makefile_path.open("w") as makefile:
@@ -429,7 +562,7 @@ class GenerateDeviceTreePass(BasePass):
                 f"CROSS_COMPILE={self.autojail_config.cross_compile}",
                 f"M={dts_path.absolute()}",
             ]
-            print(" ".join(build_dts_command))
+            # print(" ".join(build_dts_command))
 
             if not Path(self.autojail_config.kernel_dir).exists():
                 self.logger.critical(

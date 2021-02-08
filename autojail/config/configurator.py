@@ -20,6 +20,7 @@ from ..model import (
     PlatformInfoArm,
     ShMemNetRegion,
 )
+from ..utils.report import Report, Section, Table
 from .board_info import TransferBoardInfoPass
 from .cpu import CPUAllocatorPass
 from .devices import LowerDevicesPass
@@ -30,6 +31,7 @@ from .memory import (
     MergeIoRegionsPass,
     PrepareMemoryRegionsPass,
 )
+from .network import NetworkConfigPass
 from .root_shared import InferRootSharedPass
 from .shmem import ConfigSHMemRegionsPass, LowerSHMemPass  # type: ignore
 
@@ -59,6 +61,7 @@ class JailhouseConfigurator:
             ConfigSHMemRegionsPass(),
             InferRootSharedPass(),
             GenerateDeviceTreePass(self.autojail_config),
+            NetworkConfigPass(),
         ]
 
         self.logger = utils.logging.getLogger()
@@ -627,3 +630,136 @@ class JailhouseConfigurator:
             yaml_info = yaml.load(stream)
             config = JailhouseConfig(**yaml_info)
             self.config = config
+
+    def report(self, show=True):
+        self.logger.info("Generating reports")
+
+        report = Report("Jailhouse Config")
+
+        for cell_id, cell in self.config.cells.items():
+            cell_section = Section(cell.name)
+            report.add(cell_section)
+            cell_info_table = Table(headers=["Attribute", "Value"])
+            cell_info_table.content.append(["ID", cell_id])
+            cell_info_table.content.append(["Type", cell.type])
+            cell_info_table.content.append(["Flags", " | ".join(cell.flags)])
+            cell_section.add(cell_info_table)
+
+            if cell.pci_devices:
+                shmem_section = Section("Virtual PCI Devices")
+                report.add(shmem_section)
+                pci_table = Table(
+                    [
+                        "Name",
+                        "Domain",
+                        "BDF",
+                        "Interrupt",
+                        "Protocol",
+                        "Virtual Memory",
+                        "Physical Memory",
+                    ]
+                )
+                shmem_section.add(pci_table)
+                pci_device_count = 0
+                for shmem_device_name, shmem_device in cell.pci_devices.items():
+                    if shmem_device_name not in cell.memory_regions:
+                        continue
+                    device_memory_region = cell.memory_regions[
+                        shmem_device_name
+                    ]
+                    pci_table.append(
+                        [
+                            shmem_device_name,
+                            str(shmem_device.domain),
+                            f"{shmem_device.bus}:{shmem_device.device}.{shmem_device.function}",
+                            str(cell.vpci_irq_base + pci_device_count),
+                            shmem_device.shmem_protocol,
+                            hex(device_memory_region.virtual_start_addr),
+                            hex(device_memory_region.physical_start_addr),
+                        ]
+                    )
+                    pci_device_count += 1
+
+            if self.config.shmem:
+                network_section = Section("Network Configuration")
+                report.add(network_section)
+                network_interface_table = Table(
+                    ["Name", "Interface", "Address"]
+                )
+
+                interface_count = 0
+                for shmem_device_name, shmem_device in cell.pci_devices.items():
+                    if shmem_device.shmem_protocol != "SHMEM_PROTO_VETH":
+                        continue
+                    interface_count += 1
+                    interface_name = f"eth{interface_count}"
+                    addresses = ["unknown"]
+                    if shmem_device_name in self.config.shmem:
+                        if not hasattr(
+                            self.config.shmem[shmem_device_name], "network"
+                        ):
+                            continue
+                        if (
+                            cell_id
+                            in self.config.shmem[shmem_device_name].network
+                        ):
+                            shmem_addresses = (
+                                self.config.shmem[shmem_device_name]
+                                .network[cell_id]
+                                .addresses
+                            )
+                            addresses = (
+                                shmem_addresses
+                                if shmem_addresses
+                                else addresses
+                            )
+                    for address in addresses:
+                        network_interface_table.append(
+                            [shmem_device_name, interface_name, str(address)]
+                        )
+
+                if network_interface_table.content:
+                    report.add(network_interface_table)
+                else:
+                    report.add("No network interfaces configured")
+
+            memory_section = Section("Memory Map")
+            report.add(memory_section)
+
+            memory_table = Table(
+                headers=["Name", "Virtual", "Phys", "Size", "Flags"]
+            )
+            for region_name, region in sorted(
+                cell.memory_regions.items(),
+                key=lambda x: x[1].virtual_start_addr,
+            ):
+                region_size = (
+                    region.size.human_readable()
+                    if hasattr(region.size, "human_readable")
+                    else region.size
+                )
+                memory_table.append(
+                    [
+                        region_name,
+                        hex(region.virtual_start_addr),
+                        hex(region.physical_start_addr),
+                        str(region_size),
+                        " | ".join(region.flags),
+                    ]
+                )
+            memory_section.add(memory_table)
+
+        # Save report
+        build_path = Path(self.autojail_config.build_dir) / "report"
+        build_path.mkdir(parents=True, exist_ok=True)
+
+        report_path = build_path / "generate.md"
+        with report_path.open("w") as report_file:
+            report_file.write(str(report))
+
+        # Render to console
+        if show:
+            from rich.console import Console
+
+            console = Console()
+            console.print(report)

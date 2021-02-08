@@ -26,37 +26,37 @@ cells:
         flags: [MEM_READ, MEM_WRITE, MEM_EXECUTE]
 
       ivshmem1:
-        physical_start_addr: 0x3faf0000
-        virtual_start_addr: 0x3faf0000
+        physical_start_addr: 0x40000000
+        virtual_start_addr: 0x40000000
         size: 0x1000
         flags: [MEM_READ]
 
       ivshmem2:
-        physical_start_addr: 0x3faf1000
-        virtual_start_addr: 0x3faf1000
+        physical_start_addr: 0x40001000
+        virtual_start_addr: 0x40001000
         size: 0x9000
         flags: [MEM_READ, MEM_WRITE]
 
       ivshmem3:
-        physical_start_addr: 0x3fafa000
-        virtual_start_addr: 0x3fafa000
+        physical_start_addr: 0x4000a000
+        virtual_start_addr: 0x4000a000
         size: 0x2000
         flags: [MEM_READ, MEM_WRITE]
 
       ivshmem4:
-        physical_start_addr: 0x3fafc000
-        virtual_start_addr: 0x3fafc000
+        physical_start_addr: 0x4000c000
+        virtual_start_addr: 0x4000c000
         size: 0x2000
         flags: [MEM_READ]
 
       ivshmem5:
-        physical_start_addr: 0x3fafe000
-        virtual_start_addr: 0x3fafe000
+        physical_start_addr: 0x4000e000
+        virtual_start_addr: 0x4000e000
         size: 0x2000
         flags: [MEM_READ]
 
       shmem_net:
-        start_addr: 0x3fb00000
+        start_addr: 0x41000000
         device_id: 0 #0 = 0x1000; 1 = 0x80000
 
     irqchips:

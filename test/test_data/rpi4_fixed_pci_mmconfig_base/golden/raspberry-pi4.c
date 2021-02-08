@@ -60,43 +60,43 @@ struct {
 		.size = 0x30000000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE|JAILHOUSE_MEM_EXECUTE,
 	},
-	/*ivshmem1 0x3faf0000-0x3faf1000*/
+	/*ivshmem1 0x40000000-0x40001000*/
 	{
-		.phys_start = 0x3faf0000,
-		.virt_start = 0x3faf0000,
+		.phys_start = 0x40000000,
+		.virt_start = 0x40000000,
 		.size = 0x1000,
 		.flags = JAILHOUSE_MEM_READ,
 	},
-	/*ivshmem2 0x3faf1000-0x3fafa000*/
+	/*ivshmem2 0x40001000-0x4000a000*/
 	{
-		.phys_start = 0x3faf1000,
-		.virt_start = 0x3faf1000,
+		.phys_start = 0x40001000,
+		.virt_start = 0x40001000,
 		.size = 0x9000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE,
 	},
-	/*ivshmem3 0x3fafa000-0x3fafc000*/
+	/*ivshmem3 0x4000a000-0x4000c000*/
 	{
-		.phys_start = 0x3fafa000,
-		.virt_start = 0x3fafa000,
+		.phys_start = 0x4000a000,
+		.virt_start = 0x4000a000,
 		.size = 0x2000,
 		.flags = JAILHOUSE_MEM_READ|JAILHOUSE_MEM_WRITE,
 	},
-	/*ivshmem4 0x3fafc000-0x3fafe000*/
+	/*ivshmem4 0x4000c000-0x4000e000*/
 	{
-		.phys_start = 0x3fafc000,
-		.virt_start = 0x3fafc000,
+		.phys_start = 0x4000c000,
+		.virt_start = 0x4000c000,
 		.size = 0x2000,
 		.flags = JAILHOUSE_MEM_READ,
 	},
-	/*ivshmem5 0x3fafe000-0x3fb00000*/
+	/*ivshmem5 0x4000e000-0x40010000*/
 	{
-		.phys_start = 0x3fafe000,
-		.virt_start = 0x3fafe000,
+		.phys_start = 0x4000e000,
+		.virt_start = 0x4000e000,
 		.size = 0x2000,
 		.flags = JAILHOUSE_MEM_READ,
 	},
 	/* shmem_net */
-	JAILHOUSE_SHMEM_NET_REGIONS(0x3fb00000, 0),
+	JAILHOUSE_SHMEM_NET_REGIONS(0x41000000, 0),
 	/*mmio_0 0xfd500000-0xfd509310*/
 	{
 		.phys_start = 0xfd500000,

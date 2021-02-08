@@ -45,4 +45,12 @@ shmem:
   net1:
     protocol: SHMEM_PROTO_VETH
     peers: [root, guest1]
+    network:
+      root: 
+        addresses: 
+          - 192.168.1.1/24
+      guest1:
+        addresses: 
+          - 192.168.1.2/24
+
 
