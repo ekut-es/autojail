@@ -643,6 +643,9 @@ class JailhouseConfigurator:
             cell_info_table.content.append(["ID", cell_id])
             cell_info_table.content.append(["Type", cell.type])
             cell_info_table.content.append(["Flags", " | ".join(cell.flags)])
+            cell_info_table.append(
+                ["CPUs", ", ".join((str(c) for c in cell.cpus))]
+            )
             cell_section.add(cell_info_table)
 
             if cell.pci_devices:
