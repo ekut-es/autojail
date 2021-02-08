@@ -259,6 +259,26 @@ class BoardInfoExtractor:
 
         return cpuinfos[0]
 
+    def _extract_ip_info(self) -> List[Dict[str, Any]]:
+        ipinfo_file = self.data_root / "ip_addr.json"
+        if not ipinfo_file.exists():
+            return []
+
+        with ipinfo_file.open() as file:
+            ipinfo = json.load(file)
+
+        return ipinfo
+
+    def _extract_hw_info(self) -> List[Dict[str, Any]]:
+        hwinfo_file = self.data_root / "hw_info.json"
+        if not hwinfo_file.exists():
+            return []
+
+        with hwinfo_file.open() as file:
+            hwinfo = json.load(file)
+
+        return hwinfo
+
     def extract(self) -> Board:
         memory_regions = self.read_iomem(self.data_root / "proc" / "iomem")
 
@@ -290,6 +310,8 @@ class BoardInfoExtractor:
         memory_regions = self._merge_memory_regions(
             [memory_regions_dt, memory_regions]
         )
+        ip_info = self._extract_ip_info()
+        hw_info = self._extract_hw_info()
 
         board = Board(
             name=self.name,
@@ -302,6 +324,8 @@ class BoardInfoExtractor:
             clock_tree=clocks,
             devices=devices,
             clock_mapping=clock_mapping,
+            ip_info=ip_info,
+            hw_info=hw_info,
         )
 
         return board
