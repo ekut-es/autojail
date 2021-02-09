@@ -61,7 +61,7 @@ class JailhouseConfigurator:
             ConfigSHMemRegionsPass(),
             InferRootSharedPass(),
             GenerateDeviceTreePass(self.autojail_config),
-            NetworkConfigPass(),
+            NetworkConfigPass(self.autojail_config),
         ]
 
         self.logger = utils.logging.getLogger()
@@ -690,12 +690,11 @@ class JailhouseConfigurator:
                     ["Name", "Interface", "Address"]
                 )
 
-                interface_count = 0
                 for shmem_device_name, shmem_device in cell.pci_devices.items():
                     if shmem_device.shmem_protocol != "SHMEM_PROTO_VETH":
                         continue
-                    interface_count += 1
-                    interface_name = f"eth{interface_count}"
+
+                    interface_name = "unknown"
                     addresses = ["unknown"]
                     if shmem_device_name in self.config.shmem:
                         if not hasattr(
@@ -711,11 +710,25 @@ class JailhouseConfigurator:
                                 .network[cell_id]
                                 .addresses
                             )
+
                             addresses = (
                                 shmem_addresses
                                 if shmem_addresses
                                 else addresses
                             )
+
+                            network_interface_name = (
+                                self.config.shmem[shmem_device_name]
+                                .network[cell_id]
+                                .interface
+                            )
+
+                            interface_name = (
+                                network_interface_name
+                                if network_interface_name
+                                else interface_name
+                            )
+
                     for address in addresses:
                         network_interface_table.append(
                             [shmem_device_name, interface_name, str(address)]

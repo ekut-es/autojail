@@ -1,7 +1,17 @@
 import itertools
-from ipaddress import IPv4Network, IPv6Network, ip_interface, ip_network
+from collections import defaultdict
+from ipaddress import (
+    IPv4Interface,
+    IPv4Network,
+    IPv6Network,
+    ip_interface,
+    ip_network,
+)
 from logging import getLogger
-from typing import List, Tuple
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
+
+from autojail.model.config import AutojailConfig
 
 from ..model import Board, JailhouseConfig, ShmemConfigNet
 from ..model.jailhouse import InterfaceConfig
@@ -9,12 +19,19 @@ from .passes import BasePass
 
 
 class NetworkConfigPass(BasePass):
-    def __init__(self):
+    def __init__(self, config: AutojailConfig):
         self.logger = getLogger()
+        self.autojail_config = config
 
     def __call__(
         self, board: Board, config: JailhouseConfig
     ) -> Tuple[Board, JailhouseConfig]:
+
+        root_cell_id = ""
+        for cell_id, cell in config.cells.items():
+            if cell.type == "root":
+                root_cell_id = cell_id
+
         if config.shmem:
 
             link_configs: List[ShmemConfigNet] = []
@@ -26,12 +43,88 @@ class NetworkConfigPass(BasePass):
 
             self._lower_networks(link_configs)
             self._autoconf_networks(link_configs, board.ip_info)
+            self._generate_interface_names(
+                link_configs, board.ip_info, root_cell_id
+            )
+            interface_configs = self._generate_interfaces(link_configs)
 
-            from devtools import debug
-
-            debug(config.shmem)
+            self._write_interface_file(interface_configs, config)
 
         return board, config
+
+    def _write_interface_file(self, interface_configs, config):
+        deploy_path = Path(self.autojail_config.deploy_dir)
+        build_path = Path(self.autojail_config.build_dir)
+
+        for cell_id, interface_d in interface_configs.items():
+            cell = config.cells[cell_id]
+            if cell.type == "root":
+                interfaces_path = (
+                    deploy_path / "etc" / "network" / "interfaces.d"
+                )
+            else:
+                cell_name = cell.name.lower().replace(" ", "-")
+                interfaces_path = (
+                    build_path
+                    / "rootfs"
+                    / cell_name
+                    / "etc"
+                    / "network"
+                    / "interfaces.d"
+                )
+            interfaces_path.mkdir(exist_ok=True, parents=True)
+
+            output_path = interfaces_path / "jailhouse"
+            with output_path.open("w") as output_file:
+                output_file.write(interface_d)
+
+    def _generate_interface_names(
+        self,
+        network_configs: List[ShmemConfigNet],
+        ip_info: List[Dict[str, Any]],
+        root_cell_id: str,
+    ):
+        interfaces = defaultdict(list)
+
+        if root_cell_id:
+            for interface_info in ip_info:
+                interfaces[root_cell_id].append(interface_info["ifname"])
+
+        for config in network_configs:
+            assert isinstance(config.network, dict)
+            for cell_id, _network in config.network.items():
+                num = 0
+                ifname = f"eth{num}"
+                while ifname in interfaces[cell_id]:
+                    num += 1
+                    ifname = f"eth{num}"
+                config.network[cell_id].interface = ifname
+                interfaces[cell_id].append(ifname)
+
+    def _generate_interfaces(
+        self, network_configs: List[ShmemConfigNet],
+    ) -> Dict[str, str]:
+
+        configs: Dict[str, str] = defaultdict(str)
+        for shmem_config in network_configs:
+            assert isinstance(shmem_config.network, dict)
+            for cell_id, interface_config in shmem_config.network.items():
+                ifname = interface_config.interface
+                config = ""
+                config += f"auto {ifname}\n"
+                config += f"allow-hotplug {ifname}\n"
+                config += "\n"
+                for address in interface_config.addresses:
+                    protocol = (
+                        "inet"
+                        if isinstance(address, IPv4Interface)
+                        else "inet6"
+                    )
+                    config += f"iface {ifname} {protocol} static\n"
+                    config += f"    address {address}\n\n"
+
+                configs[cell_id] += config
+        return configs
 
     def _autoconf_networks(
         self, network_configs: List[ShmemConfigNet], ip_info
@@ -96,9 +189,6 @@ class NetworkConfigPass(BasePass):
                 if net.prefixlen <= 64
             )
         )
-
-        print(v4_generator)
-        print(v6_generator)
 
         for network, v4, v6 in zip(
             unconfigured_networks, v4_generator, v6_generator
