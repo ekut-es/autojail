@@ -119,6 +119,21 @@ class ExtractCommand(BaseCommand):
                     in_stream=False,
                 )
 
+                res = connection.run(
+                    f"sudo /usr/bin/lshw -json > {target_tmpdir}/lshw.json",
+                    in_stream=False,
+                    warn=True,
+                )
+                if res.return_code != 0:
+                    connection.run(
+                        "sudo rm -f {target_tmpdir}/lshw.json", in_stream=False
+                    )
+
+                res = connection.run(
+                    f"sudo /sbin/ip -j addr > {target_tmpdir}/ip_addr.json",
+                    in_stream=False,
+                )
+
                 connection.run("sudo tar czf extract.tar.gz *", in_stream=False)
                 connection.get(
                     f"{target_tmpdir}/extract.tar.gz",

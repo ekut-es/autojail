@@ -1,5 +1,5 @@
 # FIXME:  Dicts should be replaced by OrderedDict when 3.6 support is dropped
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel
 
@@ -212,3 +212,6 @@ class Board(BaseModel):
 
     # This dict contains all devices (MemoryMapped Devices are represented by DeviceMemoryRegion, Devices without memory mapping or represnted by Device)
     devices: Dict[str, Union[Device, DeviceMemoryRegion]] = {}
+    # TODO: generate structured formats for hw_info, and ipinfo
+    ip_info: List[Dict[str, Any]] = []
+    hw_info: List[Dict[str, Any]] = []

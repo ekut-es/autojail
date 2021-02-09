@@ -186,6 +186,7 @@ class ShmemConfig(BaseModel):
 
 class InterfaceConfig(BaseModel):
     addresses: List[IPvAnyInterface]
+    interface: Optional[str] = None
 
 
 class ShmemConfigNet(ShmemConfig):
