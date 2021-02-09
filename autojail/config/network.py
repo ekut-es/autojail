@@ -139,7 +139,7 @@ class NetworkConfigPass(BasePass):
                 assert isinstance(config.network, dict)
                 for _cell_name, interface_config in config.network.items():
                     for address in interface_config.addresses:
-                        network = ip_network(address)
+                        network = ip_network(address, strict=False)
                         if isinstance(network, IPv6Network):
                             used_v6.append(network)
                         elif isinstance(network, IPv4Network):
