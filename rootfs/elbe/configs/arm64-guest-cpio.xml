@@ -62,9 +62,9 @@
 			<mkdir>/etc/init.d</mkdir>
 			<ln path="/sbin/init">/init</ln>
 			<!-- minimum dvice nodes (fallback) -->
-			<mknod opts="c 5 0">/dev/tty</mknod>
-			<mknod opts="c 5 1">/dev/console</mknod>
-			<mknod opts="c 1 3">/dev/null</mknod>
+			<!--<mknod opts="c 5 0">/dev/tty</mknod>-->
+			<!--<mknod opts="c 5 1">/dev/console</mknod>-->
+			<!--<mknod opts="c 1 3">/dev/null</mknod>-->
 			<!-- Add start script (may be moved to archive) -->
 			<file dst="/etc/init.d/rcS" mode="755">
 				#!/bin/sh
@@ -72,12 +72,7 @@
 			</file>
 		</finetuning>
 		<pkg-list>
-			<pkg>less</pkg>
-			<pkg>bash</pkg>
-			<pkg>vim-nox</pkg>
-			<pkg>wget</pkg>
-			<pkg>ntpdate</pkg>
-			<pkg>busybox</pkg>
+			<pkg>busybox-static</pkg>
 		</pkg-list>
 	</target>
 </ns0:RootFileSystem>
