@@ -13,7 +13,8 @@ class GenerateCommand(BaseCommand):
     generate
         {--p|print-after-all : print cell config after each transformation step}
         {--skip-check : Do not statically check generated configs}
-        {--target} : Deploy generated configs to target board
+        {--target : Deploy generated configs to target board}
+        {--generate-only : Do not attempt to build anything}
     """
 
     def handle(self) -> int:
@@ -47,8 +48,10 @@ class GenerateCommand(BaseCommand):
         configurator.read_cell_yml(str(cells_yml_path))
         configurator.prepare()
         ret = configurator.write_config(self.autojail_config.build_dir)
-        if ret:
-            configurator.report()
+
+        if ret or self.option("generate-only"):
+            if ret:
+                configurator.report()
             return ret
 
         ret = configurator.build_config(
