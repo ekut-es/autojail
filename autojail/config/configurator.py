@@ -77,13 +77,13 @@ class JailhouseConfigurator:
             self.logger.critical(
                 f"Could not find {cc} so no binary .cell file will be generated"
             )
-            return 1
+            return 0
 
         if not shutil.which(objcopy):
             self.logger.critical(
                 f"Could not find {objcopy} so no binary cell file will be generated"
             )
-            return 1
+            return 0
 
         jailhouse_dir = self.autojail_config.jailhouse_dir
 
@@ -192,6 +192,11 @@ class JailhouseConfigurator:
         output_path = Path(output_path)
         deploy_path = Path(deploy_path)
 
+        kernel_path = Path(self.autojail_config.kernel_dir)
+        if not kernel_path.exists():
+            self.logger.info("Skipping deploy: kernel directory missing")
+            return 0
+
         jailhouse_config_dir = deploy_path / "etc" / "jailhouse"
         jailhouse_config_dir.mkdir(exist_ok=True, parents=True)
 
@@ -209,7 +214,7 @@ class JailhouseConfigurator:
             "install",
             f"ARCH={self.autojail_config.arch.lower()}",
             f"CROSS_COMPILE={self.autojail_config.cross_compile}",
-            f"KDIR={Path(self.autojail_config.kernel_dir).absolute()}",
+            f"KDIR={kernel_path.absolute()}",
             f"DESTDIR={deploy_path.absolute()}",
             f"prefix={self.autojail_config.prefix}",
             "PYTHON_PIP_USABLE=no",

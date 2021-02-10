@@ -26,6 +26,7 @@ class ExtractCommand(BaseCommand):
 
     extract
         {--b|base-folder= : base folder containing relevant /proc/ and /sys/ entries of target board}
+        {--cwd= : current working directory to locate start files, if necessary}
     """
 
     def handle(self) -> None:
@@ -49,7 +50,8 @@ class ExtractCommand(BaseCommand):
                 self.line(
                     f"Extracting target data from board {self.autojail_config.login}"
                 )
-                start_board(self.autojail_config)
+                cwd = self.option("cwd")
+                start_board(self.autojail_config, cwd)
                 try:
                     connection = connect(
                         self.autojail_config, self.automate_context
@@ -60,7 +62,7 @@ class ExtractCommand(BaseCommand):
                         tmp_folder = True
                     self._sync(connection, base_folder)
                 finally:
-                    stop_board(self.autojail_config)
+                    stop_board(self.autojail_config, cwd)
 
             else:
                 self.line(f"Extracting target data from folder {base_folder}")

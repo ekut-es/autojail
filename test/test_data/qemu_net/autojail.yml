@@ -4,7 +4,7 @@ login: ssh:root@localhost:2222
 password: root
 arch: ARM64
 cross_compile: aarch64-linux-gnu-
-kernel_dir: qemu/linux-jailhouse-images/build-full
+kernel_dir: kernel
 jailhouse_dir: jailhouse
 uart: unix://./qemu/serial0.sock
 kernel_cmdline:
