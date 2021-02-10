@@ -1,0 +1,47 @@
+cells:
+  root:
+    type: root
+    name: root cell
+    hypervisor_memory:
+      size: 0x800000
+    debug_console: serial0
+    cpus: 0,1,2,3
+    memory_regions:
+      Main Memory:
+        physical_start_addr: 0x0
+        virtual_start_addr: 0x0
+        size: 0x20000000
+        flags:
+        - MEM_READ
+        - MEM_WRITE
+        - MEM_EXECUTE
+        - MEM_DMA
+  lx-guest:
+    type: linux
+    name: lx-guest
+    debug_console: serial0
+    cpus: ''
+    memory_regions:
+      boot:
+        virtual_start_addr: 0x0
+        size: 0x100000
+        flags:
+        - MEM_READ
+        - MEM_WRITE
+        - MEM_EXECUTE
+        - MEM_LOADABLE
+      main:
+        size: 0x20000000
+        flags:
+        - MEM_READ
+        - MEM_WRITE
+        - MEM_EXECUTE
+        - MEM_DMA
+        - MEM_LOADABLE
+      comm:
+        virtual_start_addr: 0x80000000
+        size: 0x1000
+        flags:
+        - MEM_READ
+        - MEM_WRITE
+        - MEM_COMM_REGION

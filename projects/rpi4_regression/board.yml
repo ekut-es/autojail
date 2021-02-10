@@ -1,0 +1,6404 @@
+name: rpi4
+board: rpi4
+pagesize: 0x1000
+stdout_path: serial0
+virtual_address_bits: 48
+memory_regions:
+  atf@0:
+    path:
+    name: atf@0
+    physical_start_addr: 0x0
+    virtual_start_addr: 0x0
+    size: 0x80000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: false
+    shared: false
+  memory@0:
+    path:
+    name: memory@0
+    physical_start_addr: 0x0
+    virtual_start_addr: 0x0
+    size: 0x3b400000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: true
+    shared: false
+  mem_reserve:
+    path:
+    name: mem_reserve
+    physical_start_addr: 0x3b400000
+    virtual_start_addr: 0x3b400000
+    size: 0x4c00000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    - MEM_DMA
+    allocatable: false
+    shared: false
+  memory@0.0:
+    path:
+    name: memory@0
+    physical_start_addr: 0x40000000
+    virtual_start_addr: 0x40000000
+    size: 0xbc000000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_EXECUTE
+    allocatable: true
+    shared: false
+  pcie@7d500000:
+    path: /scb/pcie@7d500000
+    name: pcie@7d500000
+    phandle: 43
+    compatible:
+    - brcm,bcm2711-pcie
+    interrupts:
+    - type: 0x0
+      num: 148
+      flags: 0x4
+    - type: 0x0
+      num: 148
+      flags: 0x4
+    aliases:
+    - pcie0
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd500000
+    virtual_start_addr: 0xfd500000
+    size: 0x9310
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  ethernet@7d580000:
+    path: /scb/ethernet@7d580000
+    name: ethernet@7d580000
+    phandle: 211
+    compatible:
+    - brcm,bcm2711-genet-v5
+    interrupts:
+    - type: 0x0
+      num: 157
+      flags: 0x4
+    - type: 0x0
+      num: 158
+      flags: 0x4
+    aliases:
+    - ethernet0
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd580000
+    virtual_start_addr: 0xfd580000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  avs-monitor@7d5d2000:
+    path: /soc/avs-monitor@7d5d2000
+    name: avs-monitor@7d5d2000
+    phandle: 178
+    compatible:
+    - brcm,bcm2711-avs-monitor
+    - syscon
+    - simple-mfd
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfd5d2000
+    virtual_start_addr: 0xfd5d2000
+    size: 0xf00
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  timer@7e003000:
+    path: /soc/timer@7e003000
+    name: timer@7e003000
+    phandle: 67
+    compatible:
+    - brcm,bcm2835-system-timer
+    interrupts:
+    - type: 0x0
+      num: 64
+      flags: 0x4
+    - type: 0x0
+      num: 65
+      flags: 0x4
+    - type: 0x0
+      num: 66
+      flags: 0x4
+    - type: 0x0
+      num: 67
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe003000
+    virtual_start_addr: 0xfe003000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  txp@7e004000:
+    path: /soc/txp@7e004000
+    name: txp@7e004000
+    phandle: 68
+    compatible:
+    - brcm,bcm2835-txp
+    interrupts:
+    - type: 0x0
+      num: 75
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe004000
+    virtual_start_addr: 0xfe004000
+    size: 0x20
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dma@7e007000:
+    path: /soc/dma@7e007000
+    name: dma@7e007000
+    phandle: 11
+    compatible:
+    - brcm,bcm2835-dma
+    interrupts:
+    - type: 0x0
+      num: 80
+      flags: 0x4
+    - type: 0x0
+      num: 81
+      flags: 0x4
+    - type: 0x0
+      num: 82
+      flags: 0x4
+    - type: 0x0
+      num: 83
+      flags: 0x4
+    - type: 0x0
+      num: 84
+      flags: 0x4
+    - type: 0x0
+      num: 85
+      flags: 0x4
+    - type: 0x0
+      num: 86
+      flags: 0x4
+    - type: 0x0
+      num: 87
+      flags: 0x4
+    - type: 0x0
+      num: 87
+      flags: 0x4
+    - type: 0x0
+      num: 88
+      flags: 0x4
+    - type: 0x0
+      num: 88
+      flags: 0x4
+    aliases:
+    - dma
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe007000
+    virtual_start_addr: 0xfe007000
+    size: 0xb00
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dma@7e007b00:
+    path: /scb/dma@7e007b00
+    name: dma@7e007b00
+    phandle: 62
+    compatible:
+    - brcm,bcm2711-dma
+    interrupts:
+    - type: 0x0
+      num: 89
+      flags: 0x4
+    - type: 0x0
+      num: 90
+      flags: 0x4
+    - type: 0x0
+      num: 91
+      flags: 0x4
+    - type: 0x0
+      num: 92
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe007b00
+    virtual_start_addr: 0xfe007b00
+    size: 0x400
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  axiperf:
+    path: /soc/axiperf
+    name: axiperf
+    phandle: 58
+    compatible:
+    - brcm,bcm2835-axiperf
+    interrupts: []
+    aliases:
+    - axiperf
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe009800
+    virtual_start_addr: 0xfe009800
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  watchdog@7e100000.0:
+    path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 53
+    compatible:
+    - brcm,bcm2835-pm
+    - brcm,bcm2835-pm-wdt
+    interrupts: []
+    aliases:
+    - watchdog
+    clock_names:
+    - v3d
+    - peri_image
+    - h264
+    - isp
+    clocks:
+    - '7'
+    - '21'
+    - '7'
+    - '29'
+    - '7'
+    - '23'
+    - '7'
+    - '22'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe00a000
+    virtual_start_addr: 0xfe00a000
+    size: 0x114
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  usb@7e980000.0:
+    path: /soc/usb@7e980000
+    name: usb@7e980000
+    phandle: 176
+    compatible:
+    - brcm,bcm2708-usb
+    interrupts:
+    - type: 0x0
+      num: 73
+      flags: 0x4
+    - type: 0x0
+      num: 40
+      flags: 0x4
+    aliases:
+    - usb
+    clock_names:
+    - otg
+    clocks:
+    - '24'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe00b200
+    virtual_start_addr: 0xfe00b200
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  mailbox@7e00b840:
+    path: /soc/mailbox@7e00b840
+    name: mailbox@7e00b840
+    phandle: 199
+    compatible:
+    - brcm,bcm2711-vchiq
+    interrupts:
+    - type: 0x0
+      num: 34
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe00b840
+    virtual_start_addr: 0xfe00b840
+    size: 0x3c
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  mailbox@7e00b880:
+    path: /soc/mailbox@7e00b880
+    name: mailbox@7e00b880
+    phandle: 33
+    compatible:
+    - brcm,bcm2835-mbox
+    interrupts:
+    - type: 0x0
+      num: 33
+      flags: 0x4
+    aliases:
+    - mailbox
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe00b880
+    virtual_start_addr: 0xfe00b880
+    size: 0x40
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  watchdog@7e100000:
+    path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 53
+    compatible:
+    - brcm,bcm2835-pm
+    - brcm,bcm2835-pm-wdt
+    interrupts: []
+    aliases:
+    - watchdog
+    clock_names:
+    - v3d
+    - peri_image
+    - h264
+    - isp
+    clocks:
+    - '7'
+    - '21'
+    - '7'
+    - '29'
+    - '7'
+    - '23'
+    - '7'
+    - '22'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe100000
+    virtual_start_addr: 0xfe100000
+    size: 0x114
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  cprman@7e101000:
+    path: /soc/cprman@7e101000
+    name: cprman@7e101000
+    phandle: 7
+    compatible:
+    - brcm,bcm2711-cprman
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks:
+    - '3'
+    - '4'
+    - '0'
+    - '4'
+    - '1'
+    - '4'
+    - '2'
+    - '5'
+    - '0'
+    - '5'
+    - '1'
+    - '5'
+    - '2'
+    clock_output_names: []
+    clock_cells: 1
+    physical_start_addr: 0xfe101000
+    virtual_start_addr: 0xfe101000
+    size: 0x2000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  rng@7e104000:
+    path: /soc/rng@7e104000
+    name: rng@7e104000
+    phandle: 54
+    compatible:
+    - brcm,bcm2711-rng200
+    interrupts: []
+    aliases:
+    - random
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe104000
+    virtual_start_addr: 0xfe104000
+    size: 0x28
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  gpio@7e200000:
+    path: /soc/gpio@7e200000
+    name: gpio@7e200000
+    phandle: 15
+    compatible:
+    - brcm,bcm2711-gpio
+    interrupts:
+    - type: 0x0
+      num: 113
+      flags: 0x4
+    - type: 0x0
+      num: 114
+      flags: 0x4
+    aliases:
+    - gpio
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe200000
+    virtual_start_addr: 0xfe200000
+    size: 0xb4
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  gpiomem:
+    path: /soc/gpiomem
+    name: gpiomem
+    phandle:
+    compatible:
+    - brcm,bcm2835-gpiomem
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe200000
+    virtual_start_addr: 0xfe200000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  serial@7e201000:
+    path: /soc/serial@7e201000
+    name: serial@7e201000
+    phandle: 46
+    compatible:
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - type: 0x0
+      num: 121
+      flags: 0x4
+    aliases:
+    - serial1
+    - uart0
+    clock_names:
+    - uartclk
+    - apb_pclk
+    clocks:
+    - '7'
+    - '19'
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe201000
+    virtual_start_addr: 0xfe201000
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  serial@7e201400:
+    path: /soc/serial@7e201400
+    name: serial@7e201400
+    phandle: 179
+    compatible:
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - type: 0x0
+      num: 121
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - uartclk
+    - apb_pclk
+    clocks:
+    - '7'
+    - '19'
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe201400
+    virtual_start_addr: 0xfe201400
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  serial@7e201600:
+    path: /soc/serial@7e201600
+    name: serial@7e201600
+    phandle: 180
+    compatible:
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - type: 0x0
+      num: 121
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - uartclk
+    - apb_pclk
+    clocks:
+    - '7'
+    - '19'
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe201600
+    virtual_start_addr: 0xfe201600
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  serial@7e201800:
+    path: /soc/serial@7e201800
+    name: serial@7e201800
+    phandle: 181
+    compatible:
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - type: 0x0
+      num: 121
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - uartclk
+    - apb_pclk
+    clocks:
+    - '7'
+    - '19'
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe201800
+    virtual_start_addr: 0xfe201800
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  serial@7e201a00:
+    path: /soc/serial@7e201a00
+    name: serial@7e201a00
+    phandle: 182
+    compatible:
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - type: 0x0
+      num: 121
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - uartclk
+    - apb_pclk
+    clocks:
+    - '7'
+    - '19'
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe201a00
+    virtual_start_addr: 0xfe201a00
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  mmc@7e202000:
+    path: /soc/mmc@7e202000
+    name: mmc@7e202000
+    phandle: 55
+    compatible:
+    - brcm,bcm2835-sdhost
+    interrupts:
+    - type: 0x0
+      num: 120
+      flags: 0x4
+    aliases:
+    - mmc2
+    - sdhost
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe202000
+    virtual_start_addr: 0xfe202000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  i2s@7e203000:
+    path: /soc/i2s@7e203000
+    name: i2s@7e203000
+    phandle: 48
+    compatible:
+    - brcm,bcm2835-i2s
+    interrupts: []
+    aliases:
+    - i2s
+    clock_names: []
+    clocks:
+    - '7'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe203000
+    virtual_start_addr: 0xfe203000
+    size: 0x24
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spi@7e204000:
+    path: /soc/spi@7e204000
+    name: spi@7e204000
+    phandle: 49
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - type: 0x0
+      num: 118
+      flags: 0x4
+    aliases:
+    - spi0
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe204000
+    virtual_start_addr: 0xfe204000
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spi@7e204600:
+    path: /soc/spi@7e204600
+    name: spi@7e204600
+    phandle: 183
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - type: 0x0
+      num: 118
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe204600
+    virtual_start_addr: 0xfe204600
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spi@7e204800:
+    path: /soc/spi@7e204800
+    name: spi@7e204800
+    phandle: 184
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - type: 0x0
+      num: 118
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe204800
+    virtual_start_addr: 0xfe204800
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spi@7e204a00:
+    path: /soc/spi@7e204a00
+    name: spi@7e204a00
+    phandle: 185
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - type: 0x0
+      num: 118
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe204a00
+    virtual_start_addr: 0xfe204a00
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spi@7e204c00:
+    path: /soc/spi@7e204c00
+    name: spi@7e204c00
+    phandle: 186
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - type: 0x0
+      num: 118
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe204c00
+    virtual_start_addr: 0xfe204c00
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  i2c@7e205000:
+    path: /soc/i2c@7e205000
+    name: i2c@7e205000
+    phandle: 16
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe205000
+    virtual_start_addr: 0xfe205000
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  i2c@7e205600:
+    path: /soc/i2c@7e205600
+    name: i2c@7e205600
+    phandle: 187
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases:
+    - i2c3
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe205600
+    virtual_start_addr: 0xfe205600
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  i2c@7e205800:
+    path: /soc/i2c@7e205800
+    name: i2c@7e205800
+    phandle: 188
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases:
+    - i2c4
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe205800
+    virtual_start_addr: 0xfe205800
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  i2c@7e205a00:
+    path: /soc/i2c@7e205a00
+    name: i2c@7e205a00
+    phandle: 189
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases:
+    - i2c5
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe205a00
+    virtual_start_addr: 0xfe205a00
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  i2c@7e205c00:
+    path: /soc/i2c@7e205c00
+    name: i2c@7e205c00
+    phandle: 190
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases:
+    - i2c6
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe205c00
+    virtual_start_addr: 0xfe205c00
+    size: 0x200
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  pixelvalve@7e206000:
+    path: /soc/pixelvalve@7e206000
+    name: pixelvalve@7e206000
+    phandle: 191
+    compatible:
+    - brcm,bcm2711-pixelvalve0
+    interrupts:
+    - type: 0x0
+      num: 109
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe206000
+    virtual_start_addr: 0xfe206000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  pixelvalve@7e207000:
+    path: /soc/pixelvalve@7e207000
+    name: pixelvalve@7e207000
+    phandle: 192
+    compatible:
+    - brcm,bcm2711-pixelvalve1
+    interrupts:
+    - type: 0x0
+      num: 110
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe207000
+    virtual_start_addr: 0xfe207000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dpi@7e208000:
+    path: /soc/dpi@7e208000
+    name: dpi@7e208000
+    phandle: 169
+    compatible:
+    - brcm,bcm2835-dpi
+    interrupts: []
+    aliases: []
+    clock_names:
+    - core
+    - pixel
+    clocks:
+    - '7'
+    - '20'
+    - '7'
+    - '44'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe208000
+    virtual_start_addr: 0xfe208000
+    size: 0x8c
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dsi@7e209000:
+    path: /soc/dsi@7e209000
+    name: dsi@7e209000
+    phandle: 4
+    compatible:
+    - brcm,bcm2835-dsi0
+    interrupts:
+    - type: 0x0
+      num: 100
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - phy
+    - escape
+    - pixel
+    clocks:
+    - '7'
+    - '32'
+    - '7'
+    - '47'
+    - '7'
+    - '49'
+    clock_output_names:
+    - dsi0_byte
+    - dsi0_ddr2
+    - dsi0_ddr
+    clock_cells: 1
+    physical_start_addr: 0xfe209000
+    virtual_start_addr: 0xfe209000
+    size: 0x78
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  pixelvalve@7e20a000:
+    path: /soc/pixelvalve@7e20a000
+    name: pixelvalve@7e20a000
+    phandle: 193
+    compatible:
+    - brcm,bcm2711-pixelvalve2
+    interrupts:
+    - type: 0x0
+      num: 101
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe20a000
+    virtual_start_addr: 0xfe20a000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  pwm@7e20c000:
+    path: /soc/pwm@7e20c000
+    name: pwm@7e20c000
+    phandle: 173
+    compatible:
+    - brcm,bcm2835-pwm
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe20c000
+    virtual_start_addr: 0xfe20c000
+    size: 0x28
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  pwm@7e20c800:
+    path: /soc/pwm@7e20c800
+    name: pwm@7e20c800
+    phandle: 194
+    compatible:
+    - brcm,bcm2835-pwm
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe20c800
+    virtual_start_addr: 0xfe20c800
+    size: 0x28
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  aux@7e215000:
+    path: /soc/aux@7e215000
+    name: aux@7e215000
+    phandle: 20
+    compatible:
+    - brcm,bcm2835-aux
+    interrupts: []
+    aliases:
+    - aux
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 1
+    physical_start_addr: 0xfe215000
+    virtual_start_addr: 0xfe215000
+    size: 0x8
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  serial@7e215040:
+    path: /soc/serial@7e215040
+    name: serial@7e215040
+    phandle: 47
+    compatible:
+    - brcm,bcm2835-aux-uart
+    interrupts:
+    - type: 0x0
+      num: 93
+      flags: 0x4
+    aliases:
+    - serial0
+    - uart1
+    clock_names: []
+    clocks:
+    - '20'
+    - '0'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe215040
+    virtual_start_addr: 0xfe215040
+    size: 0x40
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spi@7e215080:
+    path: /soc/spi@7e215080
+    name: spi@7e215080
+    phandle: 171
+    compatible:
+    - brcm,bcm2835-aux-spi
+    interrupts:
+    - type: 0x0
+      num: 93
+      flags: 0x4
+    aliases:
+    - spi1
+    clock_names: []
+    clocks:
+    - '20'
+    - '1'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe215080
+    virtual_start_addr: 0xfe215080
+    size: 0x40
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  spi@7e2150c0:
+    path: /soc/spi@7e2150c0
+    name: spi@7e2150c0
+    phandle: 172
+    compatible:
+    - brcm,bcm2835-aux-spi
+    interrupts:
+    - type: 0x0
+      num: 93
+      flags: 0x4
+    aliases:
+    - spi2
+    clock_names: []
+    clocks:
+    - '20'
+    - '2'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe2150c0
+    virtual_start_addr: 0xfe2150c0
+    size: 0x40
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  pixelvalve@7e216000:
+    path: /soc/pixelvalve@7e216000
+    name: pixelvalve@7e216000
+    phandle: 195
+    compatible:
+    - brcm,bcm2711-pixelvalve4
+    interrupts:
+    - type: 0x0
+      num: 110
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe216000
+    virtual_start_addr: 0xfe216000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  mmc@7e300000:
+    path: /soc/mmc@7e300000
+    name: mmc@7e300000
+    phandle: 56
+    compatible:
+    - brcm,bcm2835-mmc
+    - brcm,bcm2835-sdhci
+    interrupts:
+    - type: 0x0
+      num: 126
+      flags: 0x4
+    aliases:
+    - mmc
+    clock_names: []
+    clocks:
+    - '7'
+    - '28'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe300000
+    virtual_start_addr: 0xfe300000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  mmcnr@7e300000:
+    path: /soc/mmcnr@7e300000
+    name: mmcnr@7e300000
+    phandle: 57
+    compatible:
+    - brcm,bcm2835-mmc
+    - brcm,bcm2835-sdhci
+    interrupts:
+    - type: 0x0
+      num: 126
+      flags: 0x4
+    aliases:
+    - mmc1
+    clock_names: []
+    clocks:
+    - '7'
+    - '28'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe300000
+    virtual_start_addr: 0xfe300000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  emmc2@7e340000:
+    path: /emmc2bus/emmc2@7e340000
+    name: emmc2@7e340000
+    phandle: 61
+    compatible:
+    - brcm,bcm2711-emmc2
+    interrupts:
+    - type: 0x0
+      num: 126
+      flags: 0x4
+    aliases:
+    - mmc0
+    clock_names: []
+    clocks:
+    - '7'
+    - '51'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe340000
+    virtual_start_addr: 0xfe340000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hvs@7e400000:
+    path: /soc/hvs@7e400000
+    name: hvs@7e400000
+    phandle: 174
+    compatible:
+    - brcm,bcm2711-hvs
+    interrupts:
+    - type: 0x0
+      num: 97
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '22'
+    - '4'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe400000
+    virtual_start_addr: 0xfe400000
+    size: 0x6000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  firmwarekms@7e600000:
+    path: /soc/firmwarekms@7e600000
+    name: firmwarekms@7e600000
+    phandle: 200
+    compatible:
+    - raspberrypi,rpi-firmware-kms-2711
+    interrupts:
+    - type: 0x0
+      num: 112
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe600000
+    virtual_start_addr: 0xfe600000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  smi@7e600000:
+    path: /soc/smi@7e600000
+    name: smi@7e600000
+    phandle: 201
+    compatible:
+    - brcm,bcm2835-smi
+    interrupts:
+    - type: 0x0
+      num: 112
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '42'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe600000
+    virtual_start_addr: 0xfe600000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  dsi@7e700000:
+    path: /soc/dsi@7e700000
+    name: dsi@7e700000
+    phandle: 5
+    compatible:
+    - brcm,bcm2835-dsi1
+    interrupts:
+    - type: 0x0
+      num: 108
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - phy
+    - escape
+    - pixel
+    clocks:
+    - '7'
+    - '35'
+    - '7'
+    - '48'
+    - '7'
+    - '50'
+    clock_output_names:
+    - dsi1_byte
+    - dsi1_ddr2
+    - dsi1_ddr
+    clock_cells: 1
+    physical_start_addr: 0xfe700000
+    virtual_start_addr: 0xfe700000
+    size: 0x8c
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  csi@7e800000:
+    path: /soc/csi@7e800000
+    name: csi@7e800000
+    phandle: 202
+    compatible:
+    - brcm,bcm2835-unicam
+    interrupts:
+    - type: 0x0
+      num: 102
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - lp
+    - vpu
+    clocks:
+    - '7'
+    - '45'
+    - '22'
+    - '4'
+    clock_output_names: []
+    clock_cells: 1
+    physical_start_addr: 0xfe800000
+    virtual_start_addr: 0xfe800000
+    size: 0x800
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  csi@7e801000:
+    path: /soc/csi@7e801000
+    name: csi@7e801000
+    phandle: 203
+    compatible:
+    - brcm,bcm2835-unicam
+    interrupts:
+    - type: 0x0
+      num: 103
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - lp
+    - vpu
+    clocks:
+    - '7'
+    - '46'
+    - '22'
+    - '4'
+    clock_output_names: []
+    clock_cells: 1
+    physical_start_addr: 0xfe801000
+    virtual_start_addr: 0xfe801000
+    size: 0x800
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  csi@7e800000.0:
+    path: /soc/csi@7e800000
+    name: csi@7e800000
+    phandle: 202
+    compatible:
+    - brcm,bcm2835-unicam
+    interrupts:
+    - type: 0x0
+      num: 102
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - lp
+    - vpu
+    clocks:
+    - '7'
+    - '45'
+    - '22'
+    - '4'
+    clock_output_names: []
+    clock_cells: 1
+    physical_start_addr: 0xfe802000
+    virtual_start_addr: 0xfe802000
+    size: 0x800
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  csi@7e801000.0:
+    path: /soc/csi@7e801000
+    name: csi@7e801000
+    phandle: 203
+    compatible:
+    - brcm,bcm2835-unicam
+    interrupts:
+    - type: 0x0
+      num: 103
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - lp
+    - vpu
+    clocks:
+    - '7'
+    - '46'
+    - '22'
+    - '4'
+    clock_output_names: []
+    clock_cells: 1
+    physical_start_addr: 0xfe802004
+    virtual_start_addr: 0xfe802004
+    size: 0x800
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  i2c@7e804000:
+    path: /soc/i2c@7e804000
+    name: i2c@7e804000
+    phandle: 51
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases:
+    - i2c
+    - i2c1
+    - i2c_arm
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe804000
+    virtual_start_addr: 0xfe804000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  vec@7e806000:
+    path: /soc/vec@7e806000
+    name: vec@7e806000
+    phandle: 175
+    compatible:
+    - brcm,bcm2835-vec
+    interrupts:
+    - type: 0x0
+      num: 123
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '24'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe806000
+    virtual_start_addr: 0xfe806000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  usb@7e980000:
+    path: /soc/usb@7e980000
+    name: usb@7e980000
+    phandle: 176
+    compatible:
+    - brcm,bcm2708-usb
+    interrupts:
+    - type: 0x0
+      num: 73
+      flags: 0x4
+    - type: 0x0
+      num: 40
+      flags: 0x4
+    aliases:
+    - usb
+    clock_names:
+    - otg
+    clocks:
+    - '24'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe980000
+    virtual_start_addr: 0xfe980000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  xhci@7e9c0000:
+    path: /scb/xhci@7e9c0000
+    name: xhci@7e9c0000
+    phandle: 213
+    compatible:
+    - generic-xhci
+    interrupts:
+    - type: 0x0
+      num: 176
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfe9c0000
+    virtual_start_addr: 0xfe9c0000
+    size: 0x100000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hevc-decoder@7eb00000:
+    path: /scb/hevc-decoder@7eb00000
+    name: hevc-decoder@7eb00000
+    phandle:
+    compatible:
+    - raspberrypi,rpivid-hevc-decoder
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfeb00000
+    virtual_start_addr: 0xfeb00000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  rpivid-local-intc@7eb10000:
+    path: /scb/rpivid-local-intc@7eb10000
+    name: rpivid-local-intc@7eb10000
+    phandle:
+    compatible:
+    - raspberrypi,rpivid-local-intc
+    interrupts:
+    - type: 0x0
+      num: 98
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfeb10000
+    virtual_start_addr: 0xfeb10000
+    size: 0x1000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  h264-decoder@7eb20000:
+    path: /scb/h264-decoder@7eb20000
+    name: h264-decoder@7eb20000
+    phandle:
+    compatible:
+    - raspberrypi,rpivid-h264-decoder
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfeb20000
+    virtual_start_addr: 0xfeb20000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  vp9-decoder@7eb30000:
+    path: /scb/vp9-decoder@7eb30000
+    name: vp9-decoder@7eb30000
+    phandle:
+    compatible:
+    - raspberrypi,rpivid-vp9-decoder
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfeb30000
+    virtual_start_addr: 0xfeb30000
+    size: 0x10000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  v3d@7ec04000:
+    path: /v3dbus/v3d@7ec04000
+    name: v3d@7ec04000
+    phandle: 218
+    compatible:
+    - brcm,2711-v3d
+    interrupts:
+    - type: 0x0
+      num: 74
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '22'
+    - '5'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfec00000
+    virtual_start_addr: 0xfec00000
+    size: 0x4000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  v3d@7ec04000.0:
+    path: /v3dbus/v3d@7ec04000
+    name: v3d@7ec04000
+    phandle: 218
+    compatible:
+    - brcm,2711-v3d
+    interrupts:
+    - type: 0x0
+      num: 74
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '22'
+    - '5'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfec04000
+    virtual_start_addr: 0xfec04000
+    size: 0x4000
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  watchdog@7e100000.1:
+    path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 53
+    compatible:
+    - brcm,bcm2835-pm
+    - brcm,bcm2835-pm-wdt
+    interrupts: []
+    aliases:
+    - watchdog
+    clock_names:
+    - v3d
+    - peri_image
+    - h264
+    - isp
+    clocks:
+    - '7'
+    - '21'
+    - '7'
+    - '29'
+    - '7'
+    - '23'
+    - '7'
+    - '22'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfec11000
+    virtual_start_addr: 0xfec11000
+    size: 0x114
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  pixelvalve@7ec12000:
+    path: /soc/pixelvalve@7ec12000
+    name: pixelvalve@7ec12000
+    phandle: 196
+    compatible:
+    - brcm,bcm2711-pixelvalve3
+    interrupts:
+    - type: 0x0
+      num: 106
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfec12000
+    virtual_start_addr: 0xfec12000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  axiperf.0:
+    path: /soc/axiperf
+    name: axiperf
+    phandle: 58
+    compatible:
+    - brcm,bcm2835-axiperf
+    interrupts: []
+    aliases:
+    - axiperf
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfee08000
+    virtual_start_addr: 0xfee08000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  clock@7ef00000:
+    path: /soc/clock@7ef00000
+    name: clock@7ef00000
+    phandle: 29
+    compatible:
+    - brcm,brcm2711-dvp
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks:
+    - '28'
+    clock_output_names: []
+    clock_cells: 1
+    physical_start_addr: 0xfef00000
+    virtual_start_addr: 0xfef00000
+    size: 0x10
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef00700.8:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef00100
+    virtual_start_addr: 0xfef00100
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef05700.8:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef00100
+    virtual_start_addr: 0xfef00100
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef00700.5:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef00200
+    virtual_start_addr: 0xfef00200
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef05700.5:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef00280
+    virtual_start_addr: 0xfef00280
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef00700.0:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef00300
+    virtual_start_addr: 0xfef00300
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef00700:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef00700
+    virtual_start_addr: 0xfef00700
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  i2c@7ef04500.0:
+    path: /soc/i2c@7ef04500
+    name: i2c@7ef04500
+    phandle: 31
+    compatible:
+    - brcm,bcm2711-hdmi-i2c
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef00b00
+    virtual_start_addr: 0xfef00b00
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef00700.1:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef00f00
+    virtual_start_addr: 0xfef00f00
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef00700.2:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef00f80
+    virtual_start_addr: 0xfef00f80
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef00700.3:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef01b00
+    virtual_start_addr: 0xfef01b00
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef00700.4:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef01f00
+    virtual_start_addr: 0xfef01f00
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef00700.6:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef04300
+    virtual_start_addr: 0xfef04300
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  i2c@7ef04500:
+    path: /soc/i2c@7ef04500
+    name: i2c@7ef04500
+    phandle: 31
+    compatible:
+    - brcm,bcm2711-hdmi-i2c
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef04500
+    virtual_start_addr: 0xfef04500
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef05700.0:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef05300
+    virtual_start_addr: 0xfef05300
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef05700:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef05700
+    virtual_start_addr: 0xfef05700
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  i2c@7ef09500.0:
+    path: /soc/i2c@7ef09500
+    name: i2c@7ef09500
+    phandle: 32
+    compatible:
+    - brcm,bcm2711-hdmi-i2c
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef05b00
+    virtual_start_addr: 0xfef05b00
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef05700.1:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef05f00
+    virtual_start_addr: 0xfef05f00
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef05700.2:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef05f80
+    virtual_start_addr: 0xfef05f80
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef05700.3:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef06b00
+    virtual_start_addr: 0xfef06b00
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef05700.4:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef06f00
+    virtual_start_addr: 0xfef06f00
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef05700.6:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef09300
+    virtual_start_addr: 0xfef09300
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  i2c@7ef09500:
+    path: /soc/i2c@7ef09500
+    name: i2c@7ef09500
+    phandle: 32
+    compatible:
+    - brcm,bcm2711-hdmi-i2c
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef09500
+    virtual_start_addr: 0xfef09500
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef00700.7:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef20000
+    virtual_start_addr: 0xfef20000
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  hdmi@7ef05700.7:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xfef20000
+    virtual_start_addr: 0xfef20000
+    size: 0x300
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+  local_intc@40000000:
+    path: /soc/local_intc@40000000
+    name: local_intc@40000000
+    phandle: 177
+    compatible:
+    - brcm,bcm2836-l1-intc
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+    physical_start_addr: 0xff800000
+    virtual_start_addr: 0xff800000
+    size: 0x100
+    flags:
+    - MEM_READ
+    - MEM_WRITE
+    - MEM_IO
+    - MEM_IO_8
+    - MEM_IO_16
+    - MEM_IO_32
+    - MEM_IO_64
+    allocatable: false
+    shared: false
+cpuinfo:
+  cpu@0:
+    name: cpu@0
+    num: 0
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
+  cpu@1:
+    name: cpu@1
+    num: 1
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
+  cpu@2:
+    name: cpu@2
+    num: 2
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
+  cpu@3:
+    name: cpu@3
+    num: 3
+    compatible: arm,cortex-a72
+    enable_method: psci
+    next_level_cache:
+interrupt_controllers:
+- maintenance_irq: 25
+  compatible:
+  - arm,gic-400
+  gic_version: 2
+  gicd_base: 0xff841000
+  gicc_base: 0xff842000
+  gich_base: 0xff844000
+  gicv_base: 0xff846000
+  gicr_base: 0x0
+  interrupts: 26,27,29,30,48,49,50,51,65,66,72,96,97,98,99,105,106,107,112,113,114,115,116,117,118,119,120,121,122,123,124,125,128,129,130,132,133,134,135,138,140,141,142,144,145,146,149,150,152,153,155,158,180,189,190,208
+clock_tree:
+  vec:
+    name: vec
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  hsm:
+    name: hsm
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  sdram:
+    name: sdram
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  pwm:
+    name: pwm
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  pcm:
+    name: pcm
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  aveo:
+    name: aveo
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dft:
+    name: dft
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  gp0:
+    name: gp0
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  gp1:
+    name: gp1
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  gp2:
+    name: gp2
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  slim:
+    name: slim
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  smi:
+    name: smi
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  tec:
+    name: tec
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dpi:
+    name: dpi
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  cam0:
+    name: cam0
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  cam1:
+    name: cam1
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dsi0e:
+    name: dsi0e
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dsi1e:
+    name: dsi1e
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dsi0p:
+    name: dsi0p
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  dsi1p:
+    name: dsi1p
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 0
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  osc:
+    name: osc
+    enable_count: 4
+    prepare_count: 4
+    protect_count: 0
+    rate: 54000000
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks:
+      plla:
+        name: plla
+        enable_count: 2
+        prepare_count: 2
+        protect_count: 0
+        rate: 2999999988
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks:
+          plla_core:
+            name: plla_core
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 499999998
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks:
+              isp:
+                name: isp
+                enable_count: 0
+                prepare_count: 0
+                protect_count: 0
+                rate: 499999998
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks: {}
+                parent: plla_core
+              h264:
+                name: h264
+                enable_count: 0
+                prepare_count: 0
+                protect_count: 0
+                rate: 499999998
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks: {}
+                parent: plla_core
+            parent: plla
+          plla_dsi0:
+            name: plla_dsi0
+            enable_count: 0
+            prepare_count: 0
+            protect_count: 0
+            rate: 11718750
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: plla
+          plla_ccp2:
+            name: plla_ccp2
+            enable_count: 0
+            prepare_count: 0
+            protect_count: 0
+            rate: 11718750
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: plla
+        parent: osc
+      pllb:
+        name: pllb
+        enable_count: 2
+        prepare_count: 2
+        protect_count: 0
+        rate: 2999999988
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks:
+          pllb_arm:
+            name: pllb_arm
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 599999998
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: pllb
+        parent: osc
+      pllc:
+        name: pllc
+        enable_count: 3
+        prepare_count: 3
+        protect_count: 0
+        rate: 2999999988
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks:
+          pllc_core0:
+            name: pllc_core0
+            enable_count: 2
+            prepare_count: 2
+            protect_count: 0
+            rate: 999999996
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks:
+              vpu:
+                name: vpu
+                enable_count: 3
+                prepare_count: 3
+                protect_count: 0
+                rate: 500000000
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks:
+                  peri_image:
+                    name: peri_image
+                    enable_count: 0
+                    prepare_count: 0
+                    protect_count: 0
+                    rate: 500000000
+                    accuracy: 0
+                    phase: 0
+                    duty_cycle: 50000
+                    derived_clocks: {}
+                    parent: vpu
+                  aux_uart:
+                    name: aux_uart
+                    enable_count: 1
+                    prepare_count: 1
+                    protect_count: 0
+                    rate: 500000000
+                    accuracy: 0
+                    phase: 0
+                    duty_cycle: 50000
+                    derived_clocks: {}
+                    parent: vpu
+                  aux_spi1:
+                    name: aux_spi1
+                    enable_count: 0
+                    prepare_count: 0
+                    protect_count: 0
+                    rate: 500000000
+                    accuracy: 0
+                    phase: 0
+                    duty_cycle: 50000
+                    derived_clocks: {}
+                    parent: vpu
+                  aux_spi2:
+                    name: aux_spi2
+                    enable_count: 0
+                    prepare_count: 0
+                    protect_count: 0
+                    rate: 500000000
+                    accuracy: 0
+                    phase: 0
+                    duty_cycle: 50000
+                    derived_clocks: {}
+                    parent: vpu
+                parent: pllc_core0
+            parent: pllc
+          pllc_core1:
+            name: pllc_core1
+            enable_count: 0
+            prepare_count: 0
+            protect_count: 0
+            rate: 11718750
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: pllc
+          pllc_core2:
+            name: pllc_core2
+            enable_count: 0
+            prepare_count: 0
+            protect_count: 0
+            rate: 11718750
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: pllc
+          pllc_per:
+            name: pllc_per
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 599999998
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: pllc
+        parent: osc
+      plld:
+        name: plld
+        enable_count: 5
+        prepare_count: 5
+        protect_count: 0
+        rate: 3000000091
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks:
+          plld_core:
+            name: plld_core
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 600000019
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: plld
+          plld_per:
+            name: plld_per
+            enable_count: 2
+            prepare_count: 2
+            protect_count: 0
+            rate: 750000023
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks:
+              uart:
+                name: uart
+                enable_count: 0
+                prepare_count: 0
+                protect_count: 0
+                rate: 48000001
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks: {}
+                parent: plld_per
+              emmc:
+                name: emmc
+                enable_count: 0
+                prepare_count: 0
+                protect_count: 0
+                rate: 250000007
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks: {}
+                parent: plld_per
+              emmc2:
+                name: emmc2
+                enable_count: 1
+                prepare_count: 1
+                protect_count: 0
+                rate: 100000003
+                accuracy: 0
+                phase: 0
+                duty_cycle: 50000
+                derived_clocks: {}
+                parent: plld_per
+            parent: plld
+          plld_dsi0:
+            name: plld_dsi0
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 11718751
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: plld
+          plld_dsi1:
+            name: plld_dsi1
+            enable_count: 1
+            prepare_count: 1
+            protect_count: 0
+            rate: 11718751
+            accuracy: 0
+            phase: 0
+            duty_cycle: 50000
+            derived_clocks: {}
+            parent: plld
+        parent: osc
+      timer:
+        name: timer
+        enable_count: 0
+        prepare_count: 0
+        protect_count: 0
+        rate: 1000000
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks: {}
+        parent: osc
+      otp:
+        name: otp
+        enable_count: 0
+        prepare_count: 0
+        protect_count: 0
+        rate: 13500000
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks: {}
+        parent: osc
+      tsens:
+        name: tsens
+        enable_count: 0
+        prepare_count: 0
+        protect_count: 0
+        rate: 3375000
+        accuracy: 0
+        phase: 0
+        duty_cycle: 50000
+        derived_clocks: {}
+        parent: osc
+    parent:
+  otg:
+    name: otg
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 480000000
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  27MHz-clock:
+    name: 27MHz-clock
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 27000000
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  108MHz-clock:
+    name: 108MHz-clock
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 108000000
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  fw-clk-arm:
+    name: fw-clk-arm
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 600000000
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  fw-clk-core:
+    name: fw-clk-core
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 500000000
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  fw-clk-v3d:
+    name: fw-clk-v3d
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 250000000
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  fw-clk-m2mc:
+    name: fw-clk-m2mc
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 120000000
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+  fw-clk-pixel-bvb:
+    name: fw-clk-pixel-bvb
+    enable_count: 0
+    prepare_count: 0
+    protect_count: 0
+    rate: 75000000
+    accuracy: 0
+    phase: 0
+    duty_cycle: 50000
+    derived_clocks: {}
+    parent:
+clock_mapping:
+  cprman@7e101000:
+  - parent_name: osc
+    rate:
+  - parent_name: dsi0_byte
+    rate:
+  - parent_name: dsi0_ddr2
+    rate:
+  - parent_name: dsi0_ddr
+    rate:
+  - parent_name: dsi1_byte
+    rate:
+  - parent_name: dsi1_ddr2
+    rate:
+  - parent_name: dsi1_ddr
+    rate:
+  serial@7e201000:
+  - parent_name: uart
+    rate:
+  - parent_name: vpu
+    rate:
+  mmc@7e202000:
+  - parent_name: vpu
+    rate:
+  i2s@7e203000:
+  - parent_name: pcm
+    rate:
+  spi@7e204000:
+  - parent_name: vpu
+    rate:
+  i2c@7e205000:
+  - parent_name: vpu
+    rate:
+  dpi@7e208000:
+  - parent_name: vpu
+    rate:
+  - parent_name: dpi
+    rate:
+  dsi@7e209000:
+  - parent_name: plla_dsi0
+    rate:
+  - parent_name: dsi0e
+    rate:
+  - parent_name: dsi0p
+    rate:
+  aux@7e215000:
+  - parent_name: vpu
+    rate:
+  serial@7e215040:
+  - parent_name: aux_uart
+    rate:
+  spi@7e215080:
+  - parent_name: aux_spi1
+    rate:
+  spi@7e2150c0:
+  - parent_name: aux_spi2
+    rate:
+  pwm@7e20c000:
+  - parent_name: pwm
+    rate:
+  hvs@7e400000:
+  - parent_name: fw-clk-core
+    rate:
+  dsi@7e700000:
+  - parent_name: plld_dsi1
+    rate:
+  - parent_name: dsi1e
+    rate:
+  - parent_name: dsi1p
+    rate:
+  i2c@7e804000:
+  - parent_name: vpu
+    rate:
+  vec@7e806000:
+  - parent_name: vec
+    rate:
+  usb@7e980000:
+  - parent_name: otg
+    rate:
+  serial@7e201400:
+  - parent_name: uart
+    rate:
+  - parent_name: vpu
+    rate:
+  serial@7e201600:
+  - parent_name: uart
+    rate:
+  - parent_name: vpu
+    rate:
+  serial@7e201800:
+  - parent_name: uart
+    rate:
+  - parent_name: vpu
+    rate:
+  serial@7e201a00:
+  - parent_name: uart
+    rate:
+  - parent_name: vpu
+    rate:
+  spi@7e204600:
+  - parent_name: vpu
+    rate:
+  spi@7e204800:
+  - parent_name: vpu
+    rate:
+  spi@7e204a00:
+  - parent_name: vpu
+    rate:
+  spi@7e204c00:
+  - parent_name: vpu
+    rate:
+  i2c@7e205600:
+  - parent_name: vpu
+    rate:
+  i2c@7e205800:
+  - parent_name: vpu
+    rate:
+  i2c@7e205a00:
+  - parent_name: vpu
+    rate:
+  i2c@7e205c00:
+  - parent_name: vpu
+    rate:
+  pwm@7e20c800:
+  - parent_name: pwm
+    rate:
+  clock@7ef00000:
+  - parent_name: 108MHz-clock
+    rate:
+  hdmi@7ef00700:
+  - parent_name: fw-clk-m2mc
+    rate:
+  - parent_name: fw-clk-pixel-bvb
+    rate:
+  hdmi@7ef05700:
+  - parent_name: fw-clk-m2mc
+    rate:
+  - parent_name: fw-clk-pixel-bvb
+    rate:
+  mmc@7e300000:
+  - parent_name: emmc
+    rate:
+  mmcnr@7e300000:
+  - parent_name: emmc
+    rate:
+  smi@7e600000:
+  - parent_name: smi
+    rate:
+  csi@7e800000:
+  - parent_name: cam0
+    rate:
+  - parent_name: fw-clk-core
+    rate:
+  csi@7e801000:
+  - parent_name: cam1
+    rate:
+  - parent_name: fw-clk-core
+    rate:
+  emmc2@7e340000:
+  - parent_name: emmc2
+    rate:
+  v3d@7ec04000:
+  - parent_name: fw-clk-v3d
+    rate:
+devices:
+  /:
+    path: ///
+    name: /
+    phandle:
+    compatible:
+    - raspberrypi,4-model-b
+    - brcm,bcm2711
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  leds:
+    path: //leds
+    name: leds
+    phandle: 214
+    compatible:
+    - gpio-leds
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  fixedregulator_3v3:
+    path: //fixedregulator_3v3
+    name: fixedregulator_3v3
+    phandle: 215
+    compatible:
+    - regulator-fixed
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  linux,cma:
+    path: /reserved-memory/linux,cma
+    name: linux,cma
+    phandle: 64
+    compatible:
+    - shared-dma-pool
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  clk-108M:
+    path: //clk-108M
+    name: clk-108M
+    phandle: 28
+    compatible:
+    - fixed-clock
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names:
+    - 108MHz-clock
+    clock_cells: 0
+  chosen:
+    path: //chosen
+    name: chosen
+    phandle:
+    compatible:
+    - simple_bus
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  framebuffer@00000000:
+    path: /chosen/framebuffer@00000000
+    name: framebuffer@00000000
+    phandle:
+    compatible:
+    - simple-framebuffer
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  phy:
+    path: //phy
+    name: phy
+    phandle: 25
+    compatible:
+    - usb-nop-xceiv
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  sd_io_1v8_reg:
+    path: //sd_io_1v8_reg
+    name: sd_io_1v8_reg
+    phandle: 37
+    compatible:
+    - regulator-gpio
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  soc:
+    path: //soc
+    name: soc
+    phandle: 66
+    compatible:
+    - simple-bus
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  vec@7e806000:
+    path: /soc/vec@7e806000
+    name: vec@7e806000
+    phandle: 175
+    compatible:
+    - brcm,bcm2835-vec
+    interrupts:
+    - type: 0x0
+      num: 123
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '24'
+    clock_output_names: []
+    clock_cells: 0
+  spi@7e204000:
+    path: /soc/spi@7e204000
+    name: spi@7e204000
+    phandle: 49
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - type: 0x0
+      num: 118
+      flags: 0x4
+    aliases:
+    - spi0
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  spidev@0:
+    path: /soc/spi@7e204000/spidev@0
+    name: spidev@0
+    phandle: 165
+    compatible:
+    - spidev
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  spidev@1:
+    path: /soc/spi@7e204000/spidev@1
+    name: spidev@1
+    phandle: 166
+    compatible:
+    - spidev
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  mmc@7e300000:
+    path: /soc/mmc@7e300000
+    name: mmc@7e300000
+    phandle: 56
+    compatible:
+    - brcm,bcm2835-mmc
+    - brcm,bcm2835-sdhci
+    interrupts:
+    - type: 0x0
+      num: 126
+      flags: 0x4
+    aliases:
+    - mmc
+    clock_names: []
+    clocks:
+    - '7'
+    - '28'
+    clock_output_names: []
+    clock_cells: 0
+  i2c@7e205a00:
+    path: /soc/i2c@7e205a00
+    name: i2c@7e205a00
+    phandle: 189
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases:
+    - i2c5
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  local_intc@40000000:
+    path: /soc/local_intc@40000000
+    name: local_intc@40000000
+    phandle: 177
+    compatible:
+    - brcm,bcm2836-l1-intc
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  i2c@7e205800:
+    path: /soc/i2c@7e205800
+    name: i2c@7e205800
+    phandle: 188
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases:
+    - i2c4
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  pixelvalve@7ec12000:
+    path: /soc/pixelvalve@7ec12000
+    name: pixelvalve@7ec12000
+    phandle: 196
+    compatible:
+    - brcm,bcm2711-pixelvalve3
+    interrupts:
+    - type: 0x0
+      num: 106
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  spi@7e204600:
+    path: /soc/spi@7e204600
+    name: spi@7e204600
+    phandle: 183
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - type: 0x0
+      num: 118
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  csi@7e801000:
+    path: /soc/csi@7e801000
+    name: csi@7e801000
+    phandle: 203
+    compatible:
+    - brcm,bcm2835-unicam
+    interrupts:
+    - type: 0x0
+      num: 103
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - lp
+    - vpu
+    clocks:
+    - '7'
+    - '46'
+    - '22'
+    - '4'
+    clock_output_names: []
+    clock_cells: 1
+  csi@7e801000.0:
+    path: /soc/csi@7e801000
+    name: csi@7e801000
+    phandle: 203
+    compatible:
+    - brcm,bcm2835-unicam
+    interrupts:
+    - type: 0x0
+      num: 103
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - lp
+    - vpu
+    clocks:
+    - '7'
+    - '46'
+    - '22'
+    - '4'
+    clock_output_names: []
+    clock_cells: 1
+  pixelvalve@7e207000:
+    path: /soc/pixelvalve@7e207000
+    name: pixelvalve@7e207000
+    phandle: 192
+    compatible:
+    - brcm,bcm2711-pixelvalve1
+    interrupts:
+    - type: 0x0
+      num: 110
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  serial@7e201400:
+    path: /soc/serial@7e201400
+    name: serial@7e201400
+    phandle: 179
+    compatible:
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - type: 0x0
+      num: 121
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - uartclk
+    - apb_pclk
+    clocks:
+    - '7'
+    - '19'
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  txp@7e004000:
+    path: /soc/txp@7e004000
+    name: txp@7e004000
+    phandle: 68
+    compatible:
+    - brcm,bcm2835-txp
+    interrupts:
+    - type: 0x0
+      num: 75
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  aux@7e215000:
+    path: /soc/aux@7e215000
+    name: aux@7e215000
+    phandle: 20
+    compatible:
+    - brcm,bcm2835-aux
+    interrupts: []
+    aliases:
+    - aux
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 1
+  spi@7e2150c0:
+    path: /soc/spi@7e2150c0
+    name: spi@7e2150c0
+    phandle: 172
+    compatible:
+    - brcm,bcm2835-aux-spi
+    interrupts:
+    - type: 0x0
+      num: 93
+      flags: 0x4
+    aliases:
+    - spi2
+    clock_names: []
+    clocks:
+    - '20'
+    - '2'
+    clock_output_names: []
+    clock_cells: 0
+  timer@7e003000:
+    path: /soc/timer@7e003000
+    name: timer@7e003000
+    phandle: 67
+    compatible:
+    - brcm,bcm2835-system-timer
+    interrupts:
+    - type: 0x0
+      num: 64
+      flags: 0x4
+    - type: 0x0
+      num: 65
+      flags: 0x4
+    - type: 0x0
+      num: 66
+      flags: 0x4
+    - type: 0x0
+      num: 67
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  pixelvalve@7e206000:
+    path: /soc/pixelvalve@7e206000
+    name: pixelvalve@7e206000
+    phandle: 191
+    compatible:
+    - brcm,bcm2711-pixelvalve0
+    interrupts:
+    - type: 0x0
+      num: 109
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef05700:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef05700.0:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef05700.1:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef05700.2:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef05700.3:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef05700.4:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef05700.5:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef05700.6:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef05700.7:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef05700.8:
+    path: /soc/hdmi@7ef05700
+    name: hdmi@7ef05700
+    phandle: 198
+    compatible:
+    - brcm,bcm2711-hdmi1
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '1'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  pwm@7e20c000:
+    path: /soc/pwm@7e20c000
+    name: pwm@7e20c000
+    phandle: 173
+    compatible:
+    - brcm,bcm2835-pwm
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  mmc@7e202000:
+    path: /soc/mmc@7e202000
+    name: mmc@7e202000
+    phandle: 55
+    compatible:
+    - brcm,bcm2835-sdhost
+    interrupts:
+    - type: 0x0
+      num: 120
+      flags: 0x4
+    aliases:
+    - mmc2
+    - sdhost
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  i2c@7ef04500:
+    path: /soc/i2c@7ef04500
+    name: i2c@7ef04500
+    phandle: 31
+    compatible:
+    - brcm,bcm2711-hdmi-i2c
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  i2c@7ef04500.0:
+    path: /soc/i2c@7ef04500
+    name: i2c@7ef04500
+    phandle: 31
+    compatible:
+    - brcm,bcm2711-hdmi-i2c
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  i2s@7e203000:
+    path: /soc/i2s@7e203000
+    name: i2s@7e203000
+    phandle: 48
+    compatible:
+    - brcm,bcm2835-i2s
+    interrupts: []
+    aliases:
+    - i2s
+    clock_names: []
+    clocks:
+    - '7'
+    - '31'
+    clock_output_names: []
+    clock_cells: 0
+  serial@7e201600:
+    path: /soc/serial@7e201600
+    name: serial@7e201600
+    phandle: 180
+    compatible:
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - type: 0x0
+      num: 121
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - uartclk
+    - apb_pclk
+    clocks:
+    - '7'
+    - '19'
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  gpio@7e200000:
+    path: /soc/gpio@7e200000
+    name: gpio@7e200000
+    phandle: 15
+    compatible:
+    - brcm,bcm2711-gpio
+    interrupts:
+    - type: 0x0
+      num: 113
+      flags: 0x4
+    - type: 0x0
+      num: 114
+      flags: 0x4
+    aliases:
+    - gpio
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  i2c@7e205600:
+    path: /soc/i2c@7e205600
+    name: i2c@7e205600
+    phandle: 187
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases:
+    - i2c3
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  hvs@7e400000:
+    path: /soc/hvs@7e400000
+    name: hvs@7e400000
+    phandle: 174
+    compatible:
+    - brcm,bcm2711-hvs
+    interrupts:
+    - type: 0x0
+      num: 97
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '22'
+    - '4'
+    clock_output_names: []
+    clock_cells: 0
+  pixelvalve@7e216000:
+    path: /soc/pixelvalve@7e216000
+    name: pixelvalve@7e216000
+    phandle: 195
+    compatible:
+    - brcm,bcm2711-pixelvalve4
+    interrupts:
+    - type: 0x0
+      num: 110
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  usb@7e980000:
+    path: /soc/usb@7e980000
+    name: usb@7e980000
+    phandle: 176
+    compatible:
+    - brcm,bcm2708-usb
+    interrupts:
+    - type: 0x0
+      num: 73
+      flags: 0x4
+    - type: 0x0
+      num: 40
+      flags: 0x4
+    aliases:
+    - usb
+    clock_names:
+    - otg
+    clocks:
+    - '24'
+    clock_output_names: []
+    clock_cells: 0
+  usb@7e980000.0:
+    path: /soc/usb@7e980000
+    name: usb@7e980000
+    phandle: 176
+    compatible:
+    - brcm,bcm2708-usb
+    interrupts:
+    - type: 0x0
+      num: 73
+      flags: 0x4
+    - type: 0x0
+      num: 40
+      flags: 0x4
+    aliases:
+    - usb
+    clock_names:
+    - otg
+    clocks:
+    - '24'
+    clock_output_names: []
+    clock_cells: 0
+  i2c@7e205c00:
+    path: /soc/i2c@7e205c00
+    name: i2c@7e205c00
+    phandle: 190
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases:
+    - i2c6
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  serial@7e201a00:
+    path: /soc/serial@7e201a00
+    name: serial@7e201a00
+    phandle: 182
+    compatible:
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - type: 0x0
+      num: 121
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - uartclk
+    - apb_pclk
+    clocks:
+    - '7'
+    - '19'
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  mailbox@7e00b840:
+    path: /soc/mailbox@7e00b840
+    name: mailbox@7e00b840
+    phandle: 199
+    compatible:
+    - brcm,bcm2711-vchiq
+    interrupts:
+    - type: 0x0
+      num: 34
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  bcm2835_audio:
+    path: /soc/mailbox@7e00b840/bcm2835_audio
+    name: bcm2835_audio
+    phandle: 52
+    compatible:
+    - brcm,bcm2835-audio
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  mmcnr@7e300000:
+    path: /soc/mmcnr@7e300000
+    name: mmcnr@7e300000
+    phandle: 57
+    compatible:
+    - brcm,bcm2835-mmc
+    - brcm,bcm2835-sdhci
+    interrupts:
+    - type: 0x0
+      num: 126
+      flags: 0x4
+    aliases:
+    - mmc1
+    clock_names: []
+    clocks:
+    - '7'
+    - '28'
+    clock_output_names: []
+    clock_cells: 0
+  cprman@7e101000:
+    path: /soc/cprman@7e101000
+    name: cprman@7e101000
+    phandle: 7
+    compatible:
+    - brcm,bcm2711-cprman
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks:
+    - '3'
+    - '4'
+    - '0'
+    - '4'
+    - '1'
+    - '4'
+    - '2'
+    - '5'
+    - '0'
+    - '5'
+    - '1'
+    - '5'
+    - '2'
+    clock_output_names: []
+    clock_cells: 1
+  avs-monitor@7d5d2000:
+    path: /soc/avs-monitor@7d5d2000
+    name: avs-monitor@7d5d2000
+    phandle: 178
+    compatible:
+    - brcm,bcm2711-avs-monitor
+    - syscon
+    - simple-mfd
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  thermal:
+    path: /soc/avs-monitor@7d5d2000/thermal
+    name: thermal
+    phandle: 2
+    compatible:
+    - brcm,bcm2711-thermal
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  i2c@7e804000:
+    path: /soc/i2c@7e804000
+    name: i2c@7e804000
+    phandle: 51
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases:
+    - i2c
+    - i2c1
+    - i2c_arm
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  vcsm:
+    path: /soc/vcsm
+    name: vcsm
+    phandle: 205
+    compatible:
+    - raspberrypi,bcm2835-vcsm
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  i2c0mux:
+    path: /soc/i2c0mux
+    name: i2c0mux
+    phandle: 50
+    compatible:
+    - i2c-mux-pinctrl
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef00700:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef00700.0:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef00700.1:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef00700.2:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef00700.3:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef00700.4:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef00700.5:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef00700.6:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef00700.7:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  hdmi@7ef00700.8:
+    path: /soc/hdmi@7ef00700
+    name: hdmi@7ef00700
+    phandle: 197
+    compatible:
+    - brcm,bcm2711-hdmi0
+    interrupts:
+    - type: 0x0
+      num: 96
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - hdmi
+    - bvb
+    - audio
+    - cec
+    clocks:
+    - '22'
+    - '13'
+    - '22'
+    - '14'
+    - '29'
+    - '0'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  mailbox@7e00b880:
+    path: /soc/mailbox@7e00b880
+    name: mailbox@7e00b880
+    phandle: 33
+    compatible:
+    - brcm,bcm2835-mbox
+    interrupts:
+    - type: 0x0
+      num: 33
+      flags: 0x4
+    aliases:
+    - mailbox
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  gpiomem:
+    path: /soc/gpiomem
+    name: gpiomem
+    phandle:
+    compatible:
+    - brcm,bcm2835-gpiomem
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  dsi@7e700000:
+    path: /soc/dsi@7e700000
+    name: dsi@7e700000
+    phandle: 5
+    compatible:
+    - brcm,bcm2835-dsi1
+    interrupts:
+    - type: 0x0
+      num: 108
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - phy
+    - escape
+    - pixel
+    clocks:
+    - '7'
+    - '35'
+    - '7'
+    - '48'
+    - '7'
+    - '50'
+    clock_output_names:
+    - dsi1_byte
+    - dsi1_ddr2
+    - dsi1_ddr
+    clock_cells: 1
+  clock@7ef00000:
+    path: /soc/clock@7ef00000
+    name: clock@7ef00000
+    phandle: 29
+    compatible:
+    - brcm,brcm2711-dvp
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks:
+    - '28'
+    clock_output_names: []
+    clock_cells: 1
+  i2c@7ef09500:
+    path: /soc/i2c@7ef09500
+    name: i2c@7ef09500
+    phandle: 32
+    compatible:
+    - brcm,bcm2711-hdmi-i2c
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  i2c@7ef09500.0:
+    path: /soc/i2c@7ef09500
+    name: i2c@7ef09500
+    phandle: 32
+    compatible:
+    - brcm,bcm2711-hdmi-i2c
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  power:
+    path: /soc/power
+    name: power
+    phandle: 19
+    compatible:
+    - raspberrypi,bcm2835-power
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  dpi@7e208000:
+    path: /soc/dpi@7e208000
+    name: dpi@7e208000
+    phandle: 169
+    compatible:
+    - brcm,bcm2835-dpi
+    interrupts: []
+    aliases: []
+    clock_names:
+    - core
+    - pixel
+    clocks:
+    - '7'
+    - '20'
+    - '7'
+    - '44'
+    clock_output_names: []
+    clock_cells: 0
+  smi@7e600000:
+    path: /soc/smi@7e600000
+    name: smi@7e600000
+    phandle: 201
+    compatible:
+    - brcm,bcm2835-smi
+    interrupts:
+    - type: 0x0
+      num: 112
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '42'
+    clock_output_names: []
+    clock_cells: 0
+  firmwarekms@7e600000:
+    path: /soc/firmwarekms@7e600000
+    name: firmwarekms@7e600000
+    phandle: 200
+    compatible:
+    - raspberrypi,rpi-firmware-kms-2711
+    interrupts:
+    - type: 0x0
+      num: 112
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  i2c@7e205000:
+    path: /soc/i2c@7e205000
+    name: i2c@7e205000
+    phandle: 16
+    compatible:
+    - brcm,bcm2711-i2c
+    - brcm,bcm2835-i2c
+    interrupts:
+    - type: 0x0
+      num: 117
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  axiperf:
+    path: /soc/axiperf
+    name: axiperf
+    phandle: 58
+    compatible:
+    - brcm,bcm2835-axiperf
+    interrupts: []
+    aliases:
+    - axiperf
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  axiperf.0:
+    path: /soc/axiperf
+    name: axiperf
+    phandle: 58
+    compatible:
+    - brcm,bcm2835-axiperf
+    interrupts: []
+    aliases:
+    - axiperf
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  pwm@7e20c800:
+    path: /soc/pwm@7e20c800
+    name: pwm@7e20c800
+    phandle: 194
+    compatible:
+    - brcm,bcm2835-pwm
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '30'
+    clock_output_names: []
+    clock_cells: 0
+  firmware:
+    path: /soc/firmware
+    name: firmware
+    phandle: 6
+    compatible:
+    - raspberrypi,bcm2835-firmware
+    - simple-mfd
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  gpio:
+    path: /soc/firmware/gpio
+    name: gpio
+    phandle: 10
+    compatible:
+    - raspberrypi,firmware-gpio
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  clocks:
+    path: /soc/firmware/clocks
+    name: clocks
+    phandle: 22
+    compatible:
+    - raspberrypi,firmware-clocks
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 1
+  serial@7e201000:
+    path: /soc/serial@7e201000
+    name: serial@7e201000
+    phandle: 46
+    compatible:
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - type: 0x0
+      num: 121
+      flags: 0x4
+    aliases:
+    - serial1
+    - uart0
+    clock_names:
+    - uartclk
+    - apb_pclk
+    clocks:
+    - '7'
+    - '19'
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  bluetooth:
+    path: /soc/serial@7e201000/bluetooth
+    name: bluetooth
+    phandle: 45
+    compatible:
+    - brcm,bcm43438-bt
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  csi@7e800000:
+    path: /soc/csi@7e800000
+    name: csi@7e800000
+    phandle: 202
+    compatible:
+    - brcm,bcm2835-unicam
+    interrupts:
+    - type: 0x0
+      num: 102
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - lp
+    - vpu
+    clocks:
+    - '7'
+    - '45'
+    - '22'
+    - '4'
+    clock_output_names: []
+    clock_cells: 1
+  csi@7e800000.0:
+    path: /soc/csi@7e800000
+    name: csi@7e800000
+    phandle: 202
+    compatible:
+    - brcm,bcm2835-unicam
+    interrupts:
+    - type: 0x0
+      num: 102
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - lp
+    - vpu
+    clocks:
+    - '7'
+    - '45'
+    - '22'
+    - '4'
+    clock_output_names: []
+    clock_cells: 1
+  rng@7e104000:
+    path: /soc/rng@7e104000
+    name: rng@7e104000
+    phandle: 54
+    compatible:
+    - brcm,bcm2711-rng200
+    interrupts: []
+    aliases:
+    - random
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  dma@7e007000:
+    path: /soc/dma@7e007000
+    name: dma@7e007000
+    phandle: 11
+    compatible:
+    - brcm,bcm2835-dma
+    interrupts:
+    - type: 0x0
+      num: 80
+      flags: 0x4
+    - type: 0x0
+      num: 81
+      flags: 0x4
+    - type: 0x0
+      num: 82
+      flags: 0x4
+    - type: 0x0
+      num: 83
+      flags: 0x4
+    - type: 0x0
+      num: 84
+      flags: 0x4
+    - type: 0x0
+      num: 85
+      flags: 0x4
+    - type: 0x0
+      num: 86
+      flags: 0x4
+    - type: 0x0
+      num: 87
+      flags: 0x4
+    - type: 0x0
+      num: 87
+      flags: 0x4
+    - type: 0x0
+      num: 88
+      flags: 0x4
+    - type: 0x0
+      num: 88
+      flags: 0x4
+    aliases:
+    - dma
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  spi@7e204c00:
+    path: /soc/spi@7e204c00
+    name: spi@7e204c00
+    phandle: 186
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - type: 0x0
+      num: 118
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  spi@7e215080:
+    path: /soc/spi@7e215080
+    name: spi@7e215080
+    phandle: 171
+    compatible:
+    - brcm,bcm2835-aux-spi
+    interrupts:
+    - type: 0x0
+      num: 93
+      flags: 0x4
+    aliases:
+    - spi1
+    clock_names: []
+    clocks:
+    - '20'
+    - '1'
+    clock_output_names: []
+    clock_cells: 0
+  watchdog@7e100000:
+    path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 53
+    compatible:
+    - brcm,bcm2835-pm
+    - brcm,bcm2835-pm-wdt
+    interrupts: []
+    aliases:
+    - watchdog
+    clock_names:
+    - v3d
+    - peri_image
+    - h264
+    - isp
+    clocks:
+    - '7'
+    - '21'
+    - '7'
+    - '29'
+    - '7'
+    - '23'
+    - '7'
+    - '22'
+    clock_output_names: []
+    clock_cells: 0
+  watchdog@7e100000.0:
+    path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 53
+    compatible:
+    - brcm,bcm2835-pm
+    - brcm,bcm2835-pm-wdt
+    interrupts: []
+    aliases:
+    - watchdog
+    clock_names:
+    - v3d
+    - peri_image
+    - h264
+    - isp
+    clocks:
+    - '7'
+    - '21'
+    - '7'
+    - '29'
+    - '7'
+    - '23'
+    - '7'
+    - '22'
+    clock_output_names: []
+    clock_cells: 0
+  watchdog@7e100000.1:
+    path: /soc/watchdog@7e100000
+    name: watchdog@7e100000
+    phandle: 53
+    compatible:
+    - brcm,bcm2835-pm
+    - brcm,bcm2835-pm-wdt
+    interrupts: []
+    aliases:
+    - watchdog
+    clock_names:
+    - v3d
+    - peri_image
+    - h264
+    - isp
+    clocks:
+    - '7'
+    - '21'
+    - '7'
+    - '29'
+    - '7'
+    - '23'
+    - '7'
+    - '22'
+    clock_output_names: []
+    clock_cells: 0
+  dsi@7e209000:
+    path: /soc/dsi@7e209000
+    name: dsi@7e209000
+    phandle: 4
+    compatible:
+    - brcm,bcm2835-dsi0
+    interrupts:
+    - type: 0x0
+      num: 100
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - phy
+    - escape
+    - pixel
+    clocks:
+    - '7'
+    - '32'
+    - '7'
+    - '47'
+    - '7'
+    - '49'
+    clock_output_names:
+    - dsi0_byte
+    - dsi0_ddr2
+    - dsi0_ddr
+    clock_cells: 1
+  pixelvalve@7e20a000:
+    path: /soc/pixelvalve@7e20a000
+    name: pixelvalve@7e20a000
+    phandle: 193
+    compatible:
+    - brcm,bcm2711-pixelvalve2
+    interrupts:
+    - type: 0x0
+      num: 101
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  spi@7e204a00:
+    path: /soc/spi@7e204a00
+    name: spi@7e204a00
+    phandle: 185
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - type: 0x0
+      num: 118
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  fb:
+    path: /soc/fb
+    name: fb
+    phandle: 204
+    compatible:
+    - brcm,bcm2708-fb
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  spi@7e204800:
+    path: /soc/spi@7e204800
+    name: spi@7e204800
+    phandle: 184
+    compatible:
+    - brcm,bcm2835-spi
+    interrupts:
+    - type: 0x0
+      num: 118
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  serial@7e201800:
+    path: /soc/serial@7e201800
+    name: serial@7e201800
+    phandle: 181
+    compatible:
+    - arm,pl011
+    - arm,primecell
+    interrupts:
+    - type: 0x0
+      num: 121
+      flags: 0x4
+    aliases: []
+    clock_names:
+    - uartclk
+    - apb_pclk
+    clocks:
+    - '7'
+    - '19'
+    - '7'
+    - '20'
+    clock_output_names: []
+    clock_cells: 0
+  serial@7e215040:
+    path: /soc/serial@7e215040
+    name: serial@7e215040
+    phandle: 47
+    compatible:
+    - brcm,bcm2835-aux-uart
+    interrupts:
+    - type: 0x0
+      num: 93
+      flags: 0x4
+    aliases:
+    - serial0
+    - uart1
+    clock_names: []
+    clocks:
+    - '20'
+    - '0'
+    clock_output_names: []
+    clock_cells: 0
+  bluetooth.0:
+    path: /soc/serial@7e215040/bluetooth
+    name: bluetooth
+    phandle: 170
+    compatible:
+    - brcm,bcm43438-bt
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  gpu:
+    path: //gpu
+    name: gpu
+    phandle: 207
+    compatible:
+    - brcm,bcm2711-vc5
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  sd_vcc_reg:
+    path: //sd_vcc_reg
+    name: sd_vcc_reg
+    phandle: 38
+    compatible:
+    - regulator-fixed
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  fixedregulator_5v0:
+    path: //fixedregulator_5v0
+    name: fixedregulator_5v0
+    phandle: 216
+    compatible:
+    - regulator-fixed
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  psci:
+    path: //psci
+    name: psci
+    phandle:
+    compatible:
+    - arm,psci-1.0
+    - arm,psci-0.2
+    - arm,psci
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  emmc2bus:
+    path: //emmc2bus
+    name: emmc2bus
+    phandle: 208
+    compatible:
+    - simple-bus
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  emmc2@7e340000:
+    path: /emmc2bus/emmc2@7e340000
+    name: emmc2@7e340000
+    phandle: 61
+    compatible:
+    - brcm,bcm2711-emmc2
+    interrupts:
+    - type: 0x0
+      num: 126
+      flags: 0x4
+    aliases:
+    - mmc0
+    clock_names: []
+    clocks:
+    - '7'
+    - '51'
+    clock_output_names: []
+    clock_cells: 0
+  scb:
+    path: //scb
+    name: scb
+    phandle: 210
+    compatible:
+    - simple-bus
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  vp9-decoder@7eb30000:
+    path: /scb/vp9-decoder@7eb30000
+    name: vp9-decoder@7eb30000
+    phandle:
+    compatible:
+    - raspberrypi,rpivid-vp9-decoder
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  hevc-decoder@7eb00000:
+    path: /scb/hevc-decoder@7eb00000
+    name: hevc-decoder@7eb00000
+    phandle:
+    compatible:
+    - raspberrypi,rpivid-hevc-decoder
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  rpivid-local-intc@7eb10000:
+    path: /scb/rpivid-local-intc@7eb10000
+    name: rpivid-local-intc@7eb10000
+    phandle:
+    compatible:
+    - raspberrypi,rpivid-local-intc
+    interrupts:
+    - type: 0x0
+      num: 98
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  dma@7e007b00:
+    path: /scb/dma@7e007b00
+    name: dma@7e007b00
+    phandle: 62
+    compatible:
+    - brcm,bcm2711-dma
+    interrupts:
+    - type: 0x0
+      num: 89
+      flags: 0x4
+    - type: 0x0
+      num: 90
+      flags: 0x4
+    - type: 0x0
+      num: 91
+      flags: 0x4
+    - type: 0x0
+      num: 92
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  h264-decoder@7eb20000:
+    path: /scb/h264-decoder@7eb20000
+    name: h264-decoder@7eb20000
+    phandle:
+    compatible:
+    - raspberrypi,rpivid-h264-decoder
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  xhci@7e9c0000:
+    path: /scb/xhci@7e9c0000
+    name: xhci@7e9c0000
+    phandle: 213
+    compatible:
+    - generic-xhci
+    interrupts:
+    - type: 0x0
+      num: 176
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  ethernet@7d580000:
+    path: /scb/ethernet@7d580000
+    name: ethernet@7d580000
+    phandle: 211
+    compatible:
+    - brcm,bcm2711-genet-v5
+    interrupts:
+    - type: 0x0
+      num: 157
+      flags: 0x4
+    - type: 0x0
+      num: 158
+      flags: 0x4
+    aliases:
+    - ethernet0
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  mdio@e14:
+    path: /scb/ethernet@7d580000/mdio@e14
+    name: mdio@e14
+    phandle: 212
+    compatible:
+    - brcm,genet-mdio-v5
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  pcie@7d500000:
+    path: /scb/pcie@7d500000
+    name: pcie@7d500000
+    phandle: 43
+    compatible:
+    - brcm,bcm2711-pcie
+    interrupts:
+    - type: 0x0
+      num: 148
+      flags: 0x4
+    - type: 0x0
+      num: 148
+      flags: 0x4
+    aliases:
+    - pcie0
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  timer:
+    path: //timer
+    name: timer
+    phandle:
+    compatible:
+    - arm,armv8-timer
+    interrupts:
+    - type: 0x1
+      num: 13
+      flags: 0xf08
+    - type: 0x1
+      num: 14
+      flags: 0xf08
+    - type: 0x1
+      num: 11
+      flags: 0xf08
+    - type: 0x1
+      num: 10
+      flags: 0xf08
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  clk-27M:
+    path: //clk-27M
+    name: clk-27M
+    phandle: 30
+    compatible:
+    - fixed-clock
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names:
+    - 27MHz-clock
+    clock_cells: 0
+  clk-usb:
+    path: /clocks/clk-usb
+    name: clk-usb
+    phandle: 24
+    compatible:
+    - fixed-clock
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names:
+    - otg
+    clock_cells: 0
+  clk-osc:
+    path: /clocks/clk-osc
+    name: clk-osc
+    phandle: 3
+    compatible:
+    - fixed-clock
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names:
+    - osc
+    clock_cells: 0
+  v3dbus:
+    path: //v3dbus
+    name: v3dbus
+    phandle: 217
+    compatible:
+    - simple-bus
+    interrupts: []
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
+  v3d@7ec04000:
+    path: /v3dbus/v3d@7ec04000
+    name: v3d@7ec04000
+    phandle: 218
+    compatible:
+    - brcm,2711-v3d
+    interrupts:
+    - type: 0x0
+      num: 74
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '22'
+    - '5'
+    clock_output_names: []
+    clock_cells: 0
+  v3d@7ec04000.0:
+    path: /v3dbus/v3d@7ec04000
+    name: v3d@7ec04000
+    phandle: 218
+    compatible:
+    - brcm,2711-v3d
+    interrupts:
+    - type: 0x0
+      num: 74
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks:
+    - '22'
+    - '5'
+    clock_output_names: []
+    clock_cells: 0
+  arm-pmu:
+    path: //arm-pmu
+    name: arm-pmu
+    phandle:
+    compatible:
+    - arm,cortex-a72-pmu
+    - arm,armv8-pmuv3
+    interrupts:
+    - type: 0x0
+      num: 16
+      flags: 0x4
+    - type: 0x0
+      num: 17
+      flags: 0x4
+    - type: 0x0
+      num: 18
+      flags: 0x4
+    - type: 0x0
+      num: 19
+      flags: 0x4
+    aliases: []
+    clock_names: []
+    clocks: []
+    clock_output_names: []
+    clock_cells: 0
