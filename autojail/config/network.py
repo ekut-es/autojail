@@ -204,7 +204,7 @@ class NetworkConfigPass(BasePass):
                 for num, peer in enumerate(config.peers):
                     interfaces = []
                     for network in config.network:
-                        address = next(itertools.islice(network, num, None))
+                        address = next(itertools.islice(network, num + 1, None))
                         interface = ip_interface(
                             f"{address}/{network.prefixlen}"
                         )

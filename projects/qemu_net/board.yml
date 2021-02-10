@@ -1927,3 +1927,72 @@ devices:
     clocks: []
     clock_output_names: []
     clock_cells: 0
+ip_info:
+- ifindex: 1
+  ifname: lo
+  flags:
+  - LOOPBACK
+  - UP
+  - LOWER_UP
+  mtu: 65536
+  qdisc: noqueue
+  operstate: UNKNOWN
+  group: default
+  txqlen: 1000
+  link_type: loopback
+  address: 00:00:00:00:00:00
+  broadcast: 00:00:00:00:00:00
+  addr_info:
+  - family: inet
+    local: 127.0.0.1
+    prefixlen: 8
+    scope: host
+    label: lo
+    valid_life_time: 4294967295
+    preferred_life_time: 4294967295
+  - family: inet6
+    local: ::1
+    prefixlen: 128
+    scope: host
+    valid_life_time: 4294967295
+    preferred_life_time: 4294967295
+- ifindex: 2
+  ifname: eth0
+  flags:
+  - BROADCAST
+  - MULTICAST
+  - UP
+  - LOWER_UP
+  mtu: 1500
+  qdisc: pfifo_fast
+  operstate: UP
+  group: default
+  txqlen: 1000
+  link_type: ether
+  address: 52:54:00:12:34:56
+  broadcast: ff:ff:ff:ff:ff:ff
+  addr_info:
+  - family: inet
+    local: 10.0.2.15
+    prefixlen: 24
+    broadcast: 10.0.2.255
+    scope: global
+    dynamic: true
+    label: eth0
+    valid_life_time: 63038
+    preferred_life_time: 63038
+  - family: inet6
+    local: fec0::5054:ff:fe12:3456
+    prefixlen: 64
+    scope: site
+    dynamic: true
+    mngtmpaddr: true
+    valid_life_time: 86311
+    preferred_life_time: 14311
+  - family: inet6
+    local: fe80::5054:ff:fe12:3456
+    prefixlen: 64
+    scope: link
+    valid_life_time: 4294967295
+    preferred_life_time: 4294967295
+hw_info: []
