@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from ..model import Board, JailhouseConfig, MemoryRegion
+from ..model import Board, JailhouseConfig, MemoryRegionData
 from ..utils import get_overlap
 from .passes import BasePass
 
@@ -28,10 +28,10 @@ class InferRootSharedPass(BasePass):
                 continue
 
             for name, region in cell.memory_regions.items():
-                if not isinstance(region, MemoryRegion):
+                if not isinstance(region, MemoryRegionData):
                     continue
                 for root_name, root_region in root_cell.memory_regions.items():
-                    if not isinstance(root_region, MemoryRegion):
+                    if not isinstance(root_region, MemoryRegionData):
                         continue
 
                     assert region.physical_start_addr is not None
