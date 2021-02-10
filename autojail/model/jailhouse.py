@@ -1,4 +1,5 @@
 # FIXME:  Dicts should be replaced by OrderedDict when 3.6 support is dropped
+from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 from pydantic import BaseModel
@@ -173,6 +174,7 @@ class CellConfig(BaseModel):
     ] = {}
     irqchips: Optional[Dict[str, IRQChip]] = {}
     pci_devices: Optional[Dict[str, PCIDevice]] = {}
+    image_path: Optional[Path] = None
 
 
 class ShmemConfig(BaseModel):
