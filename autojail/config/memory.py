@@ -30,6 +30,7 @@ from ..model import (
     ShMemNetRegion,
 )
 from ..model.datatypes import HexInt
+from ..utils import get_overlap
 from .passes import BasePass
 
 
@@ -1082,6 +1083,23 @@ class MergeIoRegionsPass(BasePass):
         current_group: List[Tuple[str, MemoryRegionData]] = []
 
         max_dist = self.MAX_DIST
+
+        vpci_start_addr = None
+        vpci_end_addr = None
+
+        if (
+            self.root_cell.platform_info is not None
+            and self.root_cell.platform_info.pci_mmconfig_base is not None
+            and self.root_cell.platform_info.pci_mmconfig_base > 0
+        ):
+            vpci_start_addr = self.root_cell.platform_info.pci_mmconfig_base
+            vpci_end_addr = (
+                vpci_start_addr
+                + (self.root_cell.platform_info.pci_mmconfig_end_bus + 1)
+                * 256
+                * 4096
+            )
+
         for name, r in regions:
             assert r.physical_start_addr is not None
             assert r.size is not None
@@ -1135,10 +1153,24 @@ class MergeIoRegionsPass(BasePass):
                             gic_overlap = True
                             break
 
-                if r1_start - last_region_end > max_dist or gic_overlap:
+                vpci_overlap = False
+                if vpci_start_addr is not None and vpci_end_addr is not None:
+                    if (
+                        get_overlap(
+                            (r1_start, r1_end), (vpci_start_addr, vpci_end_addr)
+                        )
+                        > 0
+                    ):
+                        vpci_overlap = True
+
+                if (
+                    r1_start - last_region_end > max_dist
+                    or gic_overlap
+                    or vpci_overlap
+                ):
                     grouped_regions.append(current_group)
 
-                    if not gic_overlap:
+                    if not gic_overlap and not vpci_overlap:
                         current_group = [(name, r)]
                     else:
                         current_group = []
