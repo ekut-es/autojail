@@ -47,7 +47,7 @@ class InferRootSharedPass(BasePass):
                         ),
                         (
                             root_region.physical_start_addr,
-                            root_region.physical_start_addr + region.size,
+                            root_region.physical_start_addr + root_region.size,
                         ),
                     )
                     if overlap > 0:
