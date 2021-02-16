@@ -1135,14 +1135,10 @@ class MergeIoRegionsPass(BasePass):
                             gic_overlap = True
                             break
 
-                if (
-                    r1_start - last_region_end > max_dist
-                    or r.shared
-                    or gic_overlap
-                ):
+                if r1_start - last_region_end > max_dist or gic_overlap:
                     grouped_regions.append(current_group)
 
-                    if not r.shared and not gic_overlap:
+                    if not gic_overlap:
                         current_group = [(name, r)]
                     else:
                         current_group = []
