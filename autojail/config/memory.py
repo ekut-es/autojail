@@ -30,7 +30,7 @@ from ..model import (
     ShMemNetRegion,
 )
 from ..model.datatypes import HexInt
-from ..model.parameters import GenerateConfig
+from ..model.parameters import GenerateConfig, GenerateParameters, ScalarChoice
 from ..utils import get_overlap
 from .passes import BasePass
 
@@ -1025,15 +1025,29 @@ class MergeIoRegionsPass(BasePass):
     n defaults to 64 kb
     """
 
-    def __init__(self, params: Optional[GenerateConfig]) -> None:
+    def __init__(
+        self,
+        set_params: Optional[GenerateConfig],
+        gen_params: Optional[GenerateParameters],
+    ) -> None:
         self.config: Optional[JailhouseConfig] = None
         self.board: Optional[Board] = None
         self.root_cell: Optional[CellConfig] = None
         self.logger = logging.getLogger("autojail")
         self.max_dist = 64 * 1024
 
-        if params:
-            self.max_dist = params.mem_io_merge_threshold
+        if set_params:
+            self.max_dist = set_params.mem_io_merge_threshold
+
+        if gen_params:
+            threshold_choice = ScalarChoice()
+            threshold_choice.lower = 1024
+            threshold_choice.upper = 64 * 1024 * 1024
+            threshold_choice.step = 1024
+            threshold_choice.integer = True
+            threshold_choice.log = True
+
+            gen_params.mem_io_merge_threshold = threshold_choice
 
     def __call__(
         self, board: Board, config: JailhouseConfig

@@ -4,7 +4,12 @@ import ruamel.yaml
 
 from ..config import JailhouseConfigurator
 from ..model import Board
-from ..model.parameters import GenerateConfig
+from ..model.parameters import (
+    GenerateConfig,
+    GenerateParameters,
+    Partitions,
+    ScalarChoice,
+)
 from .base import BaseCommand
 
 
@@ -42,7 +47,7 @@ class GenerateCommand(BaseCommand):
             board_dict = yaml.load(f)
             board_info = Board(**board_dict)
 
-        params = None
+        set_params = None
         if self.option("set-params"):
             params_yml_path = self.option("set-params")
 
@@ -57,17 +62,36 @@ class GenerateCommand(BaseCommand):
             with params_yml_path.open() as f:
                 yaml = ruamel.yaml.YAML()
                 params_dict = yaml.load(f)
-                params = GenerateConfig(**params_dict)
+                set_params = GenerateConfig(**params_dict)
+
+        gen_params = None
+        if self.option("generate-params"):
+            gen_params = GenerateParameters()
 
         configurator = JailhouseConfigurator(
             board_info,
             self.autojail_config,
             print_after_all=self.option("print-after-all"),
             context=self.automate_context,
-            params=params,
+            set_params=set_params,
+            gen_params=gen_params,
         )
         configurator.read_cell_yml(str(cells_yml_path))
         configurator.prepare()
+
+        if gen_params:
+            gen_params_yml_path = self.option("generate-params")
+            if gen_params_yml_path == "null":
+                gen_params_yml_path = "explore-params.yml"
+
+            gen_params_yml_path = Path(gen_params_yml_path)
+            with gen_params_yml_path.open("w") as f:
+                yaml = ruamel.yaml.YAML()
+                yaml.register_class(ScalarChoice)
+                yaml.register_class(Partitions)
+                yaml.register_class(GenerateParameters)
+                yaml.dump(gen_params.dict(), f)
+
         ret = configurator.write_config(self.autojail_config.build_dir)
 
         if ret or self.option("generate-only"):

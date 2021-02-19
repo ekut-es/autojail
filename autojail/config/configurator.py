@@ -20,7 +20,7 @@ from ..model import (
     PlatformInfoArm,
     ShMemNetRegion,
 )
-from ..model.parameters import GenerateConfig
+from ..model.parameters import GenerateConfig, GenerateParameters
 from ..utils.report import Report, Section, Table
 from .board_info import TransferBoardInfoPass
 from .cpu import CPUAllocatorPass
@@ -44,14 +44,16 @@ class JailhouseConfigurator:
         autojail_config: AutojailConfig,
         print_after_all: bool = False,
         context=None,
-        params: Optional[GenerateConfig] = None,
+        set_params: Optional[GenerateConfig] = None,
+        gen_params: Optional[GenerateParameters] = None,
     ) -> None:
         self.board = board
         self.autojail_config = autojail_config
         self.print_after_all = print_after_all
         self.config: Optional[JailhouseConfig] = None
         self.context = context
-        self.params: Optional[GenerateConfig] = params
+        self.set_params: Optional[GenerateConfig] = set_params
+        self.gen_params: Optional[GenerateParameters] = gen_params
 
         self.passes = [
             TransferBoardInfoPass(),
@@ -59,9 +61,9 @@ class JailhouseConfigurator:
             LowerSHMemPass(),
             PrepareIRQChipsPass(),
             PrepareMemoryRegionsPass(),
-            MergeIoRegionsPass(self.params),
+            MergeIoRegionsPass(self.set_params, self.gen_params),
             AllocateMemoryPass(),
-            CPUAllocatorPass(self.params),
+            CPUAllocatorPass(self.set_params, self.gen_params),
             ConfigSHMemRegionsPass(),
             InferRootSharedPass(),
             GenerateDeviceTreePass(self.autojail_config),

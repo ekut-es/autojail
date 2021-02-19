@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 
 from pydantic import BaseModel
 
@@ -35,16 +35,16 @@ class Partitions(BaseModel):
     partition of choices into partitions elements
     """
 
-    choices: List[Any]
-    partitions: int
-    ordered: bool
+    choices: List[Any] = []
+    partitions: int = 0
+    ordered: bool = False
 
 
 class GenerateParameters(BaseModel):
-    cpu_allocation: Partitions
-    mem_io_merge_threshold: ScalarChoice
+    cpu_allocation: Optional[Partitions] = None
+    mem_io_merge_threshold: Optional[ScalarChoice] = None
 
 
 class GenerateConfig(BaseModel):
-    cpu_allocation: Dict[str, List[int]]
+    cpu_allocation: List[List[int]]
     mem_io_merge_threshold: ByteSize
