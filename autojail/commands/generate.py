@@ -4,6 +4,7 @@ import ruamel.yaml
 
 from ..config import JailhouseConfigurator
 from ..model import Board
+from ..model.parameters import GenerateConfig
 from .base import BaseCommand
 
 
@@ -15,6 +16,8 @@ class GenerateCommand(BaseCommand):
         {--skip-check : Do not statically check generated configs}
         {--target : Deploy generated configs to target board}
         {--generate-only : Do not attempt to build anything}
+        {--generate-params=? : Generate parameters for explore. Filename defaults to explore-params.yml}
+        {--set-params=? : Set parameters from file. Filename defaults to set-params.yml}
     """
 
     def handle(self) -> int:
@@ -39,11 +42,29 @@ class GenerateCommand(BaseCommand):
             board_dict = yaml.load(f)
             board_info = Board(**board_dict)
 
+        params = None
+        if self.option("set-params"):
+            params_yml_path = self.option("set-params")
+
+            if params_yml_path == "null":
+                params_yml_path = "set-params.yml"
+
+            params_yml_path = Path(params_yml_path)
+            if not params_yml_path.exists():
+                self.line(f"<error>{params_yml_path} could not be found</erro>")
+                return 1
+
+            with params_yml_path.open() as f:
+                yaml = ruamel.yaml.YAML()
+                params_dict = yaml.load(f)
+                params = GenerateConfig(**params_dict)
+
         configurator = JailhouseConfigurator(
             board_info,
             self.autojail_config,
             print_after_all=self.option("print-after-all"),
             context=self.automate_context,
+            params=params,
         )
         configurator.read_cell_yml(str(cells_yml_path))
         configurator.prepare()
