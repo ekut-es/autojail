@@ -164,6 +164,8 @@ class CellConfig(BaseModel):
     name: str
     vpci_irq_base: Optional[ExpressionInt]
     flags: List[str] = []
+    network_renderer: Literal["interfaces", "cmdline"] = "interfaces"
+    image: Optional[str] = None
 
     hypervisor_memory: Optional[HypervisorMemoryRegion]
     debug_console: Union[str, DebugConsole]
@@ -193,7 +195,6 @@ class InterfaceConfig(BaseModel):
 
 class ShmemConfigNet(ShmemConfig):
     protocol: Literal["SHMEM_PROTO_VETH"]
-    renderer: Literal["interfaces"] = "interfaces"
     network: Union[List[IPvAnyNetwork], Dict[str, InterfaceConfig]] = {}
 
 

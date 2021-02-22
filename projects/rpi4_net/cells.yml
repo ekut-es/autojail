@@ -21,6 +21,7 @@ cells:
   guest1:
     type: linux
     name: "RPI4 net guest"
+    network_renderer: cmdline 
     debug_console: serial0
     cpus: 2,3
     flags: [PASSIVE_COMMREG]
