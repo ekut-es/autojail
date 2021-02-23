@@ -562,7 +562,6 @@ class GenerateDeviceTreePass(BasePass):
                 f"CROSS_COMPILE={self.autojail_config.cross_compile}",
                 f"M={dts_path.absolute()}",
             ]
-            # print(" ".join(build_dts_command))
 
             if not Path(self.autojail_config.kernel_dir).exists():
                 self.logger.critical(

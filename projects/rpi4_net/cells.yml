@@ -25,6 +25,8 @@ cells:
     debug_console: serial0
     cpus: 2,3
     flags: [PASSIVE_COMMREG]
+    image: rootfs.cpio
+
 
     memory_regions:
       Boot Memory:
