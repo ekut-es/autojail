@@ -93,7 +93,6 @@ class NetworkConfigPass(BasePass):
         ip_info: List[Dict[str, Any]],
         root_cell_id: str,
     ):
-        test = 1
         interfaces = defaultdict(list)
 
         if root_cell_id:

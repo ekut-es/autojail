@@ -1,4 +1,4 @@
 [flake8]
-select = DAR
-extend-ignore = E231, E203, E501, W291, W292, N807
+#select = DAR
+extend-ignore = E231, E203, E501, W291, W292, N807, DAR
 max-line-length = 80

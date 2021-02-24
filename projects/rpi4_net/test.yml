@@ -4,6 +4,7 @@ start_root_cell:
     - sudo jailhouse enable /etc/jailhouse/rpi4-net.cell
     - sudo jailhouse console > console.out
     - sudo jailhouse disable
+    - sudo modprobe -r jailhouse 
   asserts:
     serial: 
       - CHECK: Initializing Jailhouse hypervisor
@@ -16,8 +17,11 @@ start_inmates_cell:
   script:
     - sudo modprobe jailhouse
     - sudo jailhouse enable /etc/jailhouse/rpi4-net.cell
+    - sudo jailhouse cell linux /etc/jailhouse/rpi4-net-guest.cell /boot/vmlinuz-5.4.16 -d /etc/jailhouse/dts/rpi4-net-guest.dtb -i /usr/share/jailhouse/rootfs.cpio  -c "console=ttyS0,115200 ip=192.168.1.2"
+    - sleep 30 
     - sudo jailhouse console > console.out
     - sudo jailhouse disable
+    - sudo modprobe -r jailhouse
   asserts:
     serial: 
       - CHECK: Initializing Jailhouse hypervisor
