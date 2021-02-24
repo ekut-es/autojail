@@ -1,4 +1,3 @@
-import json
 import os
 import re
 import shutil
@@ -189,7 +188,7 @@ class JailhouseConfigurator:
     ) -> int:
         """
         Install to deploy_path/prefix and build a file deploy.tar.gz for installation on the target system
-        
+
         Parameters:
             output_path (Union[str, Path]): Path to generated builds 
             deploy_path (Union[str, Path]): Path to install the generated rootfs overlay
@@ -322,12 +321,14 @@ class JailhouseConfigurator:
             utils.deploy_target(connection, Path("deploy.tar.gz"))
             utils.stop_board(self.autojail_config)
 
+        return 0
+
     def write_config(self, output_path: str) -> int:
         """Write configuration data to file
-        
+
         Parameters:
             output_path (str): Path to output path
-        
+
         Returns:
             int: nonzero value on error 
         """
