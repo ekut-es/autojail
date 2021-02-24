@@ -165,7 +165,9 @@ class GenerateStartupPass(BasePass):
         )
 
         deploy_path = Path(self.autojail_config.deploy_dir)
-        target_path = deploy_path / "etc" / "jailhouse" / "enable.sh"
+        target_base_path = deploy_path / "etc" / "jailhouse"
+        target_base_path.mkdir(exist_ok=True, parents=True)
+        target_path = target_base_path / "enable.sh"
         with target_path.open("w") as f:
             f.write(startup_code)
 

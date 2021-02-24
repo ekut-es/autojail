@@ -20,6 +20,7 @@ from ..model import (
     ShMemNetRegion,
 )
 from ..utils.report import Report, Section, Table
+from ..utils.save_config import save_jailhouse_config
 from .board_info import TransferBoardInfoPass
 from .cpu import CPUAllocatorPass
 from .devices import LowerDevicesPass
@@ -640,12 +641,17 @@ class JailhouseConfigurator:
             )
 
         for pass_instance in self.passes:
-            pass_instance(self.board, self.config)
+            self.board, self.config = pass_instance(self.board, self.config)
             if self.print_after_all:
                 print(f"Config after {pass_instance.name}")
                 from devtools import debug
 
                 debug(self.config)
+
+            report_path = Path(self.autojail_config.build_dir) / "report"
+            report_path.mkdir(exist_ok=True, parents=True)
+            generated_cells_yml = report_path / "generated_cells.yml"
+            save_jailhouse_config(generated_cells_yml, self.config)
 
     def read_cell_yml(self, cells_yml: str) -> None:
         self.logger.info("Reading cell configuration %s", str(cells_yml))
