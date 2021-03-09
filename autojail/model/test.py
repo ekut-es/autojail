@@ -1,16 +1,16 @@
 from typing import Dict, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 ScriptList = List[str]
-CheckList = List[str]
-LogList = List[str]
+CheckDict = Dict[str, List[str]]
+LogDict = Dict[str, List[str]]
 
 
 class TestEntry(BaseModel):
     script: ScriptList
-    check: CheckList = []
-    log: LogList = []
+    check: CheckDict = Field(default_factory=dict)
+    log: LogDict = Field(default_factory=dict)
 
 
 class TestConfig(BaseModel):

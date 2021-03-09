@@ -35,30 +35,36 @@ class TestProvider:
         if "SYS_VIRTUAL_DEBUG_CONSOLE" in root_flags:
             script.append("sudo jailhouse console > /tmp/debug_console.out")
             if cell.type == "root":
-                assertions["debug_console"].append("Initializing processor")
+                assertions["/tmp/debug_console.out"].append(
+                    "Initializing processor"
+                )
                 assert cell.cpus is not None
                 for cpu in cell.cpus:
-                    assertions["debug_console.out"].append(f" CPU {cpu}... OK")
-                assertions["debug_console.out"].append("Activating hypervisor")
+                    assertions["/tmp/debug_console.out"].append(
+                        f" CPU {cpu}... OK"
+                    )
+                assertions["/tmp/debug_console.out"].append(
+                    "Activating hypervisor"
+                )
             else:
-                assertions["debug_console.out"].append(
+                assertions["/tmp/debug_console.out"].append(
                     f'Created cell "{cell.name}"'
                 )
-                assertions["debug_console.out"].append(
+                assertions["/tmp/debug_console.out"].append(
                     f'Cell "{cell.name}" can be loaded'
                 )
-                assertions["debug_console.out"].append(
+                assertions["/tmp/debug_console.out"].append(
                     f'Started cell "{cell.name}"'
                 )
         script.append("sudo /etc/jailhouse/enable.sh stop")
-        return TestEntry(script=script, assertions=assertions)
+        return TestEntry(script=script, check=dict(assertions))
 
     def _get_start_all(self):
         script = []
         script.append("sudo /etc/jailhouse/enable.sh start")
         script.append("sleep 10")
         script.append("sudo /etc/jailhouse/enable.sh stop")
-        return TestEntry(script=script, assertions=[])
+        return TestEntry(script=script)
 
     def _get_cell_ip(self, name) -> Optional[str]:
         ip = None
@@ -79,23 +85,28 @@ class TestProvider:
         script = []
         script.append("sudo /etc/jailhouse/enable.sh start")
         script.append("sleep 10")
-        assertions = []
+        assertions = {}
+        timeout = 30
         for name, cell in self.config.cells.items():
             if cell.type == "linux":
                 cell_ip = self._get_cell_ip(name)
                 if cell_ip is not None:
+                    output_name = f"/tmp/cyclictest_{name}.txt"
                     script.append(
-                        f'ssh root@{cell_ip} "cyclictest  -D 30s -m -q -a -t 4 -p 70 --priospread" > /tmp/cyclictest_{name}.txt &'
+                        f'ssh root@{cell_ip} "cyclictest  -D {timeout}s -m -q -a -t 4 -p 70 --priospread" > {output_name} &'
                     )
+                    assertion = r"T:\W*(?P<thread_num>[0-9]+)\W*\(\W*(?P<thread_id>[0-9]+)\)\W*P:\W*(?P<priority>[0-9]+)\W*I:\W*(?P<intervall>[0-9]+)\W+C:\W*(?P<cycles>[0-9]+)\W*Min:\W*(?P<min_latency>[0-9]+)\W*Act:\W*([0-9]+)\W*Avg:\W*(?P<avg_latency>[0-9]+)\W+Max:\W*(?P<max_latency>[0-9]+)"
+                    assertions[output_name] = [assertion]
+
             elif cell.type == "root":
                 script.append(
-                    "stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M --timeout 30s &"
+                    f"stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M --timeout {timeout}s &"
                 )
         script.append("wait")
 
         script.append("sudo /etc/jailhouse/enable.sh stop")
 
-        return TestEntry(script=script, assertions=assertions)
+        return TestEntry(script=script, log=assertions)
 
     def tests(self):
         tests: Dict[str, TestEntry] = {}
@@ -105,6 +116,6 @@ class TestProvider:
                 f"start_{self.cell_name_underscore(cell)}"
             ] = self._get_start_cell(cell)
         tests["start_all"] = self._get_start_all()
-        tests["cyclictest"] = self._get_cyclictest()
+        tests["cyclictest_all"] = self._get_cyclictest()
 
         return tests

@@ -1,10 +1,12 @@
+import re
 import shlex
 import subprocess
 import tempfile
 import threading
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Iterable, List, Optional, Union
 
+import pandas as pd
 from dataclasses import dataclass
 
 from ..model.board import Board
@@ -73,10 +75,81 @@ class TestRunner:
             self.logger.critical("Could not stop target, trying reset ...")
             self._run_reset()
 
+    def _get_outputs(
+        self, output_files: Iterable[str]
+    ) -> Dict[str, Optional[str]]:
+        results: Dict[str, Optional[str]] = {}
+        for f in output_files:
+            self.logger.info("Getting output file %s", f)
+            with tempfile.SpooledTemporaryFile(mode="rw+b") as tmpfile:
+                try:
+                    assert self.connection is not None
+                    self.connection.get(f, local=tmpfile)
+                    tmpfile.seek(0)
+                    results[f] = tmpfile.read()
+                except Exception:
+                    results[f] = None
+
+        return results
+
+    def _check_results(
+        self, checks: Dict[str, List[str]], results: Dict[str, Any]
+    ):
+        result = True
+        for file, file_checks in checks.items():
+            data = results[file].decode("utf-8")
+            for check in file_checks:
+                check_regex = re.compile(check)
+                match = check_regex.search(data)
+                if not match:
+                    self.logger.warning(
+                        "Could not find pattern %s in %s", check, file
+                    )
+                    result = False
+
+        return result
+
+    def _extract_metrics(
+        self, logs: Dict[str, List[str]], results: Dict[str, Any]
+    ) -> Any:
+        result_list = []
+        for file, log_patterns in logs.items():
+            data = results[file].decode("utf-8")
+            data = data.splitlines()
+            extractors = [re.compile(p) for p in log_patterns]
+            for line in data:
+                for extractor in extractors:
+                    match = extractor.match(line)
+                    if match:
+                        matched_metrics = match.groupdict()
+                        result_dict = {}
+                        for k, v in matched_metrics.items():
+                            try:
+                                result_dict[k] = float(v)
+                            except ValueError:
+                                pass
+                        if result_dict:
+                            result_list.append(result_dict)
+        result_frame = pd.DataFrame(result_list)
+        return result_frame
+
     def _run_test(self, test: TestEntry):
         script = test.script
         self._run_script(script)
-        return TestResult(passed=True, metrics={})
+
+        output_files = set()
+
+        for f in test.check:
+            output_files.add(f)
+        for f in test.log:
+            output_files.add(f)
+        outputs = self._get_outputs(output_files)
+        result = self._check_results(test.check, outputs)
+        metrics = self._extract_metrics(test.log, outputs)
+        if not metrics.empty:
+            print(metrics)
+
+        return TestResult(passed=result, metrics={})
 
     def _prepare_tests(self) -> Dict[str, TestEntry]:
         generic_provider = TestProvider(
