@@ -30,6 +30,7 @@ from ..model import (
     ShMemNetRegion,
 )
 from ..model.datatypes import HexInt
+from ..model.parameters import GenerateConfig, GenerateParameters, ScalarChoice
 from ..utils import get_overlap
 from .passes import BasePass
 
@@ -1020,15 +1021,33 @@ class UnallocatedOrSharedSegmentsAnalysis(object):
 
 
 class MergeIoRegionsPass(BasePass):
-    """ Merge IO regions in root cell that are at most 64 kB apart """
+    """ Merge IO regions in root cell that are at most n kB apart.
+    n defaults to 64 kb
+    """
 
-    MAX_DIST = 64 * 1024
-
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        set_params: Optional[GenerateConfig],
+        gen_params: Optional[GenerateParameters],
+    ) -> None:
         self.config: Optional[JailhouseConfig] = None
         self.board: Optional[Board] = None
         self.root_cell: Optional[CellConfig] = None
         self.logger = logging.getLogger("autojail")
+        self.max_dist = 64 * 1024
+
+        if set_params:
+            self.max_dist = set_params.mem_io_merge_threshold
+
+        if gen_params:
+            threshold_choice = ScalarChoice()
+            threshold_choice.lower = 1024
+            threshold_choice.upper = 64 * 1024 * 1024
+            threshold_choice.step = 1024
+            threshold_choice.integer = True
+            threshold_choice.log = True
+
+            gen_params.mem_io_merge_threshold = threshold_choice
 
     def __call__(
         self, board: Board, config: JailhouseConfig
@@ -1082,7 +1101,7 @@ class MergeIoRegionsPass(BasePass):
         grouped_regions: List[List[Tuple[str, MemoryRegionData]]] = []
         current_group: List[Tuple[str, MemoryRegionData]] = []
 
-        max_dist = self.MAX_DIST
+        max_dist = self.max_dist
 
         vpci_start_addr = None
         vpci_end_addr = None
