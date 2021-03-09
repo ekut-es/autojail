@@ -1,7 +1,7 @@
 """ Definition of standard tests """
 
 from collections import defaultdict
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from ..model import AutojailConfig, Board, CellConfig, JailhouseConfig
 from ..model.test import TestEntry
@@ -30,27 +30,72 @@ class TestProvider:
 
         cell_name = self.cell_name_underscore(cell)
         script.append(f"sudo /etc/jailhouse/enable.sh start_{cell_name}")
-
+        script.append("sleep 10")
         root_flags = self.config.root_cell.flags
         if "SYS_VIRTUAL_DEBUG_CONSOLE" in root_flags:
-
             script.append("sudo jailhouse console > /tmp/debug_console.out")
             if cell.type == "root":
                 assertions["debug_console"].append("Initializing processor")
                 assert cell.cpus is not None
                 for cpu in cell.cpus:
-                    assertions["debug_console"].append(f" CPU {cpu}... OK")
-                assertions["debug_console"].append("Activating hypervisor")
+                    assertions["debug_console.out"].append(f" CPU {cpu}... OK")
+                assertions["debug_console.out"].append("Activating hypervisor")
             else:
-                assertions["debug_console"].append(
+                assertions["debug_console.out"].append(
                     f'Created cell "{cell.name}"'
                 )
-                assertions["debug_console"].append(
+                assertions["debug_console.out"].append(
                     f'Cell "{cell.name}" can be loaded'
                 )
-                assertions["debug_console"].append(
+                assertions["debug_console.out"].append(
                     f'Started cell "{cell.name}"'
                 )
+        script.append("sudo /etc/jailhouse/enable.sh stop")
+        return TestEntry(script=script, assertions=assertions)
+
+    def _get_start_all(self):
+        script = []
+        script.append("sudo /etc/jailhouse/enable.sh start")
+        script.append("sleep 10")
+        script.append("sudo /etc/jailhouse/enable.sh stop")
+        return TestEntry(script=script, assertions=[])
+
+    def _get_cell_ip(self, name) -> Optional[str]:
+        ip = None
+        if self.config.shmem is None:
+            return None
+        for shmem in self.config.shmem.values():
+            if shmem.protocol != "SHMEM_PROTO_VETH":
+                continue
+
+            assert hasattr(shmem, "network")
+            for cell_name, network in shmem.network.items():  # type: ignore
+                if cell_name == name:
+                    ip = network.addresses[0].ip
+
+        return ip
+
+    def _get_cyclictest(self):
+        script = []
+        script.append("sudo /etc/jailhouse/enable.sh start")
+        script.append("sleep 10")
+        assertions = []
+        for name, cell in self.config.cells.items():
+            if cell.type == "linux":
+                cell_ip = self._get_cell_ip(name)
+                if cell_ip is not None:
+                    script.append(
+                        f'ssh root@{cell_ip} "cyclictest  -D 30s -m -q -a -t 4 -p 70 --priospread" > /tmp/cyclictest_{name}.txt &'
+                    )
+            elif cell.type == "root":
+                script.append(
+                    "stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M --timeout 30s &"
+                )
+        script.append("wait")
+
+        script.append("sudo /etc/jailhouse/enable.sh stop")
+
+        return TestEntry(script=script, assertions=assertions)
 
     def tests(self):
         tests: Dict[str, TestEntry] = {}
@@ -59,5 +104,7 @@ class TestProvider:
             tests[
                 f"start_{self.cell_name_underscore(cell)}"
             ] = self._get_start_cell(cell)
+        tests["start_all"] = self._get_start_all()
+        tests["cyclictest"] = self._get_cyclictest()
 
         return tests

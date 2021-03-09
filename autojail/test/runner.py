@@ -14,6 +14,7 @@ from ..model.test import TestConfig, TestEntry
 from ..utils.connection import Connection, connect
 from ..utils.deploy import deploy_target
 from ..utils.logging import getLogger
+from .test import TestProvider
 
 
 @dataclass
@@ -63,7 +64,7 @@ class TestRunner:
             self.logger.debug("Starting test: %s", name)
             result = self._run_test(test)
             self.logger.info(
-                "%s, %s", name, "PASSED" if result.passed else "Failed"
+                "%s, %s", name, "PASSED" if result.passed else "FAILED"
             )
             results[name] = result
         try:
@@ -78,7 +79,10 @@ class TestRunner:
         return TestResult(passed=True, metrics={})
 
     def _prepare_tests(self) -> Dict[str, TestEntry]:
-        tests = {}
+        generic_provider = TestProvider(
+            self.autojail_config, self.jailhouse_config, self.board_info
+        )
+        tests = generic_provider.tests()
         for name, test in self.test_config.items():
             tests[name] = test
 

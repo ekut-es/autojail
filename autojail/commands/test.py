@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from ..test import TestRunner
 from .base import BaseCommand
 
@@ -17,7 +19,9 @@ class TestCommand(BaseCommand):
         if not autojail_config:
             return 1
 
-        jailhouse_config = self.load_jailhouse_config()
+        jailhouse_config = self.load_jailhouse_config(
+            Path("report/generated_cells.yml")
+        )
         if not jailhouse_config:
             return 1
 

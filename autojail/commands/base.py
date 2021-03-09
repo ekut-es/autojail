@@ -25,25 +25,30 @@ class BaseCommand(Command):
     TEST_CONFIG_NAME = "test.yml"
 
     @property
-    def cells_config_path(self):
+    def cells_config_path(self) -> Path:
         return Path.cwd() / self.CELLS_CONFIG_NAME
 
     @property
-    def board_config_path(self):
+    def board_config_path(self) -> Path:
         return Path.cwd() / self.BOARD_CONFIG_NAME
 
     @property
-    def test_config_path(self):
+    def test_config_path(self) -> Path:
         return Path.cwd() / self.TEST_CONFIG_NAME
 
-    def load_jailhouse_config(self) -> Optional[JailhouseConfig]:
-        if not self.cells_config_path.exists():
+    def load_jailhouse_config(
+        self, config_path: Optional[Path] = None
+    ) -> Optional[JailhouseConfig]:
+        if config_path is None:
+            config_path = self.cells_config_path
+
+        if not config_path.exists():
             self.line(
                 f"{self.cells_config_path} does not exist use autojail config init to generate root cell config"
             )
             return None
 
-        with self.cells_config_path.open() as f:
+        with config_path.open() as f:
             yaml = ruamel.yaml.YAML()
             cells_dict = yaml.load(f)
             cells_info = JailhouseConfig(**cells_dict)
@@ -74,6 +79,8 @@ class BaseCommand(Command):
         with self.test_config_path.open("r") as config_file:
             yaml = ruamel.yaml.YAML()
             config_dict = yaml.load(config_file)
+            if not config_dict:
+                config_dict = {}
             config = TestConfig.parse_obj(config_dict)
 
         return config
