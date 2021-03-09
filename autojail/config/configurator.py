@@ -1,4 +1,3 @@
-import json
 import os
 import re
 import shutil
@@ -22,6 +21,7 @@ from ..model import (
 )
 from ..model.parameters import GenerateConfig, GenerateParameters
 from ..utils.report import Report, Section, Table
+from ..utils.save_config import save_jailhouse_config
 from .board_info import TransferBoardInfoPass
 from .cpu import CPUAllocatorPass
 from .devices import LowerDevicesPass
@@ -35,6 +35,7 @@ from .memory import (
 from .network import NetworkConfigPass
 from .root_shared import InferRootSharedPass
 from .shmem import ConfigSHMemRegionsPass, LowerSHMemPass  # type: ignore
+from .startup import GenerateStartupPass
 
 
 class JailhouseConfigurator:
@@ -68,6 +69,7 @@ class JailhouseConfigurator:
             InferRootSharedPass(),
             GenerateDeviceTreePass(self.autojail_config),
             NetworkConfigPass(self.autojail_config),
+            GenerateStartupPass(self.autojail_config),
         ]
 
         self.logger = utils.logging.getLogger()
@@ -178,7 +180,7 @@ class JailhouseConfigurator:
             return_val = subprocess.run(config_check_command)
             ret = return_val.returncode
 
-        if ret != 0:
+        if ret:
             self.logger.critical(
                 "Found critical errors in generated jailhouse config"
             )
@@ -190,8 +192,18 @@ class JailhouseConfigurator:
         output_path: Union[str, Path],
         deploy_path: Union[str, Path],
         target: bool = False,
-    ):
-        "Install to deploy_path/prefix and build a file deploy.tar.gz for installation on the target system"
+    ) -> int:
+        """
+        Install to deploy_path/prefix and build a file deploy.tar.gz for installation on the target system
+
+        Parameters:
+            output_path (Union[str, Path]): Path to generated builds 
+            deploy_path (Union[str, Path]): Path to install the generated rootfs overlay
+            target (bool): If true copy to target board and extract deploy tarball
+
+        Returns: 
+            int: 0 on success 1 on error 
+        """
         assert self.autojail_config is not None
         assert self.config is not None
 
@@ -316,8 +328,17 @@ class JailhouseConfigurator:
             utils.deploy_target(connection, Path("deploy.tar.gz"))
             utils.stop_board(self.autojail_config)
 
+        return 0
+
     def write_config(self, output_path: str) -> int:
-        """Write configuration data to file"""
+        """Write configuration data to file
+
+        Parameters:
+            output_path (str): Path to output path
+
+        Returns:
+            int: nonzero value on error 
+        """
         assert self.config is not None
 
         for cell in self.config.cells.values():
@@ -495,11 +516,8 @@ class JailhouseConfigurator:
             f.write(
                 "\n\t\t.num_pci_devices = ARRAY_SIZE(config.pci_devices)" + ","
             )
-            f.write(
-                "\n\t\t.cpu_set_size = sizeof(config.cpus)" + ","
-            )  # lookatthis later
+            f.write("\n\t\t.cpu_set_size = sizeof(config.cpus)" + ",")
             f.write("\n\t\t.num_irqchips = ARRAY_SIZE(config.irqchips)" + ",")
-            # f.write("\n\t\t//.num_pci_caps !!//TODO: = " + ",")
 
             if cell.type == "root":
                 f.write("\n\t},")
@@ -629,10 +647,17 @@ class JailhouseConfigurator:
             )
 
         for pass_instance in self.passes:
-            pass_instance(self.board, self.config)
+            self.board, self.config = pass_instance(self.board, self.config)
             if self.print_after_all:
-                print(json.dumps(self.config.dict(), indent=2))
-                print(json.dumps(self.board.dict(), indent=2))
+                print(f"Config after {pass_instance.name}")
+                from devtools import debug
+
+                debug(self.config)
+
+            report_path = Path(self.autojail_config.build_dir) / "report"
+            report_path.mkdir(exist_ok=True, parents=True)
+            generated_cells_yml = report_path / "generated_cells.yml"
+            save_jailhouse_config(generated_cells_yml, self.config)
 
     def read_cell_yml(self, cells_yml: str) -> None:
         self.logger.info("Reading cell configuration %s", str(cells_yml))

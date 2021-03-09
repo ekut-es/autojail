@@ -21,12 +21,9 @@ cells:
   guest1:
     type: linux
     name: "RPI4 net guest"
-    network_renderer: cmdline 
     debug_console: serial0
     cpus: 2,3
     flags: [PASSIVE_COMMREG]
-    image: rootfs.cpio
-
 
     memory_regions:
       Boot Memory:
@@ -48,12 +45,5 @@ shmem:
   net1:
     protocol: SHMEM_PROTO_VETH
     peers: [root, guest1]
-    network:
-      root: 
-        addresses: 
-          - 192.168.1.1/24
-      guest1:
-        addresses: 
-          - 192.168.1.2/24
-
+    
 

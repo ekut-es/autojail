@@ -26,6 +26,15 @@ class NetworkConfigPass(BasePass):
     def __call__(
         self, board: Board, config: JailhouseConfig
     ) -> Tuple[Board, JailhouseConfig]:
+        """Generate network configuration for all cells
+
+        Args:
+            board (Board): Parsed board info file
+            config (JailhouseConfig): Parsed Jailhouse configuration
+
+        Returns:
+            Tuple[Board, JailhouseConfig]: Modified Board and Jailhouse configuration after autoconfiguration and lowering
+        """
 
         root_cell_id = ""
         for cell_id, cell in config.cells.items():
@@ -104,6 +113,14 @@ class NetworkConfigPass(BasePass):
     def _generate_interfaces(
         self, network_configs: List[ShmemConfigNet],
     ) -> Dict[str, str]:
+        """Generate network configs in /etc/network/interfaces format.
+
+        Args:
+            network_configs (List[ShmemConfigNet]): List of network configs to generate the configuration for
+
+        Returns:
+            Dict[str, str]: Mapping from cell id to network configuration
+        """
 
         configs: Dict[str, str] = defaultdict(str)
         for shmem_config in network_configs:
@@ -204,7 +221,7 @@ class NetworkConfigPass(BasePass):
                 for num, peer in enumerate(config.peers):
                     interfaces = []
                     for network in config.network:
-                        address = next(itertools.islice(network, num, None))
+                        address = next(itertools.islice(network, num + 1, None))
                         interface = ip_interface(
                             f"{address}/{network.prefixlen}"
                         )

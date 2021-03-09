@@ -1,7 +1,5 @@
 import logging
 
-import ruamel.yaml
-
 from autojail.model.jailhouse import JailhouseConfig
 
 from ..config import (
@@ -10,31 +8,14 @@ from ..config import (
     RootConfigArgs,
     RootConfigWizard,
 )
-from ..model.datatypes import (
-    ByteSize,
-    ExpressionInt,
-    HexInt,
-    IntegerList,
-    JailhouseFlagList,
-)
+from ..model.datatypes import ByteSize, IntegerList
+from ..utils.save_config import save_jailhouse_config
 from .base import BaseCommand
 
 
 class ConfigCommandBase(BaseCommand):
     def _save_jailhouse_config(self, config: JailhouseConfig):
-        if config is not None:
-            with self.cells_config_path.open("w") as f:
-                yaml = ruamel.yaml.YAML()
-                yaml.register_class(HexInt)
-                yaml.register_class(ByteSize)
-                yaml.register_class(IntegerList)
-                yaml.register_class(JailhouseFlagList)
-                yaml.register_class(ExpressionInt)
-
-                cells_dict = config.dict(
-                    exclude_unset=True, exclude_defaults=True
-                )
-                yaml.dump(cells_dict, f)
+        save_jailhouse_config(self.cells_config_path, config)
 
 
 class InitCommand(ConfigCommandBase):
