@@ -263,7 +263,7 @@ Features:
   - Erste Unterstützung für Konfiguration von Inter-Zell Kommunikation
     
 	
-### Milestone 3: Abschluss Phase 1
+### Milestone 3: Abschluss 
 
 - Konfiguration eines zweiten Boards
 - Dokumentation der Ergebnisse
