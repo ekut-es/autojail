@@ -265,11 +265,10 @@ Features:
 	
 ### Milestone 3: Abschluss Phase 1
 
-- Integration des Codesys SPS Demonstrators
 - Konfiguration eines zweiten Boards
 - Dokumentation der Ergebnisse
 - Vielleicht Integration / Beispiel für Benutzung mit [ELBE](https://elbe-rfs.org/) 
 - Falls sinnvoll/möglich Publikation der Ergebnisse 
-- Planung für Phase 2 insbesondere:
-  - Entscheidung über *autojail test* und *autojail explore*
-  - Entscheidung über Einsatz von Machine Learning
+- *autojail test* und *autojail explore*
+
+
