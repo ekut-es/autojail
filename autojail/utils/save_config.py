@@ -35,4 +35,5 @@ def save_jailhouse_config(
             yaml.representer.add_representer(IPv6Network, repr_string)
 
             cells_dict = config.dict(exclude_unset=True, exclude_defaults=True)
+
             yaml.dump(cells_dict, f)
