@@ -162,7 +162,11 @@ class TestRunner:
         return tests
 
     def _deploy(self) -> None:
-        deploy_target(self.connection, Path("./deploy.tar.gz"))
+        deploy_target(
+            self.connection,
+            Path(self.autojail_config.deploy_dir).absolute().parent
+            / "deploy.tar.gz",
+        )
 
     def _run_script(self, script):
         script_name = ""

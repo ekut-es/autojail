@@ -23,7 +23,7 @@ cells:
     name: "RPI4 net guest"
     network_renderer: cmdline 
     debug_console: serial0
-    cpus: 2,3
+    cpus: []
     flags: [PASSIVE_COMMREG]
     image: rootfs.cpio
 

@@ -127,6 +127,7 @@ class AddCommand(ConfigCommandBase):
 
         wizard = InmateConfigWizard(self, board_info)
         config = wizard.add(args, jailhouse_config)
+
         self._save_jailhouse_config(config)
 
 

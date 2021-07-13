@@ -1,0 +1,3 @@
+[submodule "external/hannah-optimizer"]
+	path = external/hannah-optimizer
+	url = ../hannah-optimizer
