@@ -25,7 +25,7 @@ class ClockInfoExtractor:
             f"KDIR={Path(self.config.kernel_dir).absolute()}",
         ]
 
-        ret = subprocess.run(clean_command, capture_output=True)
+        ret = subprocess.run(clean_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if ret.returncode:
             self.logger.warning("Could not clean kernel module")
             self.logger.info(ret.stdout)
@@ -40,7 +40,7 @@ class ClockInfoExtractor:
             f"KDIR={Path(self.config.kernel_dir).absolute()}",
         ]
 
-        ret = subprocess.run(compile_command, capture_output=False)
+        ret = subprocess.run(compile_command)
         if ret.returncode:
             self.logger.warning("Could not build kernel module")
             self.logger.info(ret.stdout)
