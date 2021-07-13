@@ -1,5 +1,7 @@
 # Automated Jailhouse configuration ARM and ARM64 based devices
 
+[Documentation](https://atreus.informatik.uni-tuebingen.de/~gerum/autojail/)
+
 ## Requirements
 
 1. Linux Kernel build and source directory for the target board
