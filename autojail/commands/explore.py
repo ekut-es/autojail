@@ -2,7 +2,13 @@ from pathlib import Path
 
 import numpy
 import ruamel.yaml
-from hannah_optimizer.aging_evolution import AgingEvolution
+
+try:
+    from hannah_optimizer.aging_evolution import AgingEvolution
+
+    hannah_optimizer_available = True
+except ImportError:
+    hannah_optimizer_available = False
 
 from ..config import JailhouseConfigurator
 from ..model import Board
@@ -25,6 +31,15 @@ class ExploreCommand(BaseCommand):
     """  # noqa
 
     def handle(self) -> int:
+        if not hannah_optimizer_available:
+            self.line(
+                "<error>autojail explore currently depends on unreleased package hannah-tvm</error>"
+            )
+            self.line(
+                "Please contact christoph.gerum@uni-tuebingen.de if you want to use it."
+            )
+            return 1
+
         if not self.autojail_config:
             self.line(f"<error>could not find {self.CONFIG_NAME}</error>")
             return 1

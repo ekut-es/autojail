@@ -201,26 +201,26 @@ class GenerateStartupPass(BasePass):
             ip_config = ""
 
             interfaces = []
-            assert self.config.shmem is not None
-            for shmem_config in self.config.shmem.values():
-                if cell_id in shmem_config.peers:
-                    if (
-                        isinstance(shmem_config, ShmemConfigNet)
-                        and shmem_config.network
-                    ):
-                        assert isinstance(shmem_config.network, dict)
-                        interfaces.extend(
-                            shmem_config.network[cell_id].addresses
-                        )
-            if len(interfaces) > 1:
-                self.logger.critical(
-                    f"Cell {cell.name} has more than one interface this can not be configured using kernel commandline"
-                )
-                self.logger.info(f"Choosing configuration {interfaces[0]}")
+            if self.config.shmem:
+                for shmem_config in self.config.shmem.values():
+                    if cell_id in shmem_config.peers:
+                        if (
+                            isinstance(shmem_config, ShmemConfigNet)
+                            and shmem_config.network
+                        ):
+                            assert isinstance(shmem_config.network, dict)
+                            interfaces.extend(
+                                shmem_config.network[cell_id].addresses
+                            )
+                if len(interfaces) > 1:
+                    self.logger.critical(
+                        f"Cell {cell.name} has more than one interface this can not be configured using kernel commandline"
+                    )
+                    self.logger.info(f"Choosing configuration {interfaces[0]}")
 
-            if len(interfaces) > 0:
-                interface = interfaces[0]
-                ip_config = f"ip={interface.ip}"  # type: ignore
+                if len(interfaces) > 0:
+                    interface = interfaces[0]
+                    ip_config = f"ip={interface.ip}"  # type: ignore
 
             nfsroot = ""
             flags = ""
