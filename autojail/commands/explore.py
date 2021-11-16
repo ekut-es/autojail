@@ -12,13 +12,7 @@ except ImportError:
 
 from ..config import JailhouseConfigurator
 from ..model import Board
-from ..model.parameters import (
-    GenerateConfig,
-    GenerateParameters,
-    Partitions,
-    ScalarChoice,
-)
-from ..test import TestRunner
+from ..model.parameters import GenerateParameters
 from .base import BaseCommand
 
 
@@ -71,6 +65,7 @@ class ExploreCommand(BaseCommand):
         step = 0
 
         result = self._run_config(step, set_params, gen_params)
+        print(result)
 
         optimizer = AgingEvolution(
             10,
@@ -80,7 +75,7 @@ class ExploreCommand(BaseCommand):
             gen_params.dict(),
             numpy.random.RandomState(1234),
         )
-        for step in range(1, 20):
+        for _step in range(1, 20):
             set_params = optimizer.ask()
             from devtools import debug
 
@@ -117,6 +112,7 @@ class ExploreCommand(BaseCommand):
         )
 
         ret = configurator.deploy(build_dir, deploy_dir,)
+        print(ret)
 
         test_jailhouse_config = self.load_jailhouse_config(
             Path("report/generated_cells.yml")
@@ -128,7 +124,7 @@ class ExploreCommand(BaseCommand):
         if not test_config:
             return 1
 
-        automate_context = self.automate_context
+        # automate_context = self.automate_context
 
         # runner = TestRunner(
         #     self.autojail_config,
