@@ -26,7 +26,7 @@ run_pre_commit:
     - docker
 
 run_pre_commit_latest:
-  image: python:latest
+  image: python:3.9
   stage: sca
   script:
     - set -e
