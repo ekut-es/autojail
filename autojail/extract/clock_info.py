@@ -25,7 +25,9 @@ class ClockInfoExtractor:
             f"KDIR={Path(self.config.kernel_dir).absolute()}",
         ]
 
-        ret = subprocess.run(clean_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        ret = subprocess.run(
+            clean_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         if ret.returncode:
             self.logger.warning("Could not clean kernel module")
             self.logger.info(ret.stdout)
