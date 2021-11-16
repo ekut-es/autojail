@@ -25,7 +25,6 @@ python-Levenshtein = "^0.12.0"
 typing-extensions = "^3.7.4"
 rich = "^9.10.0"
 pandas = "^1.1.0"
-hannah_optimizer = {path = "external/hannah-optimizer", develop = true}
 
 [tool.poetry.extras]
 #automate = ["automate"]
