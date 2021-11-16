@@ -13,6 +13,7 @@ from ..model import (
     HypervisorMemoryRegion,
     JailhouseConfig,
     MemoryRegion,
+    ShmemConfigNet,
 )
 
 
@@ -192,6 +193,16 @@ class InmateConfigWizard(WizardBase):
         )
 
         config.cells[id] = cell_config
+
+        if args.type == "linux":
+            shmem_config = ShmemConfigNet(
+                protocol="SHMEM_PROTO_VETH", peers=["root", id]
+            )
+
+        if config.shmem is None:
+            config.shmem = {}
+
+        config.shmem[id] = shmem_config
 
         return config
 

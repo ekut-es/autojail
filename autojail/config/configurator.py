@@ -314,7 +314,7 @@ class JailhouseConfigurator:
         deploy_bundle_command = [
             "tar",
             "czf",
-            "deploy.tar.gz",
+            f"{deploy_path.absolute().parent / 'deploy.tar.gz'}",
             "-C",
             f"{deploy_path}",
         ] + deploy_files
@@ -325,7 +325,9 @@ class JailhouseConfigurator:
         if target:
             utils.start_board(self.autojail_config)
             connection = utils.connect(self.autojail_config, self.context)
-            utils.deploy_target(connection, Path("deploy.tar.gz"))
+            utils.deploy_target(
+                connection, deploy_path.absolute().parent / "deploy.tar.gz"
+            )
             utils.stop_board(self.autojail_config)
 
         return 0
@@ -640,7 +642,11 @@ class JailhouseConfigurator:
 
         return 0
 
-    def prepare(self) -> None:
+    def prepare(self, output_path=None) -> None:
+        if output_path is None:
+            output_path = Path(self.autojail_config.build_dir)
+        output_path = Path(output_path)
+
         if self.config is None:
             raise Exception(
                 "A configuration without cells_yml is not supported at the moment"
@@ -654,7 +660,7 @@ class JailhouseConfigurator:
 
                 debug(self.config)
 
-            report_path = Path(self.autojail_config.build_dir) / "report"
+            report_path = output_path / "report"
             report_path.mkdir(exist_ok=True, parents=True)
             generated_cells_yml = report_path / "generated_cells.yml"
             save_jailhouse_config(generated_cells_yml, self.config)

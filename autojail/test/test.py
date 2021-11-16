@@ -77,7 +77,7 @@ class TestProvider:
             assert hasattr(shmem, "network")
             for cell_name, network in shmem.network.items():  # type: ignore
                 if cell_name == name:
-                    ip = network.addresses[0].ip
+                    ip = network.addresses[0].ip  # type: ignore
 
         return ip
 
